@@ -1,6 +1,6 @@
 import React from 'react'
 
-function HomePage() {
+function SessionPage() {
     return (
         <div
 			style={{
@@ -8,13 +8,15 @@ function HomePage() {
 				justifyContent: "center",
 				alignItems: "center",
                 height: "700px",
+                marginLeft: "220px",
+                paddingLeft: "380px",
                 color: "#000000",
                 background: "white",
 			}}
 		>
-			<h1>HomePage</h1>
+			<h1>This is session page.</h1>
 		</div>
     )
 }
 
-export default HomePage
+export default SessionPage

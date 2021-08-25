@@ -15,7 +15,7 @@ export const SidebarContainer = styled.aside`
 `;
 
 export const SidebarWrapper = styled.div`
-  width: 300px;
+  width: 240px;
   height: 100%;
   margin-top: 80px;
   margin-left: 300px;

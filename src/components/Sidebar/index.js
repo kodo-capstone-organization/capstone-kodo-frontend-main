@@ -5,20 +5,20 @@ import {
     SidebarWrapper,
     SidebarMenu
   } from "./SidebarElements";
-const Sidebar = () => {
+function Sidebar() {
     return (
             <SidebarWrapper>
                 <SidebarMenu>
                     <SidebarLink to="/browsecourse">
                         Browse Courses
                     </SidebarLink>
-                    <SidebarLink to="/">
+                    <SidebarLink to="/progresspage">
                         My Progress
                     </SidebarLink>
-                    <SidebarLink to="/">
+                    <SidebarLink to="/profile">
                         My Profile
                     </SidebarLink>
-                    <SidebarLink to="/">
+                    <SidebarLink to="/session">
                         Sessions
                     </SidebarLink>
                 </SidebarMenu>

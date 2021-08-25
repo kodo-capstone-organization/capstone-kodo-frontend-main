@@ -11,18 +11,22 @@ function Login() {
     };
 
     return (
+        <>
         <div
 			style={{
 				display: "flex",
 				justifyContent: "center",
 				alignItems: "center",
-				height: "700px",
+                height: "700px",
+                marginLeft: "220px",
+                paddingLeft: "380px",
                 color: "#000000",
-                background: "white"
+                background: "white",
 			}}
 		>
         <Button primary={true} onClick={handleChange}>{auth ? 'Logout' : 'Login'}</Button>
 		</div>
+        </>
     )
 }
 
