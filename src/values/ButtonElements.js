@@ -7,10 +7,10 @@ export const Button = styled(LinkR)`
   background: ${({ primary }) => (primary ? colours.BLUE1 : colours.GRAY7)};
   white-space: nowrap;
   padding: ${({ big }) => (big ? "14px 48px" : "12px 30px")};
-  color: ${({ dark }) => (dark ? colours.GRAY2 : colours.WHITE)};
+  color: ${({ primary }) => (primary ? colours.WHITE : colours.GRAY2)};
   text-decoration: none;
   font-size: ${({ fontBig }) => (fontBig ? "20px" : "1 6px")};
-  font-family: 
+  font-weight: bold;
   outline: none;
   border: none;
   cursor: pointer;
@@ -22,8 +22,8 @@ export const Button = styled(LinkR)`
 
   &:hover {
     transition: all 0.2s ease-in-out;
-    background: ${({ primary }) => (primary ? colours.BLUE2 : colours.WHITE)};
-    color: ${({ dark }) => (dark ? colours.GRAY2 : colours.WHITE )};
+    background: ${({ primary }) => (primary ? colours.BLUE2 : colours.GRAY6)};
+    color: ${({ primary }) => (primary ? colours.WHITE : colours.GRAY1 )};
 
 
   }
