@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Container, MenuContainer, NavLogo, MenuBtn } from "./TopMenuElements";
 import { Button } from "../../values/ButtonElements";
 
-const TopMenu = () => {
+function TopMenu() {
   const [scrollNav, setScrollNav] = useState(false);
 
   const changeNav = () => {
