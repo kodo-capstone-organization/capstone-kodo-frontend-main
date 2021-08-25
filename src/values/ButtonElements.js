@@ -9,7 +9,7 @@ export const Button = styled(LinkR)`
   padding: ${({ big }) => (big ? "14px 48px" : "8px 30px")};
   color: ${({ primary }) => (primary ? colours.WHITE : colours.GRAY2)};
   text-decoration: none;
-  font-size: ${({ fontBig }) => (fontBig ? "20px" : "1 6px")};
+  font-size: ${({ fontBig }) => (fontBig ? "12px" : "1 6px")};
   font-weight: bold;
   outline: none;
   border: none;
