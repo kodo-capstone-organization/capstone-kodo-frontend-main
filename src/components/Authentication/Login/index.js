@@ -4,7 +4,7 @@ import { Button } from '../../../values/ButtonElements';
 
 
 
-function Login() {
+function Login({isOpen}) {
     const [auth, setAuth] = useState(true);
     const handleChange = () => {
         setAuth(!auth);
@@ -12,7 +12,7 @@ function Login() {
 
     return (
         <>
-        <div
+        <div isOpen={isOpen}
 			style={{
 				display: "flex",
 				justifyContent: "center",

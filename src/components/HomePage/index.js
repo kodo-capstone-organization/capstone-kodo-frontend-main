@@ -8,6 +8,8 @@ function HomePage() {
 				justifyContent: "center",
 				alignItems: "center",
                 height: "700px",
+                marginLeft: "220px",
+                paddingLeft: "380px",
                 color: "#000000",
                 background: "white",
 			}}
