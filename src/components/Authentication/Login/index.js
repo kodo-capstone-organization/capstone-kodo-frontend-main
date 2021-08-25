@@ -1,6 +1,15 @@
-import React from 'react'
+import React, {useState} from 'react';
+//import { useBetween } from "use-between"
+import { Button } from '../../../values/ButtonElements';
+
+
 
 function Login() {
+    const [auth, setAuth] = useState(true);
+    const handleChange = () => {
+        setAuth(!auth);
+    };
+
     return (
         <div
 			style={{
@@ -8,10 +17,11 @@ function Login() {
 				justifyContent: "center",
 				alignItems: "center",
 				height: "700px",
-				color: "#000000",
+                color: "#000000",
+                background: "white"
 			}}
 		>
-			<h1>Login</h1>
+        <Button primary={true} onClick={handleChange}>{auth ? 'Logout' : 'Login'}</Button>
 		</div>
     )
 }

@@ -1,11 +1,29 @@
 import React from 'react'
-
-function Sidebar() {
+import {
+    SidebarContainer,
+    SidebarLink,
+    SidebarWrapper,
+    SidebarMenu
+  } from "./SidebarElements";
+const Sidebar = () => {
     return (
-        <div>
-            
-        </div>
+            <SidebarWrapper>
+                <SidebarMenu>
+                    <SidebarLink to="/">
+                        Browse Courses
+                    </SidebarLink>
+                    <SidebarLink to="/">
+                        My Progress
+                    </SidebarLink>
+                    <SidebarLink to="/">
+                        My Profile
+                    </SidebarLink>
+                    <SidebarLink to="/">
+                        Sessions
+                    </SidebarLink>
+                </SidebarMenu>
+            </SidebarWrapper>
     )
 }
 
-export default Sidebar
+export default Sidebar;

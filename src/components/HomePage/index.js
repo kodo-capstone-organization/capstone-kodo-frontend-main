@@ -7,8 +7,10 @@ function HomePage() {
 				display: "flex",
 				justifyContent: "center",
 				alignItems: "center",
-				height: "700px",
-				color: "#000000",
+                height: "860px",
+                paddingLeft: "380px",
+                color: "#000000",
+                background: "white",
 			}}
 		>
 			<h1>HomePage</h1>

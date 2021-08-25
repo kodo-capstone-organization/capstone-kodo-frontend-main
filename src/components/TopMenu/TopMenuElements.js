@@ -4,7 +4,7 @@ import { colours } from "../../values/Colours";
 //import { AccountCircleIcon } from '@material-ui/icons/AccountCircle';
 
 export const Container = styled.nav`
-    background: ${({ scrollNav }) => (scrollNav ? colours.GRAY7 : "transparent")};
+    background: ${({ scrollNav }) => (scrollNav ? colours.GRAY7 : colours.WHITE )};
     height: 80px;
     margin-top: -80px;
 	display: flex;
