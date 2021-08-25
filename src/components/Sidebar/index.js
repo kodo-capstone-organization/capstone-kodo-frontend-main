@@ -9,7 +9,7 @@ const Sidebar = () => {
     return (
             <SidebarWrapper>
                 <SidebarMenu>
-                    <SidebarLink to="/">
+                    <SidebarLink to="/browsecourse">
                         Browse Courses
                     </SidebarLink>
                     <SidebarLink to="/">
