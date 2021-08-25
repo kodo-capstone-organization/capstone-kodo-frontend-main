@@ -3,23 +3,27 @@ import {
     SidebarContainer,
     SidebarLink,
     SidebarWrapper,
-    SidebarMenu
+    SidebarMenu,
+    Search,
+    TrackChanges,
+    PersonOutline,
+    CallSplit
   } from "./SidebarElements";
 function Sidebar() {
     return (
             <SidebarWrapper>
                 <SidebarMenu>
                     <SidebarLink to="/browsecourse">
-                        Browse Courses
+                        <Search />Browse Courses
                     </SidebarLink>
                     <SidebarLink to="/progresspage">
-                        My Progress
+                        <TrackChanges />My Progress
                     </SidebarLink>
                     <SidebarLink to="/profile">
-                        My Profile
+                        <PersonOutline /> My Profile
                     </SidebarLink>
                     <SidebarLink to="/session">
-                        Sessions
+                        <CallSplit /> Sessions
                     </SidebarLink>
                 </SidebarMenu>
             </SidebarWrapper>

@@ -1,8 +1,10 @@
 import styled from "styled-components";
 import { colours } from "../../values/Colours";
 import { Link } from "react-router-dom";
-//import SearchIcon from '@material-ui/icons/Search';
-//import TrackChangesIcon from '@material-ui/icons/TrackChanges';
+import SearchIcon from '@material-ui/icons/Search';
+import TrackChangesIcon from '@material-ui/icons/TrackChanges';
+import PersonOutlineIcon from '@material-ui/icons/PersonOutline';
+import CallSplitIcon from '@material-ui/icons/CallSplit';
 
 export const SidebarContainer = styled.aside`
   display: flex;
@@ -25,12 +27,12 @@ export const SidebarWrapper = styled.div`
   position: fixed;
 `;
 
-export const SidebarMenu = styled.ul`
+export const SidebarMenu = styled.div`
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: repeat(6, 75px);
   text-align: center;
-  margin-left: -40px;
+  
 `;
 
 export const SidebarLink = styled(Link)`
@@ -44,6 +46,8 @@ export const SidebarLink = styled(Link)`
   color: ${colours.GRAY5};
   cursor: pointer;
   font-family: "Roboto", sans-serif;
+  padding-left: 20px;
+
 
   &.active {
     color: ${colours.BLUE1};
@@ -53,5 +57,31 @@ export const SidebarLink = styled(Link)`
     color: ${colours.BLUE1};
     background: ${colours.GRAY7};
     transition: 0.2s ease-in-out;
+  }
+`;
+
+export const Search = styled(SearchIcon)`
+  color: ${colours.GRAY5};
+
+`;
+
+export const TrackChanges = styled(TrackChangesIcon)`
+  color: ${colours.GRAY5};
+
+`;
+
+export const PersonOutline = styled(PersonOutlineIcon)`
+  color: ${colours.GRAY5};
+
+`;
+
+export const CallSplit = styled(CallSplitIcon)`
+  color: ${colours.GRAY5};
+
+  &.active {
+    color: ${colours.BLUE1};
+ }
+  &:hover {
+    color: ${colours.BLUE1};
   }
 `;
