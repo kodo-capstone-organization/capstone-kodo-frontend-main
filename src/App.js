@@ -12,7 +12,6 @@ import Setting from "./components/MyProfile/Setting"
 import SessionPage from "./components/Sessions/SessionPage"
 import ScrollToTop from "./components/ScrollToTop";
 
-
 import "./App.css";
 
 const App = () => {
