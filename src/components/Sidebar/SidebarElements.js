@@ -62,21 +62,25 @@ export const SidebarLink = styled(Link)`
 
 export const Search = styled(SearchIcon)`
   color: ${colours.GRAY5};
+  padding-right: 8px;
 
 `;
 
 export const TrackChanges = styled(TrackChangesIcon)`
   color: ${colours.GRAY5};
+  padding-right: 8px;
 
 `;
 
 export const PersonOutline = styled(PersonOutlineIcon)`
   color: ${colours.GRAY5};
+  padding-right: 8px;
 
 `;
 
 export const CallSplit = styled(CallSplitIcon)`
   color: ${colours.GRAY5};
+  padding-right: 8px;
 
   &.active {
     color: ${colours.BLUE1};
