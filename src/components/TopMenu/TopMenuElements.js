@@ -5,7 +5,7 @@ import { colours } from "../../values/Colours";
 
 export const Container = styled.nav`
     background: ${({ scrollNav }) => (scrollNav ? colours.GRAY7 : colours.WHITE )};
-    height: 80px;
+    height: 50px;
     margin-top: -80px;
 	display: flex;
 	justify-content: center;
@@ -34,7 +34,7 @@ export const NavLogo = styled(LinkR)`
     justify-content: center;
     align-self: center;
 	cursor: pointer;
-	font-size: 48px;
+	font-size: 32px;
 	align-items: center;
 	font-weight: bold;
     text-decoration: none;

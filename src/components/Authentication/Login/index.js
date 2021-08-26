@@ -4,25 +4,29 @@ import { Button } from '../../../values/ButtonElements';
 
 
 
-function Login() {
+function Login({isOpen}) {
     const [auth, setAuth] = useState(true);
     const handleChange = () => {
         setAuth(!auth);
     };
 
     return (
-        <div
+        <>
+        <div isOpen={isOpen}
 			style={{
 				display: "flex",
 				justifyContent: "center",
 				alignItems: "center",
-				height: "700px",
+                height: "700px",
+                marginLeft: "220px",
+                paddingLeft: "380px",
                 color: "#000000",
-                background: "white"
+                background: "white",
 			}}
 		>
         <Button primary={true} onClick={handleChange}>{auth ? 'Logout' : 'Login'}</Button>
 		</div>
+        </>
     )
 }
 

@@ -3,23 +3,27 @@ import {
     SidebarContainer,
     SidebarLink,
     SidebarWrapper,
-    SidebarMenu
+    SidebarMenu,
+    Search,
+    TrackChanges,
+    PersonOutline,
+    CallSplit
   } from "./SidebarElements";
-const Sidebar = () => {
+function Sidebar() {
     return (
             <SidebarWrapper>
                 <SidebarMenu>
                     <SidebarLink to="/browsecourse">
-                        Browse Courses
+                        <Search />Browse Courses
                     </SidebarLink>
-                    <SidebarLink to="/">
-                        My Progress
+                    <SidebarLink to="/progresspage">
+                        <TrackChanges />My Progress
                     </SidebarLink>
-                    <SidebarLink to="/">
-                        My Profile
+                    <SidebarLink to="/profile">
+                        <PersonOutline /> My Profile
                     </SidebarLink>
-                    <SidebarLink to="/">
-                        Sessions
+                    <SidebarLink to="/session">
+                        <CallSplit /> Sessions
                     </SidebarLink>
                 </SidebarMenu>
             </SidebarWrapper>

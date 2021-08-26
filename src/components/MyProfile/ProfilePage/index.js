@@ -1,8 +1,7 @@
 import React from 'react'
-import { withRouter } from "react-router";
+import { Button } from "../../../values/ButtonElements";
 
-
-function CoursePreviewPage() {
+function ProfilePage() {
     return (
         <div
 			style={{
@@ -16,10 +15,11 @@ function CoursePreviewPage() {
                 background: "white",
 			}}
 		>
-			<h1>This is course preview page</h1>
+			<h1>This is Profile Page</h1>
+            <Button primary={true} to="/profile/setting">Setting</Button>
+
 		</div>
     )
 }
 
-//const CoursePreviewPageWithRouter = withRouter(CoursePreviewPage);
-export default CoursePreviewPage
+export default ProfilePage

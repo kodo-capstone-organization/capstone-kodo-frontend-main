@@ -21,7 +21,7 @@ function TopMenu() {
       <MenuContainer>
           <NavLogo to="/">kodo</NavLogo>
           <MenuBtn>
-            <Button primary={true} to="/login">Log In</Button>
+            <Button primary={true} big={false} fontBig={true} to="/login">Log In</Button>
           </MenuBtn>
       </MenuContainer>
     </Container>
