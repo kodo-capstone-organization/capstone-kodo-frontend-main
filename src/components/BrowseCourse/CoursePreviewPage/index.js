@@ -1,6 +1,8 @@
 import React from 'react'
+import { withRouter } from "react-router";
 
-function HomePage() {
+
+function CoursePreviewPage() {
     return (
         <div
 			style={{
@@ -14,9 +16,10 @@ function HomePage() {
                 background: "white",
 			}}
 		>
-			<h1>HomePage</h1>
+			<h1>This is course preview page</h1>
 		</div>
     )
 }
 
-export default HomePage
+//const CoursePreviewPageWithRouter = withRouter(CoursePreviewPage);
+export default CoursePreviewPage

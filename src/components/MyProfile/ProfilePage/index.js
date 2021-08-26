@@ -1,6 +1,7 @@
 import React from 'react'
+import { Button } from "../../../values/ButtonElements";
 
-function HomePage() {
+function ProfilePage() {
     return (
         <div
 			style={{
@@ -14,9 +15,11 @@ function HomePage() {
                 background: "white",
 			}}
 		>
-			<h1>HomePage</h1>
+			<h1>This is Profile Page</h1>
+            <Button primary={true} to="/profile/setting">Setting</Button>
+
 		</div>
     )
 }
 
-export default HomePage
+export default ProfilePage

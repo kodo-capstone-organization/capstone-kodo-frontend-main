@@ -1,6 +1,7 @@
 import React from 'react'
+import { Button } from "../../../values/ButtonElements";
 
-function HomePage() {
+function BrowseCoursePage() {
     return (
         <div
 			style={{
@@ -14,9 +15,10 @@ function HomePage() {
                 background: "white",
 			}}
 		>
-			<h1>HomePage</h1>
+			<h1>This is browse course page</h1>
+            <Button primary={true} to="/browsecourse/preview">Course Preview withRouter</Button>
 		</div>
     )
 }
 
-export default HomePage
+export default BrowseCoursePage

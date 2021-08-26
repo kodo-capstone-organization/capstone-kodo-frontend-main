@@ -1,6 +1,6 @@
 import React from 'react'
 
-function HomePage() {
+function Setting() {
     return (
         <div
 			style={{
@@ -14,9 +14,9 @@ function HomePage() {
                 background: "white",
 			}}
 		>
-			<h1>HomePage</h1>
+			<h1>This is Setting</h1>
 		</div>
     )
 }
 
-export default HomePage
+export default Setting

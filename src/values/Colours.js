@@ -8,7 +8,7 @@ export const colours = {
     GRAY2: "#323940",
     GRAY3: "#565B60",
     GRAY4: "#767C83",
-    GRAY5: "9DA5AC",
+    GRAY5: "#9DA5AC",
     GRAY6: "#B9C2CB",
     GRAY7: "#F2F2F2",
     WHITE: "#FFFFFF",
