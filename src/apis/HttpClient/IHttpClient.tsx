@@ -1,6 +1,5 @@
 import { IHttpClientRequestParameters } from "./IHttpClientRequestParameters";
-
 export interface IHttpClient {
-    get<T>(parameters: IHttpClientRequestParameters<T>): Promise<T>
-    post<T>(parameters: IHttpClientRequestParameters<T>): Promise<T>
+    get<T,R>(parameters: IHttpClientRequestParameters<T>): Promise<R>
+    post<T,R>(parameters: IHttpClientRequestParameters<T>): Promise<R>
 }
