@@ -19,7 +19,7 @@ const App = () => {
   return (
     <Router>
       <TopMenu />
-      <Sidebar />
+      <Sidebar isLoggedIn={window.location.pathname!=="/"}/>
       <Switch>
         <Route path="/" component={HomePage} exact />
         <Route path="/login" component={Login} exact />

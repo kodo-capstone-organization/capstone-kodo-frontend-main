@@ -8,9 +8,11 @@ import {
     TrackChanges,
     PersonOutline,
     CallSplit
-  } from "./SidebarElements";
-function Sidebar() {
-    return (
+} from "./SidebarElements";
+function Sidebar(props) {
+    const isLoggedIn = props.isLoggedIn;
+    if (isLoggedIn) {
+        return (
             <SidebarWrapper>
                 <SidebarMenu>
                     <SidebarLink to="/browsecourse">
@@ -27,7 +29,10 @@ function Sidebar() {
                     </SidebarLink>
                 </SidebarMenu>
             </SidebarWrapper>
-    )
+        )
+    } else {
+        return null
+    }
 }
 
 export default Sidebar;
