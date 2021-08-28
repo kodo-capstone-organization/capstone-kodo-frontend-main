@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Container, MenuContainer, NavLogo, MenuBtn } from "./TopMenuElements";
-import { Button } from "../../values/ButtonElements";
+import { Button} from "../../values/ButtonElements";
 
 function TopMenu() {
   const [scrollNav, setScrollNav] = useState(false);
@@ -21,7 +21,14 @@ function TopMenu() {
       <MenuContainer>
           <NavLogo to="/">kodo</NavLogo>
           <MenuBtn>
-            <Button primary={true} big={false} fontBig={true} to="/login">Log In</Button>
+            <Button
+                primary={true}
+                big={true}
+                fontBig={true}
+                to="/login"
+            >
+                Log In
+            </Button>
           </MenuBtn>
       </MenuContainer>
     </Container>

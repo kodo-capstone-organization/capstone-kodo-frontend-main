@@ -24,7 +24,5 @@ export const Button = styled(LinkR)`
     transition: all 0.2s ease-in-out;
     background: ${({ primary }) => (primary ? colours.BLUE2 : colours.GRAY6)};
     color: ${({ primary }) => (primary ? colours.WHITE : colours.GRAY1 )};
-
-
   }
 `;
