@@ -20,9 +20,9 @@ export const SidebarWrapper = styled.div`
   width: 240px;
   height: 100%;
   margin-top: 80px;
-  margin-left: 300px;
+  padding-left: 150px;
   border-right: 1px solid ${colours.GRAY6};
-  border-left: 1px solid ${colours.GRAY6};
+  /*border-left: 1px solid ${colours.GRAY6};*/
   background: ${colours.WHITE};
   position: fixed;
 `;
