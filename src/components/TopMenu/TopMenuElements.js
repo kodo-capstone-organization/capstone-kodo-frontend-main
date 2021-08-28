@@ -56,6 +56,7 @@ export const NavLogo = styled(LinkR)`
 	font-size: 32px;
 	font-weight: bold;
 	text-decoration: none;
+	justify-content: center;
 	align-self: center;
 	margin: 0 auto;
 	color: ${({ scrollNav }) => (scrollNav ? colours.GRAY1 : colours.BLUE1)};
@@ -73,11 +74,5 @@ export const MenuBtn = styled.nav`
 	display: flex;
 	align-items: center;
 `;
-
-// export const MenuBtn = styled.nav`
-// 	display: flex;
-// 	position: absolute;
-// 	align-items: center;
-// `;
 
 

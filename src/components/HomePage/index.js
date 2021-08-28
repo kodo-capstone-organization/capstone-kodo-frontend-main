@@ -2,8 +2,13 @@ import React from 'react'
 import {
     InfoCard,
     Title,
-    Container
+    Container,
+    TextBox,
+    MenuBtn,
+    FlexBox
 } from "./HomepageElements";
+import { Button } from "../../values/ButtonElements";
+import Logo from "../../assets/Homepage/img.png";
 
 function HomePage(props) {
     return (
@@ -24,14 +29,18 @@ function HomePage(props) {
                 flexDirection: "column",
             }}
             >
+                <MenuBtn>
+                    <Title>Start Your Coding <br/> Journey with Kodo</Title>
+                    <Button primary={true} big={true} fontBig={true} to="/signup">Sign Up</Button>
+                </MenuBtn>
+                <br/>
                 <Title>What is Kodo?</Title>
-                <br />
-                {/* <h5>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+                <TextBox primary={true}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
                 incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
                 exercitation ullamco laboris nisi ut aliquip ex ea commodoconsequat. Duis aute irure
                 dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
                 Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit
-                        anim id est laborum.</h5> */}
+                        anim id est laborum.</TextBox>
                 <Container>
                     <InfoCard primary>
                         <h2><b>Computing-centric</b></h2>

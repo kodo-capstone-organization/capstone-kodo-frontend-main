@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { colours } from "../../values/Colours";
+import { colours } from "../../../values/Colours";
 import { Link } from "react-router-dom";
 import SearchIcon from '@material-ui/icons/Search';
 import TrackChangesIcon from '@material-ui/icons/TrackChanges';
@@ -14,20 +14,36 @@ export const MenuBtn = styled.nav`
 `;
 
 export const FlexBox = styled.div`
-	display: flex;
+  display: flex;
+  justify-content: space-between;
+  
 `;
 
 export const InfoCard = styled.div`
-  background: ${({ primary }) => (primary ? colours.BLUE1 : colours.GRAY7)};
+  background: ${({ primary }) => (primary ? colours.BLUE1 : colours.WHITE)};
   color: ${props => props.primary ? colours.WHITE : colours.BLUE1};
   border: 2px solid ${colours.BLUE1};
-  padding: 10px;
-  margin: 10px;
   border-radius: 25px;
-  width: 250px;
-  height: 200px;
+  width: 500px;
+  height: 500px;
+  padding: 0px 100px 0px 100px;
   text-align: center;
+  justify-content: center;
   font-family: "Roboto", sans-serif;
+`;
+
+export const Input = styled.input.attrs(props => ({
+  type: "text",
+  size: props.size || "1em",
+}))`
+  color: ${colours.GRAY1};
+  font-size: 1em;
+  border: 2px solid ${colours.GRAY1};
+  border-radius: 3px;
+
+  /* here we use the dynamically computed prop */
+  margin: ${props => props.size};
+  padding: ${props => props.size};
 `;
 
 export const Title = styled.h1`

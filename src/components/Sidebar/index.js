@@ -10,8 +10,8 @@ import {
     CallSplit
 } from "./SidebarElements";
 function Sidebar(props) {
-    const isLoggedIn = props.isLoggedIn;
-    if (isLoggedIn) {
+    const isLoggedIn = props.pathname;
+    if (isLoggedIn !== "/" && isLoggedIn !== "/signup") {
         return (
             <SidebarWrapper>
                 <SidebarMenu>

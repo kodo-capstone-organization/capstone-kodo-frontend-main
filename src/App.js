@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import TopMenu from "./components/TopMenu";
 import HomePage from "./components/HomePage";
 import Login from "./components/Authentication/Login";
+import SignUp from "./components/Authentication/SignUp";
 import Sidebar from "./components/Sidebar";
 import BrowseCoursePage from "./components/BrowseCourse/BrowseCoursePage"
 import CoursePreviewPage from "./components/BrowseCourse/CoursePreviewPage"
@@ -19,10 +20,11 @@ const App = () => {
   return (
     <Router>
       <TopMenu />
-      <Sidebar isLoggedIn={window.location.pathname!=="/"}/>
+      <Sidebar pathname={window.location.pathname}/>
       <Switch>
         <Route path="/" component={HomePage} exact />
         <Route path="/login" component={Login} exact />
+        <Route path="/signup" component={SignUp} exact />
         <Route path="/browsecourse" component={BrowseCoursePage} exact />
         <Route path="/browsecourse/preview" component={CoursePreviewPage} exact />
         <Route path="/progresspage" component={ProgressPage} exact />
