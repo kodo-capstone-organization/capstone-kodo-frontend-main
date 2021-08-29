@@ -7,6 +7,8 @@ import NotFound from "./pages/NotFound";
 
 import Layout from "./components/Layout";
 import {RouteItemsWithSidebar} from "./routeItems";
+import Login from "./pages/Authentication/Login";
+import SignUp from "./pages/Authentication/SignUp";
 
 function Routes() {
     return (
@@ -17,6 +19,8 @@ function Routes() {
                         <Route path="/" component={HomePage} exact >
                             {/* TODO: Redirect to My Progress if user is logged in */}
                         </Route>
+                        <Route path="/login" component={Login} exact />
+                        <Route path="/signup" component={SignUp} exact />
                         {
                             RouteItemsWithSidebar.map(item => {
                                 return (

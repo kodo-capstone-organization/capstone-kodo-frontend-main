@@ -1,11 +1,5 @@
 import styled from "styled-components";
 import { colours } from "../../values/Colours";
-import { Link } from "react-router-dom";
-import SearchIcon from '@material-ui/icons/Search';
-import TrackChangesIcon from '@material-ui/icons/TrackChanges';
-import PersonOutlineIcon from '@material-ui/icons/PersonOutline';
-import CallSplitIcon from '@material-ui/icons/CallSplit';
-import { colors } from "@material-ui/core";
 
 export const MenuBtn = styled.nav`
 	display: flex;

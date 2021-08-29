@@ -46,15 +46,10 @@ export const NavLogo = styled(LinkR)`
 	cursor: pointer;
 	font-size: 32px;
 	font-weight: bold;
-<<<<<<< HEAD
-    text-decoration: none;
-    margin-left: 499px;
-=======
 	text-decoration: none;
 	justify-content: center;
 	align-self: center;
 	margin: 0 auto;
->>>>>>> elaine-branch
 	color: ${({ scrollNav }) => (scrollNav ? colours.GRAY1 : colours.BLUE1)};
 `;
 

@@ -1,21 +1,13 @@
 import React, { useState } from 'react';
-//import { useBetween } from "use-between"
 import { makeStyles } from '@material-ui/core/styles';
 import { Button } from "../../../values/ButtonElements";
-import {
-    InfoCard,
-    FlexBox,
-    Wrapper,
-} from "../../../components/Authentication/SignUp/SignUpElements";
+import { InfoCard, Wrapper } from "./SignUpElements";
 import TextField from '@material-ui/core/TextField';
 import Chip from '@material-ui/core/Chip';
 import Input from '@material-ui/core/Input';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 
-
-
 function SignUp({ isOpen, props }) {
-
     const [auth, setAuth] = useState(true);
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');

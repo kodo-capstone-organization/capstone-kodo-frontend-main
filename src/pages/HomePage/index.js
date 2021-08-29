@@ -4,9 +4,8 @@ import {
     Title,
     Container,
     TextBox,
-    MenuBtn,
-    FlexBox
-} from "../../components/HomePage/HomepageElements";
+    MenuBtn
+} from "./HomepageElements";
 import { Button } from "../../values/ButtonElements";
 
 function HomePage(props) {

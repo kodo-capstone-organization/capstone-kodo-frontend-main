@@ -1,9 +1,6 @@
 import styled from "styled-components";
 import { colours } from "../../../values/Colours";
-import { Link } from "react-router-dom";
-import { colors } from "@material-ui/core";
 import Chip from '@material-ui/core/Chip';
-
 
 export const MenuBtn = styled.nav`
 	display: flex;
