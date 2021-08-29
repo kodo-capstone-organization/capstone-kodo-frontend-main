@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from 'react'
-import {ProfileContainer, ProfileCard, ProfileCardContent, ProfileAvatar , ProfileDetails, ProfileName, ProfileUsername } from "./ProfileElements";
+import {ProfileContainer, ProfileCard, ProfileCardContent, ProfileAvatar, ProfileInitials, ProfileDetails, ProfileName, ProfileUsername } from "./ProfileElements";
 import {getMyAccount} from "../../apis/Account/AccountApis";
 import {Account} from "../../apis/Entities/Account";
 
 function ProfilePage() {
 
-    const accountId = 1; // To be fetched from localStorage
+    const accountId = 3; // To be fetched from localStorage
     const [myAccount, setMyAccount] = useState<Account>();
 
     useEffect(() => {
@@ -36,7 +36,10 @@ function ProfilePage() {
                         src={displayPictureURL()}
                         style={{ height: "128px", width: "128px" }}
                     >
-                        {avatarInitials()}
+                        <ProfileInitials>
+                            {avatarInitials()}
+                        </ProfileInitials>
+
                     </ProfileAvatar>
                     <ProfileDetails>
                         <ProfileName>

@@ -25,6 +25,10 @@ export const ProfileCardContent = styled(CardContent)`
 export const ProfileAvatar = styled(Avatar)`
 `;
 
+export const ProfileInitials = styled.div`
+    font-size: ${fontSizes.HEADER};
+`;
+
 export const ProfileDetails = styled.div`
     margin-left: 2rem;
     flex-direction: column;
