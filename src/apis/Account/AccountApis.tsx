@@ -40,3 +40,11 @@ export async function createNewAccount(createNewAccountReq: CreateNewAccountReq,
 
     return httpClient.post<FormData, Account>(postParameters)
 }
+
+export async function getMyAccount(accountId: number): Promise<Account> {
+    const getParameters: IHttpClientRequestParameters<undefined> = {
+        url: `/account/getAccountByAccountId/${accountId}`
+    }
+
+    return httpClient.get<undefined, Account>(getParameters);
+}

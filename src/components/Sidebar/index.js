@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import {
-    SidebarContainer,
     SidebarLink,
     SidebarWrapper,
     SidebarMenu,

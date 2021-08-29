@@ -1,8 +1,8 @@
 import BrowseCoursePage from "./pages/BrowseCourse/BrowseCoursePage";
 import CoursePreviewPage from "./pages/BrowseCourse/CoursePreviewPage";
 import ProgressPage from "./pages/ProgressPage";
-import ProfilePage from "./pages/MyProfile/ProfilePage";
-import Setting from "./pages/MyProfile/Setting";
+import ProfilePage from "./pages/MyProfilePage";
+import SettingsPage from "./pages/MyProfilePage/profileSettings";
 import SessionPage from "./pages/Sessions/SessionPage";
 
 export const RouteItemsWithSidebar = [
@@ -24,7 +24,7 @@ export const RouteItemsWithSidebar = [
     },
     {
         path: "/profile/setting",
-        component: Setting
+        component: SettingsPage
     },
     {
         path: "/session",
