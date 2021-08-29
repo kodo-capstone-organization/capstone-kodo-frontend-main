@@ -11,7 +11,6 @@ import {login} from '../../../apis/Account/AccountApis';
 
 
 function Login({ isOpen }) {
-    // function Login(props) {
 
     const [auth, setAuth] = useState(true);
     const [username, setUsername] = useState('');
