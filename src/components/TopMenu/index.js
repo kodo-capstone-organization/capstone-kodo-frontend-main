@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Container, MenuContainer, NavLogo, MenuBtn } from "./TopMenuElements";
 import { Button } from "../../values/ButtonElements";
 
-function TopMenu() {
+function TopMenu(props) {
   const [scrollNav, setScrollNav] = useState(false);
 
   const changeNav = () => {
@@ -16,16 +16,31 @@ function TopMenu() {
   useEffect(() => {
     window.addEventListener("scroll", changeNav);
   }, []);
-  return (
-    <Container scrollNav={scrollNav}>
-      <MenuContainer>
+
+  const isLoggedIn = props.pathname;
+  if (isLoggedIn !== "/login") {
+    return (
+      <Container scrollNav={scrollNav}>
+        <MenuContainer>
           <NavLogo to="/">kodo</NavLogo>
           <MenuBtn>
             <Button primary={true} big={false} fontBig={true} to="/login">Log In</Button>
           </MenuBtn>
-      </MenuContainer>
-    </Container>
-  );
+        </MenuContainer>
+      </Container>
+    );
+  } else if (isLoggedIn === "/login") {
+    return (
+      <Container scrollNav={scrollNav}>
+        <MenuContainer>
+          <NavLogo to="/">kodo</NavLogo>
+          <MenuBtn>
+            <Button primary={true} big={false} fontBig={true} to="/signup">Sign Up</Button>
+          </MenuBtn>
+        </MenuContainer>
+      </Container>
+    );
+  }
 };
 
 export default TopMenu;

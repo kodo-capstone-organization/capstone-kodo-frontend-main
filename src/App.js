@@ -19,7 +19,7 @@ const App = () => {
 
   return (
     <Router>
-      <TopMenu />
+      <TopMenu pathname={window.location.pathname}/>
       <Sidebar pathname={window.location.pathname}/>
       <Switch>
         <Route path="/" component={HomePage} exact />
