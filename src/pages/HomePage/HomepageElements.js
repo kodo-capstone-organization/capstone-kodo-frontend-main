@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { colours } from "../../values/Colours";
+import { fontSizes } from "../../values/FontSizes";
 
 export const MenuBtn = styled.nav`
 	display: flex;
@@ -25,9 +26,9 @@ export const InfoCard = styled.div`
 `;
 
 export const Title = styled.h1`
-  font-size: 2.0em;
+  font-size: ${fontSizes.TITLE};
   text-align: center;
-  color: ${colours.BLUE1};
+  color: ${colours.GRAY1};
   font-family: "Roboto", sans-serif;
 `;
 

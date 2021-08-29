@@ -5,7 +5,7 @@ function ProfilePage() {
     return (
         <div>
 			<h1>This is Profile Page</h1>
-            <Button primary={true} to="/profile/setting">Setting</Button>
+            <Button primary={true} big={false} fontBig={false} to="/profile/setting">Setting</Button>
 		</div>
     )
 }

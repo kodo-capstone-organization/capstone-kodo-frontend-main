@@ -5,6 +5,7 @@ import SearchIcon from '@material-ui/icons/Search';
 import TrackChangesIcon from '@material-ui/icons/TrackChanges';
 import PersonOutlineIcon from '@material-ui/icons/PersonOutline';
 import CallSplitIcon from '@material-ui/icons/CallSplit';
+import {fontSizes} from "../../values/FontSizes";
 
 export const SidebarWrapper = styled.div`
   width: 240px;
@@ -25,7 +26,7 @@ export const SidebarLink = styled(Link)`
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  font-size: 14px;
+  font-size: ${fontSizes.SUBTEXT};
   text-decoration: none;
   list-style: none;
   transition: 0.2s ease-in-out;
