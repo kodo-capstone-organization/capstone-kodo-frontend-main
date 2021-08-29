@@ -1,4 +1,5 @@
 import Login from "./pages/Authentication/Login";
+import SignUp from "./pages/Authentication/SignUp";
 import BrowseCoursePage from "./pages/BrowseCourse/BrowseCoursePage";
 import CoursePreviewPage from "./pages/BrowseCourse/CoursePreviewPage";
 import ProgressPage from "./pages/ProgressPage";
@@ -11,6 +12,10 @@ export const RouteItemsWithSidebar = [
     {
         path: "/login",
         component: Login
+    },
+    {
+        path: "/signup",
+        component: SignUp
     },
     {
         path: "/browsecourse",

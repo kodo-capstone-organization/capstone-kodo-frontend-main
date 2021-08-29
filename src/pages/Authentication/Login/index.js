@@ -5,9 +5,9 @@ import { Button } from "../../../values/ButtonElements";
 import {
     InfoCard,
     Wrapper,
-} from "./LoginElements";
+} from "../../../components/Authentication/Login/LoginElements";
 import TextField from '@material-ui/core/TextField';
-import {login} from '../../../apis/Account/AccountApis';
+import { login } from '../../../apis/Account/AccountApis';
 
 
 function Login({ isOpen }) {
