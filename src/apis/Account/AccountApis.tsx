@@ -1,7 +1,8 @@
 import { IHttpClientRequestParameters } from "./../HttpClient/IHttpClientRequestParameters";
-import { Account } from "../Entities/Account";
+import { Account, CreateNewAccountReq } from "../Entities/Account";
 import { httpClient } from "../HttpClient/HttpClient";
 import { LoginResponse } from "../Entities/Login";
+import { transformToBlob } from "./../../utils/BlobCreator"
 
 const FormData = require('form-data');
 
@@ -24,4 +25,18 @@ export async function getAllAccounts(): Promise<Account[]> {
     }
 
     return httpClient.get<undefined, Account[]>(getParameters)
+}
+
+export async function createNewAccount(createNewAccountReq: CreateNewAccountReq, displayPicture: File): Promise<Account> {
+    const formData = new FormData();
+    
+    formData.append('account', transformToBlob(createNewAccountReq));
+    formData.append('displayPicture', displayPicture);
+
+    const postParameters: IHttpClientRequestParameters<FormData> = {
+        url: '/account/createNewAccount',
+        payload: formData
+    }
+
+    return httpClient.post<FormData, Account>(postParameters)
 }
