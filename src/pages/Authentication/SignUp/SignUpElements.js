@@ -1,8 +1,7 @@
 import styled from "styled-components";
 import { colours } from "../../../values/Colours";
-import { Link } from "react-router-dom";
-import { colors } from "@material-ui/core";
 import Chip from '@material-ui/core/Chip';
+import {fontSizes} from "../../../values/FontSizes";
 
 
 export const MenuBtn = styled.nav`
@@ -69,7 +68,7 @@ export const Input = styled.input`
   border-radius: 4px;
   outline: 0;
   border: 1px solid rgba(245, 245, 245, 0.7);
-  font-size: 14px;
+  font-size: ${fontSizes.CONTENT};
   transition: all 0.3s ease-out;
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(0, 0, 0, 0.1);
   :focus,
@@ -79,7 +78,7 @@ export const Input = styled.input`
 `;
 
 export const Title = styled.h1`
-  font-size: 2.0em;
+  font-size: ${fontSizes.TITLE};
   text-align: center;
   color: ${colours.BLUE1};
   font-family: "Roboto", sans-serif;

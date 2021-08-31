@@ -1,19 +1,19 @@
 import React from "react";
-import {BrowserRouter, Route, Switch} from "react-router-dom";
+import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 
 // Pages without sidebar
 import HomePage from "./pages/HomePage";
 import NotFound from "./pages/NotFound";
 
 import Layout from "./components/Layout";
-import {RouteItemsWithSidebar} from "./routeItems";
+import { RouteItemsWithSidebar } from "./routeItems";
 import Login from "./pages/Authentication/Login";
 import SignUp from "./pages/Authentication/SignUp";
 
 function Routes() {
     return (
         <BrowserRouter>
-            <Route render = {(props) => (
+            <Route render={(props) => (
                 <Layout {...props}>
                     <Switch>
                         <Route path="/" component={HomePage} exact >
@@ -24,7 +24,7 @@ function Routes() {
                         {
                             RouteItemsWithSidebar.map(item => {
                                 return (
-                                    <Route key={item.path} path={item.path} component={item.component} exact/>
+                                    <Route key={item.path} path={item.path} component={item.component} exact />
                                 );
                             })
                         }

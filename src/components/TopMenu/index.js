@@ -26,8 +26,8 @@ function TopMenu(props) {
           <MenuBtn>
             <Button
                 primary={true}
-                big={true}
-                fontBig={true}
+                big={false}
+                fontBig={false}
                 to="/login"
             >
                 Log In
