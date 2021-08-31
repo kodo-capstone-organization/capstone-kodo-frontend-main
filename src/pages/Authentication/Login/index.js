@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button } from "../../../values/ButtonElements";
+import { useHistory } from "react-router-dom";
 import {
     InfoCard,
     Wrapper,
@@ -14,6 +15,7 @@ function Login({ isOpen }) {
     const [auth, setAuth] = useState(true);
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    let history = useHistory()
 
     const useStyles = makeStyles((theme) => ({
         root: {
@@ -29,9 +31,10 @@ function Login({ isOpen }) {
     const btnClick = e => {
         setAuth(!auth);
         e.preventDefault();
-        console.log(` username`, username)
-        console.log(` password`, password)
-        login(username, password).then(res => console.log(res))
+        login(username, password).then(res => {
+            window.sessionStorage.setItem("isLoggedIn", true);
+            history.push('/progresspage');
+        });
     };
 
     return (
