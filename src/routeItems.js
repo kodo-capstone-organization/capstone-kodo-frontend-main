@@ -4,6 +4,7 @@ import ProgressPage from "./pages/ProgressPage";
 import ProfilePage from "./pages/MyProfile/ProfilePage";
 import Setting from "./pages/MyProfile/Setting";
 import SessionPage from "./pages/Sessions/SessionPage";
+import CourseEarningsPage from "./pages/MyProfile/CourseEarningsPage";
 
 export const RouteItemsWithSidebar = [
     {
@@ -29,6 +30,10 @@ export const RouteItemsWithSidebar = [
     {
         path: "/session",
         component: SessionPage
+    },
+    {
+        path: "/courseearnings",
+        component: CourseEarningsPage
     }
 
 ]
