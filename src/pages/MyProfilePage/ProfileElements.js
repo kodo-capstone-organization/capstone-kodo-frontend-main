@@ -3,6 +3,19 @@ import {Avatar, Card, CardHeader, CardContent} from "@material-ui/core";
 import { fontSizes } from "../../values/FontSizes";
 import { colours } from "../../values/Colours";
 
+export const ProfileBreadcrumbItems = [
+    {
+        name: "Profile",
+        subpath: "/profile",
+        fullpath: "/profile"
+    },
+    {
+        name: "Settings",
+        subpath: "/settings",
+        fullpath: "/profile/settings"
+    }
+]
+
 export const ProfileContainer = styled.div`
     padding: 2rem;
     font-family: "Roboto", sans-serif;
@@ -65,7 +78,13 @@ export const ProfileName = styled.div`
     font-weight: bold;
 `
 
+export const ProfileEmail = styled.div`
+    font-size: ${fontSizes.SUBTEXT};
+    color: ${colours.GRAY3};
+`;
+
 export const ProfileUsername = styled.div`
+    margin-top: 0.2rem;
     font-size: ${fontSizes.SUBTEXT};
     font-style: italic;
     color: ${colours.GRAY3};

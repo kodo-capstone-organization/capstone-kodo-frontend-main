@@ -14,8 +14,9 @@ function Sidebar(props, {defaultActive}) {
 
     // Re-renders when the route changes
     useEffect(() => {
-        // Get index of item with the same 'route' as the one provided by react router (the current route)
-        const activeItem = SidebarItems.findIndex(item => item.route === location.pathname);
+        // Get index of item with the same / containing 'route' as the one provided by react router (the current route)
+        // Using "includes" ensures that even nested pages are counted
+        const activeItem = SidebarItems.findIndex(item => location.pathname.includes(item.route));
         setActiveIndex(activeItem)
     }, [location])
 
