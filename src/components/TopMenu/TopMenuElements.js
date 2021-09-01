@@ -8,8 +8,10 @@ export const Container = styled.nav`
     background: ${({ scrollNav }) => (scrollNav ? colours.GRAY7 : colours.WHITE )};
     height: 50px;
 	top: 0;
-    border-bottom: 1px solid ${colours.BLUE1};=
-	position: sticky;
+	position: fixed;
+	width: 100%;
+    border-bottom: 1px solid ${colours.BLUE1};
+    z-index: 1;
 `;
 
 export const MenuContainer = styled.div`
@@ -45,7 +47,7 @@ export const NavLogo = styled(LinkR)`
     display: flex;
 	cursor: pointer;
 	font-size: 32px;
-	font-weight: bold;
+	font-weight: bolder;
 	text-decoration: none;
 	justify-content: center;
 	align-self: center;

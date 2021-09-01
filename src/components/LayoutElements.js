@@ -6,6 +6,8 @@ export const LayoutContentWrapper = styled.div`
   flex-direction: row;
   padding: 0 15rem;
   background: ${colours.WHITE};
+  /* Account for Topbar's height */
+  margin-top: 50px; 
 `;
 
 export const LayoutContentPage = styled.div`
