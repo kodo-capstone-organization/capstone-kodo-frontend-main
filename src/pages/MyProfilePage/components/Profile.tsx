@@ -39,6 +39,8 @@ function Profile(props: any) {
         props.history.push('/profile/settings');
     }
     
+    // @ts-ignore
+    // @ts-ignore
     return (
         <>
             <ProfileCard id="my-details">

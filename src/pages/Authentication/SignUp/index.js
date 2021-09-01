@@ -13,8 +13,6 @@ function SignUp({ isOpen, props }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [btnTags, setBtnTags] = useState('');
-    const [tags, setTags] = useState([]);
-    // const [value, setValue] = useState('Controlled');
 
     const useStyles = makeStyles((theme) => ({
         root: {
@@ -30,12 +28,6 @@ function SignUp({ isOpen, props }) {
     const handleChange = e => {
         setAuth(!auth);
         e.preventDefault();
-    };
-
-    const btnClick = e => {
-        setBtnTags(e.target.value)
-        console.log(`btn btntag`, e.target)
-        // console.log(`btn email`, email)
     };
 
     const handleDelete = () => {
@@ -58,9 +50,9 @@ function SignUp({ isOpen, props }) {
                 <InfoCard>
                     <Wrapper>
                         <form className={classes.root} noValidate autoComplete="off">
-                            <TextField id="filled-basic" label="username" label="Username" variant="filled" value={username} onChange={e  => setUsername(e.target.value)}/>
-                            <TextField id="filled-basic" label="email" label="Email" variant="filled" value={email} onChange={e  => setEmail(e.target.value)}/>
-                            <TextField id="filled-basic" label="password" label="Password" variant="filled" value={password} onChange={e  => setPassword(e.target.value)}/>
+                            <TextField id="filled-basic" label="Username" variant="filled" value={username} onChange={e  => setUsername(e.target.value)}/>
+                            <TextField id="filled-basic" label="Email" variant="filled" value={email} onChange={e  => setEmail(e.target.value)}/>
+                            <TextField id="filled-basic" label="Password" variant="filled" value={password} onChange={e  => setPassword(e.target.value)}/>
                             <br />
                             <label>Join Kodo as a</label>
                             <ButtonGroup value={btnTags}  variant="contained" primary aria-label="contained primary button group">
