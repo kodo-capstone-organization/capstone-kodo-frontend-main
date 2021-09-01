@@ -1,15 +1,17 @@
 const createProxyMiddleware = require('http-proxy-middleware');
 
+const url = process.env.NODE_ENV === 'development' ? 'http://localhost:8080' : 'https://kodo-capstone-backend.herokuapp.com'
+
 module.exports = function(app) {
     app.use(createProxyMiddleware('/account', 
         { 
-            target: 'http://localhost:8080/',
+            target: url,
             changeOrigin: true 
         }
     ));
     app.use(createProxyMiddleware('/login', 
         { 
-            target: 'http://localhost:8080/',
+            target: url,
             changeOrigin: true 
         }
     ));
