@@ -23,7 +23,7 @@ function Routes() {
                         </Route>
                         <Route path="/login" component={Login} exact />
                         <Route path="/signup" component={SignUp} exact />
-                        <Route path="/course" component={CourseBuilderPage} exact />
+                        <Route path="/builder" component={CourseBuilderPage} exact />
                         {
                             RouteItemsWithSidebar.map(item => {
                                 return (
