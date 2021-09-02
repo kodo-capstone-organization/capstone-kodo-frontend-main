@@ -53,7 +53,7 @@ function BrowseCourse() {
                 <CardActionArea component={RouterLink} to={`/browsecourse/preview/${course.courseId}`}>
                   <CardMedia
                     className={classes.media}
-                    image="placeholder/placeholderbanner.jpg"
+                    image="/chessplaceholder.png"
                     title={course.name}
                   />
                   <CourseCardContent>
