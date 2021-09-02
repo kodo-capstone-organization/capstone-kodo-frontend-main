@@ -1,13 +1,5 @@
 @import url("https://fonts.googleapis.com/css?family=Roboto");
 
-.header {
-  display: block;
-  padding: 3px 3px 3px 3px;
-  color: rgb(131, 14, 167);
-  font-size: 50px;
-  text-align: center;
-}
-
 html * {
   font-family: "Roboto", sans-serif !important;
 }

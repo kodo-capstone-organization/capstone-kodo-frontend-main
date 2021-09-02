@@ -1,6 +1,7 @@
+import { EnrolledCourse } from './EnrolledCourse';
 import { Tag } from './Tag'
 export interface Account {
-    id: number
+    accountId: number
     username: string
     name: string
     bio: string
@@ -8,6 +9,9 @@ export interface Account {
     displayPictureUrl: string
     isAdmin: boolean
     isActive: boolean
+    interests: Tag[]
+    enrolledCourses: EnrolledCourse[]
+    // courses: Course[] // TODO
 }
 
 export interface CreateNewAccountReq {
@@ -17,5 +21,5 @@ export interface CreateNewAccountReq {
     bio: string
     email: string
     isAdmin: boolean
-    tagTitles: Tag[]
+    tagTitles: string[]
 }

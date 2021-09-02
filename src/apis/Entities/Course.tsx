@@ -1,4 +1,5 @@
 import { Account } from "./Account";
+import { EnrolledCourse } from "./EnrolledCourse";
 import { Tag } from "./Tag";
 
 export interface Course {
@@ -8,6 +9,7 @@ export interface Course {
     price: number
     bannerUrl: string
     tutor: Account
+    enrollment: EnrolledCourse[]
     // lessons: Lesson[] // TODO
     courseTags: Tag[]
     // forumCategories: ForumCategory[] // TODO
