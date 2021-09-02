@@ -10,7 +10,7 @@ export const RouteItemsWithSidebar = [
         component: BrowseCoursePage
     },
     {
-        path: "/browsecourse/preview",
+        path: "/browsecourse/preview/:courseId",
         component: CoursePreviewPage
     },
     {

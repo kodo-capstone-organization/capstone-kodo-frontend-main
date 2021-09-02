@@ -9,3 +9,11 @@ export async function getAllCourses(): Promise<Course[]> {
 
     return httpClient.get<undefined, Course[]>(getParameters)
 }
+
+export async function getCourseByCourseId(courseId: number): Promise<Course> {
+    const getParameters: IHttpClientRequestParameters<undefined> = {
+        url: `/course/getCourseByCourseId/${courseId}`
+    }
+
+    return httpClient.get<undefined, Course>(getParameters)
+}
