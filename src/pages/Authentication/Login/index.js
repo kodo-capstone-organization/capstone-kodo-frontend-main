@@ -55,8 +55,8 @@ function Login({ isOpen }) {
                 <InfoCard>
                     <Wrapper>
                         <form className={classes.root} noValidate autoComplete="off">
-                            <TextField id="filled-basic" label="username" label="Username" variant="filled" value={username} onChange={e => setUsername(e.target.value)} />
-                            <TextField type="password" id="filled-basic" label="password" label="Password" variant="filled" value={password} onChange={e => setPassword(e.target.value)} />
+                            <TextField id="filled-basic" label="Username" variant="filled" value={username} onChange={e => setUsername(e.target.value)} />
+                            <TextField id="filled-basic" label="Password" variant="filled" value={password} onChange={e => setPassword(e.target.value)} />
                             <br />
                             <Button primary onClick={btnClick}>Log In</Button>
                         </form>
