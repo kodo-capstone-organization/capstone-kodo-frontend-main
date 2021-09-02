@@ -14,7 +14,7 @@ export const RouteItemsWithSidebar = [
     {
         path: "/browsecourse/preview/:courseId",
         isDynamic: true, // dynamic because of :courseId
-        component: CoursePreviewPage
+        component: CoursePreviewPageWithRouter
     },
     {
         path: "/progresspage",
