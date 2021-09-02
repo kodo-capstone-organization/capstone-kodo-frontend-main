@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useHistory } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Course } from "../../../apis/Entities/Course";
 import { getAllCourses } from "../../../apis/Course/CourseApis";
 import { colours } from "../../../values/Colours";
@@ -32,12 +32,11 @@ const useStyles = makeStyles({
 function BrowseCourse() {
   const classes = useStyles();
   const [courses, setCourses] = useState<Course[]>();
-  const history = useHistory();
 
   useEffect(() => {
     getAllCourses().then(allCourses => {
       setCourses(allCourses);
-      console.log(allCourses);
+      console.log(courses);
     });
   }, []);
 
@@ -47,33 +46,31 @@ function BrowseCourse() {
       <h3>search bar goes here</h3>
       <Title>Suggested For You</Title>
       <CourseWrapper>
-      {courses?.map(course => {
-        return (
+        {courses?.map(course => {
+          return (
             <>
-            <CourseCard key={course.courseId}>
-              <CardActionArea>
-                <CardMedia
-                  className={classes.media}
-                  image="placeholder/placeholderbanner.jpg"
-                  title={course.name}
-                />
-                <CourseCardContent>
-                  <Typography>
-                    {course.name}
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    color="textSecondary"
-                    component="p"
-                  >
-                    {course.tutor.name}
-                  </Typography>
-                </CourseCardContent>
-              </CardActionArea>
-            </CourseCard>
+              <CourseCard key={course.courseId}>
+                <CardActionArea component={Link} to={`/browsecourse/preview/${course.courseId}`}>
+                  <CardMedia
+                    className={classes.media}
+                    image="placeholder/placeholderbanner.jpg"
+                    title={course.name}
+                  />
+                  <CourseCardContent>
+                    <Typography>{course.name}</Typography>
+                    <Typography
+                      variant="body2"
+                      color="textSecondary"
+                      component="p"
+                    >
+                      {course.tutor.name}
+                    </Typography>
+                  </CourseCardContent>
+                </CardActionArea>
+              </CourseCard>
             </>
-        );
-      })}
+          );
+        })}
       </CourseWrapper>
     </BrowseContainer>
   );

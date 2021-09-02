@@ -1,5 +1,5 @@
 import BrowseCoursePage from "./pages/BrowseCourse/BrowseCoursePage";
-import CoursePreviewPage from "./pages/BrowseCourse/CoursePreviewPage";
+import CoursePreviewPageWithRouter from "./pages/BrowseCourse/CoursePreviewPage";
 import ProgressPage from "./pages/ProgressPage";
 import MyProfilePage from "./pages/MyProfilePage";
 import SessionPage from "./pages/Sessions/SessionPage";
@@ -10,8 +10,8 @@ export const RouteItemsWithSidebar = [
         component: BrowseCoursePage
     },
     {
-        path: "/browsecourse/preview",
-        component: CoursePreviewPage
+        path: "/browsecourse/preview/:courseId",
+        component: CoursePreviewPageWithRouter
     },
     {
         path: "/progresspage",
