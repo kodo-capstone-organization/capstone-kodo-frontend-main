@@ -7,7 +7,7 @@ import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import ChipInput from 'material-ui-chip-input'
 import { createNewAccount } from '../../../apis/Account/AccountApis';
-import { CreateNewAccountReq } from "../Entities/Account";
+import { CreateNewAccountReq } from "../../../apis/Entities/Account";
 
 
 function SignUp({ isOpen, props }) {
@@ -96,20 +96,20 @@ function SignUp({ isOpen, props }) {
 
     const handleSignUp = e => {
         e.preventDefault();
-        newUserAccount = {
-            username: fields["username"],
-            password: fields["password"],
-            name: fields["name"],
-            bio: null,
-            email: fields["email"],
-            isAdmin: false,
-            tagTitles: []
-        }
-        createNewAccount(obj, null).then(res => {
-            console.log(typeof (res))
-            window.sessionStorage.setItem("loggedInAccount", res);
-            history.push('/progresspage');
-        });
+        // newUserAccount = {
+        //     username: fields["username"],
+        //     password: fields["password"],
+        //     name: fields["name"],
+        //     bio: null,
+        //     email: fields["email"],
+        //     isAdmin: false,
+        //     tagTitles: []
+        // }
+        // createNewAccount(obj, null).then(res => {
+        //     console.log(typeof (res))
+        //     window.sessionStorage.setItem("loggedInAccount", res);
+        //     history.push('/progresspage');
+        // });
     };
 
     return (

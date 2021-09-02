@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
+import { Redirect } from "react-router"
 
 // Pages without sidebar
 import HomePage from "./pages/HomePage";
@@ -24,8 +25,8 @@ function Routes() {
                         {
                             RouteItemsWithSidebar.map(item => {
                                 return (
-                                    window.sessionStorage.getItem("loggedInAccount") ?  <Route key={item.path} path={item.path} component={item.component} exact /> : <Redirect to="/" /> 
-                                    
+                                    window.sessionStorage.getItem("loggedInAccount") ? <Route key={item.path} path={item.path} component={item.component} exact /> : <Redirect to="/" />
+
                                 );
                             })
                         }
