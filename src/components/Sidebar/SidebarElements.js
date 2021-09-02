@@ -10,6 +10,7 @@ import {fontSizes} from "../../values/FontSizes";
 export const SidebarWrapper = styled.div`
   width: 240px;
   height: 100%;
+  margin-top: 8px;
   border-right: 1px solid ${colours.GRAY6};
   background: ${colours.WHITE};
   position: fixed;
