@@ -8,6 +8,7 @@ import {
 } from "./LoginElements";
 import TextField from '@material-ui/core/TextField';
 import { login } from '../../../apis/Account/AccountApis';
+import { type } from 'os';
 
 
 function Login({ isOpen }) {
@@ -32,7 +33,8 @@ function Login({ isOpen }) {
         setAuth(!auth);
         e.preventDefault();
         login(username, password).then(res => {
-            window.sessionStorage.setItem("isLoggedIn", true);
+            console.log(typeof(res))
+            window.sessionStorage.setItem("loggedInAccount", res);
             history.push('/progresspage');
         });
     };
