@@ -3,7 +3,7 @@ import { Grid, TextField } from "@material-ui/core";
 import { CourseBuilderCard, CourseBuilderCardHeader, CourseBuilderContainer, CourseBuilderContent } from "./CourseBuilderElements";
 import { Button } from "@material-ui/core";
 import LessonPlan from "./components/LessonPlan";
-import ChipInput from 'material-ui-chip-input'
+import ChipInput from 'material-ui-chip-input';
 
 function CourseBuilderPage() {
     const [courseName, setCourseName] = useState<string>("");
@@ -35,6 +35,7 @@ function CourseBuilderPage() {
                                 onChange={(chips) => handleChipChange(chips)}
                             />
                         </Grid>
+
                         <Grid item xs={9}>
                             <TextField id="standard-basic" fullWidth disabled value={fileName} label="Banner Image"></TextField>
                         </Grid>
@@ -61,11 +62,6 @@ function CourseBuilderPage() {
             </CourseBuilderCard>
             <CourseBuilderCard id="lesson-plan">
                 <LessonPlan/>
-            </CourseBuilderCard>
-            <CourseBuilderCard id="lesson-plan">
-                <CourseBuilderCardHeader
-                    title="Lesson Plan"
-                />
             </CourseBuilderCard>
         </CourseBuilderContainer>
     )

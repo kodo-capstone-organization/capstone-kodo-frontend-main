@@ -8,9 +8,9 @@ import ChipInput from 'material-ui-chip-input'
 function LessonPlan() {
     const [lessons, setLessons] = useState<Lesson[]>([]);
     const [lessonId, setLessonId] = useState<number>(1);
-
-    const addToLessons = () => {
-        lessons.push({ id: lessonId, relatedFiles: [] });
+    
+    function addToLessons() {
+        lessons.push({ lessonId: lessonId });
         setLessons(lessons)
         setLessonId(lessonId + 1)
     }
@@ -28,8 +28,9 @@ function LessonPlan() {
 
     const deleteFile = (lessonId: number, fileToRemove: string) => {
         lessons.map((lesson) => {
-            if (lesson.id === lessonId) {
-                lesson.relatedFiles = lesson.relatedFiles.filter((file) => file.name !== fileToRemove)
+            if (lesson.lessonId === lessonId) {
+                // TODO: Fix to get lesson.multimedias...
+                // lesson.relatedFiles = lesson.relatedFiles.filter((file) => file.name !== fileToRemove)
             }
             return lesson
         })
@@ -52,7 +53,7 @@ function LessonPlan() {
                         <Grid item xs={12}>
                             <TextField id="standard-basic" fullWidth required label="Name" value={lesson.name} onChange={e => {
                                 const newLessons: Lesson[] = lessons.map(currentLesson => {
-                                if (lesson.id === currentLesson.id) {
+                                if (lesson.lessonId === currentLesson.lessonId) {
                                     currentLesson.name = e.target.value
                                 }
                                 return currentLesson;
@@ -88,6 +89,9 @@ function LessonPlan() {
                                     }}
                                 />
                             </Button>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField id="standard-basic" fullWidth multiline maxRows={3} required label="Quiz"/>
                         </Grid>
                     </Grid>
                 </CourseBuilderContent>

@@ -1,6 +1,7 @@
 export interface Lesson {
-    id: number
-    name?: string
-    // quiz: Quiz
-    relatedFiles: File[]
+    lessonId: number
+    name: string
+    description: string
+    sequence: number
+    // content: Content[]
 }
