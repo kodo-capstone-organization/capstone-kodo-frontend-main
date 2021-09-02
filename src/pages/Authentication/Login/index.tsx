@@ -12,7 +12,11 @@ import { type } from 'os';
 
 
 // function Login({ isOpen }) {
+<<<<<<< HEAD:src/pages/Authentication/Login/index.tsx
 function Login() {
+=======
+    function Login() {
+>>>>>>> login, homepage, progress page converted to ts:src/pages/Authentication/Login/index.js
 
     const [auth, setAuth] = useState(true);
     const [username, setUsername] = useState('');
