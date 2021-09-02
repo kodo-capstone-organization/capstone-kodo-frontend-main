@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link as RouterLink } from 'react-router-dom'
 import { Course } from "../../../apis/Entities/Course";
 import { getAllCourses } from "../../../apis/Course/CourseApis";
 import { colours } from "../../../values/Colours";
@@ -50,7 +50,7 @@ function BrowseCourse() {
           return (
             <>
               <CourseCard key={course.courseId}>
-                <CardActionArea component={Link} to={`/browsecourse/preview/${course.courseId}`}>
+                <CardActionArea component={RouterLink} to={`/browsecourse/preview/${course.courseId}`}>
                   <CardMedia
                     className={classes.media}
                     image="placeholder/placeholderbanner.jpg"
