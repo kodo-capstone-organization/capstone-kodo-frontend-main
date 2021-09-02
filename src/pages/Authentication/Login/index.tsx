@@ -11,7 +11,8 @@ import { login } from '../../../apis/Account/AccountApis';
 import { type } from 'os';
 
 
-function Login({ isOpen }) {
+// function Login({ isOpen }) {
+    function Login() {
 
     const [auth, setAuth] = useState(true);
     const [username, setUsername] = useState('');
@@ -29,7 +30,7 @@ function Login({ isOpen }) {
 
     const classes = useStyles();
 
-    const btnClick = e => {
+    const btnClick = (e : React.SyntheticEvent) => {
         setAuth(!auth);
         e.preventDefault();
         login(username, password).then(loginCallback.bind(this, username, password));
@@ -48,7 +49,8 @@ function Login({ isOpen }) {
 
     return (
         <>
-            <div isOpen={isOpen}
+            <div
+                // isOpen={isOpen}
                 style={{
                     display: "flex",
                     justifyContent: "center",
