@@ -93,7 +93,7 @@ function Profile(props: any) {
                                 />
                                 <ImageListItemBar
                                     title={<strong>{enrolledCourse.parentCourse.name}</strong>}
-                                    subtitle={<span>by <i>@{enrolledCourse.parentCourse.tutor.username}</i></span>}
+                                    subtitle="tutor placement"
                                     actionIcon={
                                         <IconButton color="secondary" aria-label={`Resume ${enrolledCourse.parentCourse.name}`}>
                                             <PlayCircleFilledWhiteIcon /> &nbsp;<span style={{fontSize: fontSizes.SUBTEXT }}>Resume</span>
