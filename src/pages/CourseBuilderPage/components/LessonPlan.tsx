@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Lesson } from './Lesson';
-import { Grid, IconButton, TextField } from "@material-ui/core";
+import { Grid, IconButton, TextField, Button } from "@material-ui/core";
 import AddIcon from '@material-ui/icons/Add';
 import { CourseBuilderCardHeader, CourseBuilderContent } from "./../CourseBuilderElements";
 
@@ -40,8 +40,16 @@ function LessonPlan() {
                             setLessons(newLessons)
                             }}/>
                         </Grid>
-                        <Grid item xs={12}>
+                        <Grid item xs={9}>
                             <TextField id="standard-basic" fullWidth multiline maxRows={3} required label="Quiz"/>
+                        </Grid>
+                        <Grid item xs={3}>
+                        <Button
+                                variant="contained"
+                                component="label"
+                                >
+                                Build Quiz
+                            </Button>
                         </Grid>
                     </Grid>
                 </CourseBuilderContent>
