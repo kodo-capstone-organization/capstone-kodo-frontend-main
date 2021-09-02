@@ -3,12 +3,18 @@ import { Grid, TextField } from "@material-ui/core";
 import { CourseBuilderCard, CourseBuilderCardHeader, CourseBuilderContainer, CourseBuilderContent } from "./CourseBuilderElements";
 import { Button } from "@material-ui/core";
 import LessonPlan from "./components/LessonPlan";
+import ChipInput from 'material-ui-chip-input'
 
 function CourseBuilderPage() {
     const [courseName, setCourseName] = useState<string>("");
     const [courseDescription, setCourseDescription] = useState<string>("");
     const [fileName, setFileName] = useState<string>("");
     const [file, setFile] = useState<any>();
+    const [tags, setTags] = useState<string[]>([]);
+
+    const handleChipChange = (chips: string[]) => {
+        setTags(chips)
+    }
 
     return (
         <CourseBuilderContainer>
@@ -23,6 +29,11 @@ function CourseBuilderPage() {
                         </Grid>
                         <Grid item xs={12}>
                             <TextField id="standard-basic" fullWidth multiline maxRows={3} required label="Description" value={courseDescription} onChange={e => setCourseDescription(e.target.value)}/>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <ChipInput fullWidth label="Tags"
+                                onChange={(chips) => handleChipChange(chips)}
+                            />
                         </Grid>
                         <Grid item xs={9}>
                             <TextField id="standard-basic" fullWidth disabled value={fileName} label="Banner Image"></TextField>

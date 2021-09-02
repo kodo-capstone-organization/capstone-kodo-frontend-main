@@ -8,13 +8,11 @@ function LessonPlan() {
     const [lessons, setLessons] = useState<Lesson[]>([]);
     const [lessonId, setLessonId] = useState<number>(1);
 
-    function addToLessons() {
+    const addToLessons = () => {
         lessons.push({ id: lessonId });
         setLessons(lessons)
         setLessonId(lessonId + 1)
     }
-
-    console.log(lessons)
     
     return (
         <>
