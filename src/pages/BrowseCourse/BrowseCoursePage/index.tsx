@@ -3,6 +3,12 @@ import { useHistory } from "react-router-dom";
 import { Course } from "../../../apis/Entities/Course";
 import { getAllCourses } from "../../../apis/Course/CourseApis";
 import { colours } from "../../../values/Colours";
+import {
+  BrowseContainer,
+  CourseWrapper,
+  CourseCard,
+  Title
+} from "./BrowseCourseElements";
 
 import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
@@ -36,11 +42,13 @@ function BrowseCourse() {
 
   return (
     //This would encompass the whole container for cards
-    <div>
+    <BrowseContainer>
+      <Title>Suggested For You</Title>
+      <CourseWrapper>
       {courses?.map(course => {
         return (
-          <>
-            <Card className={classes.root} key={course.courseId}>
+            <>
+            <CourseCard key={course.courseId}>
               <CardActionArea>
                 <CardMedia
                   className={classes.media}
@@ -61,12 +69,13 @@ function BrowseCourse() {
                   </Typography>
                 </CardContent>
               </CardActionArea>
-            </Card>
+            </CourseCard>
             <br />
-          </>
+            </>
         );
       })}
-    </div>
+      </CourseWrapper>
+    </BrowseContainer>
   );
 }
 
