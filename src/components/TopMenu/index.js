@@ -5,10 +5,12 @@ import IconButton from '@material-ui/core/IconButton';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
+import { useHistory } from "react-router";
 
 
 function TopMenu(props) {
   const [scrollNav, setScrollNav] = useState(false);
+  const history = useHistory();
 
   const changeNav = () => {
     if (window.scrollY >= 80) {
@@ -32,6 +34,14 @@ function TopMenu(props) {
     window.sessionStorage.removeItem("loggedInAccount");
   };
 
+  const handleClick = () => {
+    if(window.location.pathname === "/login"){
+      history.push("/signup")
+    }else {
+      history.push("login")
+    }
+  }
+
   useEffect(() => {
     window.addEventListener("scroll", changeNav);
   }, []);
@@ -42,7 +52,7 @@ function TopMenu(props) {
         <MenuBtn>
           {
             window.sessionStorage.getItem("loggedInAccount") ? <Button primary={true} big={false} fontBig={false} to="/" onClick={handleLogOut}> Log Out</Button> :
-              <Button primary={true} big={false} fontBig={false} to="/login" > Log In</Button>
+          <Button primary={true} big={false} fontBig={false} onClick={handleClick}>{window.location.pathname === "/login" ? "Sign Up" : "Log In"}</Button>
           }
         </MenuBtn>
       </MenuContainer>
