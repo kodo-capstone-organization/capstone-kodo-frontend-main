@@ -62,6 +62,11 @@ function CourseBuilderPage() {
             <CourseBuilderCard id="lesson-plan">
                 <LessonPlan/>
             </CourseBuilderCard>
+            <CourseBuilderCard id="lesson-plan">
+                <CourseBuilderCardHeader
+                    title="Lesson Plan"
+                />
+            </CourseBuilderCard>
         </CourseBuilderContainer>
     )
 }
