@@ -7,15 +7,24 @@ import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import ChipInput from 'material-ui-chip-input'
 import { createNewAccount } from '../../../apis/Account/AccountApis';
-import { CreateNewAccountReq } from "../../../apis/Entities/Account";
+import { getAllAccounts } from '../../../apis/Account/AccountApis';
+import { useHistory } from 'react-router';
 
 
-function SignUp({ isOpen, props }) {
+// function SignUp({ isOpen, props }) {
+
+// interface Fields {
+//     username: String;
+// }
+
+function SignUp() {
+
     // const [auth, setAuth] = useState(true);
-    const [btnTags, setBtnTags] = useState('');
+    const [btnTags, setBtnTags] = useState([]);
     const [tags, setTags] = useState([]);
     const [fields, setFields] = useState({});
     const [errors, setErrors] = useState({});
+    const history = useHistory();
 
     const useStyles = makeStyles((theme) => ({
         root: {
@@ -32,19 +41,20 @@ function SignUp({ isOpen, props }) {
         // setAuth(!auth);
         fields[field] = e.target.value;
         setFields(fields);
-        console.log(fields)
+        // console.log(fields)
         e.preventDefault();
     }
 
     const handleChipChange = (chip) => {
         setTags(chip)
         fields["tags"] = chip
-        console.log(fields)
+        // console.log(fields)
     }
 
     const handleBtn = (event, newBtnTag) => {
-        setBtnTags(newBtnTag)
-        fields["btnTag"] = newBtnTag
+        setBtnTags([newBtnTag])
+        // console.log(btnTags)
+        fields["btnTags"] = [newBtnTag]
         setFields(fields);
     }
 
@@ -84,85 +94,98 @@ function SignUp({ isOpen, props }) {
         }
 
         //Btn
-        if (!fields["btnTag"]) {
+        if (fields["btnTags"] === undefined) {
+            console.log('btn invalid');
             formIsValid = false;
-            errors["btnTag"] = "Please choose one";
+            errors["btnTags"] = "Please choose one";
         }
 
         setErrors(errors);
+        console.log('form is valid1', formIsValid)
+        if (formIsValid) {
+            console.log('form is valid2')
+            handleSignUp();
+        }
         return formIsValid;
     }
 
 
-    const handleSignUp = e => {
-        e.preventDefault();
-        // newUserAccount = {
-        //     username: fields["username"],
-        //     password: fields["password"],
-        //     name: fields["name"],
-        //     bio: null,
-        //     email: fields["email"],
-        //     isAdmin: false,
-        //     tagTitles: []
-        // }
-        // createNewAccount(obj, null).then(res => {
-        //     console.log(typeof (res))
-        //     window.sessionStorage.setItem("loggedInAccount", res);
-        //     history.push('/progresspage');
-        // });
+    const handleSignUp = () => {
+        const tagTitles = fields["btnTags"].concat(fields["tags"])
+        var newUserAccount =
+        {
+            username: fields["username"],
+            password: fields["password"],
+            name: fields["name"],
+            bio: "",
+            email: fields["email"],
+            isAdmin: false,
+            tagTitles
+        }
+        createNewAccount(newUserAccount, null).then(res => {
+            console.log(typeof (res))
+            console.log(res)
+            window.sessionStorage.setItem("loggedInAccount", res);
+            history.push('/progresspage');
+        }).catch(err => {
+            console.log('error', err);
+        }
+        )
+
     };
 
     return (
-        <>
-            <div isOpen={isOpen}
-                style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    height: "700px",
-                    marginTop: "50px",
-                    color: "#000000",
-                    background: "white",
-                }}
-            >
-                <InfoCard>
-                    <Wrapper>
-                        <form className={classes.root} autoComplete="off">
-                            <TextField required label="Username" variant="filled" value={fields["username"]} onChange={e => handleTextInputChange("username", e)} />
-                            <span style={{ color: "red" }}>{errors["username"]}</span>
-                            <TextField required label="Name" variant="filled" value={fields["name"]} onChange={e => handleTextInputChange("name", e)} />
-                            <span style={{ color: "red" }}>{errors["name"]}</span>
-                            <TextField required label="Email" variant="filled" value={fields["email"]} onChange={e => handleTextInputChange("email", e)} />
-                            <span style={{ color: "red" }}>{errors["email"]}</span>
-                            <TextField required type="password" label="Password" variant="filled" value={fields["password"]} onChange={e => handleTextInputChange("password", e)} />
-                            <span style={{ color: "red" }}>{errors["password"]}</span>
-                            <br />
-                            <label>Join Kodo as a</label>
-                            <ToggleButtonGroup
-                                value={btnTags}
-                                exclusive
-                                onChange={handleBtn}
-                                style={{ justifyContent: "center" }}
-                            >
-                                <ToggleButton value="beginner"> Beginner
+        // <>
+        <div
+            // isOpen={isOpen}
+            style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "700px",
+                marginTop: "50px",
+                color: "#000000",
+                background: "white",
+            }}
+        >
+            <InfoCard>
+                <Wrapper>
+                    <form className={classes.root} autoComplete="off">
+                        <TextField required label="Username" variant="filled" value={fields["username"]} onChange={e => handleTextInputChange("username", e)} />
+                        <span style={{ color: "red" }}>{errors["username"]}</span>
+                        <TextField required label="Name" variant="filled" value={fields["name"]} onChange={e => handleTextInputChange("name", e)} />
+                        <span style={{ color: "red" }}>{errors["name"]}</span>
+                        <TextField required label="Email" variant="filled" value={fields["email"]} onChange={e => handleTextInputChange("email", e)} />
+                        <span style={{ color: "red" }}>{errors["email"]}</span>
+                        <TextField required type="password" label="Password" variant="filled" value={fields["password"]} onChange={e => handleTextInputChange("password", e)} />
+                        <span style={{ color: "red" }}>{errors["password"]}</span>
+                        <br />
+                        <label>Join Kodo as a</label>
+                        <ToggleButtonGroup
+                            value={btnTags}
+                            exclusive
+                            onChange={handleBtn}
+                            style={{ justifyContent: "center" }}
+                        >
+                            <ToggleButton value="beginner"> Beginner
                                 </ToggleButton>
-                                <ToggleButton value="intermediate" > Intermediate
+                            <ToggleButton value="intermediate" > Intermediate
                                 </ToggleButton>
-                                <ToggleButton value="expert"> Expert
+                            <ToggleButton value="expert"> Expert
                                 </ToggleButton>
-                            </ToggleButtonGroup>
-                            <span style={{ color: "red" }}>{errors["btnTag"]}</span>
-                            <br />
-                            <label>What subjects are you interested in?</label>
-                            <ChipInput
-                                onChange={(chips) => handleChipChange(chips)}
-                            />
-                            <Button onClick={handleValidation}>Sign Up</Button>
-                        </form>
-                    </Wrapper>
-                </InfoCard>
-            </div>
-        </>
+                        </ToggleButtonGroup>
+                        <span style={{ color: "red" }}>{errors["btnTag"]}</span>
+                        <br />
+                        <label>What subjects are you interested in?</label>
+                        <ChipInput
+                            onChange={(chips) => handleChipChange(chips)}
+                        />
+                        <Button onClick={handleValidation}>Sign Up</Button>
+                    </form>
+                </Wrapper>
+            </InfoCard>
+        </div>
+        // </>
     )
 }
 

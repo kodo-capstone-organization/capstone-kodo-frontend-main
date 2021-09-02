@@ -11,7 +11,8 @@ import { login } from '../../../apis/Account/AccountApis';
 import { type } from 'os';
 
 
-function Login({ isOpen }) {
+// function Login({ isOpen }) {
+    function Login() {
 
     const [auth, setAuth] = useState(true);
     const [username, setUsername] = useState('');
@@ -29,12 +30,12 @@ function Login({ isOpen }) {
 
     const classes = useStyles();
 
-    const btnClick = e => {
+    const btnClick = (e : React.SyntheticEvent) => {
         setAuth(!auth);
         e.preventDefault();
         login(username, password).then(res => {
             // Set to locale
-            window.sessionStorage.setItem("loggedInAccountId", res);
+            window.sessionStorage.setItem("loggedInAccountId", JSON.stringify(res));
             window.sessionStorage.setItem("loggedInUsername", username);
             window.sessionStorage.setItem("loggedInPassword", password);
             history.push('/progresspage');
@@ -43,7 +44,8 @@ function Login({ isOpen }) {
 
     return (
         <>
-            <div isOpen={isOpen}
+            <div
+                // isOpen={isOpen}
                 style={{
                     display: "flex",
                     justifyContent: "center",
