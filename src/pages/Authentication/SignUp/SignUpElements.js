@@ -34,7 +34,7 @@ export const InfoCard = styled.div`
   border: 2px solid ${colours.BLUE1};
   border-radius: 25px;
   width: 500px;
-  height: 500px;
+  height: 700px;
   padding: 0px 100px 0px 100px;
   text-align: center;
   justify-content: center;
