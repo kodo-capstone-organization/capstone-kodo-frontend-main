@@ -11,7 +11,17 @@ function Layout(props) {
     const [showSideBar, setShowSideBar] = useState(true);
 
     useEffect(() => {
-        if (RouteItemsWithSidebar.find(item => item.path === location.pathname)) {
+        if (RouteItemsWithSidebar.find(item => {
+            if (item.isDynamic) {
+                // Get index of last occurring "/" in both item path and current path
+                const lastIdxItem = item.path.lastIndexOf("/")
+                const lastIdxCur = location.pathname.lastIndexOf("/")
+                return item.path.substring(0, lastIdxItem+1) === location.pathname.substring(0, lastIdxCur+1)
+            } else {
+                return item.path === location.pathname
+            }
+        }))
+        {
             setShowSideBar(true);
         } else {
             setShowSideBar(false)
