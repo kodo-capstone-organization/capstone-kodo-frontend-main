@@ -7,9 +7,9 @@ import ChipInput from 'material-ui-chip-input'
 
 function LessonPlan() {
     const [lessons, setLessons] = useState<Lesson[]>([]);
-    const [lessonId, setLessonId] = useState<number>(1);
+    const [lessonId, setLessonId] = useState<number>(1);=
     
-    function addToLessons() {
+    const addToLessons = () => {
         // @ts-ignore
         lessons.push({ lessonId: lessonId });
         setLessons(lessons)

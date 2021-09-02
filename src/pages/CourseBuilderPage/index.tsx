@@ -5,6 +5,7 @@ import { Button } from "@material-ui/core";
 import LessonPlan from "./components/LessonPlan";
 import ChipInput from 'material-ui-chip-input';
 
+
 function CourseBuilderPage() {
     const [courseName, setCourseName] = useState<string>("");
     const [courseDescription, setCourseDescription] = useState<string>("");
@@ -35,7 +36,6 @@ function CourseBuilderPage() {
                                 onChange={(chips) => handleChipChange(chips)}
                             />
                         </Grid>
-
                         <Grid item xs={9}>
                             <TextField id="standard-basic" fullWidth disabled value={fileName} label="Banner Image"></TextField>
                         </Grid>
