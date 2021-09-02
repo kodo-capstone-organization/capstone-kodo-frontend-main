@@ -10,6 +10,7 @@ function LessonPlan() {
     const [lessonId, setLessonId] = useState<number>(1);
     
     function addToLessons() {
+        // @ts-ignore
         lessons.push({ lessonId: lessonId });
         setLessons(lessons)
         setLessonId(lessonId + 1)
@@ -17,7 +18,7 @@ function LessonPlan() {
 
     const updateFiles = (lessonId: number, files: FileList) => {
         lessons.map((lesson) => {
-            if (lesson.id === lessonId) {
+            if (lesson.lessonId === lessonId) {
                 // @ts-ignore
                 lesson.relatedFiles.push(files[0])
             }
@@ -48,7 +49,7 @@ function LessonPlan() {
                     }/>
         {lessons.map((lesson) => {
             return (
-                <CourseBuilderContent key={lesson.id}>
+                <CourseBuilderContent key={lesson.lessonId}>
                     <Grid container spacing={3}>
                         <Grid item xs={12}>
                             <TextField id="standard-basic" fullWidth required label="Name" value={lesson.name} onChange={e => {
@@ -92,6 +93,14 @@ function LessonPlan() {
                         </Grid>
                         <Grid item xs={12}>
                             <TextField id="standard-basic" fullWidth multiline maxRows={3} required label="Quiz"/>
+                        </Grid>
+                        <Grid item xs={3}>
+                        <Button
+                                variant="contained"
+                                component="label"
+                                >
+                                Build Quiz
+                            </Button>
                         </Grid>
                     </Grid>
                 </CourseBuilderContent>
