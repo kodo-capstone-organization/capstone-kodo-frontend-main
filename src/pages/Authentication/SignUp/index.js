@@ -7,17 +7,15 @@ import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import ChipInput from 'material-ui-chip-input'
 import { createNewAccount } from '../../../apis/Account/AccountApis';
+import { CreateNewAccountReq } from "../Entities/Account";
 
 
 function SignUp({ isOpen, props }) {
     // const [auth, setAuth] = useState(true);
     const [btnTags, setBtnTags] = useState('');
-<<<<<<< HEAD
     const [tags, setTags] = useState([]);
     const [fields, setFields] = useState({});
     const [errors, setErrors] = useState({});
-=======
->>>>>>> cc00a7f6a0ec6e29384b283c69d9b37e457c37c5
 
     const useStyles = makeStyles((theme) => ({
         root: {
@@ -38,7 +36,6 @@ function SignUp({ isOpen, props }) {
         e.preventDefault();
     }
 
-<<<<<<< HEAD
     const handleChipChange = (chip) => {
         setTags(chip)
         fields["tags"] = chip
@@ -99,15 +96,20 @@ function SignUp({ isOpen, props }) {
 
     const handleSignUp = e => {
         e.preventDefault();
-        // createNewAccount(obj, dp).then(res => {
-        //     console.log(typeof(res))
-        //     window.sessionStorage.setItem("loggedInAccount", res);
-        //     history.push('/progresspage');
-        // });
-=======
-    const handleDelete = () => {
-        console.info('You clicked the delete icon.');
->>>>>>> cc00a7f6a0ec6e29384b283c69d9b37e457c37c5
+        newUserAccount = {
+            username: fields["username"],
+            password: fields["password"],
+            name: fields["name"],
+            bio: null,
+            email: fields["email"],
+            isAdmin: false,
+            tagTitles: []
+        }
+        createNewAccount(obj, null).then(res => {
+            console.log(typeof (res))
+            window.sessionStorage.setItem("loggedInAccount", res);
+            history.push('/progresspage');
+        });
     };
 
     return (
@@ -125,7 +127,6 @@ function SignUp({ isOpen, props }) {
             >
                 <InfoCard>
                     <Wrapper>
-<<<<<<< HEAD
                         <form className={classes.root} autoComplete="off">
                             <TextField required label="Username" variant="filled" value={fields["username"]} onChange={e => handleTextInputChange("username", e)} />
                             <span style={{ color: "red" }}>{errors["username"]}</span>
@@ -135,12 +136,6 @@ function SignUp({ isOpen, props }) {
                             <span style={{ color: "red" }}>{errors["email"]}</span>
                             <TextField required type="password" label="Password" variant="filled" value={fields["password"]} onChange={e => handleTextInputChange("password", e)} />
                             <span style={{ color: "red" }}>{errors["password"]}</span>
-=======
-                        <form className={classes.root} noValidate autoComplete="off">
-                            <TextField id="filled-basic" label="Username" variant="filled" value={username} onChange={e  => setUsername(e.target.value)}/>
-                            <TextField id="filled-basic" label="Email" variant="filled" value={email} onChange={e  => setEmail(e.target.value)}/>
-                            <TextField id="filled-basic" label="Password" variant="filled" value={password} onChange={e  => setPassword(e.target.value)}/>
->>>>>>> cc00a7f6a0ec6e29384b283c69d9b37e457c37c5
                             <br />
                             <label>Join Kodo as a</label>
                             <ToggleButtonGroup
