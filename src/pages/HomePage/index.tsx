@@ -8,7 +8,7 @@ import {
 } from "./HomepageElements";
 import { Button } from "../../values/ButtonElements";
 
-function HomePage(props) {
+function HomePage(props: any) {
     return (
         <div
             style={{
