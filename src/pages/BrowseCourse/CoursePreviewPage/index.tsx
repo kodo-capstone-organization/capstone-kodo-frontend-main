@@ -12,11 +12,9 @@ function CoursePreviewPage(props: any) {
     useEffect(() => {
         getCourseByCourseId(courseId).then(receivedCourse => {
             setCourse(receivedCourse);
-            console.log(receivedCourse.name)
+            console.log(receivedCourse.name);
         })
     }, [])
-
-    console.log(currentCourse)
 
 const courseName = () => {
     if (currentCourse?.name) {
@@ -39,7 +37,7 @@ const courseName = () => {
                 background: "white",
             }}
         >
-           {courseName}
+           <h1>{courseName}</h1>
         </div>
     )
 }
