@@ -12,11 +12,12 @@ import { type } from 'os';
 
 
 // function Login({ isOpen }) {
-    function Login() {
+function Login() {
 
     const [auth, setAuth] = useState(true);
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [loginFailed, setloginFailed] = useState('');
     let history = useHistory()
 
     const useStyles = makeStyles((theme) => ({
@@ -30,13 +31,15 @@ import { type } from 'os';
 
     const classes = useStyles();
 
-    const btnClick = (e : React.SyntheticEvent) => {
+    const btnClick = (e: React.SyntheticEvent) => {
         setAuth(!auth);
         e.preventDefault();
         login(username, password).then(res => {
-            console.log(typeof(res))
+            console.log(typeof (res))
             window.sessionStorage.setItem("loggedInAccount", JSON.stringify(res));
             history.push('/progresspage');
+        }).catch(err => {
+            setloginFailed('Login Failed!')
         });
     };
 
@@ -58,9 +61,10 @@ import { type } from 'os';
                     <Wrapper>
                         <form className={classes.root} noValidate autoComplete="off">
                             <TextField id="filled-basic" label="Username" variant="filled" value={username} onChange={e => setUsername(e.target.value)} />
-                            <TextField id="filled-basic" label="Password" variant="filled" value={password} onChange={e => setPassword(e.target.value)} />
+                            <TextField id="filled-basic" type="password" label="Password" variant="filled" value={password} onChange={e => setPassword(e.target.value)} />
                             <br />
-                            <Button primary onClick={btnClick}>Log In</Button>
+                            <Button primary onClick={btnClick} style={{ margin: "auto" }}>Log In</Button>
+                            <span style={{ color: "red"}}>{loginFailed}</span>
                         </form>
                     </Wrapper>
                 </InfoCard>
