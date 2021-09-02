@@ -7,6 +7,7 @@ import {
   BrowseContainer,
   CourseWrapper,
   CourseCard,
+  CourseCardContent,
   Title
 } from "./BrowseCourseElements";
 
@@ -24,7 +25,7 @@ const useStyles = makeStyles({
     maxWidth: 300
   },
   media: {
-    height: 140
+    height: 170
   }
 });
 
@@ -43,6 +44,7 @@ function BrowseCourse() {
   return (
     //This would encompass the whole container for cards
     <BrowseContainer>
+      <h3>search bar goes here</h3>
       <Title>Suggested For You</Title>
       <CourseWrapper>
       {courses?.map(course => {
@@ -55,9 +57,8 @@ function BrowseCourse() {
                   image="placeholder/placeholderbanner.jpg"
                   title={course.name}
                 />
-
-                <CardContent>
-                  <Typography gutterBottom variant="h5" component="h2">
+                <CourseCardContent>
+                  <Typography>
                     {course.name}
                   </Typography>
                   <Typography
@@ -67,10 +68,9 @@ function BrowseCourse() {
                   >
                     {course.tutor.name}
                   </Typography>
-                </CardContent>
+                </CourseCardContent>
               </CardActionArea>
             </CourseCard>
-            <br />
             </>
         );
       })}

@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import Card from "@material-ui/core/Card";
+import CardContent from "@material-ui/core/CardContent";
 import { fontSizes } from "../../../values/FontSizes";
 import { colours } from "../../../values/Colours";
 
@@ -15,28 +16,34 @@ export const BrowseContainer = styled.div`
 export const CourseWrapper = styled.div`
     display: grid;
     grid-gap: 1rem;
-    grid-template-columns: repeat(10,1fr);
+    grid-template-columns: repeat(5,1fr);
 
     @media screen and (max-width: 1800px) {
-        grid-template-columns: repeat(8, 1fr);
+        grid-template-columns: repeat(4, 1fr);
     }
 
     @media screen and (max-width: 1530px) {
-        grid-template-columns: repeat(6, 1fr);
+        grid-template-columns: repeat(3, 1fr);
     }
 
     @media screen and (max-width: 1263px) {
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(2, 1fr);
     }
     
     @media screen and (max-width: 990px) {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(1, 1fr);
     }
 `
 
 export const CourseCard = styled(Card)`
-    width: 240px;
+    border-radius: 20px !important;
+    width: 220px;
 `
+export const CourseCardContent = styled(CardContent)`
+    height: 30px;
+    font-size: 18px !important;
+`
+
 export const Title = styled.h4`
     color: ${colours.GRAY2};
     margin-top: 200px;
