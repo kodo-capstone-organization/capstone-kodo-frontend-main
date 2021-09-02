@@ -12,11 +12,15 @@ import { type } from 'os';
 
 
 // function Login({ isOpen }) {
+<<<<<<< HEAD
 <<<<<<< HEAD:src/pages/Authentication/Login/index.tsx
 function Login() {
 =======
     function Login() {
 >>>>>>> login, homepage, progress page converted to ts:src/pages/Authentication/Login/index.js
+=======
+function Login() {
+>>>>>>> conditional rendering for login/signup/logout button done
 
     const [auth, setAuth] = useState(true);
     const [username, setUsername] = useState('');
@@ -38,7 +42,17 @@ function Login() {
     const btnClick = (e: React.SyntheticEvent) => {
         setAuth(!auth);
         e.preventDefault();
+<<<<<<< HEAD
         login(username, password).then(loginCallback.bind(this, username, password));
+=======
+        login(username, password).then(res => {
+            console.log(typeof (res))
+            window.sessionStorage.setItem("loggedInAccount", JSON.stringify(res));
+            history.push('/progresspage');
+        }).catch(err => {
+            setloginFailed('Login Failed!')
+        });
+>>>>>>> conditional rendering for login/signup/logout button done
     };
 
     const loginCallback = (username, password, res) => {
