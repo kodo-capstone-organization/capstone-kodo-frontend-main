@@ -13,6 +13,11 @@ export const ProfileBreadcrumbItems = [
         name: "Settings",
         subpath: "/settings",
         fullpath: "/profile/settings"
+    },
+    {
+        name: "Course Earnings",
+        subpath: "/earnings",
+        fullpath: "/profile/earnings"
     }
 ]
 

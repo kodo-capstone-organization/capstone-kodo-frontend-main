@@ -39,9 +39,11 @@ function Profile(props: any) {
     const navigateToSettingsPage = () => {
         props.history.push('/profile/settings');
     }
-    
-    // @ts-ignore
-    // @ts-ignore
+
+    const navigateToEarningsPage = () => {
+        props.history.push('/profile/earnings');
+    }
+
     return (
         <>
             <ProfileCard id="my-details">
@@ -111,7 +113,7 @@ function Profile(props: any) {
                 <ProfileCardHeader
                     title="My Courses"
                     action={
-                        <IconButton aria-label="earnings" color="primary">
+                        <IconButton aria-label="earnings" color="primary" onClick={navigateToEarningsPage}>
                             <LocalAtmIcon /> &nbsp; Earnings
                         </IconButton>
                     }
