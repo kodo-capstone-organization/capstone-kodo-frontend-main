@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import { Typography } from '@material-ui/core';
 import { Button } from "../../../values/ButtonElements";
 import { useHistory } from "react-router-dom";
 import {
-    InfoCard,
-    Wrapper,
+    LoginPaper,
+    LoginPaperWrapper,
+    LoginForm
 } from "./LoginElements";
 import TextField from '@material-ui/core/TextField';
 import { login } from '../../../apis/Account/AccountApis';
@@ -17,17 +19,6 @@ function Login({ isOpen }) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     let history = useHistory()
-
-    const useStyles = makeStyles((theme) => ({
-        root: {
-            '& > *': {
-                margin: theme.spacing(1),
-                width: '50ch',
-            },
-        },
-    }));
-
-    const classes = useStyles();
 
     const btnClick = e => {
         setAuth(!auth);
@@ -59,17 +50,23 @@ function Login({ isOpen }) {
                     background: "white",
                 }}
             >
-                <InfoCard>
-                    <Wrapper>
-                        <form className={classes.root} noValidate autoComplete="off">
-                            <TextField id="filled-basic" label="Username" variant="filled" value={username} onChange={e => setUsername(e.target.value)} />
-                            <TextField id="filled-basic" label="Password" variant="filled" value={password} onChange={e => setPassword(e.target.value)} />
-                            <br />
-                            <Button primary onClick={btnClick}>Log In</Button>
+                <LoginPaper elevation={3}>
+                    <LoginPaperWrapper>
+                        <Typography color="primary" variant="h4">
+                            <strong>Login</strong>
+                        </Typography>
+                        <br/>
+                        <form noValidate autoComplete="off">
+                            <LoginForm>
+                                <TextField id="filled-basic" label="Username" variant="filled" type="text" value={username} onChange={e => setUsername(e.target.value)} />
+                                <br/>
+                                <TextField id="filled-basic" label="Password" variant="filled" type="password" value={password} onChange={e => setPassword(e.target.value)} />
+                            </LoginForm>
                         </form>
-                    </Wrapper>
-                </InfoCard>
-                {/* <Button primary={true} onClick={handleChange}>{auth ? 'Logout' : 'Login'}</Button> */}
+                        <br />
+                        <Button primary big fontBig onClick={btnClick}>Login</Button>
+                    </LoginPaperWrapper>
+                </LoginPaper>
             </div>
         </>
     )

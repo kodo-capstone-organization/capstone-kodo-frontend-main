@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { colours } from "../../../values/Colours";
 import { fontSizes} from "../../../values/FontSizes";
 import Chip from '@material-ui/core/Chip';
+import Paper from '@material-ui/core/Paper';
 
 export const MenuBtn = styled.nav`
 	display: flex;
@@ -42,6 +43,7 @@ export const InfoCard = styled.div`
 
 export const Wrapper = styled.section`
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 100%;
@@ -90,4 +92,23 @@ export const Container = styled.div`
 	width: 100%;
 	padding: 0 24px;
 	max-width: 1100px;
+`;
+
+export const LoginPaper = styled(Paper)`
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-width: 500px;
+    min-height: 500px;
+    padding: 3rem;
+`;
+
+export const LoginPaperWrapper = styled.div`
+    width: 100%
+`;
+
+export const LoginForm = styled.div`
+    display: flex;
+    flex-direction: column;
 `;
