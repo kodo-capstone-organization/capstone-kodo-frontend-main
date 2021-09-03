@@ -33,8 +33,10 @@ function Login({ isOpen }) {
         setAuth(!auth);
         e.preventDefault();
         login(username, password).then(res => {
-            console.log(typeof(res))
-            window.sessionStorage.setItem("loggedInAccount", res);
+            // Set to locale
+            window.sessionStorage.setItem("loggedInAccountId", res);
+            window.sessionStorage.setItem("loggedInUsername", username);
+            window.sessionStorage.setItem("loggedInPassword", password);
             history.push('/progresspage');
         });
     };
