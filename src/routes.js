@@ -18,14 +18,14 @@ function Routes() {
                 <Layout {...props}>
                     <Switch>
                         <Route path="/" component={HomePage} exact >
-                            {window.sessionStorage.getItem("loggedInAccountId") ? <Redirect to="/progresspage" /> : <HomePage />}
+                            {window.sessionStorage.getItem("loggedInAccount") ? <Redirect to="/progresspage" /> : <HomePage />}
                         </Route>
                         <Route path="/login" component={Login} exact />
                         <Route path="/signup" component={SignUp} exact />
                         {
                             RouteItemsWithSidebar.map(item => {
                                 return (
-                                    window.sessionStorage.getItem("loggedInAccountId") ? <Route key={item.path} path={item.path} component={item.component} exact /> : <Redirect to="/" />
+                                    window.sessionStorage.getItem("loggedInAccount") ? <Route key={item.path} path={item.path} component={item.component} exact /> : <Redirect to="/" />
 
                                 );
                             })

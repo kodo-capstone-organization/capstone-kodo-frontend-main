@@ -1,4 +1,3 @@
-import { Course } from './Course';
 import { EnrolledCourse } from './EnrolledCourse';
 import { Tag } from './Tag'
 export interface Account {
@@ -12,7 +11,7 @@ export interface Account {
     isActive: boolean
     interests: Tag[]
     enrolledCourses: EnrolledCourse[]
-    courses: Course[]
+    // courses: Course[] // TODO
 }
 
 export interface CreateNewAccountReq {

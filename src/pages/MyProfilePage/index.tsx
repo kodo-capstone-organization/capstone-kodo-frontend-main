@@ -8,22 +8,17 @@ import Profile from './components/Profile';
 import ProfileSettings from './components/ProfileSettings';
 
 function MyProfilePage() {
+
+    const accountId = 4; // To be fetched from localStorage
     const [isIndexPage, setIsIndexPage] = useState<Boolean>();
     const [myAccount, setMyAccount] = useState<Account>();
     const history = useHistory();
 
     // Runs on page load only
     useEffect(() => {
-        const accountId = window.sessionStorage.getItem("loggedInAccountId");
-        if (accountId !== null) {
-            getMyAccount(parseInt(accountId)).then(receivedAccount => {
-                setMyAccount(receivedAccount)
-            });
-        }
-        else {
-            // No logged in account id found in session storage, redirect to login
-            history.push('/login');
-        }
+        getMyAccount(accountId).then(receivedAccount => {
+            setMyAccount(receivedAccount)
+        });
     }, [])
 
     // To update isIndexPage

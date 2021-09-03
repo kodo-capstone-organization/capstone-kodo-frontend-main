@@ -4,5 +4,5 @@ export interface EnrolledCourse {
     enrolledCourseId: number
     courseRating: number,
     parentCourse: Course
-    // completedLessons: CompletedLesson[] // Todo
+    // completedLessons: Lesson[] // Todo
 }
