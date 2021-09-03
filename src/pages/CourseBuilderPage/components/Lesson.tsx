@@ -3,5 +3,7 @@ export interface Lesson {
     name: string
     description: string
     sequence: number
-    // content: Content[]
+    // TODO: Content children objects
+    // quizzes: Quiz[]
+    // multimedias: Multimedia[]
 }

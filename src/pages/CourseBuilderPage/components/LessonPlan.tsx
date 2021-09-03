@@ -19,8 +19,8 @@ function LessonPlan() {
     const updateFiles = (lessonId: number, files: FileList) => {
         lessons.map((lesson) => {
             if (lesson.lessonId === lessonId) {
-                // @ts-ignore
-                lesson.relatedFiles.push(files[0])
+                // TODO: Fix to get lesson.multimedias... instead
+                // lesson.relatedFiles.push(files[0])
             }
             return lesson
         })
@@ -30,7 +30,7 @@ function LessonPlan() {
     const deleteFile = (lessonId: number, fileToRemove: string) => {
         lessons.map((lesson) => {
             if (lesson.lessonId === lessonId) {
-                // TODO: Fix to get lesson.multimedias...
+                // TODO: Fix to get lesson.multimedias... instead
                 // lesson.relatedFiles = lesson.relatedFiles.filter((file) => file.name !== fileToRemove)
             }
             return lesson
@@ -95,7 +95,7 @@ function LessonPlan() {
                             <TextField id="standard-basic" fullWidth multiline maxRows={3} required label="Quiz"/>
                         </Grid>
                         <Grid item xs={3}>
-                        <Button
+                            <Button
                                 variant="contained"
                                 component="label"
                                 >
