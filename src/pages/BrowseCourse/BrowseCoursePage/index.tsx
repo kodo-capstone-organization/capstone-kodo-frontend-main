@@ -3,31 +3,50 @@ import { Link as RouterLink } from 'react-router-dom'
 import { Course } from "../../../apis/Entities/Course";
 import { getAllCourses } from "../../../apis/Course/CourseApis";
 import { colours } from "../../../values/Colours";
+import TagsInput from "./TagsInput";
+
 import {
   BrowseContainer,
   CourseWrapper,
   CourseCard,
   CourseCardContent,
-  Title
+  Title,
+  CourseCardMedia,
+  InputWrapper
 } from "./BrowseCourseElements";
 
-import { makeStyles } from "@material-ui/core/styles";
+import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import CardActionArea from "@material-ui/core/CardActionArea";
 import CardMedia from "@material-ui/core/CardMedia";
 import Typography from "@material-ui/core/Typography";
+import TextField from '@material-ui/core/TextField';
+import SearchIcon from '@material-ui/icons/Search';
+import ChipInput from 'material-ui-chip-input'
+import { Chip } from "@material-ui/core";
 
-const useStyles = makeStyles({
-  root: {
-    maxWidth: 300
-  },
-  media: {
-    height: 170
-  }
-});
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      '& > *': {
+        margin: theme.spacing(1),
+        width: '25ch',
+      },
+    },
+    media: {
+      height: 170,
+    },
+    chipInput: {
+      width: '100%',
+    }
+  }),
+  
+);
 
 function BrowseCourse() {
   const classes = useStyles();
   const [courses, setCourses] = useState<Course[]>();
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [tags, setTags] = useState<string[]>([]);
 
   useEffect(() => {
     getAllCourses().then(allCourses => {
@@ -36,13 +55,43 @@ function BrowseCourse() {
     });
   }, []);
 
+  /** HELPER METHODS */
+  const handleChipChange = (chips: any) => {
+      setTags(chips);
+      //console.log("tags", tags);
+  }
+
+  const returnTagMatch = (val: Course, tags: string[]) => {
+      return val;
+  }
+
+  function handleSelectedTags(items: any) {
+      setTags(items);
+      console.log("tags", tags);
+  }
+
   return (
-    //This would encompass the whole container for cards
+    //This would encompass the whole container for component
+    <>
     <BrowseContainer>
-      <h3>search bar goes here</h3>
+      <form className={classes.root} noValidate autoComplete="off">
+        <TextField id="outlined-basic" label="Search" variant="outlined" onChange={event => {setSearchTerm(event.target.value)}}/>
+        <ChipInput 
+        label="Add Tags"
+        onChange={(chips) => handleChipChange(chips)}
+        />
+      </form>
       <Title>Suggested For You</Title>
       <CourseWrapper>
-        {courses?.map(course => {
+        {courses?.filter((val) => {
+          if (searchTerm == "" && (typeof tags == undefined || tags?.length == 0)) {
+            return val;
+          } else if (val.name.toLowerCase().includes(searchTerm.toLowerCase())) {
+            return val;
+          } else if (typeof tags == undefined && tags?.length == 0) {
+            returnTagMatch(val, tags)
+          }
+        }).map(course => {
           return (
             <>
               <CourseCard key={course.courseId}>
@@ -69,6 +118,7 @@ function BrowseCourse() {
         })}
       </CourseWrapper>
     </BrowseContainer>
+    </>
   );
 }
 

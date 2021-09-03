@@ -3,6 +3,7 @@ import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import { fontSizes } from "../../../values/FontSizes";
 import { colours } from "../../../values/Colours";
+import CardMedia from "@material-ui/core/CardMedia";
 
 
 export const BrowseContainer = styled.div`
@@ -46,7 +47,15 @@ export const CourseCardContent = styled(CardContent)`
 
 export const Title = styled.h4`
     color: ${colours.GRAY2};
-    margin-top: 200px;
+    margin-top: 50px;
+`
+
+export const CourseCardMedia = styled.div`
+    height: 170px;
+`
+
+export const InputWrapper = styled.div`
+    width: 100%;
 `
 
 

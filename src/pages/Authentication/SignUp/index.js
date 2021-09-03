@@ -39,7 +39,7 @@ function SignUp({ isOpen, props }) {
     const handleChipChange = (chip) => {
         setTags(chip)
         fields["tags"] = chip
-        console.log(fields)
+        console.log("tags", tags)
     }
 
     const handleBtn = (event, newBtnTag) => {
