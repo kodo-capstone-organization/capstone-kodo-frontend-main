@@ -55,7 +55,7 @@ function ProgressPage() {
     const [spacing, setSpacing] = React.useState(2)
     const [enrolledCourses, setEnrolledCourses] = useState<EnrolledCourse[]>([])
     const classes = useStyles();
-    const accountId = JSON.parse(window.sessionStorage.getItem('loggedInAccount') || '{}');
+    const accountId = JSON.parse(window.sessionStorage.getItem('loggedInAccountId') || '{}');
     // parseInt(window.sessionStorage.getItem("loggedInAccount"));
 
     useEffect(() => {
