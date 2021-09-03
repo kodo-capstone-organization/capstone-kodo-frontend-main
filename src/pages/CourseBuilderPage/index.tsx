@@ -31,7 +31,7 @@ function CourseBuilderPage() {
                             <TextField id="standard-basic" fullWidth multiline maxRows={3} required label="Description" value={courseDescription} onChange={e => setCourseDescription(e.target.value)}/>
                         </Grid>
                         <Grid item xs={12}>
-                            <ChipInput fullWidth label="Tags"
+                            <ChipInput fullWidth label="Tags" value={tags}
                                 onChange={(chips) => handleChipChange(chips)}
                             />
                         </Grid>
