@@ -28,7 +28,10 @@ function TopMenu(props) {
   };
 
   const handleLogOut = () => {
-    window.sessionStorage.removeItem("loggedInAccount");
+    window.sessionStorage.removeItem("loggedInAccountId");
+    window.sessionStorage.removeItem("loggedInUsername");
+    window.sessionStorage.removeItem("loggedInPassword");
+
   };
 
   const handleClick = () => {
@@ -48,7 +51,7 @@ function TopMenu(props) {
         <NavLogo to="/">kodo</NavLogo>
         <MenuBtn>
           {
-            window.sessionStorage.getItem("loggedInAccount") ? <Button primary={true} big={false} fontBig={false} to="/" onClick={handleLogOut}> Log Out</Button> :
+            window.sessionStorage.getItem("loggedInAccountId") ? <Button primary={true} big={false} fontBig={false} to="/" onClick={handleLogOut}> Log Out</Button> :
           <Button primary={true} big={false} fontBig={false} onClick={handleClick}>{window.location.pathname === "/login" ? "Sign Up" : "Log In"}</Button>
           }
         </MenuBtn>
