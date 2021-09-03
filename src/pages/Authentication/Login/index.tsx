@@ -34,9 +34,11 @@ function Login() {
     const btnClick = (e: React.SyntheticEvent) => {
         setAuth(!auth);
         e.preventDefault();
+        // @ts-ignore: Unreachable code error
         login(username, password).then(loginCallback.bind(this, username, password));
     }
 
+    // @ts-ignore: Unreachable code error
     const loginCallback = (username, password, res) => {
         // res is the last param (though not shown in the callback) since its a binded function
         // Set to local storage

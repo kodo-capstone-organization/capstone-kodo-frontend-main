@@ -13,7 +13,8 @@ import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
 import { getMyAccount } from "../../apis/Account/AccountApis";
 import { EnrolledCourse } from "../../apis/Entities/EnrolledCourse";
-// import { EnrolledCourse } from "../../apis/Entities/EnrolledCourse";
+import { Course } from "../../apis/Entities/Course";
+import { Lesson } from "../../apis/Entities/Lesson";
 import { getCourseByCourseId } from "../../apis/Course/CourseApis";
 
 
@@ -56,7 +57,7 @@ function ProgressPage() {
     const classes = useStyles();
     const accountId = JSON.parse(window.sessionStorage.getItem('loggedInAccountId') || '{}');
     // parseInt(window.sessionStorage.getItem("loggedInAccount"));
-    
+
     useEffect(() => {
         getMyAccount(accountId).then(receivedAccount => {
             setEnrolledCourses(receivedAccount.enrolledCourses)
@@ -64,16 +65,37 @@ function ProgressPage() {
 
     }, [])
 
-    const currentCourseItems = enrolledCourses.map((course) =>
-        <CourseElement>
-            <Avatar style={{ margin: "auto 10px" }} />
-            <CourseDetails>
-                <h3>{course.parentCourse.lessons.name}</h3>
-                {/* <TutorName>{course.parentCourse.tutor.name}</TutorName> */}
-            </CourseDetails>
-            {/* <Button primary={course.status} >{course.status ? 'Resume' : 'Start'}</Button> */}
-        </CourseElement>
-    );
+    // const currentCourseItems = enrolledCourses.map((course) =>
+    //     <CourseElement>
+    //         <Avatar style={{ margin: "auto 10px" }} />
+    //         <CourseDetails>
+    //             <h3>{course.parentCourse.lessons[0].name}</h3>
+    //             {/* <TutorName>{course.parentCourse.tutor.name}</TutorName> */}
+    //         </CourseDetails>
+    //         {/* <Button primary={course.status} >{course.status ? 'Resume' : 'Start'}</Button> */}
+    //     </CourseElement>
+    // );
+
+    const getCourseLessons = (parentCourse: Course) => {
+        var lessons: Lesson[] = parentCourse.lessons;
+        console.log("lessons", lessons);
+        return (
+            <div>
+                {lessons.map(function (lesson, lessonId) {
+                    return (
+                        // <li key={ lessonId }>{lesson.name}</li>
+                        <CourseElement key={lessonId}>
+                            <Avatar style={{ margin: "auto 10px" }} />
+                            <CourseDetails>
+                                <h3>{lesson.name}</h3>
+                            </CourseDetails>
+                            <Button primary>Start</Button>
+                        </CourseElement>
+                    );
+                })}
+            </div>
+        )
+    }
 
     const completedCourseItems = completedCourses.map((course) =>
         <CourseElement>
@@ -103,7 +125,7 @@ function ProgressPage() {
                         <Grid item xs={5} style={{ margin: "5px" }}>
                             <Subject>{course.parentCourse.name}</Subject>
                             <Divider />
-                            {currentCourseItems}
+                            {getCourseLessons(course.parentCourse)}
                         </Grid>
                     )
                 }
