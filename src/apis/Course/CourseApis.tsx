@@ -18,3 +18,12 @@ export async function getCourseByCourseId(courseId: number): Promise<Course> {
     return httpClient.get<undefined, Course>(getParameters);
 }
 
+export async function getCourseByKeyword(keyword: string): Promise<Course[]> {
+    const getParameters: IHttpClientRequestParameters<undefined> = {
+        url: `/course/getAllCoursesByKeyword/${keyword}`
+    }
+
+    return httpClient.get<undefined, Course[]>(getParameters)
+}
+
+
