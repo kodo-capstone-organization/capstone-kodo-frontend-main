@@ -6,5 +6,4 @@ export interface Lesson {
     description: string,
     sequence: number,
     // contents: Content[]
-    // completedLessons: Lesson[] // Todo
 }

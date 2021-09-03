@@ -15,6 +15,9 @@ import Grid from '@material-ui/core/Grid';
 import { Account } from "../../apis/Entities/Account";
 import { getMyAccount } from "../../apis/Account/AccountApis";
 import { EnrolledCourse } from "../../apis/Entities/EnrolledCourse";
+// import { EnrolledCourse } from "../../apis/Entities/EnrolledCourse";
+import { getCourseByCourseId } from "../../apis/Course/CourseApis";
+
 
 
 
@@ -33,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 var topics = [
-    { title: 'Python Programming'},
+    { title: 'Python Programming' },
     { title: 'Web Development' }
 ];
 
@@ -59,16 +62,17 @@ function ProgressPage() {
     useEffect(() => {
         getMyAccount(accountId).then(receivedAccount => {
             setEnrolledCourses(receivedAccount.enrolledCourses)
-            // console.log(enrolledCourses[0].completedLessons)
+            // getCourseByCourseId
         });
+
     }, [])
 
     const currentCourseItems = enrolledCourses.map((course) =>
         <CourseElement>
             <Avatar style={{ margin: "auto 10px" }} />
             <CourseDetails>
-                <h3>{course.parentCourse.name}</h3>
-                <TutorName>{course.parentCourse.tutor.name}</TutorName>
+                <h3>{course.parentCourse.lessons[0].name}</h3>
+                {/* <TutorName>{course.parentCourse.tutor.name}</TutorName> */}
             </CourseDetails>
             {/* <Button primary={course.status} >{course.status ? 'Resume' : 'Start'}</Button> */}
         </CourseElement>
@@ -97,7 +101,7 @@ function ProgressPage() {
             <Grid container>
                 {
                     enrolledCourses.map((course) =>
-                        <Grid item xs={5} style={{margin: "5px"}}>
+                        <Grid item xs={5} style={{ margin: "5px" }}>
                             <Subject>{course.parentCourse.name}</Subject>
                             <Divider />
                             {currentCourseItems}
@@ -107,7 +111,7 @@ function ProgressPage() {
             </Grid>
             <br />
             <Grid container>
-                <Grid item xs={5} style={{margin: "5px"}}>
+                <Grid item xs={5} style={{ margin: "5px" }}>
                     <Subject>My Completed Courses</Subject>
                     <Divider />
                     {completedCourseItems}
