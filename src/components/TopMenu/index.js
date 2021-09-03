@@ -29,7 +29,9 @@ function TopMenu(props) {
   };
 
   const handleLogOut = () => {
-    window.sessionStorage.removeItem("loggedInAccount");
+    window.sessionStorage.removeItem("loggedInAccountId");
+    window.sessionStorage.removeItem("loggedInAccountUsername");
+    window.sessionStorage.removeItem("loggedInAccountPassword");
   };
 
   useEffect(() => {
@@ -41,7 +43,7 @@ function TopMenu(props) {
         <NavLogo to="/">kodo</NavLogo>
         <MenuBtn>
           {
-            window.sessionStorage.getItem("loggedInAccount") ? <Button primary={true} big={false} fontBig={false} to="/" onClick={handleLogOut}> Log Out</Button> :
+            window.sessionStorage.getItem("loggedInAccountId") ? <Button primary={true} big={false} fontBig={false} to="/" onClick={handleLogOut}> Log Out</Button> :
               <Button primary={true} big={false} fontBig={false} to="/login" > Log In</Button>
           }
         </MenuBtn>
