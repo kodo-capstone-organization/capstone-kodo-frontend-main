@@ -14,6 +14,7 @@ import Grid from '@material-ui/core/Grid';
 import { Account } from "../../apis/Entities/Account";
 import { getMyAccount } from "../../apis/Account/AccountApis";
 import { EnrolledCourse } from "../../apis/Entities/EnrolledCourse";
+// import { EnrolledCourse } from "../../apis/Entities/EnrolledCourse";
 import { getCourseByCourseId } from "../../apis/Course/CourseApis";
 
 
@@ -61,6 +62,7 @@ function ProgressPage() {
         getMyAccount(accountId).then(receivedAccount => {
             setEnrolledCourses(receivedAccount.enrolledCourses)
 <<<<<<< HEAD
+<<<<<<< HEAD
             // getCourseByCourseId
         });
 
@@ -68,6 +70,11 @@ function ProgressPage() {
             // console.log(enrolledCourses[0].completedLessons)
         });
 >>>>>>> creation of lesson entity to populate progress page
+=======
+            // getCourseByCourseId
+        });
+
+>>>>>>> displaying lessons in my progress page
     }, [])
 
     const currentCourseItems = enrolledCourses.map((course) =>
@@ -75,12 +82,17 @@ function ProgressPage() {
             <Avatar style={{ margin: "auto 10px" }} />
             <CourseDetails>
 <<<<<<< HEAD
+<<<<<<< HEAD
                 <h3>{course.parentCourse.lessons[0].name}</h3>
                 {/* <TutorName>{course.parentCourse.tutor.name}</TutorName> */}
 =======
                 <h3>{course.parentCourse.name}</h3>
                 <TutorName>{course.parentCourse.tutor.name}</TutorName>
 >>>>>>> creation of lesson entity to populate progress page
+=======
+                <h3>{course.parentCourse.lessons[0].name}</h3>
+                {/* <TutorName>{course.parentCourse.tutor.name}</TutorName> */}
+>>>>>>> displaying lessons in my progress page
             </CourseDetails>
             {/* <Button primary={course.status} >{course.status ? 'Resume' : 'Start'}</Button> */}
         </CourseElement>
@@ -110,10 +122,14 @@ function ProgressPage() {
                 {
                     enrolledCourses.map((course) =>
 <<<<<<< HEAD
+<<<<<<< HEAD
                         <Grid item xs={5} style={{ margin: "5px" }}>
 =======
                         <Grid item xs={5} style={{margin: "5px"}}>
 >>>>>>> creation of lesson entity to populate progress page
+=======
+                        <Grid item xs={5} style={{ margin: "5px" }}>
+>>>>>>> displaying lessons in my progress page
                             <Subject>{course.parentCourse.name}</Subject>
                             <Divider />
                             {currentCourseItems}
