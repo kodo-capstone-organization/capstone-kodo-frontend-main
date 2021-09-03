@@ -48,7 +48,6 @@ function SignUp() {
     const handleChipChange = (chip) => {
         setTags(chip)
         fields["tags"] = chip
-        // console.log(fields)
     }
 
     const handleBtn = (event, newBtnTag) => {

@@ -56,7 +56,7 @@ function TopMenu(props) {
         <MenuBtn>
           {
             window.sessionStorage.getItem("loggedInAccountId") ? <Button primary={true} big={false} fontBig={false} to="/" onClick={handleLogOut}> Log Out</Button> :
-              <Button primary={true} big={false} fontBig={false} to="/login" > Log In</Button>
+          <Button primary={true} big={false} fontBig={false} onClick={handleClick}>{window.location.pathname === "/login" ? "Sign Up" : "Log In"}</Button>
           }
         </MenuBtn>
       </MenuContainer>
