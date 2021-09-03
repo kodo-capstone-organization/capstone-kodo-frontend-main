@@ -35,6 +35,7 @@ function Login() {
         setAuth(!auth);
         e.preventDefault();
         login(username, password).then(loginCallback.bind(this, username, password));
+    }
 
     const loginCallback = (username, password, res) => {
         // res is the last param (though not shown in the callback) since its a binded function

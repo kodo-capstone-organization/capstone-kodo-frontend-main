@@ -11,7 +11,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import Avatar from '@material-ui/core/Avatar';
 import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
-import { Account } from "../../apis/Entities/Account";
 import { getMyAccount } from "../../apis/Account/AccountApis";
 import { EnrolledCourse } from "../../apis/Entities/EnrolledCourse";
 // import { EnrolledCourse } from "../../apis/Entities/EnrolledCourse";
@@ -55,61 +54,22 @@ function ProgressPage() {
     const [spacing, setSpacing] = React.useState(2)
     const [enrolledCourses, setEnrolledCourses] = useState<EnrolledCourse[]>([])
     const classes = useStyles();
-<<<<<<< HEAD:src/pages/ProgressPage/index.tsx
     const accountId = JSON.parse(window.sessionStorage.getItem('loggedInAccountId') || '{}');
     // parseInt(window.sessionStorage.getItem("loggedInAccount"));
-
+    
     useEffect(() => {
         getMyAccount(accountId).then(receivedAccount => {
             setEnrolledCourses(receivedAccount.enrolledCourses)
-<<<<<<< HEAD
-<<<<<<< HEAD
-            // getCourseByCourseId
         });
 
-=======
-            // console.log(enrolledCourses[0].completedLessons)
-        });
->>>>>>> creation of lesson entity to populate progress page
-=======
-            // getCourseByCourseId
-        });
-
->>>>>>> displaying lessons in my progress page
-=======
-    const accountId = JSON.parse(window.sessionStorage.getItem('loggedInAccount') || '{}');
-    // parseInt(window.sessionStorage.getItem("loggedInAccount"));
-
-    useEffect(() => {
-        getMyAccount(accountId).then(receivedAccount => {
-            setEnrolledCourses(receivedAccount.enrolledCourses)
-            // getCourseByCourseId
-        });
-
->>>>>>> 45ef504805cc32ac0f57dab8929a25df79c7a064:src/pages/ProgressPage/index.js
     }, [])
 
     const currentCourseItems = enrolledCourses.map((course) =>
         <CourseElement>
             <Avatar style={{ margin: "auto 10px" }} />
             <CourseDetails>
-<<<<<<< HEAD:src/pages/ProgressPage/index.tsx
-<<<<<<< HEAD
-<<<<<<< HEAD
-                <h3>{course.parentCourse.lessons[0].name}</h3>
+                <h3>{course.parentCourse.lessons.name}</h3>
                 {/* <TutorName>{course.parentCourse.tutor.name}</TutorName> */}
-=======
-                <h3>{course.parentCourse.name}</h3>
-                <TutorName>{course.parentCourse.tutor.name}</TutorName>
->>>>>>> creation of lesson entity to populate progress page
-=======
-                <h3>{course.parentCourse.lessons[0].name}</h3>
-                {/* <TutorName>{course.parentCourse.tutor.name}</TutorName> */}
->>>>>>> displaying lessons in my progress page
-=======
-                <h3>{course.parentCourse.lessons[0].name}</h3>
-                {/* <TutorName>{course.parentCourse.tutor.name}</TutorName> */}
->>>>>>> 45ef504805cc32ac0f57dab8929a25df79c7a064:src/pages/ProgressPage/index.js
             </CourseDetails>
             {/* <Button primary={course.status} >{course.status ? 'Resume' : 'Start'}</Button> */}
         </CourseElement>
@@ -138,19 +98,9 @@ function ProgressPage() {
             <Grid container>
                 {
                     enrolledCourses.map((course) =>
-<<<<<<< HEAD:src/pages/ProgressPage/index.tsx
-<<<<<<< HEAD
-<<<<<<< HEAD
+
+
                         <Grid item xs={5} style={{ margin: "5px" }}>
-=======
-                        <Grid item xs={5} style={{margin: "5px"}}>
->>>>>>> creation of lesson entity to populate progress page
-=======
-                        <Grid item xs={5} style={{ margin: "5px" }}>
->>>>>>> displaying lessons in my progress page
-=======
-                        <Grid item xs={5} style={{ margin: "5px" }}>
->>>>>>> 45ef504805cc32ac0f57dab8929a25df79c7a064:src/pages/ProgressPage/index.js
                             <Subject>{course.parentCourse.name}</Subject>
                             <Divider />
                             {currentCourseItems}
