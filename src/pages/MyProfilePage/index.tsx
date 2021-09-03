@@ -15,11 +15,6 @@ function MyProfilePage() {
     // Runs on page load only
     useEffect(() => {
         const accountId = window.sessionStorage.getItem("loggedInAccountId");
-
-        console.log("received from storage: " + window.sessionStorage.getItem("loggedInAccountUsername"));
-        console.log("received from storage: " + window.sessionStorage.getItem("loggedInAccountPassword"));
-        console.log("received from storage: " + accountId);
-
         if (accountId !== null) {
             getMyAccount(parseInt(accountId)).then(receivedAccount => {
                 setMyAccount(receivedAccount)
