@@ -32,14 +32,19 @@ function Login({ isOpen }) {
     const btnClick = e => {
         setAuth(!auth);
         e.preventDefault();
-        login(username, password).then(res => {
-            // Set to locale
-            window.sessionStorage.setItem("loggedInAccountId", res);
-            window.sessionStorage.setItem("loggedInUsername", username);
-            window.sessionStorage.setItem("loggedInPassword", password);
-            history.push('/progresspage');
-        });
+        login(username, password).then(loginCallback.bind(this, username, password));
     };
+
+    const loginCallback = (username, password, res) => {
+        // res is the last param (though not shown in the callback) since its a binded function
+        // Set to local storage
+        window.sessionStorage.setItem("loggedInAccountId", res);
+        window.sessionStorage.setItem("loggedInAccountUsername", username);
+        window.sessionStorage.setItem("loggedInAccountPassword", password);
+        history.push('/');
+        // Redirect to home "/" where the route will conditionally check if logged in or not
+        // and redirect accordingly
+    }
 
     return (
         <>
