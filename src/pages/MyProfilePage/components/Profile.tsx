@@ -6,6 +6,7 @@ import { IconButton, ImageList } from "@material-ui/core";
 import SettingsIcon from '@material-ui/icons/Settings';
 import LocalAtmIcon from '@material-ui/icons/LocalAtm';
 import PlayCircleFilledWhiteIcon from '@material-ui/icons/PlayCircleFilledWhite';
+import EditIcon from '@material-ui/icons/Edit';
 import { Account } from "../../../apis/Entities/Account";
 import { ImageListItem, ImageListItemBar } from '@material-ui/core';
 import { fontSizes } from '../../../values/FontSizes';
@@ -116,6 +117,29 @@ function Profile(props: any) {
                     }
                 />
                 <ProfileCardContent>
+                    <ImageList rowHeight={180} style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-around", overflow: "hidden" }}>
+                        { myAccount?.courses.map(course => (
+                            /* TODO: Vertical Scrolling */
+                            <ImageListItem key={course.courseId}>
+                                <img src={course.bannerUrl}
+                                     alt={course.name}
+                                     onError={ (e) => { // @ts-ignore
+                                         e.target.onerror = null; e.target.src="placeholder/placeholderbanner.jpg"}
+                                     }
+                                />
+                                <ImageListItemBar
+                                    title={<strong>{course.name}</strong>}
+                                    // subtitle={<span>by <i>@{enrolledCourse.parentCourse.tutor.username}</i></span>}
+                                    actionIcon={
+                                        <IconButton color="secondary" aria-label={`Manage ${course.name}`}>
+                                            <EditIcon /> &nbsp;<span style={{fontSize: fontSizes.SUBTEXT }}>Manage</span>
+                                        </IconButton>
+                                    }
+                                />
+                            </ImageListItem>
+                        ))
+                        }
+                    </ImageList>
                 </ProfileCardContent>
             </ProfileCard>
         </>

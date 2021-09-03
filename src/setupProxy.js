@@ -9,12 +9,6 @@ module.exports = function(app) {
             changeOrigin: true 
         }
     ));
-    app.use(createProxyMiddleware('/login', 
-        { 
-            target: url,
-            changeOrigin: true 
-        }
-    ));
     app.use(createProxyMiddleware('/course',
         {
             target: url,
