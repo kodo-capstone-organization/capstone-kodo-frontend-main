@@ -1,4 +1,5 @@
 import { Course } from "./Course";
+import {Lesson} from "./Lesson";
 
 export interface EnrolledCourse {
     enrolledCourseId: number

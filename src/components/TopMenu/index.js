@@ -1,11 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Container, MenuContainer, NavLogo, MenuBtn } from "./TopMenuElements";
 import { Button } from "../../values/ButtonElements";
-import IconButton from '@material-ui/core/IconButton';
-import AccountCircle from '@material-ui/icons/AccountCircle';
-import MenuItem from '@material-ui/core/MenuItem';
-import Menu from '@material-ui/core/Menu';
 import { useHistory } from "react-router";
+
 
 
 function TopMenu(props) {
