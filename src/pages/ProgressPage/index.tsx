@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import {
     Title,
     Subject,
@@ -12,7 +12,11 @@ import Avatar from '@material-ui/core/Avatar';
 // import { Button } from "../../values/ButtonElements";
 import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
+import { Account } from "../../apis/Entities/Account";
+import { getMyAccount } from "../../apis/Account/AccountApis";
+import { EnrolledCourse } from "../../apis/Entities/EnrolledCourse";
+
+
 
 
 const useStyles = makeStyles((theme) => ({
@@ -43,19 +47,30 @@ var completedCourses = [
     { title: 'CSS', tutor: 'Tutor Trisha', id: '', imageURL: '' }
 ];
 
+
 function ProgressPage() {
 
     const [spacing, setSpacing] = React.useState(2)
+    const [enrolledCourses, setEnrolledCourses] = useState<EnrolledCourse[]>([])
     const classes = useStyles();
+    const accountId = JSON.parse(window.sessionStorage.getItem('loggedInAccount') || '{}');
+    // parseInt(window.sessionStorage.getItem("loggedInAccount"));
 
-    const currentCourseItems = currentCourses.map((course) =>
+    useEffect(() => {
+        getMyAccount(accountId).then(receivedAccount => {
+            setEnrolledCourses(receivedAccount.enrolledCourses)
+            // console.log(enrolledCourses[0].completedLessons)
+        });
+    }, [])
+
+    const currentCourseItems = enrolledCourses.map((course) =>
         <CourseElement>
             <Avatar style={{ margin: "auto 10px" }} />
             <CourseDetails>
-                <h3>{course.title}</h3>
-                <TutorName>{course.tutor}</TutorName>
+                <h3>{course.parentCourse.name}</h3>
+                <TutorName>{course.parentCourse.tutor.name}</TutorName>
             </CourseDetails>
-            <Button primary={course.status} >{course.status ? 'Resume' : 'Start'}</Button>
+            {/* <Button primary={course.status} >{course.status ? 'Resume' : 'Start'}</Button> */}
         </CourseElement>
     );
 
@@ -81,9 +96,9 @@ function ProgressPage() {
             <Title>My Progress</Title>
             <Grid container>
                 {
-                    topics.map((topic) =>
+                    enrolledCourses.map((course) =>
                         <Grid item xs={5} style={{margin: "5px"}}>
-                            <Subject>{topic.title}</Subject>
+                            <Subject>{course.parentCourse.name}</Subject>
                             <Divider />
                             {currentCourseItems}
                         </Grid>
