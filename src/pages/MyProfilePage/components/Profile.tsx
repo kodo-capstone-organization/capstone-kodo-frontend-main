@@ -116,7 +116,7 @@ function Profile(props: any) {
             // If successful, redirect to coursebuilder
 
             // Redirect
-            props.history.push(`/coursebuilder/${res.courseId}`);
+            props.history.push(`/builder/${res.courseId}`);
         });
     }
 

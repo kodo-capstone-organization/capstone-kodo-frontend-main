@@ -13,6 +13,7 @@ export interface Account {
     interests: Tag[]
     enrolledCourses: EnrolledCourse[]
     courses: Course[]
+    stripeAccountId: string
 }
 
 export interface CreateNewAccountReq {
