@@ -92,7 +92,7 @@ function ProgressPage() {
                                 <h3>{lesson?.name}</h3>
                                 {getLessonMultimedia(lesson)}
                             </CourseDetails>
-                            <Button primary={lesson.isCompleted}>{lesson.isCompleted ? "Resume" : <LockIcon />}</Button>
+                            <Button primary={lesson.isCompleted} >{lesson.isCompleted ? "Resume" : <LockIcon />}</Button>
                         </CourseElement>
                     );
                 })}

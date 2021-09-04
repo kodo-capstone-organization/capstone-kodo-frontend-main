@@ -94,14 +94,14 @@ function SignUp() {
         }
 
         //Btn
-        if (fields["btnTags"] === undefined) {
+        if (!("btnTags" in fields)) {
             console.log('btn invalid');
             formIsValid = false;
             errors["btnTags"] = "Please choose one";
         }
 
         setErrors(errors);
-        console.log('form is valid1', formIsValid)
+        console.log('form is valid1', !("btnTags" in fields))
         if (formIsValid) {
             console.log('form is valid2')
             handleSignUp();
@@ -128,7 +128,7 @@ function SignUp() {
             window.sessionStorage.setItem("loggedInAccount", res);
             history.push('/progresspage');
         }).catch(err => {
-            console.log('error', err);
+            console.log('Sign up failed', err);
         }
         )
 
@@ -174,7 +174,7 @@ function SignUp() {
                             <ToggleButton value="expert"> Expert
                                 </ToggleButton>
                         </ToggleButtonGroup>
-                        <span style={{ color: "red" }}>{errors["btnTag"]}</span>
+                        <span style={{ color: "red" }}>{errors["btnTags"]}</span>
                         <br />
                         <label>What subjects are you interested in?</label>
                         <ChipInput

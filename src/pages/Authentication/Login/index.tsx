@@ -35,7 +35,7 @@ function Login() {
         setAuth(!auth);
         e.preventDefault();
         // @ts-ignore: Unreachable code error
-        login(username, password).then(loginCallback.bind(this, username, password));
+        login(username, password).then(loginCallback.bind(this, username, password)).catch(err => setloginFailed("Login Failed!"));
     }
 
     // @ts-ignore: Unreachable code error
@@ -71,7 +71,7 @@ function Login() {
                             <TextField id="filled-basic" type="password" label="Password" variant="filled" value={password} onChange={e => setPassword(e.target.value)} />
                             <br />
                             <Button primary onClick={btnClick} style={{ margin: "auto" }}>Log In</Button>
-                            <span style={{ color: "red"}}>{loginFailed}</span>
+                            <span style={{ color: "red" }}>{loginFailed}</span>
                         </form>
                     </Wrapper>
                 </InfoCard>

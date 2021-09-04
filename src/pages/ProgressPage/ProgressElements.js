@@ -60,6 +60,7 @@ export const Button = styled(LinkR)`
   width: 100px;
   margin: auto 10px auto auto;
 
+
   &:hover {
     transition: all 0.2s ease-in-out;
     background: ${({ primary }) => (primary ? colours.BLUE2 : colours.GRAY6)};
