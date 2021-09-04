@@ -2,10 +2,13 @@ import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Container, MenuContainer, NavLogo, MenuBtn } from "./TopMenuElements";
 import { Button } from "../../values/ButtonElements";
-import IconButton from '@material-ui/core/IconButton';
-import AccountCircle from '@material-ui/icons/AccountCircle';
-import MenuItem from '@material-ui/core/MenuItem';
-import Menu from '@material-ui/core/Menu';
+import { useHistory } from "react-router";
+
+// import IconButton from '@material-ui/core/IconButton';
+// import AccountCircle from '@material-ui/icons/AccountCircle';
+// import MenuItem from '@material-ui/core/MenuItem';
+// import Menu from '@material-ui/core/Menu';
+
 
 
 function TopMenu(props) {
@@ -41,6 +44,14 @@ function TopMenu(props) {
     window.sessionStorage.removeItem("loggedInAccountPassword");
   };
 
+  const handleClick = () => {
+    if(window.location.pathname === "/login"){
+      history.push("/signup")
+    }else {
+      history.push("login")
+    }
+  }
+
   useEffect(() => {
     window.addEventListener("scroll", changeNav);
   }, []);
@@ -48,6 +59,7 @@ function TopMenu(props) {
     <Container scrollNav={scrollNav}>
       <MenuContainer>
         <NavLogo to="/">kodo</NavLogo>
+<<<<<<< HEAD
         {
           isNotLoginPage &&
           <MenuBtn>
@@ -58,6 +70,14 @@ function TopMenu(props) {
             }
           </MenuBtn>
         }
+=======
+        <MenuBtn>
+          {
+            window.sessionStorage.getItem("loggedInAccountId") ? <Button primary={true} big={false} fontBig={false} to="/" onClick={handleLogOut}> Log Out</Button> :
+          <Button primary={true} big={false} fontBig={false} onClick={handleClick}>{window.location.pathname === "/login" ? "Sign Up" : "Log In"}</Button>
+          }
+        </MenuBtn>
+>>>>>>> feature/auth
       </MenuContainer>
     </Container>
   );

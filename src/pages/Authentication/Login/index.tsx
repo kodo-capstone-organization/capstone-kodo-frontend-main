@@ -13,19 +13,23 @@ import { login } from '../../../apis/Account/AccountApis';
 import { type } from 'os';
 
 
-function Login({ isOpen }) {
+// function Login({ isOpen }) {
+function Login() {
 
     const [auth, setAuth] = useState(true);
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [loginFailed, setloginFailed] = useState('');
     let history = useHistory()
 
     const btnClick = e => {
         setAuth(!auth);
         e.preventDefault();
-        login(username, password).then(loginCallback.bind(this, username, password));
-    };
+        // @ts-ignore: Unreachable code error
+        login(username, password).then(loginCallback.bind(this, username, password)).catch(err => setloginFailed("Login Failed!"));
+    }
 
+    // @ts-ignore: Unreachable code error
     const loginCallback = (username, password, res) => {
         // res is the last param (though not shown in the callback) since its a binded function
         // Set to local storage
@@ -39,7 +43,8 @@ function Login({ isOpen }) {
 
     return (
         <>
-            <div isOpen={isOpen}
+            <div
+                // isOpen={isOpen}
                 style={{
                     display: "flex",
                     justifyContent: "center",
@@ -61,6 +66,7 @@ function Login({ isOpen }) {
                                 <TextField id="filled-basic" label="Username" variant="filled" type="text" value={username} onChange={e => setUsername(e.target.value)} />
                                 <br/>
                                 <TextField id="filled-basic" label="Password" variant="filled" type="password" value={password} onChange={e => setPassword(e.target.value)} />
+                                <span style={{ color: "red" }}>{loginFailed}</span>
                             </LoginForm>
                         </form>
                         <br />

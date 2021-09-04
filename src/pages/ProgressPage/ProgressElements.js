@@ -23,6 +23,12 @@ export const TutorName = styled.h3`
   font-family: "Roboto", sans-serif;
 `;
 
+export const MultiMediaText = styled.h3`
+  font-size: 10px;
+  color: ${props => props.primary ? colours.BLUE1 : colours.GRAY3};
+  font-family: "Roboto", sans-serif;
+`;
+
 export const CourseDetails = styled.div`
     display: flex;
     flex-direction: column;
@@ -53,6 +59,7 @@ export const Button = styled(LinkR)`
   height: 20px;
   width: 100px;
   margin: auto 10px auto auto;
+
 
   &:hover {
     transition: all 0.2s ease-in-out;

@@ -52,7 +52,7 @@ function MyProfilePage() {
 
             { /* Conditional Rendering of Subpage */}
             { isIndexPage && myAccount && <Profile account={myAccount} history={history}/> }
-            { !isIndexPage && history.location.pathname.includes("settings") && <ProfileSettings /> }
+            { !isIndexPage && history.location.pathname.includes("settings") && <ProfileSettings account={myAccount} history={history} /> }
             { !isIndexPage && !history.location.pathname.includes("settings") && <CourseEarnings /> }
 
         </ProfileContainer>

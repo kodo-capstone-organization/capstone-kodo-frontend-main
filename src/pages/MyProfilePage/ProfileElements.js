@@ -94,3 +94,12 @@ export const ProfileUsername = styled.div`
     font-style: italic;
     color: ${colours.GRAY3};
 `;
+
+export const ProfileSettingField = styled.div`
+    display: flex;
+    flex-direction: row;
+    background-color: ${colours.WHITE};
+    color: ${colours.GRAY2};
+    align-items: center;
+    padding: 2rem !important;
+`;
