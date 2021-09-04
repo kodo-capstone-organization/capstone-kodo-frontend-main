@@ -1,6 +1,6 @@
 import React, { useEffect, useReducer, useState } from 'react'
-import { ProfileCard, ProfileCardHeader, ProfileCardContent,
-    ProfileAvatar, ProfileInitials, ProfileDetails, ProfileName, ProfileEmail, ProfileUsername
+import { ProfileCard, ProfileCardHeader, ProfileCardContent, ProfileCardActions,
+    ProfileAvatar, ProfileInitials, ProfileDetails, ProfileName, ProfileContentText, ProfileSubText, ProfileUsername
 } from "../ProfileElements";
 import {ButtonGroup, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle,
     FormControl, IconButton, ImageList, Input, InputAdornment, InputLabel, TextField } from "@material-ui/core";
@@ -16,6 +16,7 @@ import { Button } from '../../../values/ButtonElements';
 import ChipInput from 'material-ui-chip-input';
 import { createNewCourse } from '../../../apis/Course/CourseApis';
 import { Course } from '../../../apis/Entities/Course';
+import Chip from '@material-ui/core/Chip';
 
 
 const formReducer = (state: any, event: any) => {
@@ -113,7 +114,6 @@ function Profile(props: any) {
             // Cleanup
             setCourseFormData({ reset: true })
             handleClose();
-            // If successful, redirect to coursebuilder
 
             // Redirect
             props.history.push(`/builder/${res.courseId}`);
@@ -140,20 +140,34 @@ function Profile(props: any) {
                         <ProfileInitials>
                             {avatarInitials()}
                         </ProfileInitials>
-
                     </ProfileAvatar>
                     <ProfileDetails>
                         <ProfileName>
                             { myAccount?.name }
                         </ProfileName>
-                        <ProfileEmail>
+                        <ProfileSubText>
                             { myAccount?.email }
-                        </ProfileEmail>
+                        </ProfileSubText>
                         <ProfileUsername>
                             @{ myAccount?.username }
                         </ProfileUsername>
                     </ProfileDetails>
                 </ProfileCardContent>
+                <ProfileCardContent removePadTop>
+                    <ProfileContentText>
+                        { myAccount?.bio }
+                    </ProfileContentText>
+                </ProfileCardContent>
+                <ProfileCardActions>
+                    <ProfileSubText>
+                        My Interests:
+                    </ProfileSubText>
+                    {
+                        myAccount?.interests.map(tag => (
+                            <Chip key={tag.title} label={tag.title} variant="outlined" />
+                        ))
+                    }
+                </ProfileCardActions>
             </ProfileCard>
             <ProfileCard id="my-enrolled-courses">
                 <ProfileCardHeader

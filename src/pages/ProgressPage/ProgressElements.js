@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import { colours } from "../../values/Colours";
-import Chip from '@material-ui/core/Chip';
 import { fontSizes } from "../../values/FontSizes";
 import { Link as LinkR } from "react-router-dom";
 
