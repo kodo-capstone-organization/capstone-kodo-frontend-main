@@ -7,7 +7,7 @@ import ChipInput from 'material-ui-chip-input'
 
 function LessonPlan() {
     const [lessons, setLessons] = useState<Lesson[]>([]);
-    const [lessonId, setLessonId] = useState<number>(1);=
+    const [lessonId, setLessonId] = useState<number>(1);
     
     const addToLessons = () => {
         // @ts-ignore
@@ -74,7 +74,7 @@ function LessonPlan() {
                             </Button>
                         </Grid>
                         <Grid item xs={9}>
-                            <ChipInput fullWidth label="Related Files" value={lesson.relatedFiles.map((file) => file.name)} onDelete={(chip) => deleteFile(lesson.id, chip)}/>
+                            <ChipInput fullWidth label="Related Files" value={lesson.relatedFiles.map((file) => file.name)} onDelete={(chip) => deleteFile(lesson.lessonId, chip)}/>
                         </Grid>
                         <Grid item xs={3}>
                             <Button
