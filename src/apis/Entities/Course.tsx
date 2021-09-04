@@ -12,9 +12,8 @@ export interface Course {
     bannerUrl: string
     tutor: Account
     enrollment: EnrolledCourse[]
-    lessons: Lesson[] // TODO
+    lessons: Lesson[]
     courseTags: Tag[]
-    // forumCategories: ForumCategory[] // TODO
 }
 
 // When Frontend is creating a new course
