@@ -58,17 +58,27 @@ function BrowseCourse() {
   /** HELPER METHODS */
   const handleChipChange = (chips: any) => {
       setTags(chips);
-      //console.log("tags", tags);
   }
+  console.log("tags", tags);
 
+  //Return an array of Courses that match the tags entered by user
   const returnTagMatch = (val: Course, tags: string[]) => {
-      return val;
+      /** for tag in courseTags, if tags.include(tag.title) return val*/
+      let courseTags = val.courseTags;
+      courseTags.forEach(function(tag) {
+        if (tags.includes(tag.title)) {
+          console.log("True")
+          return val;
+        } 
+      });
   }
 
+  /** 
   function handleSelectedTags(items: any) {
       setTags(items);
-      console.log("tags", tags);
   }
+  */
+
 
   return (
     //This would encompass the whole container for component
@@ -76,6 +86,7 @@ function BrowseCourse() {
     <BrowseContainer>
       <form className={classes.root} noValidate autoComplete="off">
         <TextField id="outlined-basic" label="Search" variant="outlined" onChange={event => {setSearchTerm(event.target.value)}}/>
+        <p>or</p>
         <ChipInput 
         label="Add Tags"
         onChange={(chips) => handleChipChange(chips)}
@@ -84,13 +95,13 @@ function BrowseCourse() {
       <Title>Suggested For You</Title>
       <CourseWrapper>
         {courses?.filter((val) => {
-          if (searchTerm == "" && (typeof tags == undefined || tags?.length == 0)) {
+          if (searchTerm == "" && tags?.length == 0) {
             return val;
+          } else if (tags.length > 0) {
+            returnTagMatch(val, tags);
           } else if (val.name.toLowerCase().includes(searchTerm.toLowerCase())) {
             return val;
-          } else if (typeof tags == undefined && tags?.length == 0) {
-            returnTagMatch(val, tags)
-          }
+          } 
         }).map(course => {
           return (
             <>
