@@ -14,9 +14,7 @@ import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
 import { getMyAccount } from "../../apis/Account/AccountApis";
 import { EnrolledCourse } from "../../apis/Entities/EnrolledCourse";
-import { Course } from "../../apis/Entities/Course";
 import { Lesson } from "../../apis/Entities/Lesson";
-import { CompletedLesson } from "../../apis/Entities/CompletedLesson";
 import { Content } from "../../apis/Entities/Content";
 import Link from '@material-ui/core/Link';
 import LockIcon from '@material-ui/icons/Lock';
@@ -43,11 +41,9 @@ var completedCourses = [
 
 function ProgressPage() {
 
-    const [spacing, setSpacing] = React.useState(2)
     const [enrolledCourses, setEnrolledCourses] = useState<EnrolledCourse[]>([])
     const classes = useStyles();
     const accountId = JSON.parse(window.sessionStorage.getItem('loggedInAccountId') || '{}');
-    // parseInt(window.sessionStorage.getItem("loggedInAccount"));
 
     useEffect(() => {
         getMyAccount(accountId).then(receivedAccount => {
@@ -55,25 +51,6 @@ function ProgressPage() {
         });
 
     }, [])
-
-    const getCourseLessons = (parentCourse: Course) => {
-        var lessons: Lesson[] = parentCourse.lessons;
-        return (
-            <div>
-                {lessons.map(function (lesson, lessonId) {
-                    return (
-                        <CourseElement key={lessonId}>
-                            <Avatar style={{ margin: "auto 10px" }} />
-                            <CourseDetails>
-                                <h3>{lesson.name}</h3>
-                            </CourseDetails>
-                            <Button primary>Start</Button>
-                        </CourseElement>
-                    );
-                })}
-            </div>
-        )
-    }
 
     const getLessonMultimedia = (parentLesson: Lesson) => {
         var contents: Content[] = parentLesson.contents;
@@ -89,7 +66,7 @@ function ProgressPage() {
         )
     }
 
-    const getCompletedLessons = (course: EnrolledCourse) => {
+    const getCourseLessons = (course: EnrolledCourse) => {
         // list of all completed Lesson parent Id
         var listOfCompletedLessonsId: number[] = course.completedLessons.map(x => x.parentLesson.lessonId);
         // list of all lessons
@@ -97,7 +74,7 @@ function ProgressPage() {
         // list to populate html
         var listOfLessons: any[] = []
         allLessons.map((lesson) => {
-            var lessonWithStatus : any;
+            var lessonWithStatus: any;
             if (listOfCompletedLessonsId.includes(lesson.lessonId)) { //lesson is completed
                 lessonWithStatus = Object.assign(lesson, { isCompleted: true });
             } else {
@@ -115,7 +92,7 @@ function ProgressPage() {
                                 <h3>{lesson?.name}</h3>
                                 {getLessonMultimedia(lesson)}
                             </CourseDetails>
-                            <Button primary={lesson.isCompleted}>{lesson.isCompleted ? "Resume" : <LockIcon/>}</Button>
+                            <Button primary={lesson.isCompleted}>{lesson.isCompleted ? "Resume" : <LockIcon />}</Button>
                         </CourseElement>
                     );
                 })}
@@ -146,12 +123,10 @@ function ProgressPage() {
             <Grid container>
                 {
                     enrolledCourses.map((course) =>
-
-
                         <Grid item xs={5} style={{ margin: "5px" }}>
                             <Subject>{course.parentCourse.name}</Subject>
                             <Divider />
-                            {getCompletedLessons(course)}
+                            {getCourseLessons(course)}
                         </Grid>
                     )
                 }

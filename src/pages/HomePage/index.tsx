@@ -7,6 +7,7 @@ import {
     MenuBtn
 } from "./HomepageElements";
 import { Button } from "../../values/ButtonElements";
+import img from "../../assets/Homepage/img.png";
 
 function HomePage(props: any) {
     return (
@@ -27,11 +28,15 @@ function HomePage(props: any) {
                 flexDirection: "column",
             }}
             >
-                <MenuBtn>
-                    <Title>Start Your Coding <br/> Journey with Kodo</Title>
-                    <Button primary={true} big={true} fontBig={true} to="/signup">Sign Up</Button>
-                </MenuBtn>
-                <br/>
+                <div style={{display: "flex", marginTop:"200px"}}>
+                    <img src={img} style={{height: "350px"}}/>
+                    <MenuBtn>
+                        <Title>Start Your Coding <br /> Journey with Kodo</Title>
+                        <Button primary={true} big={true} fontBig={true} to="/signup">Sign Up</Button>
+                    </MenuBtn>
+                </div>
+
+                <br />
                 <Title>What is Kodo?</Title>
                 <TextBox primary={true}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
                 incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
