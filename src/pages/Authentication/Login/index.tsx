@@ -22,7 +22,7 @@ function Login() {
     const [loginFailed, setloginFailed] = useState('');
     let history = useHistory()
 
-    const btnClick = e => {
+    const btnClick = (e: any) => {
         setAuth(!auth);
         e.preventDefault();
         // @ts-ignore: Unreachable code error

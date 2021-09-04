@@ -8,7 +8,8 @@ export interface Lesson {
     name: number,
     description: string,
     sequence: number,
-    // Note: We decompose Content[] into children Quizzes[] and Multimedia[] on the frontend
+    contents: Content[],
+    // Note: We further decompose Content[] into children Quizzes[] and Multimedia[] on the frontend
     quizzes: Quiz[]
     multimedias: Multimedia[]
 }
