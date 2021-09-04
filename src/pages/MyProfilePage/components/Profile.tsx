@@ -1,9 +1,9 @@
 import React, { useEffect, useReducer, useState } from 'react'
 import { ProfileCard, ProfileCardHeader, ProfileCardContent, ProfileCardActions,
-    ProfileAvatar, ProfileInitials, ProfileDetails, ProfileName, ProfileContentText, ProfileSubText, ProfileUsername
+    ProfileAvatar, ProfileInitials, ProfileDetails, ProfileName, ProfileContentText, ProfileSubText, ProfileUsername, BlankStateContainer
 } from "../ProfileElements";
 import {ButtonGroup, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle,
-    FormControl, IconButton, ImageList, Input, InputAdornment, InputLabel, TextField } from "@material-ui/core";
+    FormControl, IconButton, ImageList, Input, InputAdornment, InputLabel, TextField, Typography } from "@material-ui/core";
 import SettingsIcon from '@material-ui/icons/Settings';
 import LocalAtmIcon from '@material-ui/icons/LocalAtm';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
@@ -73,6 +73,10 @@ function Profile(props: any) {
 
     const navigateToEarningsPage = () => {
         props.history.push('/profile/earnings');
+    }
+
+    const navigateToBrowseCoursePage = () => {
+        props.history.push('/browsecourse');
     }
 
     const handleFormDataChange = (event: any) => {
@@ -174,29 +178,40 @@ function Profile(props: any) {
                     title="My Enrolled Courses"
                 />
                 <ProfileCardContent>
-                    <ImageList rowHeight={180} style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-around", overflow: "hidden" }}>
-                        { myAccount?.enrolledCourses.map(enrolledCourse => (
-                            /* TODO: Vertical Scrolling */
-                            <ImageListItem key={enrolledCourse.enrolledCourseId}>
-                                <img src={enrolledCourse.parentCourse.bannerUrl}
-                                     alt={enrolledCourse.parentCourse.name}
-                                     onError={ (e) => { // @ts-ignore
-                                         e.target.onerror = null; e.target.src="placeholder/placeholderbanner.jpg"}
-                                     }
-                                />
-                                <ImageListItemBar
-                                    title={<strong>{enrolledCourse.parentCourse.name}</strong>}
-                                    // subtitle={<span>by <i>@{enrolledCourse.parentCourse.tutor.username}</i></span>}
-                                    actionIcon={
-                                        <IconButton color="secondary" aria-label={`Resume ${enrolledCourse.parentCourse.name}`}>
-                                            <PlayCircleFilledWhiteIcon /> &nbsp;<span style={{fontSize: fontSizes.SUBTEXT }}>Resume</span>
-                                        </IconButton>
-                                    }
-                                />
-                            </ImageListItem>
-                        ))
-                        }
-                    </ImageList>
+                    { myAccount?.enrolledCourses.length === 0 &&
+                        <BlankStateContainer>
+                            <Typography variant="h5">You are not enrolled in any course 🥺</Typography>
+                            <br/>
+                            <Typography>Try heading over to our Browse Courses page to look through the multitude of courses we have to offer on Kodo. From there, you can choose to enroll in any course that catches your eye!</Typography>
+                            <br/>
+                            <Button onClick={navigateToBrowseCoursePage} style={{width: "10%" }} big>Browse Courses</Button>
+                        </BlankStateContainer>
+                    }
+                    { myAccount?.enrolledCourses.length > 0 &&
+                        <ImageList rowHeight={180} style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-around", overflow: "hidden" }}>
+                            { myAccount?.enrolledCourses.map(enrolledCourse => (
+                                /* TODO: Vertical Scrolling */
+                                <ImageListItem key={enrolledCourse.enrolledCourseId}>
+                                    <img src={enrolledCourse.parentCourse.bannerUrl}
+                                         alt={enrolledCourse.parentCourse.name}
+                                         onError={ (e) => { // @ts-ignore
+                                             e.target.onerror = null; e.target.src="placeholder/placeholderbanner.jpg"}
+                                         }
+                                    />
+                                    <ImageListItemBar
+                                        title={<strong>{enrolledCourse.parentCourse.name}</strong>}
+                                        // subtitle={<span>by <i>@{enrolledCourse.parentCourse.tutor.username}</i></span>}
+                                        actionIcon={
+                                            <IconButton color="secondary" aria-label={`Resume ${enrolledCourse.parentCourse.name}`}>
+                                                <PlayCircleFilledWhiteIcon /> &nbsp;<span style={{fontSize: fontSizes.SUBTEXT }}>Resume</span>
+                                            </IconButton>
+                                        }
+                                    />
+                                </ImageListItem>
+                            ))
+                            }
+                        </ImageList>
+                    }
                 </ProfileCardContent>
             </ProfileCard>
             <ProfileCard id="my-courses">
@@ -214,29 +229,47 @@ function Profile(props: any) {
                     }
                 />
                 <ProfileCardContent>
-                    <ImageList rowHeight={180} style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-around", overflow: "hidden" }}>
-                        { myAccount?.courses.map(course => (
-                            /* TODO: Vertical Scrolling */
-                            <ImageListItem key={course.courseId}>
-                                <img src={course.bannerUrl}
-                                     alt={course.name}
-                                     onError={ (e) => { // @ts-ignore
-                                         e.target.onerror = null; e.target.src="placeholder/placeholderbanner.jpg"}
-                                     }
-                                />
-                                <ImageListItemBar
-                                    title={<strong>{course.name}</strong>}
-                                    // subtitle={<span>by <i>@{enrolledCourse.parentCourse.tutor.username}</i></span>}
-                                    actionIcon={
-                                        <IconButton color="secondary" aria-label={`Manage ${course.name}`}>
-                                            <EditIcon /> &nbsp;<span style={{fontSize: fontSizes.SUBTEXT }}>Manage</span>
-                                        </IconButton>
-                                    }
-                                />
-                            </ImageListItem>
-                        ))
-                        }
-                    </ImageList>
+                    { myAccount?.courses.length === 0 &&
+                        <BlankStateContainer>
+                            <Typography variant="h5">You do not own any courses 🧐</Typography>
+                            <br/>
+                            <Typography>Want to spread your knowledge on Kodo? You can create and customise a course of your very own for other Kodo users to enroll in and learn from you! To get started, simply click on 'New Course' just above this.</Typography>
+                            <br/>
+                        </BlankStateContainer>
+                    }
+                    {myAccount?.courses.length > 0 &&
+                        <ImageList rowHeight={180} style={{
+                            display: "flex",
+                            flexWrap: "wrap",
+                            justifyContent: "space-around",
+                            overflow: "hidden"
+                        }}>
+                            {myAccount?.courses.map(course => (
+                                /* TODO: Vertical Scrolling */
+                                <ImageListItem key={course.courseId}>
+                                    <img src={course.bannerUrl}
+                                         alt={course.name}
+                                         onError={(e) => {
+                                             // @ts-ignore
+                                             e.target.onerror = null;
+                                             // @ts-ignore
+                                             e.target.src = "placeholder/placeholderbanner.jpg"
+                                         }}
+                                    />
+                                    <ImageListItemBar
+                                        title={<strong>{course.name}</strong>}
+                                        // subtitle={<span>by <i>@{enrolledCourse.parentCourse.tutor.username}</i></span>}
+                                        actionIcon={
+                                            <IconButton color="secondary" aria-label={`Manage ${course.name}`}>
+                                                <EditIcon/> &nbsp;<span style={{fontSize: fontSizes.SUBTEXT}}>Manage</span>
+                                            </IconButton>
+                                        }
+                                    />
+                                </ImageListItem>
+                            ))
+                            }
+                        </ImageList>
+                    }
                 </ProfileCardContent>
             </ProfileCard>
 

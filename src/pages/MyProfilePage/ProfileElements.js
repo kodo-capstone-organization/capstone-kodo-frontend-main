@@ -114,3 +114,18 @@ export const ProfileSettingField = styled.div`
     align-items: center;
     padding: 2rem !important;
 `;
+
+export const BlankStateContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: center; 
+    text-align: center; 
+    align-items: center;
+    width: 100%;
+    color: ${colours.GRAY4};
+    
+    > * {
+        margin: 0 0 1rem 0;
+    }
+    
+`;
