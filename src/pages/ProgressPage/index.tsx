@@ -15,6 +15,8 @@ import { getMyAccount } from "../../apis/Account/AccountApis";
 import { EnrolledCourse } from "../../apis/Entities/EnrolledCourse";
 import { Course } from "../../apis/Entities/Course";
 import { Lesson } from "../../apis/Entities/Lesson";
+import { CompletedLesson } from "../../apis/Entities/CompletedLesson";
+import { Content } from "../../apis/Entities/Content";
 import { getCourseByCourseId } from "../../apis/Course/CourseApis";
 
 
@@ -65,20 +67,8 @@ function ProgressPage() {
 
     }, [])
 
-    // const currentCourseItems = enrolledCourses.map((course) =>
-    //     <CourseElement>
-    //         <Avatar style={{ margin: "auto 10px" }} />
-    //         <CourseDetails>
-    //             <h3>{course.parentCourse.lessons[0].name}</h3>
-    //             {/* <TutorName>{course.parentCourse.tutor.name}</TutorName> */}
-    //         </CourseDetails>
-    //         {/* <Button primary={course.status} >{course.status ? 'Resume' : 'Start'}</Button> */}
-    //     </CourseElement>
-    // );
-
     const getCourseLessons = (parentCourse: Course) => {
         var lessons: Lesson[] = parentCourse.lessons;
-        console.log("lessons", lessons);
         return (
             <div>
                 {lessons.map(function (lesson, lessonId) {
@@ -88,6 +78,41 @@ function ProgressPage() {
                             <Avatar style={{ margin: "auto 10px" }} />
                             <CourseDetails>
                                 <h3>{lesson.name}</h3>
+                            </CourseDetails>
+                            <Button primary>Start</Button>
+                        </CourseElement>
+                    );
+                })}
+            </div>
+        )
+    }
+
+    const getLessonMultimedia = (parentLesson: Lesson) => {
+        var contents: Content[] = parentLesson.contents;
+        console.log(contents.toLocaleString)
+        return (
+            <div style={{display:"flex"}}>
+                {contents.map(function (content, contentId) {
+                    return (
+                        <h5 key={contentId}>{content.name},</h5>
+                    );
+                })}
+            </div>
+        )
+    }
+
+    const getCompletedLessons = (course: EnrolledCourse) => {
+        var completedLessons: CompletedLesson[] = course.completedLessons;
+        return (
+            <div>
+                {completedLessons.map(function (lesson, lessonId) {
+                    return (
+                        // <li key={ lessonId }>{lesson.name}</li>
+                        <CourseElement key={lessonId}>
+                            <Avatar style={{ margin: "auto 10px" }} />
+                            <CourseDetails>
+                                <h3>{lesson.parentLesson.name}</h3>
+                                {getLessonMultimedia(lesson.parentLesson)}
                             </CourseDetails>
                             <Button primary>Start</Button>
                         </CourseElement>
@@ -122,10 +147,10 @@ function ProgressPage() {
                     enrolledCourses.map((course) =>
 
 
-                        <Grid item xs={5} style={{ margin: "5px" }}>
+                        <Grid item xs={6} style={{ margin: "5px" }}>
                             <Subject>{course.parentCourse.name}</Subject>
                             <Divider />
-                            {getCourseLessons(course.parentCourse)}
+                            {getCompletedLessons(course)}
                         </Grid>
                     )
                 }

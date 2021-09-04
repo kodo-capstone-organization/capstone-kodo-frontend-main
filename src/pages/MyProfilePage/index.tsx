@@ -51,7 +51,7 @@ function MyProfilePage() {
 
             { /* Conditional Rendering of Subpage */}
             { isIndexPage && myAccount && <Profile account={myAccount} history={history}/> }
-            { !isIndexPage && <ProfileSettings /> }
+            { !isIndexPage && <ProfileSettings account={myAccount} history={history}/> }
 
         </ProfileContainer>
     )
