@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import {
     Title,
-    Subject,
+    MultiMediaText,
     CourseDetails,
     CourseElement,
     TutorName,
-    Button
+    Button,
+    Subject
 } from "./ProgressElements";
 import { makeStyles } from '@material-ui/core/styles';
 import Avatar from '@material-ui/core/Avatar';
@@ -17,10 +18,8 @@ import { Course } from "../../apis/Entities/Course";
 import { Lesson } from "../../apis/Entities/Lesson";
 import { CompletedLesson } from "../../apis/Entities/CompletedLesson";
 import { Content } from "../../apis/Entities/Content";
-import { getCourseByCourseId } from "../../apis/Course/CourseApis";
-
-
-
+import Link from '@material-ui/core/Link';
+import LockIcon from '@material-ui/icons/Lock';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -35,16 +34,6 @@ const useStyles = makeStyles((theme) => ({
         padding: theme.spacing(2),
     },
 }));
-
-var topics = [
-    { title: 'Python Programming' },
-    { title: 'Web Development' }
-];
-
-var currentCourses = [
-    { title: 'Python for Beginners', tutor: 'Nelson Jamal', status: true, id: '', imageURL: '' },
-    { title: 'Python for Intermediate', tutor: 'Tutor Trisha', status: false, id: '', imageURL: '' }
-];
 
 var completedCourses = [
     { title: 'HTML', tutor: 'Nelson Jamal', id: '', imageURL: '' },
@@ -73,7 +62,6 @@ function ProgressPage() {
             <div>
                 {lessons.map(function (lesson, lessonId) {
                     return (
-                        // <li key={ lessonId }>{lesson.name}</li>
                         <CourseElement key={lessonId}>
                             <Avatar style={{ margin: "auto 10px" }} />
                             <CourseDetails>
@@ -91,10 +79,10 @@ function ProgressPage() {
         var contents: Content[] = parentLesson.contents;
         console.log(contents.toLocaleString)
         return (
-            <div style={{display:"flex"}}>
+            <div style={{ display: "flex" }}>
                 {contents.map(function (content, contentId) {
                     return (
-                        <h5 key={contentId}>{content.name},</h5>
+                        <Link><MultiMediaText key={contentId}>{content.name},</MultiMediaText></Link>
                     );
                 })}
             </div>
@@ -102,19 +90,32 @@ function ProgressPage() {
     }
 
     const getCompletedLessons = (course: EnrolledCourse) => {
-        var completedLessons: CompletedLesson[] = course.completedLessons;
+        // list of all completed Lesson parent Id
+        var listOfCompletedLessonsId: number[] = course.completedLessons.map(x => x.parentLesson.lessonId);
+        // list of all lessons
+        var allLessons: Lesson[] = course.parentCourse.lessons;
+        // list to populate html
+        var listOfLessons: any[] = []
+        allLessons.map((lesson) => {
+            var lessonWithStatus : any;
+            if (listOfCompletedLessonsId.includes(lesson.lessonId)) { //lesson is completed
+                lessonWithStatus = Object.assign(lesson, { isCompleted: true });
+            } else {
+                lessonWithStatus = Object.assign(lesson, { isCompleted: false });
+            }
+            listOfLessons.push(lessonWithStatus)
+        })
         return (
             <div>
-                {completedLessons.map(function (lesson, lessonId) {
+                {listOfLessons.map(function (lesson, lessonId) {
                     return (
-                        // <li key={ lessonId }>{lesson.name}</li>
                         <CourseElement key={lessonId}>
                             <Avatar style={{ margin: "auto 10px" }} />
                             <CourseDetails>
-                                <h3>{lesson.parentLesson.name}</h3>
-                                {getLessonMultimedia(lesson.parentLesson)}
+                                <h3>{lesson?.name}</h3>
+                                {getLessonMultimedia(lesson)}
                             </CourseDetails>
-                            <Button primary>Start</Button>
+                            <Button primary={lesson.isCompleted}>{lesson.isCompleted ? "Resume" : <LockIcon/>}</Button>
                         </CourseElement>
                     );
                 })}
@@ -147,7 +148,7 @@ function ProgressPage() {
                     enrolledCourses.map((course) =>
 
 
-                        <Grid item xs={6} style={{ margin: "5px" }}>
+                        <Grid item xs={5} style={{ margin: "5px" }}>
                             <Subject>{course.parentCourse.name}</Subject>
                             <Divider />
                             {getCompletedLessons(course)}
