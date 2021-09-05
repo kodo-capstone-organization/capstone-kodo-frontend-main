@@ -34,13 +34,13 @@ function CoursePreviewPage(props: any) {
     }, []);
 
     /** HELPER METHODS */
-    function courseIsEnrolled(course: Course): boolean {
+    function courseIsNotEnrolled(course: Course): boolean {
         
         let userEnrolledCourses = currentUser?.enrolledCourses;
         var userParentCourses = userEnrolledCourses?.map(function(c) {
-            return c.parentCourse;
+            return c.parentCourse.courseId;
         });
-        if (userParentCourses?.includes(course)) {
+        if (userParentCourses?.includes(course.courseId)) {
             return true;
         }
         return false;
@@ -51,10 +51,10 @@ function CoursePreviewPage(props: any) {
             <EnrollCard>
                 <EnrollImage src="/chessplaceholder.png" />
                 <EnrollBtn>
-                    {currentCourse && courseIsEnrolled(currentCourse) &&
+                    {currentCourse && !courseIsNotEnrolled(currentCourse) &&
                     <Button primary={true} big={false} fontBig={false} disabled={false}>Enroll</Button>
                     }
-                    {currentCourse && !courseIsEnrolled(currentCourse) &&
+                    {currentCourse && courseIsNotEnrolled(currentCourse) &&
                     <Button primary={false} big={false} fontBig={false} disabled={true}>Enrolled</Button>
                     }
                 </EnrollBtn>
