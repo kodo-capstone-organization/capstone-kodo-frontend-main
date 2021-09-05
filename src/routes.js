@@ -11,6 +11,9 @@ import { RouteItemsWithSidebar } from "./routeItems";
 import Login from "./pages/Authentication/Login";
 import SignUp from "./pages/Authentication/SignUp";
 
+import CourseOverview from "./pages/CourseViewer";
+
+
 function Routes() {
     return (
         <BrowserRouter>
@@ -22,6 +25,7 @@ function Routes() {
                         </Route>
                         <Route path="/login" component={Login} exact />
                         <Route path="/signup" component={SignUp} exact />
+                        <Route path="/courseoverview/:courseId" component={CourseOverview} exact />
                         {
                             RouteItemsWithSidebar.map(item => {
                                 return (

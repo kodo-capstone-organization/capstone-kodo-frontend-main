@@ -13,9 +13,6 @@ import Chip from "@material-ui/core/Chip";
 import FaceIcon from "@material-ui/icons/Face";
 import DoneIcon from "@material-ui/icons/Done";
 
-function CoursePreviewPage(props: any) {
-  const courseId = props.match.params.courseId;
-
 function CoursePreviewPage(props: any) {
     const courseId = props.match.params.courseId;
     const [currentUser, setUser] = useState<Account>();

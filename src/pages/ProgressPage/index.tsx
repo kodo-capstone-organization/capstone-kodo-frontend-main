@@ -106,7 +106,7 @@ function ProgressPage() {
                 <h3>{course.title}</h3>
                 <TutorName>{course.tutor}</TutorName>
             </CourseDetails>
-            <Button >View</Button>
+            <Button to={`/courseoverview/${course.id}`}>View</Button>
         </CourseElement>
     );
 
