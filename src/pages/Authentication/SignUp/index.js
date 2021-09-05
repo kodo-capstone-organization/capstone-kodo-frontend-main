@@ -10,13 +10,6 @@ import { createNewAccount } from '../../../apis/Account/AccountApis';
 import { getAllAccounts } from '../../../apis/Account/AccountApis';
 import { useHistory } from 'react-router';
 
-
-// function SignUp({ isOpen, props }) {
-
-// interface Fields {
-//     username: String;
-// }
-
 function SignUp() {
 
     // const [auth, setAuth] = useState(true);
@@ -123,9 +116,9 @@ function SignUp() {
             tagTitles
         }
         createNewAccount(newUserAccount, null).then(res => {
-            console.log(typeof (res))
-            console.log(res)
-            window.sessionStorage.setItem("loggedInAccount", res);
+            window.sessionStorage.setItem("loggedInAccountId", res);
+            window.sessionStorage.setItem("loggedInAccountUsername", fields.username);
+            window.sessionStorage.setItem("loggedInAccountPassword", fields.password);
             history.push('/progresspage');
         }).catch(err => {
             console.log('Sign up failed', err);
