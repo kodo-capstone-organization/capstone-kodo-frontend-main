@@ -3,7 +3,7 @@ import { withRouter } from "react-router";
 import { getCourseByCourseId } from "../../../apis/Course/CourseApis";
 import { Course } from "../../../apis/Entities/Course";
 import { Account } from "../../../apis/Entities/Account";
-import { PreviewContainer, EnrollCard, EnrollImage, EnrollBtn, CourseTags, TagChip, CourseHeader, CourseProviderName, CourseDescription } from "./CoursePreviewElements"
+import { PreviewContainer, EnrollCard, EnrollImage, EnrollBtn, CourseTags, TagChip, CourseHeader, CourseProviderName, CourseDescription, CoursePrice } from "./CoursePreviewElements"
 import { Button } from "../../../values/ButtonElements";
 import { getMyAccount } from "../../../apis/Account/AccountApis";
 
@@ -70,6 +70,8 @@ function CoursePreviewPage(props: any) {
             <CourseHeader>Description</CourseHeader>  
             <CourseDescription>{currentCourse?.description}</CourseDescription>
             <CourseHeader>Syllabus and Schedule</CourseHeader>
+            <CourseHeader>Price</CourseHeader>
+            <CoursePrice>{currentCourse?.price}</CoursePrice>
         </PreviewContainer>   
     )
 }
