@@ -92,7 +92,7 @@ function BrowseCourse() {
         onChange={(chips) => handleChipChange(chips)}
         />
       </form>
-      <Title>Suggested For You</Title>
+      <Title>Courses</Title>
       <CourseWrapper>
         {courses?.filter((val) => {
           if (searchTerm == "" && tags.length == 0) {
@@ -128,6 +128,7 @@ function BrowseCourse() {
           );
         })}
       </CourseWrapper>
+      <Title>Suggested For You [To Do]</Title>
     </BrowseContainer>
     </>
   );
