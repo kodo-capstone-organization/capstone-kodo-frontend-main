@@ -17,7 +17,6 @@ function CourseOverview(props: any) {
   useEffect(() => {
     getCourseByCourseId(courseId).then(receivedCourse => {
       setCourse(receivedCourse);
-      console.log(receivedCourse.name);
     });
   }, []);
 
@@ -27,14 +26,33 @@ function CourseOverview(props: any) {
     });
   }, []);
 
-  const allLessons = currentCourse?.lessons;
-  console.log(allLessons);
+  function courseIsEnrolled(course: Course): boolean {
+        
+    let userEnrolledCourses = currentUser?.enrolledCourses;
+    var userParentCourses = userEnrolledCourses?.map(function(c) {
+        return c.parentCourse.courseId;
+    });
+    if (userParentCourses?.includes(course.courseId)) {
+        return true;
+    }
+    return false;
+  }
+
+
 
   return (
+    <>
     <div>
+      <div>
+      {currentCourse && !courseIsEnrolled(currentCourse) &&
+      <h1>You are not enrolled in this course.</h1>
+      }
+      </div>
+      {currentCourse && courseIsEnrolled(currentCourse) && 
         <Sidebar course={currentCourse}/>
-        <h1>Course overview of {currentCourse?.name}</h1>
+      }
     </div>
+    </>
   );
 }
 
