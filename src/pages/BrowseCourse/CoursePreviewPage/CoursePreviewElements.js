@@ -64,4 +64,10 @@ export const CourseDescription = styled.div`
     color: ${colours.GRAY1};
     margin-bottom: 40px;
 `
+export const CoursePrice = styled.div`
+    font-size: ${fontSizes.HEADER};
+    color: ${colours.GRAY3};
+    font-weight: bold;
+    margin-bottom: 40px;
+`
 

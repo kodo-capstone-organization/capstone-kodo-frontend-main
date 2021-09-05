@@ -7,12 +7,11 @@ import { PreviewContainer, EnrollCard, EnrollImage, EnrollBtn, CourseTags, TagCh
 import { Button } from "../../../values/ButtonElements";
 import { getMyAccount } from "../../../apis/Account/AccountApis";
 
-import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
-import Avatar from '@material-ui/core/Avatar';
-import Chip from '@material-ui/core/Chip';
-import FaceIcon from '@material-ui/icons/Face';
-import DoneIcon from '@material-ui/icons/Done';
-
+import { createStyles, Theme, makeStyles } from "@material-ui/core/styles";
+import Avatar from "@material-ui/core/Avatar";
+import Chip from "@material-ui/core/Chip";
+import FaceIcon from "@material-ui/icons/Face";
+import DoneIcon from "@material-ui/icons/Done";
 
 function CoursePreviewPage(props: any) {
     const courseId = props.match.params.courseId;
@@ -35,13 +34,13 @@ function CoursePreviewPage(props: any) {
     }, []);
 
     /** HELPER METHODS */
-    function courseIsEnrolled(course: Course): boolean {
+    function courseIsNotEnrolled(course: Course): boolean {
         
         let userEnrolledCourses = currentUser?.enrolledCourses;
         var userParentCourses = userEnrolledCourses?.map(function(c) {
-            return c.parentCourse;
+            return c.parentCourse.courseId;
         });
-        if (userParentCourses?.includes(course)) {
+        if (userParentCourses?.includes(course.courseId)) {
             return true;
         }
         return false;
@@ -52,10 +51,10 @@ function CoursePreviewPage(props: any) {
             <EnrollCard>
                 <EnrollImage src="/chessplaceholder.png" />
                 <EnrollBtn>
-                    {currentCourse && courseIsEnrolled(currentCourse) &&
+                    {currentCourse && !courseIsNotEnrolled(currentCourse) &&
                     <Button primary={true} big={false} fontBig={false} disabled={false}>Enroll</Button>
                     }
-                    {currentCourse && !courseIsEnrolled(currentCourse) &&
+                    {currentCourse && courseIsNotEnrolled(currentCourse) &&
                     <Button primary={false} big={false} fontBig={false} disabled={true}>Enrolled</Button>
                     }
                 </EnrollBtn>
@@ -75,5 +74,5 @@ function CoursePreviewPage(props: any) {
     )
 }
 
-const CoursePreviewPageWithRouter = withRouter(CoursePreviewPage);
-export default CoursePreviewPageWithRouter
+const CoursePreviewPageWithRouter = withRouter(CoursePreviewPage);
+export default CoursePreviewPageWithRouter;
