@@ -26,6 +26,7 @@ function CourseOverview(props: any) {
     });
   }, []);
 
+  //if current logged in user is enrolled in this course, returns true
   function courseIsEnrolled(course: Course): boolean {
         
     let userEnrolledCourses = currentUser?.enrolledCourses;
@@ -34,6 +35,15 @@ function CourseOverview(props: any) {
     });
     if (userParentCourses?.includes(course.courseId)) {
         return true;
+    }
+    return false;
+  }
+
+  //if current user is this course's tutor this function, returns true
+  function isCourseTutor(course: Course): boolean {
+        
+    if(course.tutor.accountId == currentUser?.accountId) {
+      return true;
     }
     return false;
   }
