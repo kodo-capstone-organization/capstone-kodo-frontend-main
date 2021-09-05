@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { colours } from "./Colours";
 import { Link as LinkR } from "react-router-dom";
-import {fontSizes} from "./FontSizes";
+import { fontSizes } from "./FontSizes";
 
 export const Button = styled(LinkR)`
   border-radius: 10px;
@@ -10,7 +10,8 @@ export const Button = styled(LinkR)`
   padding: ${({ big }) => (big ? "14px 48px" : "8px 30px")};
   color: ${({ primary }) => (primary ? colours.WHITE : colours.GRAY2)};
   text-decoration: none;
-  font-size: ${({ fontBig }) => (fontBig ? fontSizes.CONTENT : fontSizes.SUBTEXT)};
+  font-size: ${({ fontBig }) =>
+    fontBig ? fontSizes.CONTENT : fontSizes.SUBTEXT};
   font-weight: bold;
   outline: none;
   border: none;
@@ -25,6 +26,6 @@ export const Button = styled(LinkR)`
   &:hover {
     transition: all 0.2s ease-in-out;
     background: ${({ primary }) => (primary ? colours.BLUE2 : colours.GRAY6)};
-    color: ${({ primary }) => (primary ? colours.WHITE : colours.GRAY1 )};
+    color: ${({ primary }) => (primary ? colours.WHITE : colours.GRAY1)};
   }
 `;
