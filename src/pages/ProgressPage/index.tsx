@@ -67,7 +67,7 @@ function ProgressPage() {
 
     const getCourseLessons = (course: EnrolledCourse) => {
         // list of all completed Lesson parent Id
-        var listOfCompletedLessonsId: number[] = course.completedLessons.map(x => x.parentLesson.lessonId);
+        var listOfCompletedLessonsId: number[] = course.enrolledLessons.map(x => x.parentLesson.lessonId);
         // list of all lessons
         var allLessons: Lesson[] = course.parentCourse.lessons;
         // list to populate html

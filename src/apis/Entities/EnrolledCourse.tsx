@@ -1,11 +1,11 @@
 import { Course } from "./Course";
 import {Lesson} from "./Lesson";
-import {CompletedLesson} from "./CompletedLesson";
+import {EnrolledLesson} from "./EnrolledLesson";
 
 
 export interface EnrolledCourse {
     enrolledCourseId: number
     courseRating: number,
     parentCourse: Course
-    completedLessons: CompletedLesson[] // Todo
+    enrolledLessons: EnrolledLesson[] // Todo
 }
