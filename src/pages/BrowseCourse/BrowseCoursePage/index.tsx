@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import { Link as RouterLink } from 'react-router-dom'
 import { Course } from "../../../apis/Entities/Course";
 import { getAllCourses } from "../../../apis/Course/CourseApis";
+
 import { colours } from "../../../values/Colours";
-import TagsInput from "./TagsInput";
 
 import {
   BrowseContainer,
@@ -61,16 +61,17 @@ function BrowseCourse() {
   }
   console.log("tags", tags);
 
+  const handleSearchTerm = (term: any) => {
+    setSearchTerm(term);
+
+  }
+
   //Return an array of Courses that match the tags entered by user
-  const returnTagMatch = (val: Course, tags: string[]) => {
-      /** for tag in courseTags, if tags.include(tag.title) return val*/
-      let courseTags = val.courseTags;
-      courseTags.forEach(function(tag) {
-        if (tags.includes(tag.title)) {
-          console.log("True")
-          return val;
-        } 
-      });
+  function returnTagMatch(val: Course): boolean {
+      let courseAllTags = val.courseTags;
+      var result = courseAllTags.map(function(a) {return a.title;});
+      console.log(tags.every(t => result.includes(t)))
+      return tags.every(t => result.includes(t));
   }
 
   /** 
@@ -85,21 +86,20 @@ function BrowseCourse() {
     <>
     <BrowseContainer>
       <form className={classes.root} noValidate autoComplete="off">
-        <TextField id="outlined-basic" label="Search" variant="outlined" onChange={event => {setSearchTerm(event.target.value)}}/>
-        <p>or</p>
+        <TextField id="outlined-basic" label="Search By Name" variant="outlined" onChange={event => {setSearchTerm(event.target.value)}}/>
         <ChipInput 
-        label="Add Tags"
+        label="Search By Tags"
         onChange={(chips) => handleChipChange(chips)}
         />
       </form>
       <Title>Suggested For You</Title>
       <CourseWrapper>
         {courses?.filter((val) => {
-          if (searchTerm == "" && tags?.length == 0) {
+          if (searchTerm == "" && tags.length == 0) {
             return val;
-          } else if (tags.length > 0) {
-            returnTagMatch(val, tags);
-          } else if (val.name.toLowerCase().includes(searchTerm.toLowerCase())) {
+          } else if (tags.length > 0 && returnTagMatch(val)){
+            return val;
+          } else if (searchTerm !== "" && val.name.toLowerCase().includes(searchTerm.toLowerCase())) {
             return val;
           } 
         }).map(course => {
