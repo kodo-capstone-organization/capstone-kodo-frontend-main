@@ -6,6 +6,7 @@ import { Account } from "../../apis/Entities/Account";
 import { Breadcrumbs, Link } from '@material-ui/core';
 import Profile from './components/Profile';
 import ProfileSettings from './components/ProfileSettings';
+import CourseEarnings from './components/CourseEarnings';
 
 function MyProfilePage() {
 
@@ -46,7 +47,8 @@ function MyProfilePage() {
 
             { /* Conditional Rendering of Subpage */}
             { isIndexPage && myAccount && <Profile account={myAccount} history={history}/> }
-            { !isIndexPage && <ProfileSettings /> }
+            { !isIndexPage && history.location.pathname.includes("settings") && <ProfileSettings account={myAccount} history={history} /> }
+            { !isIndexPage && !history.location.pathname.includes("settings") && <CourseEarnings /> }
 
         </ProfileContainer>
     )

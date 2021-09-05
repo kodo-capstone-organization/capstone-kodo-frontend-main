@@ -1,6 +1,8 @@
 import { Account } from "./Account";
 import { EnrolledCourse } from "./EnrolledCourse";
 import { Tag } from "./Tag";
+import { Lesson } from "./Lesson";
+
 
 export interface Course {
     courseId: number
@@ -10,9 +12,8 @@ export interface Course {
     bannerUrl: string
     tutor: Account
     enrollment: EnrolledCourse[]
-    // lessons: Lesson[] // TODO
+    lessons: Lesson[]
     courseTags: Tag[]
-    // forumCategories: ForumCategory[] // TODO
 }
 
 // When Frontend is creating a new course

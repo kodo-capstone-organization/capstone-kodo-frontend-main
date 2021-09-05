@@ -25,7 +25,9 @@ function Routes() {
                         {
                             RouteItemsWithSidebar.map(item => {
                                 return (
-                                    window.sessionStorage.getItem("loggedInAccount") ? <Route key={item.path} path={item.path} component={item.component} exact /> : <Redirect to="/" />
+                                    window.sessionStorage.getItem("loggedInAccountId") ?
+                                        <Route key={item.path} path={item.path} component={item.component} exact />
+                                        : <Redirect to="/" />
 
                                 );
                             })

@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import {Avatar, Card, CardHeader, CardContent} from "@material-ui/core";
+import {Avatar, Card, CardHeader, CardContent, CardActions} from "@material-ui/core";
 import { fontSizes } from "../../values/FontSizes";
 import { colours } from "../../values/Colours";
 
@@ -13,6 +13,11 @@ export const ProfileBreadcrumbItems = [
         name: "Settings",
         subpath: "/settings",
         fullpath: "/profile/settings"
+    },
+    {
+        name: "Course Earnings",
+        subpath: "/earnings",
+        fullpath: "/profile/earnings"
     }
 ]
 
@@ -59,6 +64,11 @@ export const ProfileCardContent = styled(CardContent)`
     color: ${colours.GRAY2};
     align-items: center;
     padding: 2rem !important;
+    padding: ${({ removePadTop }) => (removePadTop ? "0 2rem 2rem 2rem !important" : "2rem !important")};
+`;
+
+export const ProfileCardActions = styled(CardActions)`
+    padding: 1rem 2rem !important;
 `;
 
 export const ProfileAvatar = styled(Avatar)`
@@ -78,7 +88,13 @@ export const ProfileName = styled.div`
     font-weight: bold;
 `
 
-export const ProfileEmail = styled.div`
+export const ProfileContentText = styled.div`
+    font-size: ${fontSizes.CONTENT};
+    color: ${colours.GRAY3};
+`;
+
+
+export const ProfileSubText = styled.div`
     font-size: ${fontSizes.SUBTEXT};
     color: ${colours.GRAY3};
 `;
@@ -88,4 +104,28 @@ export const ProfileUsername = styled.div`
     font-size: ${fontSizes.SUBTEXT};
     font-style: italic;
     color: ${colours.GRAY3};
+`;
+
+export const ProfileSettingField = styled.div`
+    display: flex;
+    flex-direction: row;
+    background-color: ${colours.WHITE};
+    color: ${colours.GRAY2};
+    align-items: center;
+    padding: 2rem !important;
+`;
+
+export const BlankStateContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: center; 
+    text-align: center; 
+    align-items: center;
+    width: 100%;
+    color: ${colours.GRAY4};
+    
+    > * {
+        margin: 0 0 1rem 0;
+    }
+    
 `;

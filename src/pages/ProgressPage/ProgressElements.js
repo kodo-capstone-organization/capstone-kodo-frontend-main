@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import { colours } from "../../values/Colours";
-import Chip from '@material-ui/core/Chip';
 import { fontSizes } from "../../values/FontSizes";
 import { Link as LinkR } from "react-router-dom";
 
@@ -19,6 +18,12 @@ export const Subject = styled.h1`
 
 export const TutorName = styled.h3`
   font-size: ${fontSizes.SUBTEXT};
+  color: ${props => props.primary ? colours.BLUE1 : colours.GRAY3};
+  font-family: "Roboto", sans-serif;
+`;
+
+export const MultiMediaText = styled.h3`
+  font-size: 10px;
   color: ${props => props.primary ? colours.BLUE1 : colours.GRAY3};
   font-family: "Roboto", sans-serif;
 `;
@@ -53,6 +58,7 @@ export const Button = styled(LinkR)`
   height: 20px;
   width: 100px;
   margin: auto 10px auto auto;
+
 
   &:hover {
     transition: all 0.2s ease-in-out;
