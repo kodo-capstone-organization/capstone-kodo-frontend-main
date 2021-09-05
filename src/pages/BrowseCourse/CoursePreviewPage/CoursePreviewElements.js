@@ -71,3 +71,32 @@ export const CoursePrice = styled.div`
     margin-bottom: 40px;
 `
 
+export const SyllabusCard = styled.div`
+    height: auto;
+    width: auto;
+    border-radius: 20px;
+    margin-bottom: 40px;
+    background: ${colours.GRAY7}
+`;
+
+export const SyllabusTable = styled.table`
+    border-collapse: collapse;
+    color: ${colours.GRAY2};
+    width: 100%;
+`
+
+export const SyllabusTableData = styled.td`
+    text-align: left;
+    padding: 8px;
+    text-align: center;
+    //border: 1px solid #dddddd;
+    border-radius: 20px;
+`
+export const SyllabusTableHeader = styled.th`
+    text-align: left;
+    padding: 8px;
+    text-align: center;
+    //border: 1px solid #dddddd;
+`
+
+
