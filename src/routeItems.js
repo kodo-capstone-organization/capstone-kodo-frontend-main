@@ -1,5 +1,5 @@
 import BrowseCoursePage from "./pages/BrowseCourse/BrowseCoursePage";
-import CoursePreviewPage from "./pages/BrowseCourse/CoursePreviewPage";
+import CoursePreviewPageWithRouter from "./pages/BrowseCourse/CoursePreviewPage";
 import ProgressPage from "./pages/ProgressPage";
 import MyProfilePage from "./pages/MyProfilePage";
 import SessionPage from "./pages/Sessions/SessionPage";
@@ -13,7 +13,7 @@ export const RouteItemsWithSidebar = [
     {
         path: "/browsecourse/preview/:courseId",
         isDynamic: true, // dynamic because of :courseId
-        component: CoursePreviewPage
+        component: CoursePreviewPageWithRouter
     },
     {
         path: "/progresspage",

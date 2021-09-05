@@ -31,9 +31,7 @@ function TopMenu(props) {
   };
 
   const handleLogOut = () => {
-    window.sessionStorage.removeItem("loggedInAccountId");
-    window.sessionStorage.removeItem("loggedInAccountUsername");
-    window.sessionStorage.removeItem("loggedInAccountPassword");
+    window.sessionStorage.removeItem("loggedInAccount");
   };
 
   const handleClick = () => {

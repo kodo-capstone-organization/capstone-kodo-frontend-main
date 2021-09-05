@@ -1,39 +1,49 @@
-import React, { useEffect, useState } from 'react'
-import { withRouter } from "react-router";
-import { getCourseByCourseId } from "../../../apis/Course/CourseApis";
-import { Course } from "../../../apis/Entities/Course";
+import React, { useEffect, useState } from 'react'
+import { withRouter } from "react-router";
+import { getCourseByCourseId } from "../../../apis/Course/CourseApis";
+import { Course } from "../../../apis/Entities/Course";
+import { PreviewContainer, EnrollCard, EnrollImage, EnrollBtn, CourseTags, TagChip, CourseHeader, CourseProviderName, CourseDescription } from "./CoursePreviewElements"
+import { Button } from "../../../values/ButtonElements";
 
-function CoursePreviewPage(props: any) {
+import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
+import Avatar from '@material-ui/core/Avatar';
+import Chip from '@material-ui/core/Chip';
+import FaceIcon from '@material-ui/icons/Face';
+import DoneIcon from '@material-ui/icons/Done';
 
-    const courseId = props.match.params.courseId;
 
-    const [currentCourse, setCourse] = useState<Course>();
+function CoursePreviewPage(props: any) {
+    const courseId = props.match.params.courseId;
 
-    useEffect(() => {
-        getCourseByCourseId(courseId).then(receivedCourse => {
-            setCourse(receivedCourse)
-        })
-    }, [courseId])
+    const [currentCourse, setCourse] = useState<Course>();
 
-    console.log(currentCourse)
+    useEffect(() => {
+        getCourseByCourseId(courseId).then(receivedCourse => {
+            setCourse(receivedCourse);
+            console.log(receivedCourse.name);
+        })
+    }, [])
 
-    return (
-        <div
-			style={{
-				display: "flex",
-				justifyContent: "center",
-				alignItems: "center",
-                height: "700px",
-                marginLeft: "220px",
-                paddingLeft: "380px",
-                color: "#000000",
-                background: "white",
-			}}
-		>
-			<h1>This is course preview page</h1>
-		</div>
-    )
+    return (
+        <PreviewContainer>
+            <EnrollCard>
+                <EnrollImage src="/chessplaceholder.png" />
+                <EnrollBtn><Button primary={true} big={false} fontBig={false}>Enroll</Button></EnrollBtn>
+            </EnrollCard>
+            <CourseTags>
+                {currentCourse?.courseTags.map(tag => (
+                    <TagChip label={tag.title} />
+                ))}
+
+            </CourseTags>
+            <CourseHeader>{currentCourse?.name}</CourseHeader>
+            <CourseProviderName>{currentCourse?.tutor.name}</CourseProviderName>  
+            <CourseHeader>Description</CourseHeader>  
+            <CourseDescription>{currentCourse?.description}</CourseDescription>
+            <CourseHeader>Syllabus and Schedule</CourseHeader>
+        </PreviewContainer>   
+    )
 }
 
-const CoursePreviewPageWithRouter = withRouter(CoursePreviewPage);
-export default CoursePreviewPageWithRouter
+const CoursePreviewPageWithRouter = withRouter(CoursePreviewPage);
+export default CoursePreviewPageWithRouter
