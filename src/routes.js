@@ -25,7 +25,7 @@ function Routes() {
                         </Route>
                         <Route path="/login" component={Login} exact />
                         <Route path="/signup" component={SignUp} exact />
-                        <Route path="/courseoverview/:courseId" component={CourseOverview} exact />
+                        <Route path="/overview/:courseId" component={CourseOverview} exact />
                         {
                             RouteItemsWithSidebar.map(item => {
                                 return (

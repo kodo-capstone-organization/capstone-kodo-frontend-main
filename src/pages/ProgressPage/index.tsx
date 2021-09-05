@@ -99,15 +99,17 @@ function ProgressPage() {
         )
     }
 
-    const completedCourseItems = completedCourses.map((course) =>
-        <CourseElement>
-            <Avatar style={{ margin: "auto 10px" }} />
-            <CourseDetails>
-                <h3>{course.title}</h3>
-                <TutorName>{course.tutor}</TutorName>
-            </CourseDetails>
-            <Button to={`/courseoverview/${course.id}`}>View</Button>
-        </CourseElement>
+    const completedCourseItems = enrolledCourses.map((enrolledCourse) =>
+        { enrolledCourse.dateTimeOfCompletion !== null &&
+            <CourseElement>
+                <Avatar style={{ margin: "auto 10px" }} />
+                <CourseDetails>
+                    <h3>{enrolledCourse.parentCourse.name}</h3>
+                    {/*<TutorName>{course.tutor}</TutorName>*/}
+                </CourseDetails>
+                <Button to={`/overview/${enrolledCourse.parentCourse.courseId}`}>View</Button>
+            </CourseElement>
+        }
     );
 
     return (

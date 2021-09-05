@@ -4,7 +4,8 @@ import {EnrolledLesson} from "./EnrolledLesson";
 
 
 export interface EnrolledCourse {
-    enrolledCourseId: number
+    enrolledCourseId: number,
+    dateTimeOfCompletion: Date,
     courseRating: number,
     parentCourse: Course
     enrolledLessons: EnrolledLesson[] // Todo
