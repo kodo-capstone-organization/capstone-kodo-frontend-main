@@ -74,7 +74,9 @@ function LessonPlan() {
                             </Button>
                         </Grid>
                         <Grid item xs={9}>
-                            <ChipInput fullWidth label="Related Files" value={lesson.relatedFiles.map((file) => file.name)} onDelete={(chip) => deleteFile(lesson.lessonId, chip)}/>
+                            {/* TODO: Fix
+                                <ChipInput fullWidth label="Related Files" value={lesson.relatedFiles.map((file) => file.name)} onDelete={(chip) => deleteFile(lesson.lessonId, chip)}/>
+                            */}
                         </Grid>
                         <Grid item xs={3}>
                             <Button
@@ -86,7 +88,7 @@ function LessonPlan() {
                                     type="file"
                                     hidden
                                     onChange={e => {
-                                        if (e.target.files) updateFiles(lesson.id, e.target.files)
+                                        if (e.target.files) updateFiles(lesson.lessonId, e.target.files)
                                     }}
                                 />
                             </Button>

@@ -6,12 +6,17 @@ import LessonPlan from "./components/LessonPlan";
 import ChipInput from 'material-ui-chip-input';
 
 
-function CourseBuilderPage() {
+function CourseBuilderPage(props: any) {
+
+    // TODO: Get course ID from url path
+
     const [courseName, setCourseName] = useState<string>("");
     const [courseDescription, setCourseDescription] = useState<string>("");
     const [fileName, setFileName] = useState<string>("");
     const [file, setFile] = useState<any>();
     const [tags, setTags] = useState<string[]>([]);
+    
+    // TODO: Fetch course using retrieved course ID
 
     const handleChipChange = (chips: string[]) => {
         setTags(chips)
