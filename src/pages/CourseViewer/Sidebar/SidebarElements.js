@@ -10,7 +10,7 @@ export const SidebarContainer = styled.div`
 export const SidebarWrapper = styled.div`
   width: 240px;
   height: 100%;
-  background: #f2f2f2;
+  background: ${colours.GRAY7};
   position: relative;
   margin-left: -10.4rem;
   padding-left: 2rem;
