@@ -1,11 +1,11 @@
 import { httpClient } from '../HttpClient/HttpClient';
 import { IHttpClientRequestParameters } from '../HttpClient/IHttpClientRequestParameters';
-import { StripeAccountResponse, StripeSessionResponse, StripePaymentReq } from './../Entities/Stripe';
+import { StripeSessionResponse, StripePaymentReq } from './../Entities/Stripe';
 import { transformToBlob } from './../../utils/BlobCreator'
 
 const FormData = require('form-data');
 
-export async function createStripeAccount(accountId: number): Promise<StripeAccountResponse> {
+export async function createStripeAccount(accountId: number): Promise<string> {
     const formData = new FormData();
     formData.append('accountId', accountId);
 
@@ -14,7 +14,7 @@ export async function createStripeAccount(accountId: number): Promise<StripeAcco
         payload: formData
     }
 
-    return httpClient.post<FormData, StripeAccountResponse>(postParameters);
+    return httpClient.post<FormData, string>(postParameters);
 }
 
 export async function createStripeSession(stripePaymentReq: StripePaymentReq): Promise<StripeSessionResponse> {

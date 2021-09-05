@@ -15,7 +15,6 @@ function MyProfilePage() {
     const history = useHistory();
 
     // Runs on page load only
-    // Runs on page load only
     useEffect(() => {
         const accountId = window.sessionStorage.getItem("loggedInAccountId");
 
