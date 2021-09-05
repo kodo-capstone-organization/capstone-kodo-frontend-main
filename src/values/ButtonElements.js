@@ -14,7 +14,8 @@ export const Button = styled(LinkR)`
   font-weight: bold;
   outline: none;
   border: none;
-  cursor: pointer;
+  cursor: ${({ disabled }) => (disabled ? "default" : "pointer")};
+  pointer-events: ${({ disabled }) => (disabled ? "none" : "auto")};
   display: flex;
   justify-content: center;
   align-items: center;

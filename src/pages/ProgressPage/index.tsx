@@ -54,7 +54,6 @@ function ProgressPage() {
 
     const getLessonMultimedia = (parentLesson: Lesson) => {
         var contents: Content[] = parentLesson.contents;
-        console.log(contents.toLocaleString)
         return (
             <div style={{ display: "flex" }}>
                 {contents.map(function (content, contentId) {

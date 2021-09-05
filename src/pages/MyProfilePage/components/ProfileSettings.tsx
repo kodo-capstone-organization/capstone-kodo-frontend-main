@@ -6,7 +6,7 @@ import Input from '@material-ui/core/Input';
 import ChipInput from 'material-ui-chip-input'
 import {
     ProfileCard, ProfileSettingField, ProfileCardContent,
-    ProfileAvatar, ProfileInitials, ProfileDetails, ProfileName, ProfileEmail, ProfileUsername
+    ProfileAvatar, ProfileInitials, ProfileDetails, ProfileName, ProfileSubText, ProfileUsername
 } from "../ProfileElements";
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
@@ -99,9 +99,9 @@ function ProfileSettings(props: any) {
                         <ProfileName>
                             {myAccount?.name}
                         </ProfileName>
-                        <ProfileEmail>
+                        <ProfileSubText>
                             {myAccount?.email}
-                        </ProfileEmail>
+                        </ProfileSubText>
                         <ProfileUsername>
                             @{myAccount?.username}
                         </ProfileUsername>
