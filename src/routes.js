@@ -18,7 +18,7 @@ function Routes() {
                 <Layout {...props}>
                     <Switch>
                         <Route path="/" component={HomePage} exact >
-                            {window.sessionStorage.getItem("loggedInAccount") ? <Redirect to="/progresspage" /> : <HomePage />}
+                            {window.sessionStorage.getItem("loggedInAccountId") ? <Redirect to="/progresspage" /> : <HomePage />}
                         </Route>
                         <Route path="/login" component={Login} exact />
                         <Route path="/signup" component={SignUp} exact />
