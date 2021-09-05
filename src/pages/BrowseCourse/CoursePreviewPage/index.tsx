@@ -1,20 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { withRouter } from "react-router";
-import { getCourseByCourseId } from "../../../apis/Course/CourseApis";
-import { Course } from "../../../apis/Entities/Course";
-import {
-  PreviewContainer,
-  EnrollCard,
-  EnrollImage,
-  EnrollBtn,
-  CourseTags,
-  TagChip,
-  CourseHeader,
-  CourseProviderName,
-  CourseDescription,
-  CoursePrice
-} from "./CoursePreviewElements";
+import React, { useEffect, useState } from 'react'
+import { withRouter } from "react-router";
+import { getCourseByCourseId } from "../../../apis/Course/CourseApis";
+import { Course } from "../../../apis/Entities/Course";
+import { Account } from "../../../apis/Entities/Account";
+import { PreviewContainer, EnrollCard, EnrollImage, EnrollBtn, CourseTags, TagChip, CourseHeader, CourseProviderName, CourseDescription } from "./CoursePreviewElements"
 import { Button } from "../../../values/ButtonElements";
+import { getMyAccount } from "../../../apis/Account/AccountApis";
 
 import { createStyles, Theme, makeStyles } from "@material-ui/core/styles";
 import Avatar from "@material-ui/core/Avatar";
@@ -25,39 +16,65 @@ import DoneIcon from "@material-ui/icons/Done";
 function CoursePreviewPage(props: any) {
   const courseId = props.match.params.courseId;
 
-  const [currentCourse, setCourse] = useState<Course>();
+function CoursePreviewPage(props: any) {
+    const courseId = props.match.params.courseId;
+    const [currentUser, setUser] = useState<Account>();
+    const [currentCourse, setCourse] = useState<Course>();
+    const accountId = JSON.parse(window.sessionStorage.getItem('loggedInAccountId') || '{}');
 
-  useEffect(() => {
-    getCourseByCourseId(courseId).then(receivedCourse => {
-      setCourse(receivedCourse);
-      console.log(receivedCourse.name);
-    });
-  }, []);
 
-  return (
-    <PreviewContainer>
-      <EnrollCard>
-        <EnrollImage src="/chessplaceholder.png" />
-        <EnrollBtn>
-          <Button primary={true} big={false} fontBig={false}>
-            Enroll
-          </Button>
-        </EnrollBtn>
-      </EnrollCard>
-      <CourseTags>
-        {currentCourse?.courseTags.map(tag => (
-          <TagChip label={tag.title} />
-        ))}
-      </CourseTags>
-      <CourseHeader>{currentCourse?.name}</CourseHeader>
-      <CourseProviderName>{currentCourse?.tutor.name}</CourseProviderName>
-      <CourseHeader>Description</CourseHeader>
-      <CourseDescription>{currentCourse?.description}</CourseDescription>
-      <CourseHeader>Syllabus and Schedule</CourseHeader>
-      <CourseHeader>Price</CourseHeader>
-      <CoursePrice>SGD {currentCourse?.price}</CoursePrice>
-    </PreviewContainer>
-  );
+    useEffect(() => {
+        getCourseByCourseId(courseId).then(receivedCourse => {
+            setCourse(receivedCourse);
+            console.log(receivedCourse.name);
+        })
+    }, [])
+
+    useEffect(() => {
+        getMyAccount(accountId).then(receivedAccount => {
+            setUser(receivedAccount)
+        });
+    }, []);
+
+    /** HELPER METHODS */
+    function courseIsEnrolled(course: Course): boolean {
+        
+        let userEnrolledCourses = currentUser?.enrolledCourses;
+        var userParentCourses = userEnrolledCourses?.map(function(c) {
+            return c.parentCourse;
+        });
+        if (userParentCourses?.includes(course)) {
+            return true;
+        }
+        return false;
+      }
+
+    return (
+        <PreviewContainer>
+            <EnrollCard>
+                <EnrollImage src="/chessplaceholder.png" />
+                <EnrollBtn>
+                    {currentCourse && courseIsEnrolled(currentCourse) &&
+                    <Button primary={true} big={false} fontBig={false} disabled={false}>Enroll</Button>
+                    }
+                    {currentCourse && !courseIsEnrolled(currentCourse) &&
+                    <Button primary={false} big={false} fontBig={false} disabled={true}>Enrolled</Button>
+                    }
+                </EnrollBtn>
+            </EnrollCard>
+            <CourseTags>
+                {currentCourse?.courseTags.map(tag => (
+                    <TagChip label={tag.title} />
+                ))}
+
+            </CourseTags>
+            <CourseHeader>{currentCourse?.name}</CourseHeader>
+            <CourseProviderName>{currentCourse?.tutor.name}</CourseProviderName>  
+            <CourseHeader>Description</CourseHeader>  
+            <CourseDescription>{currentCourse?.description}</CourseDescription>
+            <CourseHeader>Syllabus and Schedule</CourseHeader>
+        </PreviewContainer>   
+    )
 }
 
 const CoursePreviewPageWithRouter = withRouter(CoursePreviewPage);
