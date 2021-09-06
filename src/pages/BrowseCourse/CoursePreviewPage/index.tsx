@@ -89,6 +89,10 @@ function CoursePreviewPage(props: any) {
       <CourseDescription>{currentCourse?.description}</CourseDescription>
       <CourseHeader>Syllabus and Schedule</CourseHeader>
       <SyllabusCard>
+        {currentCourse && currentCourse?.lessons.length == 0 &&
+        <CourseDescription>There are no lessons under this course yet 😅</CourseDescription>
+        }
+        {currentCourse && currentCourse?.lessons.length > 0 &&
         <SyllabusTable>
         <tr>
             <SyllabusTableHeader>Number</SyllabusTableHeader>
@@ -107,6 +111,7 @@ function CoursePreviewPage(props: any) {
             );
           })}
         </SyllabusTable>
+        }
     </SyllabusCard>
       <CourseHeader>Price</CourseHeader>
       <CoursePrice>SGD {currentCourse?.price}</CoursePrice>

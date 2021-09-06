@@ -55,7 +55,7 @@ function CourseOverview(props: any) {
     <div>
       <div>
       {currentCourse && !courseIsEnrolled(currentCourse) &&
-      <h1>You are not enrolled in this course.</h1>
+      <h1>You are not enrolled in this course 😡</h1>
       }
       </div>
       {currentCourse && courseIsEnrolled(currentCourse) && 
