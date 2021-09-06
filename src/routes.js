@@ -10,6 +10,7 @@ import Layout from "./components/Layout";
 import { RouteItemsWithSidebar } from "./routeItems";
 import Login from "./pages/Authentication/Login";
 import SignUp from "./pages/Authentication/SignUp";
+import CourseBuilderPage from "./pages/CourseBuilderPage";
 
 import CourseOverview from "./pages/CourseViewer";
 
@@ -25,6 +26,7 @@ function Routes() {
                         </Route>
                         <Route path="/login" component={Login} exact />
                         <Route path="/signup" component={SignUp} exact />
+                        <Route path="/builder/:courseId" component={CourseBuilderPage} exact />
                         <Route path="/overview/:courseId" component={CourseOverview} exact />
                         {
                             RouteItemsWithSidebar.map(item => {
