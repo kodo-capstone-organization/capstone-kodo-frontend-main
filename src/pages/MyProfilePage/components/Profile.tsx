@@ -2,12 +2,14 @@ import React, { useEffect, useReducer, useState } from 'react'
 import { ProfileCard, ProfileCardHeader, ProfileCardContent, ProfileCardActions,
     ProfileAvatar, ProfileInitials, ProfileDetails, ProfileName, ProfileContentText, ProfileSubText, ProfileUsername, BlankStateContainer
 } from "../ProfileElements";
-import {ButtonGroup, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle,
+import {ButtonGroup, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle,
     FormControl, IconButton, ImageList, Input, InputAdornment, InputLabel, TextField, Typography } from "@material-ui/core";
 import SettingsIcon from '@material-ui/icons/Settings';
 import LocalAtmIcon from '@material-ui/icons/LocalAtm';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import PlayCircleFilledWhiteIcon from '@material-ui/icons/PlayCircleFilledWhite';
+import LinkOffIcon from '@material-ui/icons/LinkOff';
+import DoneIcon from '@material-ui/icons/Done';
 import EditIcon from '@material-ui/icons/Edit';
 import { Account } from "../../../apis/Entities/Account";
 import { ImageListItem, ImageListItemBar } from '@material-ui/core';
@@ -17,6 +19,7 @@ import ChipInput from 'material-ui-chip-input';
 import { createNewCourse } from '../../../apis/Course/CourseApis';
 import { Course } from '../../../apis/Entities/Course';
 import Chip from '@material-ui/core/Chip';
+import { createStripeAccount } from '../../../apis/Stripe/StripeApis';
 
 
 const formReducer = (state: any, event: any) => {
@@ -40,8 +43,8 @@ function Profile(props: any) {
 
     const [myAccount, setMyAccount] = useState<Account>({...props.account}); // get from props
     const [isOpen, setIsOpen] = useState<boolean>(false); // create new course dialog
+    const [isStripeDialogOpen, setStripeDialogOpen] = useState<boolean>(false);
     const [courseFormData, setCourseFormData] = useReducer(formReducer, {});
-
 
     /***********************
      * Use Effects         *
@@ -109,10 +112,9 @@ function Profile(props: any) {
         courseFormData.tutorId = myAccount.accountId;
 
         // Call API
-        console.log("on submit")
-        console.log(courseFormData);
         const dummyFile = new File([""], "dummyFile");
         createNewCourse(courseFormData, dummyFile).then((res: Course) => {
+            // Debug
             console.log("Course created successfully" + res.courseId);
 
             // Cleanup
@@ -122,6 +124,19 @@ function Profile(props: any) {
             // Redirect
             props.history.push(`/builder/${res.courseId}`);
         });
+    }
+
+    const invokeStripeAccountCreation = () => {
+        setStripeDialogOpen(true);
+        createStripeAccount(myAccount.accountId).then((resUrl: string) => {
+            let newTab = window.open(resUrl, '_blank');
+            newTab?.focus();
+        })
+    }
+
+    const handleStripeDialogClose = () => {
+        // Do nothing. Dont allow closing.
+        return;
     }
 
     return (
@@ -219,12 +234,30 @@ function Profile(props: any) {
                     title="My Courses"
                     action={
                         <>
-                            <IconButton aria-label="create new course" color="primary" onClick={handleClickOpen}>
-                                <AddCircleOutlineIcon /> &nbsp; New Course
-                            </IconButton>
-                            <IconButton aria-label="earnings" color="primary" onClick={navigateToEarningsPage}>
-                                <LocalAtmIcon /> &nbsp; View Earnings
-                            </IconButton>
+                            {
+                                myAccount?.stripeAccountId === null &&
+                                    <Chip
+                                        variant="outlined"
+                                        size="small"
+                                        label="Wallet Not Linked"
+                                        color="secondary"
+                                        onClick={invokeStripeAccountCreation}
+                                    />
+                            }
+                            {
+                                myAccount?.stripeAccountId !== null &&
+                                    <>
+                                        <Chip variant="outlined" size="small" label="Wallet Linked" style={{ color: "green", border: "1px solid green" }} />
+                                        &nbsp;
+                                        <IconButton aria-label="create new course" color="primary" onClick={handleClickOpen}>
+                                            <AddCircleOutlineIcon /> &nbsp; New Course
+                                        </IconButton>
+                                        <IconButton aria-label="earnings" color="primary" onClick={navigateToEarningsPage}>
+                                            <LocalAtmIcon /> &nbsp; View Earnings
+                                        </IconButton>
+                                    </>
+                            }
+
                         </>
                     }
                 />
@@ -233,8 +266,23 @@ function Profile(props: any) {
                         <BlankStateContainer>
                             <Typography variant="h5">You do not own any courses 🧐</Typography>
                             <br/>
-                            <Typography>Want to spread your knowledge on Kodo? You can create and customise a course of your very own for other Kodo users to enroll in and learn from you! To get started, simply click on 'New Course' just above this.</Typography>
-                            <br/>
+                            {
+                                myAccount?.stripeAccountId === null &&
+                                    <>
+                                        <Typography>Want to spread your knowledge on Kodo? Let's get your account's wallet set up first!</Typography>
+                                        <br/>
+                                        <Button onClick={invokeStripeAccountCreation} style={{width: "10%" }} big>Setup Wallet</Button>
+                                    </>
+                            }
+                            {
+                                myAccount?.stripeAccountId !== null &&
+                                    <>
+                                        <Typography>Your account's wallet is all set! You can now create and customise a course of your very own for other Kodo users to enroll in and learn from you. Hooray!</Typography>
+                                        <br/>
+                                        <Button onClick={handleClickOpen} style={{width: "10%" }} big>Create New Course</Button>
+                                    </>
+                            }
+
                         </BlankStateContainer>
                     }
                     {myAccount?.courses.length > 0 &&
@@ -349,6 +397,17 @@ function Profile(props: any) {
                         Create Course
                     </Button>
                 </DialogActions>
+            </Dialog>
+
+
+            {/* Stripe Buffering Dialog Component */}
+
+            <Dialog fullWidth open={isStripeDialogOpen} onClose={handleStripeDialogClose} aria-labelledby="stripe-dialog">
+                <DialogTitle>Linking To Stripe Account...</DialogTitle>
+                <DialogContent style={{ margin: "auto" }}>
+                    <CircularProgress />
+                    <br/>
+                </DialogContent>
             </Dialog>
         </>
     )
