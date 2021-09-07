@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import {Avatar, Card, CardHeader, CardContent, CardActions} from "@material-ui/core";
+import { TextField, Avatar, Card, CardHeader, CardContent, CardActions } from "@material-ui/core";
 import { fontSizes } from "../../values/FontSizes";
 import { colours } from "../../values/Colours";
 
@@ -106,13 +106,10 @@ export const ProfileUsername = styled.div`
     color: ${colours.GRAY3};
 `;
 
-export const ProfileSettingField = styled.div`
-    display: flex;
-    flex-direction: row;
-    background-color: ${colours.WHITE};
-    color: ${colours.GRAY2};
-    align-items: center;
-    padding: 2rem !important;
+export const ProfileSettingField = styled(TextField)`
+    width: -webkit-fill-available;
+    margin: 20px;
+    
 `;
 
 export const BlankStateContainer = styled.div`

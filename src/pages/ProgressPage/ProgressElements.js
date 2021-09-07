@@ -16,6 +16,14 @@ export const Subject = styled.h1`
   font-family: "Roboto", sans-serif;
 `;
 
+export const EmptyStateText = styled.h1`
+  font-size: ${fontSizes.SUBTEXT};
+  color: ${colours.GRAY4};
+  font-family: "Roboto", sans-serif;
+  text-align: center;
+  padding: 50px;
+`;
+
 export const TutorName = styled.h3`
   font-size: ${fontSizes.SUBTEXT};
   color: ${props => props.primary ? colours.BLUE1 : colours.GRAY3};

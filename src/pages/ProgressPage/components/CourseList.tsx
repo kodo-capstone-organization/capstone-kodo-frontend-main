@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import {
-    MultiMediaText,
     CourseDetails,
     CourseElement,
     TutorName,
     Button,
-    Subject
+    Subject,
+    EmptyStateText
 } from "../ProgressElements";
 import { makeStyles } from '@material-ui/core/styles';
 import Avatar from '@material-ui/core/Avatar';
@@ -43,6 +43,7 @@ function CourseList(props: any) {
     useEffect(() => {
         setMyAccount(props.account)
         setMyCourses(props.courses)
+        console.log(props.courses)
     }, [props])
 
     const openModal = () => {
@@ -98,6 +99,11 @@ function CourseList(props: any) {
                         )
                     }
                 </Grid>
+            }
+            {
+                myCourses?.length === 0 &&
+                <EmptyStateText>No courses, sorry!</EmptyStateText>
+
             }
             <MultimediaModal show={showMultimedia} lesson={selectedLesson} />
         </>

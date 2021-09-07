@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-import TextField from '@material-ui/core/TextField';
-import InputLabel from '@material-ui/core/InputLabel';
-import Input from '@material-ui/core/Input';
 import ChipInput from 'material-ui-chip-input'
 import {
-    ProfileCard, ProfileSettingField, ProfileCardContent,
-    ProfileAvatar, ProfileInitials, ProfileDetails, ProfileName, ProfileSubText, ProfileUsername
+    ProfileCard, ProfileSettingField,
+    ProfileAvatar, ProfileInitials
 } from "../ProfileElements";
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import InputAdornment from '@material-ui/core/InputAdornment';
+import Input from '@material-ui/core/Input';
+import InputLabel from '@material-ui/core/InputLabel';
 import IconButton from '@material-ui/core/IconButton';
 import { Button } from "../../../values/ButtonElements";
 import { Account } from "../../../apis/Entities/Account";
@@ -21,12 +20,12 @@ const useStyles = makeStyles((theme: Theme) =>
         input: {
             display: 'none',
         },
-        root: {
-            '& .MuiTextField-root': {
-                margin: theme.spacing(1),
-                width: '25ch',
-            },
-        },
+        // root: {
+        //     '& .MuiProfileSettingField-root': {
+        //         margin: theme.spacing(2),
+        //         width: '25ch',
+        //     },
+        // },
     }),
 );
 
@@ -36,36 +35,23 @@ function ProfileSettings(props: any) {
     const [myAccount, setMyAccount] = useState<Account>();
     const [showPassword, setShowPassword] = useState<Boolean>(false);
     const [password, setPassword] = useState<String | null>('');
-    const [chips, setChips] = useState<String[]>([]);
+    const [interests, setInterests] = useState<String[]>([]);
     const [name, setName] = useState<String>("");
-    const [fields, setFields] = useState<any>({});
+    const [email, setEmail] = useState<String>("");
+    const [bio, setBio] = useState<String>("");
     const classes = useStyles();
-
-    // type FormInputs = {
-    //     name: string;
-    //     email: string;
-    //     displayPicture: string;
-    //     bio: string;
-    //     password: string;
-    //     interests: Array<string>;
-    // };
 
     useEffect(() => {
         setMyAccount(props.account)
         setPassword(window.sessionStorage.getItem("loggedInAccountPassword"))
-        if(props.account !== undefined){
+        if (props.account !== undefined) {
             setName(props.account.name)
-            setFields(props.account)
+            setEmail(props.account.email)
+            setBio(props.account.bio)
+            setInterests(props.account.interests.map((x: Tag) => x.title))
+
         }
     }, [props.account])
-
-    const handleChipChange = (chip: String[]) => {
-        setChips(chip)
-    }
-
-    const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setName(e.target.value)
-    }
 
     const displayPictureURL = () => {
         return myAccount?.displayPictureUrl ? myAccount?.displayPictureUrl : "";
@@ -77,11 +63,18 @@ function ProfileSettings(props: any) {
             return "";
         }
     }
-
     const handleClickShowPassword = () => {
         setShowPassword(!showPassword)
     };
+    const handleAddChip = (interest: string) => {
+        interests.push(interest)
+        setInterests(interests)
+    };
 
+    const handleDeleteChip = (interest: string, index: number) => {
+        interests.filter(x => x !== interest)
+        setInterests(interests)
+    };
     const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
     };
@@ -91,14 +84,14 @@ function ProfileSettings(props: any) {
             {
                 myAccount !== null &&
                 <ProfileCard id="my-details">
-                    Edit Profile
-                <form className={classes.root}
-                        noValidate autoComplete="off">
-                        <ProfileSettingField>
+                    <form
+                        // className={classes.root}
+                        noValidate autoComplete="off" style={{ display: "flex" }}>
+                        <div style={{ padding: "20px" }}>
                             <ProfileAvatar
                                 alt={myAccount?.username}
                                 src={displayPictureURL()}
-                                style={{ height: "128px", width: "128px" }}
+                                style={{ height: "128px", width: "128px", margin: "auto" }}
                             >
                                 <ProfileInitials>
                                     {avatarInitials()}
@@ -112,16 +105,43 @@ function ProfileSettings(props: any) {
                                 type="file"
                             />
                             <label htmlFor="contained-button-file">
-                                <Button variant="contained" color="primary" component="span">
+                                <Button variant="contained" color="primary" component="span"
+                                    style={{ margin: "10px" }}>
                                     Change Display Picture
                             </Button>
                             </label>
-                        </ProfileSettingField>
-                        <TextField
-                            label="Name"
-                            value={name}
-                            onChange={handleNameChange}
-                        />
+                        </div>
+                        <div style={{ margin: "20px" }}>
+                            <ProfileSettingField label="Name" value={name} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setName(e.target.value)} />
+                            <ProfileSettingField label="Email" value={email} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setEmail(e.target.value)} />
+                            <ProfileSettingField label="Bio" value={bio} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setBio(e.target.value)} />
+                            <InputLabel htmlFor="standard-adornment-password">Password</InputLabel>
+                            <Input
+                                id="standard-adornment-password"
+                                type={showPassword ? 'text' : 'password'}
+                                value={password}
+                                style={{width:"100%"}}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setPassword(e.target.value)}
+                                endAdornment={
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                            aria-label="toggle password visibility"
+                                            onClick={handleClickShowPassword}
+                                            onMouseDown={handleMouseDownPassword}
+                                        >
+                                            {showPassword ? <Visibility /> : <VisibilityOff />}
+                                        </IconButton>
+                                    </InputAdornment>
+                                }
+                            />
+                            <label>Interests</label>
+                            <ChipInput
+                                value={interests}
+                                onAdd={(interest) => handleAddChip(interest)}
+                                onDelete={(interest, index) => handleDeleteChip(interest, index)}
+                            />
+                        </div>
+
                     </form>
                 </ProfileCard>
 
