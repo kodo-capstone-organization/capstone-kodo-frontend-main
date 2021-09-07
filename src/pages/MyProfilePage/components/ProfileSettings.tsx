@@ -21,28 +21,50 @@ const useStyles = makeStyles((theme: Theme) =>
         input: {
             display: 'none',
         },
+        root: {
+            '& .MuiTextField-root': {
+                margin: theme.spacing(1),
+                width: '25ch',
+            },
+        },
     }),
 );
 
+
 function ProfileSettings(props: any) {
 
-    const [myAccount, setMyAccount] = useState<Account>({ ...props.account });
-    const [accountToSubmit, setAccountToSubmit] = useState<Account>(myAccount);
+    const [myAccount, setMyAccount] = useState<Account>();
     const [showPassword, setShowPassword] = useState<Boolean>(false);
     const [password, setPassword] = useState<String | null>('');
     const [chips, setChips] = useState<String[]>([]);
+    const [name, setName] = useState<String>("");
+    const [fields, setFields] = useState<any>({});
     const classes = useStyles();
+
+    // type FormInputs = {
+    //     name: string;
+    //     email: string;
+    //     displayPicture: string;
+    //     bio: string;
+    //     password: string;
+    //     interests: Array<string>;
+    // };
 
     useEffect(() => {
         setMyAccount(props.account)
         setPassword(window.sessionStorage.getItem("loggedInAccountPassword"))
+        if(props.account !== undefined){
+            setName(props.account.name)
+            setFields(props.account)
+        }
     }, [props.account])
 
     const handleChipChange = (chip: String[]) => {
         setChips(chip)
     }
 
-    const handleFieldChange = (field: String, e: React.SyntheticEvent) => {
+    const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setName(e.target.value)
     }
 
     const displayPictureURL = () => {
@@ -66,77 +88,44 @@ function ProfileSettings(props: any) {
 
     return (
         <>
-            <ProfileCard id="my-details">
-                Edit Profile
-                <form
-                    // className={classes.root}
-                    noValidate autoComplete="off">
-                    <ProfileSettingField>
-                        <ProfileAvatar
-                            alt={myAccount?.username}
-                            src={displayPictureURL()}
-                            style={{ height: "128px", width: "128px" }}
-                        >
-                            <ProfileInitials>
-                                {avatarInitials()}
-                            </ProfileInitials>
-
-                        </ProfileAvatar>
-                        <input
-                            accept="image/*"
-                            className={classes.input}
-                            id="contained-button-file"
-                            multiple
-                            type="file"
+            {
+                myAccount !== null &&
+                <ProfileCard id="my-details">
+                    Edit Profile
+                <form className={classes.root}
+                        noValidate autoComplete="off">
+                        <ProfileSettingField>
+                            <ProfileAvatar
+                                alt={myAccount?.username}
+                                src={displayPictureURL()}
+                                style={{ height: "128px", width: "128px" }}
+                            >
+                                <ProfileInitials>
+                                    {avatarInitials()}
+                                </ProfileInitials>
+                            </ProfileAvatar>
+                            <input
+                                accept="image/*"
+                                className={classes.input}
+                                id="contained-button-file"
+                                multiple
+                                type="file"
+                            />
+                            <label htmlFor="contained-button-file">
+                                <Button variant="contained" color="primary" component="span">
+                                    Change Display Picture
+                            </Button>
+                            </label>
+                        </ProfileSettingField>
+                        <TextField
+                            label="Name"
+                            value={name}
+                            onChange={handleNameChange}
                         />
-                        <label htmlFor="contained-button-file">
-                            <Button variant="contained" color="primary" component="span">
-                                Change Display Picture
-                        </Button>
-                        </label>
-                    </ProfileSettingField>
-                    <ProfileDetails>
-                        <ProfileName>
-                            {myAccount?.name}
-                        </ProfileName>
-                        <ProfileSubText>
-                            {myAccount?.email}
-                        </ProfileSubText>
-                        <ProfileUsername>
-                            @{myAccount?.username}
-                        </ProfileUsername>
-                    </ProfileDetails>
-                    <TextField fullWidth label="Name" defaultValue={accountToSubmit?.name} />
-                    <TextField fullWidth label="Username" defaultValue={accountToSubmit?.email} />
-                    <InputLabel htmlFor="standard-adornment-password">Password</InputLabel>
-                    <Input
-                        id="standard-adornment-password"
-                        type={showPassword ? 'text' : 'password'}
-                        value={password}
-                        // onChange={handleChange('password')}
-                        endAdornment={
-                            <InputAdornment position="end">
-                                <IconButton
-                                    aria-label="toggle password visibility"
-                                    onClick={handleClickShowPassword}
-                                    onMouseDown={handleMouseDownPassword}
-                                >
-                                    {showPassword ? <Visibility /> : <VisibilityOff />}
-                                </IconButton>
-                            </InputAdornment>
-                        }
-                    />
-                    <InputLabel htmlFor="chips-input">Tag</InputLabel>
-                    <ChipInput
-                    id="chips-input"
-                    style={{display:"flex"}}
-                        onChange={(chips) => handleChipChange(chips)}
-                        defaultValue={chips}
-                    />
-                    <TextField fullWidth label="Bio" defaultValue={accountToSubmit?.bio} />
+                    </form>
+                </ProfileCard>
 
-                </form>
-            </ProfileCard>
+            }
 
         </>
     )
