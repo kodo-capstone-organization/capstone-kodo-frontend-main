@@ -1,28 +1,63 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useReducer } from "react";
 import { Grid, TextField } from "@material-ui/core";
 import { CourseBuilderCard, CourseBuilderCardHeader, CourseBuilderContainer, CourseBuilderContent } from "./CourseBuilderElements";
 import { Button } from "@material-ui/core";
 import LessonPlan from "./components/LessonPlan";
 import ChipInput from 'material-ui-chip-input';
+import { getCourseByCourseId } from './../../apis/Course/CourseApis';
+import { Tag } from "../../apis/Entities/Tag";
 
+const formReducer = (state: any, event: any) => {
+    return {
+        ...state,
+        [event.name]: event.value
+    }
+}
 
 function CourseBuilderPage(props: any) {
 
-    // TODO: Get course ID from url path
+    const courseId = props.match.params.courseId;
 
-    const [courseName, setCourseName] = useState<string>("");
-    const [courseDescription, setCourseDescription] = useState<string>("");
-    const [fileName, setFileName] = useState<string>("");
-    const [file, setFile] = useState<any>();
-    const [tags, setTags] = useState<string[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
+
+    const [bannerImageFile, setBannerImageFile] = useState<any>();
+    const [courseFormData, setCourseFormData] = useReducer(formReducer, {});
     
-    // TODO: Fetch course using retrieved course ID
+    useEffect(() => {
+        getCourseByCourseId(courseId).then(receivedCourse => {
+            Object.keys(receivedCourse).map((key, index) => {
+                let wrapperEvent = {
+                    target: {
+                        name: key,
+                        value: Object.values(receivedCourse)[index]
+                    }
+                }
+                handleFormDataChange(wrapperEvent)
+            })
+            setLoading(false);   
+            }
+        );
+      }, []);
 
-    const handleChipChange = (chips: string[]) => {
-        setTags(chips)
+    const handleChipInputChange = (newTagTitles: object) => {
+        let wrapperEvent = {
+            target: {
+                name: "courseTags",
+                value: newTagTitles
+            }
+        }
+        return handleFormDataChange(wrapperEvent);
     }
 
-    return (
+    const handleFormDataChange = (event: any) => {
+        console.log(event)
+        setCourseFormData({
+            name: event.target.name,
+            value: event.target.value,
+        });
+    }
+
+    return !loading && (
         <CourseBuilderContainer>
             <CourseBuilderCard id="course-information">
                 <CourseBuilderCardHeader
@@ -31,18 +66,17 @@ function CourseBuilderPage(props: any) {
                 <CourseBuilderContent>
                     <Grid container spacing={3}>
                         <Grid item xs={12}>
-                            <TextField id="standard-basic" fullWidth required label="Name" value={courseName} onChange={e => setCourseName(e.target.value)}/>
+                            <TextField id="standard-basic" fullWidth required label="Name" value={courseFormData.name} onChange={handleFormDataChange}/>
                         </Grid>
                         <Grid item xs={12}>
-                            <TextField id="standard-basic" fullWidth multiline maxRows={3} required label="Description" value={courseDescription} onChange={e => setCourseDescription(e.target.value)}/>
+                            <TextField id="standard-basic" fullWidth multiline maxRows={3} required label="Description" value={courseFormData.description} onChange={handleFormDataChange}/>
                         </Grid>
                         <Grid item xs={12}>
-                            <ChipInput fullWidth label="Tags" value={tags}
-                                onChange={(chips) => handleChipChange(chips)}
+                            <ChipInput fullWidth label="Tags" defaultValue={courseFormData.courseTags.map((tag: Tag) => tag.title)} onChange={(newChips) => handleChipInputChange(newChips)}
                             />
                         </Grid>
                         <Grid item xs={9}>
-                            <TextField id="standard-basic" fullWidth disabled value={fileName} label="Banner Image"></TextField>
+                            <TextField id="standard-basic" fullWidth disabled value={courseFormData.bannerUrl} label="Banner Image"></TextField>
                         </Grid>
                         <Grid item xs={3}>
                             <Button
@@ -55,9 +89,7 @@ function CourseBuilderPage(props: any) {
                                     hidden
                                     onChange={e => {
                                         // @ts-ignore
-                                        setFile(e.target.files[0])
-                                        // @ts-ignore
-                                        setFileName(e.target.files[0].name)
+                                        setBannerImageFile(e.target.files[0])
                                     }}
                                 />
                             </Button>
@@ -66,7 +98,7 @@ function CourseBuilderPage(props: any) {
                 </CourseBuilderContent>
             </CourseBuilderCard>
             <CourseBuilderCard id="lesson-plan">
-                <LessonPlan/>
+                <LessonPlan lessons={courseFormData.lessons}setCourseFormData={setCourseFormData}/>
             </CourseBuilderCard>
         </CourseBuilderContainer>
     )

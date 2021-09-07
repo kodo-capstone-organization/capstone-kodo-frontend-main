@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
-import { Lesson } from './Lesson';
-import { Grid, IconButton, TextField, Button } from "@material-ui/core";
+import { Lesson } from './../../../apis/Entities/Lesson';
+import { AppBar, Tabs, Tab, Grid, IconButton, TextField, Button, Select, MenuItem } from "@material-ui/core";
 import AddIcon from '@material-ui/icons/Add';
 import { CourseBuilderCardHeader, CourseBuilderContent } from "./../CourseBuilderElements";
 import ChipInput from 'material-ui-chip-input'
+import { tabProps, TabPanel }from './TabPanel';
 
-function LessonPlan() {
-    const [lessons, setLessons] = useState<Lesson[]>([]);
+function LessonPlan(props: any) {
+    const [lessons, setLessons] = useState<Lesson[]>(props.lessons);
     const [lessonId, setLessonId] = useState<number>(1);
-    
+    const [tabValue, setTabValue] = useState<number>(1);
+
     const addToLessons = () => {
         // @ts-ignore
         lessons.push({ lessonId: lessonId });
@@ -38,6 +40,10 @@ function LessonPlan() {
         setLessons([...lessons])
     }
 
+    const handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
+        setTabValue(newValue);
+    }
+
     return (
         <>
         <CourseBuilderCardHeader
@@ -47,65 +53,65 @@ function LessonPlan() {
                             <AddIcon/>&nbsp; Add Lesson
                         </IconButton>
                     }/>
-        {lessons.map((lesson) => {
+        <AppBar position="static" color="default">
+            <Tabs value={tabValue}
+                onChange={handleTabChange}
+                indicatorColor="primary"
+                textColor="primary"
+                variant="scrollable"
+                scrollButtons="auto"
+                aria-label="scrollable auto tabs example">
+                    {lessons?.map((lesson, index) => {
+                        return (<Tab label={"Lesson " + index} {...tabProps(index)}/>)
+                    })} 
+            </Tabs>
+        </AppBar>
+        {lessons?.map((lesson, index) => {
             return (
-                <CourseBuilderContent key={lesson.lessonId}>
-                    <Grid container spacing={3}>
-                        <Grid item xs={12}>
-                            <TextField id="standard-basic" fullWidth required label="Name" value={lesson.name} onChange={e => {
-                                const newLessons: Lesson[] = lessons.map(currentLesson => {
-                                if (lesson.lessonId === currentLesson.lessonId) {
-                                    currentLesson.name = e.target.value
-                                }
-                                return currentLesson;
-                            });
-                            setLessons(newLessons)
-                            }}/>
-                        </Grid>
-                        <Grid item xs={9}>
-                            <TextField id="standard-basic" fullWidth multiline maxRows={3} required label="Quiz"/>
-                        </Grid>
-                        <Grid item xs={3}>
-                        <Button
-                                variant="contained"
-                                component="label"
-                                >
-                                Build Quiz
-                            </Button>
-                        </Grid>
-                        <Grid item xs={9}>
-                            {/* TODO: Fix
-                                <ChipInput fullWidth label="Related Files" value={lesson.relatedFiles.map((file) => file.name)} onDelete={(chip) => deleteFile(lesson.lessonId, chip)}/>
-                            */}
-                        </Grid>
-                        <Grid item xs={3}>
+                <TabPanel value={tabValue} index={index}>
+                    <CourseBuilderContent key={lesson.lessonId}>
+                        <Grid container spacing={3}>
+                            <Grid item xs={12}>
+                                <TextField id="standard-basic" fullWidth required label="Name" value={lesson.name}/>
+                            </Grid>
+                            <Grid item xs={9}>
+                                <Select fullWidth>
+                                    {lesson.quizzes?.map((quiz) => {
+                                        return (
+                                            <MenuItem value={quiz.name}>{quiz.name}</MenuItem>
+                                        )
+                                    })}
+                                </Select>
+                            </Grid>
+                            <Grid item xs={3}>
                             <Button
-                                variant="contained"
-                                component="label"
-                                >
-                                Upload Files
-                                <input
-                                    type="file"
-                                    hidden
-                                    onChange={e => {
-                                        if (e.target.files) updateFiles(lesson.lessonId, e.target.files)
-                                    }}
-                                />
-                            </Button>
+                                    variant="contained"
+                                    component="label"
+                                    >
+                                    Build Quiz
+                                </Button>
+                            </Grid>
+                            <Grid item xs={9}>
+                                <ChipInput fullWidth label="Multimedias" value={lesson.multimedias?.map((multimedia) => multimedia.name)} onDelete={(chip) => deleteFile(lesson.lessonId, chip)}/>
+                            </Grid>
+                            <Grid item xs={3}>
+                                <Button
+                                    variant="contained"
+                                    component="label"
+                                    >
+                                    Upload Files
+                                    <input
+                                        type="file"
+                                        hidden
+                                        onChange={e => {
+                                            if (e.target.files) updateFiles(lesson.lessonId, e.target.files)
+                                        }}
+                                    />
+                                </Button>
+                            </Grid>
                         </Grid>
-                        <Grid item xs={12}>
-                            <TextField id="standard-basic" fullWidth multiline maxRows={3} required label="Quiz"/>
-                        </Grid>
-                        <Grid item xs={3}>
-                            <Button
-                                variant="contained"
-                                component="label"
-                                >
-                                Build Quiz
-                            </Button>
-                        </Grid>
-                    </Grid>
-                </CourseBuilderContent>
+                    </CourseBuilderContent>
+                </TabPanel>
         )})}
         </>
     )
