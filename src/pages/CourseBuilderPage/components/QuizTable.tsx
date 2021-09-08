@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import clsx from 'clsx';
 import { createStyles, lighten, makeStyles, Theme } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
@@ -20,8 +20,9 @@ import Switch from '@material-ui/core/Switch';
 import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import { Quiz } from '../../../apis/Entities/Quiz';
-
+import { Lesson } from '../../../apis/Entities/Lesson';
 interface Data {
+  id: number
   name: string,
   description: string,
   maxAttemptsPerStudent: number,
@@ -29,12 +30,13 @@ interface Data {
 }
 
 function createData(
+  id: number,
   name: string,
   description: string,
   maxAttemptsPerStudent: number,
   timeLimit: string
 ): Data {
-  return { name, description, maxAttemptsPerStudent, timeLimit };
+  return { id, name, description, maxAttemptsPerStudent, timeLimit };
 }
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
@@ -159,11 +161,37 @@ const useToolbarStyles = makeStyles((theme: Theme) =>
 
 interface EnhancedTableToolbarProps {
   numSelected: number;
+  selectedIds: number[];
+  lessonId: number;
+  handleFormDataChange: any;
+  lessons: Lesson[];
+  setLessons: any;
 }
 
 const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   const classes = useToolbarStyles();
-  const { numSelected } = props;
+  const { numSelected, selectedIds, lessonId, handleFormDataChange, setLessons, lessons} = props;
+
+  const handleDeleteQuiz = () => {
+    const updatedLessons = lessons.map((lesson: Lesson) => {
+      if (lesson.lessonId === lessonId) {
+        const updatedQuizzes = lesson.quizzes.filter((quiz: Quiz) => !selectedIds.includes(quiz.contentId))
+        lesson.quizzes = updatedQuizzes
+      }
+      return lesson
+    })
+
+    setLessons(updatedLessons)
+
+    let wrapperEvent = {
+      target: {
+        name: "lessons",
+        value: updatedLessons
+      }
+    }
+
+    handleFormDataChange(wrapperEvent)
+  }
 
   return (
     <Toolbar
@@ -182,7 +210,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
       )}
       {numSelected > 0 ? (
         <Tooltip title="Delete">
-          <IconButton aria-label="delete">
+          <IconButton aria-label="delete" onClick={handleDeleteQuiz}>
             <DeleteIcon />
           </IconButton>
         </Tooltip>
@@ -224,13 +252,23 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 export default function QuizTable(props: any) {
+    const handleFormDataChange = props.handleFormDataChange;
     const [quizzes, setQuizzes] = useState<Quiz[]>(props.quizzes);
-    const rows = quizzes?.length > 0 ? quizzes.map((row: Quiz) => createData(row.name, row.description, row.maxAttemptsPerStudent, row.timeLimit)) : []
+    const [lessons, setLessons] = useState<Lesson[]>(props.lessons);
+    const rows = quizzes?.length > 0 ? quizzes.map((row: Quiz) => createData(row.contentId, row.name, row.description, row.maxAttemptsPerStudent, row.timeLimit)) : []
+
+    useEffect(() => {
+      const newQuizzes = lessons.find((lesson) => lesson.lessonId === props.lessonId)?.quizzes
+      if (newQuizzes) {
+        setQuizzes(newQuizzes)
+      }
+    }, [lessons])
 
     const classes = useStyles();
     const [order, setOrder] = React.useState<Order>('asc');
     const [orderBy, setOrderBy] = React.useState<keyof Data>('name');
     const [selected, setSelected] = React.useState<string[]>([]);
+    const [selectedIds, setSelectedIds] = React.useState<number[]>([]);
     const [page, setPage] = React.useState(0);
     const [dense, setDense] = React.useState(false);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -243,31 +281,44 @@ export default function QuizTable(props: any) {
 
     const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.checked) {
-        const newSelecteds = rows.map((n: any) => n.name);
-        setSelected(newSelecteds);
-        return;
+          const newSelecteds = rows.map((n: any) => n.name);
+          setSelected(newSelecteds);
+
+          const newSelectedIds = rows.map((n: any) => n.id);
+          setSelectedIds(newSelectedIds);
+          return;
         }
+        setSelectedIds([]);
         setSelected([]);
     };
 
-    const handleClick = (event: React.MouseEvent<unknown>, name: string) => {
-        const selectedIndex = selected.indexOf(name);
+    const handleClick = (event: React.MouseEvent<unknown>, name: string, id: number) => {
+        const selectedIndex = selectedIds.indexOf(id);
         let newSelected: string[] = [];
+        let newSelectedIds: number[] = [];
 
         if (selectedIndex === -1) {
-        newSelected = newSelected.concat(selected, name);
+          newSelected = newSelected.concat(selected, name);
+          newSelectedIds = newSelectedIds.concat(selectedIds, id);
         } else if (selectedIndex === 0) {
-        newSelected = newSelected.concat(selected.slice(1));
+          newSelected = newSelected.concat(selected.slice(1));
+          newSelectedIds = newSelectedIds.concat(selectedIds.slice(1));
         } else if (selectedIndex === selected.length - 1) {
-        newSelected = newSelected.concat(selected.slice(0, -1));
+          newSelected = newSelected.concat(selected.slice(0, -1));
+          newSelectedIds = newSelectedIds.concat(selectedIds.slice(0, -1));
         } else if (selectedIndex > 0) {
-        newSelected = newSelected.concat(
+          newSelected = newSelected.concat(
             selected.slice(0, selectedIndex),
             selected.slice(selectedIndex + 1),
-        );
+          );
+          newSelectedIds = newSelectedIds.concat(
+            selectedIds.slice(0, selectedIndex),
+            selectedIds.slice(selectedIndex + 1),
+          );
         }
 
         setSelected(newSelected);
+        setSelectedIds(newSelectedIds);
     };
 
     const handleChangePage = (event: unknown, newPage: number) => {
@@ -292,7 +343,13 @@ export default function QuizTable(props: any) {
         {rows.length > 0 &&
         <div className={classes.root}>
         <Paper className={classes.paper}>
-            <EnhancedTableToolbar numSelected={selected.length} />
+            <EnhancedTableToolbar 
+                numSelected={selected.length} 
+                selectedIds={selectedIds}
+                lessonId={props.lessonId}
+                lessons={lessons}
+                setLessons={setLessons}
+                handleFormDataChange={handleFormDataChange}/>
             <TableContainer>
             <Table
                 className={classes.table}
@@ -321,7 +378,7 @@ export default function QuizTable(props: any) {
                         <TableRow
                         hover
                         // @ts-ignore
-                        onClick={(event) => handleClick(event, row.name)}
+                        onClick={(event) => handleClick(event, row.name, row.id)}
                         role="checkbox"
                         aria-checked={isItemSelected}
                         tabIndex={-1}

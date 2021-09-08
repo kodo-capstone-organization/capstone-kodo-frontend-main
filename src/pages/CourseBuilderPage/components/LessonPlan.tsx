@@ -103,10 +103,18 @@ function LessonPlan(props: any) {
                     <CourseBuilderContent key={lesson.lessonId}>
                         <Grid container spacing={3}>
                             <Grid item xs={12}>
-                                <TextField id={lesson.lessonId.toString()} fullWidth required label="Name" value={lesson.name} onChange={handleLessonNameChange}/>
+                                <TextField fullWidth required 
+                                id={lesson.lessonId.toString()} 
+                                label="Name" 
+                                value={lesson.name} 
+                                onChange={handleLessonNameChange}/>
                             </Grid>
                             <Grid item xs={12}>
-                                <QuizTable quizzes={lesson.quizzes}/>
+                                <QuizTable 
+                                handleFormDataChange={handleFormDataChange} 
+                                lessonId={lesson.lessonId} 
+                                quizzes={lesson.quizzes}
+                                lessons={lessons}/>
                             </Grid>
                             <Grid item xs={12}>
                                 <MultimediaTable multimedias={lesson.multimedias}/>
