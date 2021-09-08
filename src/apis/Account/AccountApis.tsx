@@ -27,7 +27,7 @@ export async function getAllAccounts(): Promise<Account[]> {
     return httpClient.get<undefined, Account[]>(getParameters)
 }
 
-export async function createNewAccount(createNewAccountReq: CreateNewAccountReq, displayPicture: File): Promise<Account> {
+export async function createNewAccount(createNewAccountReq: CreateNewAccountReq, displayPicture: File|null): Promise<Account> {
     const formData = new FormData();
     
     formData.append('account', transformToBlob(createNewAccountReq));

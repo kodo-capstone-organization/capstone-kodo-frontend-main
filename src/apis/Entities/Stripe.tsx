@@ -1,7 +1,3 @@
-export interface StripeAccountResponse {
-    stripeAccountCreationUrl: string
-}
-
 export interface StripeSessionResponse {
     paymentUrl: string
 }
