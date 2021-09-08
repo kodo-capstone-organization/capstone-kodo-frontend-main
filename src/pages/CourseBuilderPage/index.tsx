@@ -49,8 +49,19 @@ function CourseBuilderPage(props: any) {
         return handleFormDataChange(wrapperEvent);
     }
 
+    const handleBannerImageChange = (event: any) => {
+        setBannerImageFile(event.target.files[0])
+
+        let wrapperEvent = {
+            target: {
+                name: "bannerUrl",
+                value: event.target.files[0].name 
+            }
+        }
+        handleFormDataChange(wrapperEvent)
+    }
+
     const handleFormDataChange = (event: any) => {
-        console.log(event)
         setCourseFormData({
             name: event.target.name,
             value: event.target.value,
@@ -66,19 +77,19 @@ function CourseBuilderPage(props: any) {
                 <CourseBuilderContent>
                     <Grid container spacing={3}>
                         <Grid item xs={12}>
-                            <TextField id="standard-basic" fullWidth required label="Name" value={courseFormData.name} onChange={handleFormDataChange}/>
+                            <TextField id="standard-basic" fullWidth required label="Name" name="name" value={courseFormData.name} onChange={handleFormDataChange}/>
                         </Grid>
                         <Grid item xs={12}>
-                            <TextField id="standard-basic" fullWidth multiline maxRows={3} required label="Description" value={courseFormData.description} onChange={handleFormDataChange}/>
+                            <TextField id="standard-basic" fullWidth multiline maxRows={3} name="description" required label="Description" value={courseFormData.description} onChange={handleFormDataChange}/>
                         </Grid>
                         <Grid item xs={12}>
                             <ChipInput fullWidth label="Tags" defaultValue={courseFormData.courseTags.map((tag: Tag) => tag.title)} onChange={(newChips) => handleChipInputChange(newChips)}
                             />
                         </Grid>
-                        <Grid item xs={9}>
+                        <Grid item xs={10}>
                             <TextField id="standard-basic" fullWidth disabled value={courseFormData.bannerUrl} label="Banner Image"></TextField>
                         </Grid>
-                        <Grid item xs={3}>
+                        <Grid item xs={2}>
                             <Button
                                 variant="contained"
                                 component="label"
@@ -87,10 +98,7 @@ function CourseBuilderPage(props: any) {
                                 <input
                                     type="file"
                                     hidden
-                                    onChange={e => {
-                                        // @ts-ignore
-                                        setBannerImageFile(e.target.files[0])
-                                    }}
+                                    onChange={handleBannerImageChange}
                                 />
                             </Button>
                         </Grid>
@@ -98,7 +106,7 @@ function CourseBuilderPage(props: any) {
                 </CourseBuilderContent>
             </CourseBuilderCard>
             <CourseBuilderCard id="lesson-plan">
-                <LessonPlan lessons={courseFormData.lessons}setCourseFormData={setCourseFormData}/>
+                <LessonPlan lessons={courseFormData.lessons} setCourseFormData={setCourseFormData}/>
             </CourseBuilderCard>
         </CourseBuilderContainer>
     )
