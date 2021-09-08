@@ -2,8 +2,8 @@ import { IHttpClientRequestParameters } from "./../HttpClient/IHttpClientRequest
 import { Account, CreateNewAccountReq } from "../Entities/Account";
 import { httpClient } from "../HttpClient/HttpClient";
 import { LoginResponse } from "../Entities/Login";
-import { transformToBlob } from "./../../utils/BlobCreator"
-
+import { transformToBlob } from "./../../utils/BlobCreator";
+import { DeactivateAccountResponse } from "../Entities/Deactivate";
 const FormData = require('form-data');
 
 export async function login(username: string, password: string): Promise<LoginResponse> {
@@ -47,4 +47,12 @@ export async function getMyAccount(accountId: number): Promise<Account> {
     }
 
     return httpClient.get<undefined, Account>(getParameters);
+}
+
+export async function deactivateAccount(deactivatingAccountId: number, requestingAccountId: number): Promise<DeactivateAccountResponse> {
+    const getParameters: IHttpClientRequestParameters<undefined> = {
+        url: `/deactivateAccount/${deactivatingAccountId}&${requestingAccountId}`
+    }
+
+    return httpClient.delete<undefined, DeactivateAccountResponse>(getParameters);
 }

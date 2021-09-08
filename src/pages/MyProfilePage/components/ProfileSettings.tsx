@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-import ChipInput from 'material-ui-chip-input'
+import ChipInput from 'material-ui-chip-input';
 import {
     ProfileCard, ProfileSettingField,
     ProfileAvatar, ProfileInitials
@@ -143,10 +143,9 @@ function ProfileSettings(props: any) {
                             />
                         </div>
                     </form>
-                    <Button>Deactivate Account</Button>
+                    <DeactivateAccountModal account={myAccount}/>
                 </ProfileCard>
             }
-            <DeactivateAccountModal/>
         </>
     )
 }
