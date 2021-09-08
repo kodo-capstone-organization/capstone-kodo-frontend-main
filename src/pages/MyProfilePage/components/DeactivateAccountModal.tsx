@@ -11,6 +11,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { Chip } from '@material-ui/core';
+import { deactivateAccount } from '../../../apis/Account/AccountApis';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -58,13 +59,18 @@ function DeactivateAccountModal(props: any) {
     };
 
     const handleAction = () => {
-        setOpen(false);
+        if(myAccount !== undefined){
+            deactivateAccount(myAccount.accountId, myAccount.accountId)
+            .then((res) => console.log(res))
+            .catch(error => console.log("error in deactivating", error));
+        }
+
     };
 
     return (
         <>
             <div>
-                <Button big style={{width:"fit-content", margin:"20px auto 10px auto"}} onClick={handleOpen}>{isActive ? "Deactivate" : "Activate"} Account</Button>
+                <Button big style={{ width: "fit-content", margin: "20px auto 10px auto" }} onClick={handleOpen}>{isActive ? "Deactivate" : "Activate"} Account</Button>
                 <Dialog open={open} onClose={handleClose}>
                     <div style={{ display: "flex" }}>
                         <DialogTitle id="form-dialog-title">Deactivate/Reactivate Your Kodo Account</DialogTitle>
