@@ -3,9 +3,11 @@ import { withRouter } from "react-router";
 
 function LessonViewer(props: any) {
     const lessonId = props.match.params.lessonId;
+    const courseId = props.match.params.courseId;
     return (
         <div>
-            <h1>{lessonId}</h1>
+            <h1>{courseId}</h1>
+            <h3>{lessonId}</h3>
         </div>
     )
 }
