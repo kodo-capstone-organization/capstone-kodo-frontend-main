@@ -4,6 +4,7 @@ import CardContent from "@material-ui/core/CardContent";
 import { fontSizes } from "../../../values/FontSizes";
 import { colours } from "../../../values/Colours";
 import CardMedia from "@material-ui/core/CardMedia";
+import Chip from '@material-ui/core/Chip';
 
 
 export const BrowseContainer = styled.div`
@@ -57,6 +58,18 @@ export const CourseCardMedia = styled.div`
 export const InputWrapper = styled.div`
     width: 100%;
 `
+
+export const CourseTags = styled.div`
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    > * {
+    margin: theme.spacing(0.5)
+`;
+
+export const TagChip = styled(Chip)`
+    min-width: 80px;
+`;
 
 
 
