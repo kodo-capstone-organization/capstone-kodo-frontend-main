@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Lesson } from './../../../apis/Entities/Lesson';
-import { AppBar, Tabs, Tab, Grid, IconButton, TextField } from "@material-ui/core";
+import { AppBar, Tabs, Tab, Grid, IconButton, TextField, Button } from "@material-ui/core";
 import AddIcon from '@material-ui/icons/Add';
 import { CourseBuilderCardHeader, CourseBuilderContent } from "./../CourseBuilderElements";
 import { tabProps, TabPanel }from './TabPanel';
@@ -8,6 +8,7 @@ import QuizTable from './QuizTable';
 import MultimediaTable from './MultimediaTable';
 
 function LessonPlan(props: any) {
+    const handleFormDataChange = props.handleFormDataChange;
     const [lessons, setLessons] = useState<Lesson[]>(props.lessons);
     const [lessonId, setLessonId] = useState<number>(1);
     const [tabValue, setTabValue] = useState<number>(1);
@@ -45,6 +46,35 @@ function LessonPlan(props: any) {
         setTabValue(newValue);
     }
 
+    const handleDeleteLesson = (lessonIdToDelete: number) => {
+        const updatedLessons = lessons.filter((lesson: Lesson) => lesson.lessonId !== lessonIdToDelete)
+        setLessons(updatedLessons)
+        let wrapperEvent = {
+            target: {
+                name: "lessons",
+                value: updatedLessons
+            }
+        }
+        handleFormDataChange(wrapperEvent)
+    }
+
+    const handleLessonNameChange = (event: any) => {
+        const updatedLessons = lessons.map((lesson: Lesson) => {
+            if (lesson.lessonId.toString() === event.target.id) {
+                lesson.name = event.target.value
+            }
+            return lesson
+        })
+
+        let wrapperEvent = {
+            target: {
+                name: "lessons",
+                value: updatedLessons
+            }
+        }
+        handleFormDataChange(wrapperEvent)
+    }
+
     return (
         <>
         <CourseBuilderCardHeader
@@ -73,13 +103,20 @@ function LessonPlan(props: any) {
                     <CourseBuilderContent key={lesson.lessonId}>
                         <Grid container spacing={3}>
                             <Grid item xs={12}>
-                                <TextField id="standard-basic" fullWidth required label="Name" value={lesson.name}/>
+                                <TextField id={lesson.lessonId.toString()} fullWidth required label="Name" value={lesson.name} onChange={handleLessonNameChange}/>
                             </Grid>
                             <Grid item xs={12}>
                                 <QuizTable quizzes={lesson.quizzes}/>
                             </Grid>
                             <Grid item xs={12}>
                                 <MultimediaTable multimedias={lesson.multimedias}/>
+                            </Grid>
+                            <Grid container xs={12} justify="flex-end">
+                                <Button variant="contained"
+                                    component="label"
+                                    onClick={() => handleDeleteLesson(lesson.lessonId)}>
+                                        Delete Lesson
+                                </Button>
                             </Grid>
                             {/* <Grid item xs={9}>
                                 <ChipInput fullWidth label="Multimedias" value={lesson.multimedias?.map((multimedia) => multimedia.name)} onDelete={(chip) => deleteFile(lesson.lessonId, chip)}/>

@@ -106,7 +106,7 @@ function CourseBuilderPage(props: any) {
                 </CourseBuilderContent>
             </CourseBuilderCard>
             <CourseBuilderCard id="lesson-plan">
-                <LessonPlan lessons={courseFormData.lessons} setCourseFormData={setCourseFormData}/>
+                <LessonPlan courseFormData={courseFormData} lessons={courseFormData.lessons} handleFormDataChange={handleFormDataChange}/>
             </CourseBuilderCard>
         </CourseBuilderContainer>
     )
