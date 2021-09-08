@@ -31,7 +31,7 @@ function Sidebar(props: any) {
           {allLessons?.map(lesson => {
             return (
               <LessonLink key={lesson.lessonId}>
-                <SidebarLink>{lesson.name}</SidebarLink>
+                <SidebarLink to={`/overview/lesson/${currentCourse.courseId}/${lesson.lessonId}`}>{lesson.name}</SidebarLink>
               </LessonLink>
             );
           })}
