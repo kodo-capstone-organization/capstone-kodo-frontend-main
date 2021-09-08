@@ -4,7 +4,7 @@ import { StudentAttempt } from "./StudentAttempt";
 
 export interface Quiz extends Content {
     timeLimit: string, // Todo
-    maxAttemptPerStudent: number,
+    maxAttemptsPerStudent: number,
     quizQuestions: QuizQuestion[],
     studentAttempts: StudentAttempt[]
 }
