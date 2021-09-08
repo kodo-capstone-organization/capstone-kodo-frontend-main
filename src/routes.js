@@ -29,7 +29,7 @@ function Routes() {
                         <Route path="/signup" component={SignUp} exact />
                         <Route path="/builder/:courseId" component={CourseBuilderPage} exact />
                         <Route path="/overview/:courseId" component={CourseOverview} exact />
-                        <Route path="/overview/lesson/:lessonId" component={LessonViewerWithRouter} exact />
+                        <Route path="/overview/lesson/:courseId/:lessonId" component={LessonViewerWithRouter} exact />
                         {
                             RouteItemsWithSidebar.map(item => {
                                 return (
