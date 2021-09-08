@@ -50,9 +50,9 @@ export async function getMyAccount(accountId: number): Promise<Account> {
 }
 
 export async function deactivateAccount(deactivatingAccountId: number, requestingAccountId: number): Promise<DeactivateAccountResponse> {
-    const getParameters: IHttpClientRequestParameters<undefined> = {
+    const deleteParameters: IHttpClientRequestParameters<undefined> = {
         url: `/deactivateAccount/${deactivatingAccountId}&${requestingAccountId}`
     }
 
-    return httpClient.delete<undefined, DeactivateAccountResponse>(getParameters);
+    return httpClient.delete<undefined, DeactivateAccountResponse>(deleteParameters);
 }
