@@ -2,7 +2,8 @@ import { Content } from "./Content";
 
 export interface Multimedia extends Content {
     url: string,
-    type: MultimediaType
+    type: MultimediaType,
+    urlFilename: string
 }
 
 export enum MultimediaType {

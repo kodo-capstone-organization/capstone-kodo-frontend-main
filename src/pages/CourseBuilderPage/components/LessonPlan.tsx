@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { Lesson } from './../../../apis/Entities/Lesson';
-import { AppBar, Tabs, Tab, Grid, IconButton, TextField, Button, Select, MenuItem } from "@material-ui/core";
+import { AppBar, Tabs, Tab, Grid, IconButton, TextField } from "@material-ui/core";
 import AddIcon from '@material-ui/icons/Add';
 import { CourseBuilderCardHeader, CourseBuilderContent } from "./../CourseBuilderElements";
-import ChipInput from 'material-ui-chip-input'
 import { tabProps, TabPanel }from './TabPanel';
+import QuizTable from './QuizTable';
+import MultimediaTable from './MultimediaTable';
 
 function LessonPlan(props: any) {
     const [lessons, setLessons] = useState<Lesson[]>(props.lessons);
@@ -74,24 +75,13 @@ function LessonPlan(props: any) {
                             <Grid item xs={12}>
                                 <TextField id="standard-basic" fullWidth required label="Name" value={lesson.name}/>
                             </Grid>
-                            <Grid item xs={9}>
-                                <Select fullWidth>
-                                    {lesson.quizzes?.map((quiz) => {
-                                        return (
-                                            <MenuItem value={quiz.name}>{quiz.name}</MenuItem>
-                                        )
-                                    })}
-                                </Select>
+                            <Grid item xs={12}>
+                                <QuizTable quizzes={lesson.quizzes}/>
                             </Grid>
-                            <Grid item xs={3}>
-                            <Button
-                                    variant="contained"
-                                    component="label"
-                                    >
-                                    Build Quiz
-                                </Button>
+                            <Grid item xs={12}>
+                                <MultimediaTable multimedias={lesson.multimedias}/>
                             </Grid>
-                            <Grid item xs={9}>
+                            {/* <Grid item xs={9}>
                                 <ChipInput fullWidth label="Multimedias" value={lesson.multimedias?.map((multimedia) => multimedia.name)} onDelete={(chip) => deleteFile(lesson.lessonId, chip)}/>
                             </Grid>
                             <Grid item xs={3}>
@@ -108,7 +98,7 @@ function LessonPlan(props: any) {
                                         }}
                                     />
                                 </Button>
-                            </Grid>
+                            </Grid> */}
                         </Grid>
                     </CourseBuilderContent>
                 </TabPanel>
