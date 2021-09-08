@@ -14,6 +14,7 @@ import IconButton from '@material-ui/core/IconButton';
 import { Button } from "../../../values/ButtonElements";
 import { Account } from "../../../apis/Entities/Account";
 import { Tag } from "../../../apis/Entities/Tag";
+import DeactivateAccountModal from "./DeactivateAccountModal";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -120,7 +121,7 @@ function ProfileSettings(props: any) {
                                 id="standard-adornment-password"
                                 type={showPassword ? 'text' : 'password'}
                                 value={password}
-                                style={{width:"100%"}}
+                                style={{ width: "100%" }}
                                 onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setPassword(e.target.value)}
                                 endAdornment={
                                     <InputAdornment position="end">
@@ -141,12 +142,11 @@ function ProfileSettings(props: any) {
                                 onDelete={(interest, index) => handleDeleteChip(interest, index)}
                             />
                         </div>
-
                     </form>
+                    <Button>Deactivate Account</Button>
                 </ProfileCard>
-
             }
-
+            <DeactivateAccountModal/>
         </>
     )
 }
