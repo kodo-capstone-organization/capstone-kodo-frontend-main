@@ -1,24 +1,33 @@
-const createProxyMiddleware = require('http-proxy-middleware');
+const createProxyMiddleware = require("http-proxy-middleware");
 
-const url = process.env.NODE_ENV === 'development' ? 'http://localhost:8080' : 'https://kodo-capstone-backend.herokuapp.com'
+const url =
+  process.env.NODE_ENV === "development"
+    ? "http://localhost:8080"
+    : "https://kodo-capstone-backend.herokuapp.com";
 
 module.exports = function(app) {
-    app.use(createProxyMiddleware('/account', 
-        { 
-            target: url,
-            changeOrigin: true 
-        }
-    ));
-    app.use(createProxyMiddleware('/course',
-        {
-            target: url,
-            changeOrigin: true
-        }
-    ));
-    app.use(createProxyMiddleware('/stripe',
-        {
-            target: url,
-            changeOrigin: true
-        }
-    ))
-}
+  app.use(
+    createProxyMiddleware("/account", {
+      target: url,
+      changeOrigin: true
+    })
+  );
+  app.use(
+    createProxyMiddleware("/course", {
+      target: url,
+      changeOrigin: true
+    })
+  );
+  app.use(
+    createProxyMiddleware("/lesson", {
+      target: url,
+      changeOrigin: true
+    })
+  );
+  app.use(
+    createProxyMiddleware("/stripe", {
+      target: url,
+      changeOrigin: true
+    })
+  );
+};
