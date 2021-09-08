@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import ChipInput from 'material-ui-chip-input';
 import {
-    ProfileCard, ProfileSettingField,
-    ProfileAvatar, ProfileInitials
+    ProfileCard, ProfileSettingField, ProfileSubText,
+    ProfileAvatar, ProfileInitials, ProfileCardHeader, TextSpan
 } from "../ProfileElements";
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
@@ -12,9 +12,11 @@ import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import IconButton from '@material-ui/core/IconButton';
 import { Button } from "../../../values/ButtonElements";
+import { colours } from "../../../values/Colours";
 import { Account } from "../../../apis/Entities/Account";
 import { Tag } from "../../../apis/Entities/Tag";
 import DeactivateAccountModal from "./DeactivateAccountModal";
+import { Chip } from '@material-ui/core';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -40,6 +42,7 @@ function ProfileSettings(props: any) {
     const [name, setName] = useState<String>("");
     const [email, setEmail] = useState<String>("");
     const [bio, setBio] = useState<String>("");
+    const [isActive, setIsActive] = useState<Boolean>();
     const classes = useStyles();
 
     useEffect(() => {
@@ -49,6 +52,7 @@ function ProfileSettings(props: any) {
             setName(props.account.name)
             setEmail(props.account.email)
             setBio(props.account.bio)
+            setIsActive(props.account.isActive)
             setInterests(props.account.interests.map((x: Tag) => x.title))
 
         }
@@ -85,6 +89,9 @@ function ProfileSettings(props: any) {
             {
                 myAccount !== null &&
                 <ProfileCard id="my-details">
+                    <ProfileCardHeader
+                        title="Account Settings"
+                    />
                     <form
                         // className={classes.root}
                         noValidate autoComplete="off" style={{ display: "flex" }}>
@@ -111,6 +118,7 @@ function ProfileSettings(props: any) {
                                     Change Display Picture
                             </Button>
                             </label>
+                            <ProfileSubText style={{textAlign:"center"}}>Status: <Chip variant="outlined" label={isActive ? "Activated" : "Deactivated"} style={{ color: isActive ? "green" : "red", border: isActive ? "1px solid green" : "1px solid red" }} /></ProfileSubText>
                         </div>
                         <div style={{ margin: "20px" }}>
                             <ProfileSettingField label="Name" value={name} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setName(e.target.value)} />
@@ -143,7 +151,7 @@ function ProfileSettings(props: any) {
                             />
                         </div>
                     </form>
-                    <DeactivateAccountModal account={myAccount}/>
+                    <DeactivateAccountModal account={myAccount} style={{ margin: "auto" }} />
                 </ProfileCard>
             }
         </>
