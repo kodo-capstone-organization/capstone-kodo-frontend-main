@@ -3,7 +3,7 @@ import { ProfileCard, ProfileCardHeader, ProfileCardContent, ProfileCardActions,
     ProfileAvatar, ProfileInitials, ProfileDetails, ProfileName, ProfileContentText, ProfileSubText, ProfileUsername, BlankStateContainer
 } from "../ProfileElements";
 import {ButtonGroup, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle,
-    FormControl, IconButton, ImageList, Input, InputAdornment, InputLabel, TextField, Typography } from "@material-ui/core";
+    FormControl, Grid, IconButton, ImageList, Input, InputAdornment, InputLabel, TextField, Typography } from "@material-ui/core";
 import SettingsIcon from '@material-ui/icons/Settings';
 import LocalAtmIcon from '@material-ui/icons/LocalAtm';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
@@ -28,8 +28,8 @@ const formReducer = (state: any, event: any) => {
             tutorId: null,
             name: '',
             description: '',
-            price: 0,
-            tagTitles: [],
+            price: null,
+            tagTitles: []
         }
     }
     
@@ -45,6 +45,7 @@ function Profile(props: any) {
     const [isOpen, setIsOpen] = useState<boolean>(false); // create new course dialog
     const [isStripeDialogOpen, setStripeDialogOpen] = useState<boolean>(false);
     const [courseFormData, setCourseFormData] = useReducer(formReducer, {});
+    const [courseBannerImageFile, setCourseBannerImageFile] = useState<File>(new File([""], ""));
 
     /***********************
      * Use Effects         *
@@ -112,8 +113,7 @@ function Profile(props: any) {
         courseFormData.tutorId = myAccount.accountId;
 
         // Call API
-        const dummyFile = new File([""], "dummyFile");
-        createNewCourse(courseFormData, dummyFile).then((res: Course) => {
+        createNewCourse(courseFormData, courseBannerImageFile).then((res: Course) => {
             // Debug
             console.log("Course created successfully" + res.courseId);
 
@@ -358,7 +358,7 @@ function Profile(props: any) {
                         <Input
                             id="course-price"
                             name="price"
-                            value={courseFormData.price || 0 }
+                            value={courseFormData.price || null }
                             onChange={handleFormDataChange}
                             type="number"
                             inputProps={{
@@ -368,14 +368,25 @@ function Profile(props: any) {
                             startAdornment={<InputAdornment position="start">$</InputAdornment>}
                         />
                     </FormControl>
-                    <FormControl fullWidth margin="normal">
-                        <InputLabel htmlFor="course-price">Banner Picture (Currently Disabled)</InputLabel>
-                        <Input
-                            id="banner-image-name"
-                            name="banner"
-                            type="text"
-                            disabled
-                        />
+                    <FormControl fullWidth margin="normal" style={{ display: "flex", flexDirection: "row"}}>
+                        <Grid xs={9}>
+                            <TextField id="banner-image-name" fullWidth disabled value={courseBannerImageFile.name} label="Banner Image"></TextField>
+                        </Grid>
+                        <Grid xs={3} style={{ display: "flex", alignItems: "center"}}>
+                            <Button variant="contained"  component="label">
+                                Upload Banner
+                                <input
+                                    id="banner-image-upload"
+                                    type="file"
+                                    accept="image/*"
+                                    hidden
+                                    onChange={e => {
+                                        // @ts-ignore
+                                        setCourseBannerImageFile(e.target.files[0])
+                                    }}
+                                />
+                            </Button>
+                        </Grid>
                     </FormControl>
 
                     <DialogContentText>
