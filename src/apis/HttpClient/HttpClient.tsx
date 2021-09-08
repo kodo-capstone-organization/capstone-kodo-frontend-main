@@ -45,10 +45,10 @@ export class HttpClient implements IHttpClient {
 
     delete<T, R>(parameters: IHttpClientRequestParameters<T>): Promise<R> {
         return new Promise<R>((resolve, reject) => {
-            const { url, payload } = parameters
+            const { url } = parameters
 
             axios
-                .delete(formatUrl(url), payload)
+                .delete(formatUrl(url))
                 .then((response: any) => {
                     resolve(response.data as R)
                 })
