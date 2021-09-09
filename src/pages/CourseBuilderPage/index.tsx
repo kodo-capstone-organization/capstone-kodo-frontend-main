@@ -1,12 +1,15 @@
 import React, { useState, useEffect, useReducer } from "react";
 import { useHistory } from "react-router-dom";
-import { Box, Grid, TextField } from "@material-ui/core";
+import { Box, Grid, TextField, InputLabel, Input, InputAdornment} from "@material-ui/core";
 import { CourseBuilderCard, CourseBuilderCardHeader, CourseBuilderContainer, CourseBuilderContent } from "./CourseBuilderElements";
 import { Button } from "@material-ui/core";
 import LessonPlan from "./components/LessonPlan";
 import ChipInput from 'material-ui-chip-input';
-import { getCourseByCourseId } from './../../apis/Course/CourseApis';
+import { getCourseByCourseId, updateCourse } from './../../apis/Course/CourseApis';
 import { Tag } from "../../apis/Entities/Tag";
+import { Lesson } from "../../apis/Entities/Lesson";
+import { Multimedia } from "../../apis/Entities/Multimedia"
+import { UpdateCourseReq } from "../../apis/Entities/Course";
 
 const formReducer = (state: any, event: any) => {
     return {
@@ -87,10 +90,24 @@ function CourseBuilderPage(props: any) {
                 <CourseBuilderContent>
                     <Grid container spacing={3}>
                         <Grid item xs={12}>
-                            <TextField id="standard-basic" fullWidth required label="Name" name="name" value={courseFormData.name} onChange={handleFormDataChange}/>
+                            <TextField id="standard-basic" fullWidth label="Name" name="name" value={courseFormData.name} onChange={handleFormDataChange}/>
                         </Grid>
                         <Grid item xs={12}>
-                            <TextField id="standard-basic" fullWidth multiline maxRows={3} name="description" required label="Description" value={courseFormData.description} onChange={handleFormDataChange}/>
+                            <TextField id="standard-basic" fullWidth multiline maxRows={3} name="description" label="Description" value={courseFormData.description} onChange={handleFormDataChange}/>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                fullWidth
+                                label="Price"
+                                name="price"
+                                id="start-adornment"
+                                type="number"
+                                InputProps={{
+                                    startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                                }}
+                                value={courseFormData.price}
+                                onChange={handleFormDataChange}
+                                />
                         </Grid>
                         <Grid item xs={12}>
                             <ChipInput fullWidth label="Tags" defaultValue={courseFormData.courseTags.map((tag: Tag) => tag.title)} onChange={(newChips) => handleChipInputChange(newChips)}
