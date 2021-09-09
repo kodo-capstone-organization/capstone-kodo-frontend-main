@@ -8,7 +8,7 @@ import { Lesson } from '../../../apis/Entities/Lesson';
 
 
 
-import { LessonContainer, LessonCard } from "./LessonViewerElements";
+import { LessonContainer, LessonTitle, CourseTitle, LessonCard } from "./LessonViewerElements";
 import Sidebar from "../Sidebar/Sidebar";
 
 function LessonViewer(props: any) {
@@ -34,10 +34,12 @@ function LessonViewer(props: any) {
 
 
   return (
+    <>
     <LessonContainer>
-      <h1>{currentCourse?.name}</h1>
-      <h3>{currentLesson?.name}</h3>
+      <LessonTitle>{currentLesson?.name}</LessonTitle>
+      <CourseTitle>{currentCourse?.name}</CourseTitle>
     </LessonContainer>
+    </>
   );
 }
 
