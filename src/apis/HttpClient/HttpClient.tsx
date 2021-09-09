@@ -5,7 +5,7 @@ import { formatUrl } from './UrlFormatter';
 
 export class HttpClient implements IHttpClient {
 
-    get<T,R>(parameters: IHttpClientRequestParameters<T>): Promise<R> {
+    get<T, R>(parameters: IHttpClientRequestParameters<T>): Promise<R> {
         return new Promise<R>((resolve, reject) => {
             const { url } = parameters
 
@@ -22,12 +22,12 @@ export class HttpClient implements IHttpClient {
                     reject(response)
                 })
         })
-    } 
+    }
 
-    post<T,R>(parameters: IHttpClientRequestParameters<T>): Promise<R> {
+    post<T, R>(parameters: IHttpClientRequestParameters<T>): Promise<R> {
         return new Promise<R>((resolve, reject) => {
             const { url, payload } = parameters
-             
+
             const options: AxiosRequestConfig = {
                 headers: {}
             }
@@ -41,7 +41,22 @@ export class HttpClient implements IHttpClient {
                     reject(response)
                 })
         })
-    } 
+    }
+
+    delete<T, R>(parameters: IHttpClientRequestParameters<T>): Promise<R> {
+        return new Promise<R>((resolve, reject) => {
+            const { url, payload } = parameters
+
+            axios
+                .delete(formatUrl(url), payload)
+                .then((response: any) => {
+                    resolve(response.data as R)
+                })
+                .catch((response: any) => {
+                    reject(response)
+                })
+        })
+    }
 }
 
 export const httpClient = new HttpClient();

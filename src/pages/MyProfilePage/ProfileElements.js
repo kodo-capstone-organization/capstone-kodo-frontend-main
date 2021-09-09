@@ -112,6 +112,10 @@ export const ProfileSettingField = styled(TextField)`
     
 `;
 
+export const TextSpan = styled.span`
+    color: ${props => props.isActive ? colours.GREEN : colours.RED};
+`;
+
 export const BlankStateContainer = styled.div`
     display: flex;
     flex-direction: column;
