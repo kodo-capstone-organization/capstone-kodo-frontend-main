@@ -31,7 +31,7 @@ function CourseCard(props: any) {
                 <CardMedia
                     component="img"
                     style={{ height: 170 }}
-                    image={course?.bannerUrl}
+                    image={course?.bannerUrl === "" ? "invalidurl.com" : course?.bannerUrl }
                     onError={handleImageError}
                     title={course?.name}
                 />

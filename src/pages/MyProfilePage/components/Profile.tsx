@@ -3,7 +3,7 @@ import { ProfileCard, ProfileCardHeader, ProfileCardContent, ProfileCardActions,
     ProfileAvatar, ProfileInitials, ProfileDetails, ProfileName, ProfileContentText, ProfileSubText, ProfileUsername, BlankStateContainer
 } from "../ProfileElements";
 import {CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle,
-    FormControl, Grid, IconButton, Input, InputAdornment, InputLabel, TextField, Typography } from "@material-ui/core";
+    FormControl, Grid, IconButton, Input, InputAdornment, InputLabel, Snackbar, TextField, Typography } from "@material-ui/core";
 import SettingsIcon from '@material-ui/icons/Settings';
 import LocalAtmIcon from '@material-ui/icons/LocalAtm';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
@@ -15,8 +15,9 @@ import { Course } from '../../../apis/Entities/Course';
 import Chip from '@material-ui/core/Chip';
 import { createStripeAccount } from '../../../apis/Stripe/StripeApis';
 import { EnrolledCourse } from '../../../apis/Entities/EnrolledCourse';
-import CourseCard from '../../../components/CourseCard';
 import { CourseWrapper } from '../../BrowseCourse/BrowseCoursePage/BrowseCourseElements';
+import CourseCard from '../../../components/CourseCard';
+import { Alert } from '@material-ui/lab';
 
 
 const formReducer = (state: any, event: any) => {
@@ -42,7 +43,8 @@ function Profile(props: any) {
     const [isOpen, setIsOpen] = useState<boolean>(false); // create new course dialog
     const [isStripeDialogOpen, setStripeDialogOpen] = useState<boolean>(false);
     const [courseFormData, setCourseFormData] = useReducer(formReducer, {});
-    const [courseBannerImageFile, setCourseBannerImageFile] = useState<File>(new File([""], ""));
+    const [courseBannerImageFile, setCourseBannerImageFile] = useState<File|null>(null);
+    const [createCourseLoading, setCreateCourseLoading] = useState<boolean>(false);
 
     /***********************
      * Use Effects         *
@@ -109,18 +111,20 @@ function Profile(props: any) {
         // Set tutorId field
         courseFormData.tutorId = myAccount.accountId;
 
+        setCreateCourseLoading(true);
+
         // Call API
         createNewCourse(courseFormData, courseBannerImageFile).then((res: Course) => {
-            // Debug
-            console.log("Course created successfully" + res.courseId);
-
             // Cleanup
             setCourseFormData({ reset: true })
+            setCourseBannerImageFile(null);
             handleClose();
 
             // Redirect
             props.history.push(`/builder/${res.courseId}`);
         });
+
+        setCreateCourseLoading(false);
     }
 
     const invokeStripeAccountCreation = () => {
@@ -315,7 +319,7 @@ function Profile(props: any) {
                         <Input
                             id="course-price"
                             name="price"
-                            value={courseFormData.price || null }
+                            value={courseFormData.price || 0 }
                             onChange={handleFormDataChange}
                             type="number"
                             inputProps={{
@@ -327,7 +331,7 @@ function Profile(props: any) {
                     </FormControl>
                     <FormControl fullWidth margin="normal" style={{ display: "flex", flexDirection: "row"}}>
                         <Grid xs={9}>
-                            <TextField id="banner-image-name" fullWidth disabled value={courseBannerImageFile.name} label="Banner Image"></TextField>
+                            <TextField id="banner-image-name" fullWidth disabled value={courseBannerImageFile?.name} label="Banner Image"></TextField>
                         </Grid>
                         <Grid xs={3} style={{ display: "flex", alignItems: "center"}}>
                             <Button variant="contained"  component="label">
@@ -361,12 +365,11 @@ function Profile(props: any) {
                     <Button onClick={handleClose}>
                         Cancel
                     </Button>
-                    <Button onClick={handleClickSubmit} primary>
+                    <Button onClick={handleClickSubmit} disabled={createCourseLoading} primary>
                         Create Course
                     </Button>
                 </DialogActions>
             </Dialog>
-
 
             {/* Stripe Buffering Dialog Component */}
 
@@ -377,6 +380,7 @@ function Profile(props: any) {
                     <br/>
                 </DialogContent>
             </Dialog>
+
         </>
     )
 }
