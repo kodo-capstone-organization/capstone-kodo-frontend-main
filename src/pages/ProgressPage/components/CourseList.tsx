@@ -8,6 +8,7 @@ import {
     EmptyStateText
 } from "../ProgressElements";
 import { makeStyles } from '@material-ui/core/styles';
+import IconButton from '@material-ui/core/IconButton';
 import Avatar from '@material-ui/core/Avatar';
 import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
@@ -18,6 +19,7 @@ import Link from '@material-ui/core/Link';
 import LockIcon from '@material-ui/icons/Lock';
 import InfoIcon from '@material-ui/icons/Info';
 import MultimediaModal from './MultimediaModal';
+import { useHistory } from 'react-router';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -39,16 +41,23 @@ function CourseList(props: any) {
     const [showMultimedia, setShowMultimedia] = useState<Boolean>(false)
     const [selectedLesson, setSelectedLesson] = useState<any>()
     const classes = useStyles();
+    const history = useHistory();
 
     useEffect(() => {
         setMyAccount(props.account)
         setMyCourses(props.courses)
-        console.log(props.courses)
     }, [props])
 
     const openModal = () => {
         setShowMultimedia(true);
         // setSelectedLesson(lesson)
+    }
+
+    const redirectToLesson = (lesson: any, course: EnrolledCourse) => {
+        if (lesson.isCompleted) {
+            console.log("too fast")
+            history.push(`/overview/${course.parentCourse.courseId}`)
+        }
     }
 
     const getCourseLessons = (course: EnrolledCourse) => {
@@ -68,16 +77,19 @@ function CourseList(props: any) {
             <div>
                 {finalListOfLesson.map(function (lesson, lessonId) {
                     return (
-                        <CourseElement key={lessonId}>
-                            <Avatar style={{ margin: "auto 10px" }} />
-                            <CourseDetails>
-                                <h3>{lesson?.name}</h3>
-                            </CourseDetails>
-                            <Button onClick={openModal}>
-                                <InfoIcon />
-                            </Button>
-                            <Button primary={lesson.isCompleted} >{lesson.isCompleted ? "Resume" : <LockIcon />}</Button>
-                        </CourseElement>
+                        <>
+                            <CourseElement key={lessonId}>
+                                <Avatar style={{ margin: "auto 10px" }} />
+                                <CourseDetails>
+                                    <h3>{lesson?.name}</h3>
+                                </CourseDetails>
+                                <MultimediaModal show={showMultimedia} account={myAccount} lesson={lesson} />
+                                {
+                                    lesson.isCompleted ? <Button primary={lesson.isCompleted} to={`/overview/${course.parentCourse.courseId}`}>Resume</Button> :
+                                        <LockIcon />
+                                }
+                            </CourseElement>
+                        </>
                     );
                 })}
             </div>
@@ -105,7 +117,6 @@ function CourseList(props: any) {
                 <EmptyStateText>No courses, sorry!</EmptyStateText>
 
             }
-            <MultimediaModal show={showMultimedia} lesson={selectedLesson} />
         </>
     )
 }
