@@ -15,3 +15,8 @@ export enum MultimediaType {
     DOCUMENT = "DOCUMENT",
     EMPTY = "",
 }
+
+export interface MultimediaReq {
+    multimedia: Multimedia,
+    multipartFile: File
+}

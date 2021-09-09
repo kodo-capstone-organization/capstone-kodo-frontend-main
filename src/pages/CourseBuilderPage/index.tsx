@@ -70,6 +70,10 @@ function CourseBuilderPage(props: any) {
         });
     }
 
+    const handleUpdateCourse = () => {
+        
+    }
+
     const navigateToPreviousPage = () => {
         history.goBack();
     }
@@ -126,7 +130,8 @@ function CourseBuilderPage(props: any) {
                 <Box m={1} pt={2}>
                     <Button
                         variant="contained"
-                        component="label">
+                        component="label"
+                        onClick={handleUpdateCourse}>
                         Update Course
                     </Button>
                 </Box>

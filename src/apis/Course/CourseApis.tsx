@@ -1,5 +1,5 @@
 import { IHttpClientRequestParameters } from "./../HttpClient/IHttpClientRequestParameters";
-import { Course } from "../Entities/Course";
+import { Course, UpdateCourseReq } from "../Entities/Course";
 import { httpClient } from "../HttpClient/HttpClient";
 import { CreateNewAccountReq } from "../Entities/Account";
 import { transformToBlob } from "../../utils/BlobCreator";
@@ -57,4 +57,18 @@ export async function getCourseToRecommend(accountId: number): Promise<Course[]>
     }
 
     return httpClient.get<undefined, Course[]>(getParameters)
+}
+
+export async function updateCourse(updateCourseReq: UpdateCourseReq, updatedBannerPicture: File): Promise<Course> {
+    const formData = new FormData();
+
+    formData.append('updateCourseReq', transformToBlob(updateCourseReq));
+    formData.append('bannerPicture', updatedBannerPicture);
+
+    const putParameters: IHttpClientRequestParameters<FormData> = {
+        url: '/course/updateCourse',
+        payload: formData
+    }
+
+    return httpClient.put<FormData, Course>(putParameters)
 }
