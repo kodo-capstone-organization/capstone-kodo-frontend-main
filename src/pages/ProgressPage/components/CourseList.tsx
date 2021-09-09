@@ -50,14 +50,6 @@ function CourseList(props: any) {
 
     const openModal = () => {
         setShowMultimedia(true);
-        // setSelectedLesson(lesson)
-    }
-
-    const redirectToLesson = (lesson: any, course: EnrolledCourse) => {
-        if (lesson.isCompleted) {
-            console.log("too fast")
-            history.push(`/overview/${course.parentCourse.courseId}`)
-        }
     }
 
     const getCourseLessons = (course: EnrolledCourse) => {
@@ -85,7 +77,7 @@ function CourseList(props: any) {
                                 </CourseDetails>
                                 <MultimediaModal show={showMultimedia} account={myAccount} lesson={lesson} />
                                 {
-                                    lesson.isCompleted ? <Button primary={lesson.isCompleted} to={`/overview/${course.parentCourse.courseId}`}>Resume</Button> :
+                                    lesson.isCompleted ? <Button primary={lesson.isCompleted} to={`/overview/lesson/${course.parentCourse.courseId}/${lesson.lessonId}`}>Resume</Button> :
                                         <LockIcon />
                                 }
                             </CourseElement>

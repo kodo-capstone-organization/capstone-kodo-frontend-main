@@ -1,35 +1,36 @@
 import React, { useEffect, useState } from 'react';
-import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
+import { makeStyles, Theme, createStyles, withStyles } from '@material-ui/core/styles';
 import {
     CourseDetails,
     CourseElement
 } from "../ProgressElements";
-import IconButton from '@material-ui/core/IconButton';
+import {
+    IconButton, Dialog, DialogActions, DialogContent, DialogContentText,
+    DialogTitle, Link, List, ListItem, ListItemAvatar, ListItemIcon, ListItemSecondaryAction,
+    ListItemText, Avatar, FormGroup, Checkbox, Grid, Typography, FormControlLabel
+} from "@material-ui/core";
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import TablePagination from '@material-ui/core/TablePagination';
+import Paper from '@material-ui/core/Paper';
+import AppBar from '@material-ui/core/AppBar';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
+import Box from '@material-ui/core/Box';
 import CloseIcon from '@material-ui/icons/Close';
 import InfoIcon from '@material-ui/icons/Info';
+import FolderIcon from '@material-ui/icons/Folder';
+import DeleteIcon from '@material-ui/icons/Delete';
 import { Button } from "../../../values/ButtonElements";
 import { Account } from "../../../apis/Entities/Account";
 import { Content } from "../../../apis/Entities/Content";
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import Link from '@material-ui/core/Link';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemAvatar from '@material-ui/core/ListItemAvatar';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import ListItemText from '@material-ui/core/ListItemText';
-import Avatar from '@material-ui/core/Avatar';
-import FormGroup from '@material-ui/core/FormGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
-import FolderIcon from '@material-ui/icons/Folder';
-import DeleteIcon from '@material-ui/icons/Delete';
+import { Quiz } from "../../../apis/Entities/Quiz";
+import { Multimedia } from '../../../apis/Entities/Multimedia';
+import { useHistory } from 'react-router';
 
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -50,24 +51,61 @@ const useStyles = makeStyles((theme: Theme) =>
         title: {
             margin: theme.spacing(4, 0, 2),
         },
+        table: {
+            minWidth: 700,
+        },
+        container: {
+            maxHeight: 440,
+        },
     }),
 );
 
+const StyledTableCell = withStyles((theme: Theme) =>
+    createStyles({
+        head: {
+            backgroundColor: theme.palette.common.black,
+            color: theme.palette.common.white,
+        },
+        body: {
+            fontSize: 14,
+        },
+    }),
+)(TableCell);
+
+const StyledTableRow = withStyles((theme: Theme) =>
+    createStyles({
+        root: {
+            '&:nth-of-type(odd)': {
+                backgroundColor: theme.palette.action.hover,
+            },
+        },
+    }),
+)(TableRow);
+
+
+function createData(name: string, url: (string | null)) {
+    return { name, url };
+}
 
 function MultimediaModal(props: any) {
 
     const classes = useStyles();
     const [open, setOpen] = React.useState(false);
-    const [myAccount, setMyAccount] = useState<Account>()
-    const [contents, setContents] = useState<Content[]>()
-    const [lesson, setLesson] = useState<any>()
-    const [isActive, setIsActive] = useState<Boolean>()
+    const [myAccount, setMyAccount] = useState<Account>();
+    const [multimedias, setMultimedias] = useState<Multimedia[]>([]);
+    const [quizzes, setQuizzes] = useState<Quiz[]>([]);
+    const [lesson, setLesson] = useState<any>();
+    const [tab, setTab] = React.useState(0);
+    const quizzesRow = quizzes?.map(quiz => createData(quiz.name, null))
+    const multimediasRow = multimedias?.map(multimedia => createData(multimedia.name, multimedia.url))
+    const history = useHistory();
 
     useEffect(() => {
         setMyAccount(props.account)
         setLesson(props.lesson)
         if (props.lesson !== undefined) {
-            setContents(props.lesson.contents)
+            setMultimedias(props.lesson.multimedias)
+            setQuizzes(props.lesson.quizzes)
         }
     }, [props.lesson])
 
@@ -82,24 +120,49 @@ function MultimediaModal(props: any) {
     const handleAction = () => {
     };
 
-    // const function generate(element: React.ReactElement) {
-    //     return [0, 1, 2].map((value) =>
-    //       React.cloneElement(element, {
-    //         key: value,
-    //       }),
-    //     );
-    //   }
+    const handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
+        setTab(newValue);
+    };
 
-    const listOfContentUrl = () => {
-        contents?.map((content, contentId) => {
-            return (
-                <CourseElement key={contentId}>
-                    <CourseDetails>
-                        <h3>{content.name}</h3>
-                    </CourseDetails>
-                </CourseElement>
-            )
-        })
+    const TabPanel = (props: any) => {
+        const { index, data } = props;
+
+        return (
+            <div
+                role="tabpanel"
+                hidden={tab !== index}
+            >
+                {tab === index && (
+                    <Box p={3}>
+                        <Typography>
+                            <DialogContent>
+                                <TableContainer component={Paper} className={classes.container}>
+                                    <Table stickyHeader className={classes.table} aria-label="customized table">
+                                        <TableHead>
+                                            <TableRow>
+                                                <StyledTableCell>Name</StyledTableCell>
+                                                <StyledTableCell >URL</StyledTableCell>
+                                            </TableRow>
+                                        </TableHead>
+                                        <TableBody>
+                                            {data.map((row: any) => (
+                                                <StyledTableRow key={row.name}>
+                                                    <StyledTableCell component="th" scope="row">
+                                                        {row.name}
+                                                    </StyledTableCell>
+                                                    {/* // @ts-ignore */}
+                                                    <StyledTableCell><Link onClick={() => { window.open(row.url, "_blank") }}>{row.url}</Link></StyledTableCell>
+                                                </StyledTableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                </TableContainer>
+                            </DialogContent>
+                        </Typography>
+                    </Box>
+                )}
+            </div>
+        );
     }
 
     return (
@@ -109,31 +172,28 @@ function MultimediaModal(props: any) {
                     <InfoIcon />
                 </IconButton>
                 <Dialog open={open} onClose={handleClose}>
-                    <div style={{ display: "flex" }}>
-                        <DialogTitle id="form-dialog-title">View Lesson Multimedia</DialogTitle>
-                        <IconButton onClick={handleClose}>
-                            <CloseIcon />
-                        </IconButton>
+                    <DialogTitle id="form-dialog-title">View Lesson Multimedia</DialogTitle>
+                    <Tabs
+                        value={tab}
+                        indicatorColor="primary"
+                        textColor="primary"
+                        onChange={handleTabChange}
+                    >
+                        <Tab label="Multimedia" />
+                        <Tab label="Quizzes" />
+                    </Tabs>
+                    <div id="panel-group">
+                        <TabPanel value={tab} index={0} data={multimediasRow}>
+                        </TabPanel>
+
+                        <TabPanel value={tab} index={1} data={quizzesRow}>
+                        </TabPanel>
                     </div>
-                    <DialogContent>
-                        <DialogContentText>
-                            <Grid container>
-                                <Grid item xs={5} style={{ margin: "5px" }}>
-                                    {JSON.stringify(contents)}
-                                    {contents?.map((content, contentId) => {
-                                        <CourseElement key={contentId}>
-                                            <CourseDetails>
-                                                <h3>{JSON.stringify(content)}</h3>
-                                            </CourseDetails>
-                                        </CourseElement>
-                                    })}
-                                </Grid>
-                            </Grid>
-                        </DialogContentText>
-                    </DialogContent>
+
+
                     <DialogActions>
                         <Button onClick={handleClose} >
-                            Cancel
+                            Close
                         </Button>
                     </DialogActions>
                 </Dialog>
