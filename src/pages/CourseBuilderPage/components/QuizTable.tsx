@@ -324,7 +324,6 @@ export default function QuizTable(props: any) {
 
     return (
         <>
-        {rows.length > 0 &&
         <div className={classes.root}>
         <Paper className={classes.paper}>
             <EnhancedTableToolbar 
@@ -335,6 +334,7 @@ export default function QuizTable(props: any) {
                 setLessons={setLessons}
                 handleFormDataChange={handleFormDataChange}
                 setSelectedIds={setSelectedIds}/>
+            {rows.length > 0 &&
             <TableContainer>
             <Table
                 className={classes.table}
@@ -392,7 +392,7 @@ export default function QuizTable(props: any) {
                 )}
                 </TableBody>
             </Table>
-            </TableContainer>
+            </TableContainer>}
             <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
@@ -407,7 +407,7 @@ export default function QuizTable(props: any) {
             control={<Switch checked={dense} onChange={handleChangeDense} />}
             label="Dense padding"
         />
-        </div>}
+        </div>
         </>
     );
 }

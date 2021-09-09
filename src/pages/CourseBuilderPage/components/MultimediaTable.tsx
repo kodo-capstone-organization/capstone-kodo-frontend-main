@@ -457,7 +457,6 @@ export default function MultimediaTable(props: any) {
 
     return (
         <>
-        {rows.length > 0 &&
         <div className={classes.root}>
         <Paper className={classes.paper}>
             <EnhancedTableToolbar 
@@ -468,6 +467,7 @@ export default function MultimediaTable(props: any) {
                 setLessons={setLessons}
                 handleFormDataChange={handleFormDataChange}
                 setSelectedIds={setSelectedIds} />
+            {rows.length > 0 &&
             <TableContainer>
             <Table
                 className={classes.table}
@@ -525,7 +525,7 @@ export default function MultimediaTable(props: any) {
                 )}
                 </TableBody>
             </Table>
-            </TableContainer>
+            </TableContainer>}
             <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
@@ -540,7 +540,7 @@ export default function MultimediaTable(props: any) {
             control={<Switch checked={dense} onChange={handleChangeDense} />}
             label="Dense padding"
         />
-        </div>}
+        </div>
         </>
     );
 }
