@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useReducer } from "react";
-import { Grid, TextField } from "@material-ui/core";
+import { Box, Grid, TextField } from "@material-ui/core";
 import { CourseBuilderCard, CourseBuilderCardHeader, CourseBuilderContainer, CourseBuilderContent } from "./CourseBuilderElements";
 import { Button } from "@material-ui/core";
 import LessonPlan from "./components/LessonPlan";
@@ -108,6 +108,22 @@ function CourseBuilderPage(props: any) {
             <CourseBuilderCard id="lesson-plan">
                 <LessonPlan courseFormData={courseFormData} lessons={courseFormData.lessons} handleFormDataChange={handleFormDataChange}/>
             </CourseBuilderCard>
+            <Grid container spacing={3} justify="flex-end">
+                <Box m={1} pt={2}>
+                    <Button
+                        variant="contained"
+                        component="label">
+                        Cancel
+                    </Button>
+                </Box>
+                <Box m={1} pt={2}>
+                    <Button
+                        variant="contained"
+                        component="label">
+                        Update Course
+                    </Button>
+                </Box>
+            </Grid>
         </CourseBuilderContainer>
     )
 }
