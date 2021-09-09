@@ -19,9 +19,10 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import DeleteIcon from '@material-ui/icons/Delete';
 import AddIcon from '@material-ui/icons/Add';
-import { Multimedia } from '../../../apis/Entities/Multimedia';
+import { Multimedia, MultimediaType } from '../../../apis/Entities/Multimedia';
 import { Lesson } from '../../../apis/Entities/Lesson';
 import { Button, Dialog, DialogContent, DialogContentText, DialogTitle, InputLabel, Input, FormControl, Grid, DialogActions} from '@material-ui/core';
+import { ACCEPTABLE_FILE_TYPE, getFileType } from '../../../utils/GetFileType';
 
 interface Data {
   id: number,
@@ -166,14 +167,6 @@ const useToolbarStyles = makeStyles((theme: Theme) =>
     },
   }),
 );
-
-interface NewFileProps {
-  name: string;
-  description: string;
-  urlFileName: string;
-  file: File;
-}
-
 interface EnhancedTableToolbarProps {
   numSelected: number;
   selectedIds: number[];
@@ -187,7 +180,7 @@ interface EnhancedTableToolbarProps {
 const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   const classes = useToolbarStyles();
   const { numSelected, selectedIds, lessonId, handleFormDataChange, setLessons, lessons, setSelectedIds } = props;
-  const [newFile, setNewFile] = useState<NewFileProps>({ name: "", description: "", urlFileName: "", file: new File([""], "")});
+  const [newFile, setNewFile] = useState<Multimedia>({ contentId: -1, name: "", description: "", url: "", type: MultimediaType.EMPTY, urlFilename: "", file: new File([""], "")}, );
 
   const [showAddMultimediaDialog, setShowAddMultimediaDialog] = useState<boolean>(false); 
 
@@ -202,8 +195,8 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   const handleClickSubmit = () => {
     const updatedLessons = lessons.map((lesson: Lesson) => {
       if (lesson.lessonId === lessonId) {
-        // const updatedMultimedias = lesson.multimedias.concat([newFile])
-        // lesson.multimedias = updatedMultimedias
+        const updatedMultimedias = lesson.multimedias.concat(newFile)
+        lesson.multimedias = updatedMultimedias
       }
       return lesson
     })
@@ -218,6 +211,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
     }
 
     handleFormDataChange(wrapperEvent)
+    setShowAddMultimediaDialog(false)
   }
 
   const handleFileChange = (event: any) => {
@@ -231,8 +225,9 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
         updatedFile.description = event.target.value
         break;
       case "file":
-        updatedFile.urlFileName = event.target.files[0].name
+        updatedFile.urlFilename = event.target.files[0].name
         updatedFile.file = event.target.files[0]
+        updatedFile.type = getFileType(updatedFile.urlFilename)
         break;
     }
     setNewFile({...updatedFile})
@@ -256,7 +251,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
         value: updatedLessons
       }
     }
-    
+
     setSelectedIds([])
     handleFormDataChange(wrapperEvent)
   }
@@ -301,7 +296,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
                 </FormControl>
                 <FormControl fullWidth margin="normal">
                   <input 
-                    accept="image/*" 
+                    accept={ACCEPTABLE_FILE_TYPE}
                     className={classes.input} 
                     id="contained-button-file" 
                     type="file" 
