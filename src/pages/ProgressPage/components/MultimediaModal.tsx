@@ -119,7 +119,7 @@ function MultimediaModal(props: any) {
                         <DialogContentText>
                             <Grid container>
                                 <Grid item xs={5} style={{ margin: "5px" }}>
-                                    {/* {JSON.stringify(contents)} */}
+                                    {JSON.stringify(contents)}
                                     {contents?.map((content, contentId) => {
                                         <CourseElement key={contentId}>
                                             <CourseDetails>

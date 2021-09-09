@@ -59,10 +59,10 @@ function DeactivateAccountModal(props: any) {
     };
 
     const handleAction = () => {
-        if(myAccount !== undefined){
+        if (myAccount !== undefined) {
             deactivateAccount(myAccount.accountId, myAccount.accountId)
-            .then((res) => console.log(res))
-            .catch(error => console.log("error in deactivating", error));
+                .then((res) => { console.log(res); window.location.reload(); })
+                .catch(error => console.log("error in deactivating", error));
         }
 
     };
