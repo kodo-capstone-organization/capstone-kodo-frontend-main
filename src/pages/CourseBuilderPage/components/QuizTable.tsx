@@ -209,16 +209,10 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
           Quizzes
         </Typography>
       )}
-      {numSelected > 0 ? (
+      {numSelected > 0 && (
         <Tooltip title="Delete">
           <IconButton aria-label="delete" onClick={handleDeleteQuiz}>
             <DeleteIcon />
-          </IconButton>
-        </Tooltip>
-      ) : (
-        <Tooltip title="Filter list">
-          <IconButton aria-label="filter list">
-            <FilterListIcon />
           </IconButton>
         </Tooltip>
       )}
