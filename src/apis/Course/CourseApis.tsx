@@ -62,11 +62,16 @@ export async function getCourseToRecommend(accountId: number): Promise<Course[]>
     return httpClient.get<undefined, Course[]>(getParameters)
 }
 
-export async function updateCourse(updateCourseReq: UpdateCourseReq, updatedBannerPicture: File): Promise<Course> {
+export async function updateCourse(updateCourseReq: UpdateCourseReq, updatedBannerPicture: File | null): Promise<Course> {
     const formData = new FormData();
 
     formData.append('updateCourseReq', transformToBlob(updateCourseReq));
-    formData.append('bannerPicture', updatedBannerPicture);
+    if (updatedBannerPicture !== null) {
+        formData.append('bannerPicture', updatedBannerPicture);
+    }
+
+    console.log(updateCourseReq)
+    console.log(updatedBannerPicture)
 
     const putParameters: IHttpClientRequestParameters<FormData> = {
         url: '/course/updateCourse',
