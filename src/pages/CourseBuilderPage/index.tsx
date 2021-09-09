@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useReducer } from "react";
+import { useHistory } from "react-router-dom";
 import { Box, Grid, TextField } from "@material-ui/core";
 import { CourseBuilderCard, CourseBuilderCardHeader, CourseBuilderContainer, CourseBuilderContent } from "./CourseBuilderElements";
 import { Button } from "@material-ui/core";
@@ -16,6 +17,7 @@ const formReducer = (state: any, event: any) => {
 
 function CourseBuilderPage(props: any) {
 
+    const history = useHistory();
     const courseId = props.match.params.courseId;
 
     const [loading, setLoading] = useState<boolean>(true);
@@ -68,6 +70,10 @@ function CourseBuilderPage(props: any) {
         });
     }
 
+    const navigateToPreviousPage = () => {
+        history.goBack();
+    }
+
     return !loading && (
         <CourseBuilderContainer>
             <CourseBuilderCard id="course-information">
@@ -112,7 +118,8 @@ function CourseBuilderPage(props: any) {
                 <Box m={1} pt={2}>
                     <Button
                         variant="contained"
-                        component="label">
+                        component="label"
+                        onClick={navigateToPreviousPage}>
                         Cancel
                     </Button>
                 </Box>
