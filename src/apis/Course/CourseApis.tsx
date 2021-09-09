@@ -37,11 +37,14 @@ export async function getCourseByTagTitle(tagTitle: string): Promise<Course[]> {
 }
 
 
-export async function createNewCourse(createNewCourseReq: CreateNewAccountReq, bannerPicture: File): Promise<Course> {
+export async function createNewCourse(createNewCourseReq: CreateNewAccountReq, bannerPicture: File | null): Promise<Course> {
     const formData = new FormData();
 
     formData.append('course', transformToBlob(createNewCourseReq));
-    formData.append('bannerPicture', bannerPicture);
+    if(bannerPicture !== null)
+    {
+        formData.append('bannerPicture', bannerPicture);
+    }
 
     const postParameters: IHttpClientRequestParameters<FormData> = {
         url: '/course/createNewCourse',

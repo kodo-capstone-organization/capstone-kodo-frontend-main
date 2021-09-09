@@ -10,10 +10,7 @@ import { colours } from "../../../values/Colours";
 import {
   BrowseContainer,
   CourseWrapper,
-  CourseCard,
-  CourseCardContent,
   Title,
-  CourseCardMedia,
   InputWrapper,
   CourseTags,
   TagChip
@@ -27,6 +24,7 @@ import TextField from "@material-ui/core/TextField";
 import SearchIcon from "@material-ui/icons/Search";
 import ChipInput from "material-ui-chip-input";
 import { Chip } from "@material-ui/core";
+import CourseCard from "../../../components/CourseCard";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -35,9 +33,6 @@ const useStyles = makeStyles((theme: Theme) =>
         margin: theme.spacing(1),
         width: "25ch"
       }
-    },
-    media: {
-      height: 170
     },
     chipInput: {
       width: "100%"
@@ -140,32 +135,7 @@ function BrowseCourse() {
               }
             })
             .map(course => {
-              return (
-                <>
-                  <CourseCard key={course.courseId}>
-                    <CardActionArea
-                      component={RouterLink}
-                      to={`/browsecourse/preview/${course.courseId}`}
-                    >
-                      <CardMedia
-                        className={classes.media}
-                        image="/chessplaceholder.png"
-                        title={course.name}
-                      />
-                      <CourseCardContent>
-                        <Typography>{course.name}</Typography>
-                        <Typography
-                          variant="body2"
-                          color="textSecondary"
-                          component="p"
-                        >
-                          {course.tutor.name}
-                        </Typography>
-                      </CourseCardContent>
-                    </CardActionArea>
-                  </CourseCard>
-                </>
-              );
+              return ( <CourseCard course={course} redirectUrlBase="/browsecourse/preview" /> );
             })}
         </CourseWrapper>
         <Title>Suggested For You</Title>

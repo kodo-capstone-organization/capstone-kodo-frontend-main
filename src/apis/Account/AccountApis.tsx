@@ -31,7 +31,10 @@ export async function createNewAccount(createNewAccountReq: CreateNewAccountReq,
     const formData = new FormData();
 
     formData.append('account', transformToBlob(createNewAccountReq));
-    formData.append('displayPicture', displayPicture);
+    if (displayPicture !== null)
+    {
+        formData.append('displayPicture', displayPicture);
+    }
 
     const postParameters: IHttpClientRequestParameters<FormData> = {
         url: '/account/createNewAccount',
