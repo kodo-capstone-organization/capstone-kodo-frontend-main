@@ -1,18 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button } from "../../../values/ButtonElements";
 import { InfoCard, Wrapper } from "./SignUpElements";
 import TextField from '@material-ui/core/TextField';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
-import ChipInput from 'material-ui-chip-input'
+import ChipInput from 'material-ui-chip-input';
+import Chip from '@material-ui/core/Chip';
 import { createNewAccount } from '../../../apis/Account/AccountApis';
+import { getAllTags } from '../../../apis/Tag/TagApis';
+import { Tag } from "../../../apis/Entities/Tag";
 import { Account } from "../../../apis/Entities/Account";
 import { useHistory } from 'react-router';
-
-interface IFields<TValue> {
-    [id: string]: TValue;
-}
+import Autocomplete from '@material-ui/lab/Autocomplete';
 
 interface IErrors<TValue> {
     [id: string]: TValue;
@@ -26,6 +26,7 @@ function SignUp() {
     const [password, setPassword] = useState<string>("");
     const [btnTags, setBtnTags] = useState<String[]>([]);
     const [chips, setChips] = useState<String[]>([]);
+    const [tagLibrary, setTagLibrary] = useState<Tag[]>([]);
     const [errors, setErrors] = useState<IErrors<any>>({
         name: "",
         username: "",
@@ -44,16 +45,14 @@ function SignUp() {
         },
     }));
 
+    useEffect(() => {
+        getAllTags().then(res => setTagLibrary(res)).catch(error => console.log("error getting tags."))
+    }, [])
+
     const classes = useStyles();
-
-    // const handleTextInputChange = (field: any, e: React.ChangeEvent<HTMLInputElement|HTMLTextAreaElement>) => {
-    //     fields[field] = e.target.value;
-    //     setFields(fields);
-    //     e.preventDefault();
-    // }
-
-    const handleChipChange = (chip: String[]) => {
-        setChips(chip)
+    const handleChipChange = (e: object, value: String[], reason: string) => {
+        console.log(value)
+        setChips(value)
     }
 
     const handleBtn = (event: React.SyntheticEvent, newBtnTag: string) => {
@@ -110,6 +109,7 @@ function SignUp() {
 
 
     const handleSignUp = () => {
+        // const chipsToString = chips.map((chip) => chip.title)
         const tagTitles = btnTags.concat(chips)
         var newUserAccount =
         {
@@ -177,8 +177,24 @@ function SignUp() {
                             <span style={{ color: "red" }}>{errors["btnTags"]}</span>
                             <br />
                             <label>What subjects are you interested in?</label>
-                            <ChipInput
+                            {/* <ChipInput
                                 onChange={(chips) => handleChipChange(chips)}
+                            /> */}
+                            <Autocomplete
+                                multiple
+                                id="tags-filled"
+                                options={tagLibrary.map((option) => option.title)}
+                                defaultValue={[]}
+                                onChange={handleChipChange}
+                                freeSolo
+                                renderTags={(value: string[], getTagProps) =>
+                                    value.map((option: string, index: number) => (
+                                        <Chip variant="outlined" label={option} {...getTagProps({ index })} />
+                                    ))
+                                }
+                                renderInput={(params) => (
+                                    <TextField {...params} variant="filled" label="What subjects are you interested in?" />
+                                )}
                             />
                             <Button onClick={handleValidation}>Sign Up</Button>
                         </form>

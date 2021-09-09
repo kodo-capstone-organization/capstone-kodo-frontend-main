@@ -30,4 +30,10 @@ module.exports = function(app) {
       changeOrigin: true
     })
   );
+  app.use(
+    createProxyMiddleware("/tag", {
+      target: url,
+      changeOrigin: true
+    })
+  );
 };
