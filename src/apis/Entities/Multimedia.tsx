@@ -4,6 +4,7 @@ export interface Multimedia extends Content {
     url: string,
     type: MultimediaType,
     urlFilename: string
+    file: File
 }
 
 export enum MultimediaType {

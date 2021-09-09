@@ -117,7 +117,11 @@ function LessonPlan(props: any) {
                                 lessons={lessons}/>
                             </Grid>
                             <Grid item xs={12}>
-                                <MultimediaTable multimedias={lesson.multimedias}/>
+                                <MultimediaTable
+                                handleFormDataChange={handleFormDataChange} 
+                                lessonId={lesson.lessonId} 
+                                multimedias={lesson.multimedias}
+                                lessons={lessons}/>
                             </Grid>
                             <Grid container xs={12} justify="flex-end">
                                 <Button variant="contained"

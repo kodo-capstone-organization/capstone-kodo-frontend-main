@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import clsx from 'clsx';
 import { createStyles, lighten, makeStyles, Theme } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
@@ -20,8 +20,10 @@ import Switch from '@material-ui/core/Switch';
 import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import { Multimedia } from '../../../apis/Entities/Multimedia';
+import { Lesson } from '../../../apis/Entities/Lesson';
 
 interface Data {
+  id: number,
   name: string,
   description: string,
   type: string,
@@ -30,13 +32,14 @@ interface Data {
 }
 
 function createData(
+  id: number,
   name: string,
   description: string,
   type: string,
   url: string,
   urlFilename: string
 ): Data {
-  return { name, description, type, url, urlFilename };
+  return { id, name, description, type, url, urlFilename };
 }
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
@@ -162,11 +165,37 @@ const useToolbarStyles = makeStyles((theme: Theme) =>
 
 interface EnhancedTableToolbarProps {
   numSelected: number;
+  selectedIds: number[];
+  lessonId: number;
+  handleFormDataChange: any;
+  lessons: Lesson[];
+  setLessons: any;
 }
 
 const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   const classes = useToolbarStyles();
-  const { numSelected } = props;
+  const { numSelected, selectedIds, lessonId, handleFormDataChange, setLessons, lessons } = props;
+
+  const handleDeleteMultimedia = () => {
+    const updatedLessons = lessons.map((lesson: Lesson) => {
+      if (lesson.lessonId === lessonId) {
+        const updatedMultimedias = lesson.multimedias.filter((multimedia: Multimedia) => !selectedIds.includes(multimedia.contentId))
+        lesson.multimedias = updatedMultimedias
+      }
+      return lesson
+    })
+
+    setLessons(updatedLessons)
+
+    let wrapperEvent = {
+      target: {
+        name: "lessons",
+        value: updatedLessons
+      }
+    }
+
+    handleFormDataChange(wrapperEvent)
+  }
 
   return (
     <Toolbar
@@ -185,7 +214,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
       )}
       {numSelected > 0 ? (
         <Tooltip title="Delete">
-          <IconButton aria-label="delete">
+          <IconButton aria-label="delete" onClick={handleDeleteMultimedia}>
             <DeleteIcon />
           </IconButton>
         </Tooltip>
@@ -227,13 +256,23 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 export default function MultimediaTable(props: any) {
+    const handleFormDataChange = props.handleFormDataChange;
     const [multimedias, setMultimedias] = useState<Multimedia[]>(props.multimedias);
-    const rows = multimedias?.length > 0 ? multimedias.map((row: Multimedia) => createData(row.name, row.description, row.type, row.urlFilename, row.url)) : []
+    const [lessons, setLessons] = useState<Lesson[]>(props.lessons);
+    const rows = multimedias?.length > 0 ? multimedias.map((row: Multimedia) => createData(row.contentId, row.name, row.description, row.type, row.url, row.urlFilename)) : []
+
+    useEffect(() => {
+      const newMultimedias = lessons.find((lesson) => lesson.lessonId === props.lessonId)?.multimedias
+      if (newMultimedias) {
+        setMultimedias(newMultimedias)
+      }
+    }, [lessons])
 
     const classes = useStyles();
     const [order, setOrder] = React.useState<Order>('asc');
     const [orderBy, setOrderBy] = React.useState<keyof Data>('name');
     const [selected, setSelected] = React.useState<string[]>([]);
+    const [selectedIds, setSelectedIds] = React.useState<number[]>([]);
     const [page, setPage] = React.useState(0);
     const [dense, setDense] = React.useState(false);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -253,25 +292,34 @@ export default function MultimediaTable(props: any) {
         setSelected([]);
     };
 
-    const handleClick = (event: React.MouseEvent<unknown>, name: string) => {
-        const selectedIndex = selected.indexOf(name);
-        let newSelected: string[] = [];
+    const handleClick = (event: React.MouseEvent<unknown>, name: string, id: number) => {
+      const selectedIndex = selectedIds.indexOf(id);
+      let newSelected: string[] = [];
+      let newSelectedIds: number[] = [];
 
-        if (selectedIndex === -1) {
+      if (selectedIndex === -1) {
         newSelected = newSelected.concat(selected, name);
-        } else if (selectedIndex === 0) {
+        newSelectedIds = newSelectedIds.concat(selectedIds, id);
+      } else if (selectedIndex === 0) {
         newSelected = newSelected.concat(selected.slice(1));
-        } else if (selectedIndex === selected.length - 1) {
+        newSelectedIds = newSelectedIds.concat(selectedIds.slice(1));
+      } else if (selectedIndex === selected.length - 1) {
         newSelected = newSelected.concat(selected.slice(0, -1));
-        } else if (selectedIndex > 0) {
+        newSelectedIds = newSelectedIds.concat(selectedIds.slice(0, -1));
+      } else if (selectedIndex > 0) {
         newSelected = newSelected.concat(
-            selected.slice(0, selectedIndex),
-            selected.slice(selectedIndex + 1),
+          selected.slice(0, selectedIndex),
+          selected.slice(selectedIndex + 1),
         );
-        }
+        newSelectedIds = newSelectedIds.concat(
+          selectedIds.slice(0, selectedIndex),
+          selectedIds.slice(selectedIndex + 1),
+        );
+      }
 
-        setSelected(newSelected);
-    };
+      setSelected(newSelected);
+      setSelectedIds(newSelectedIds);
+  };
 
     const handleChangePage = (event: unknown, newPage: number) => {
         setPage(newPage);
@@ -295,7 +343,13 @@ export default function MultimediaTable(props: any) {
         {rows.length > 0 &&
         <div className={classes.root}>
         <Paper className={classes.paper}>
-            <EnhancedTableToolbar numSelected={selected.length} />
+            <EnhancedTableToolbar 
+                numSelected={selected.length}
+                selectedIds={selectedIds}
+                lessonId={props.lessonId}
+                lessons={lessons}
+                setLessons={setLessons}
+                handleFormDataChange={handleFormDataChange} />
             <TableContainer>
             <Table
                 className={classes.table}
@@ -324,7 +378,7 @@ export default function MultimediaTable(props: any) {
                         <TableRow
                         hover
                         // @ts-ignore
-                        onClick={(event) => handleClick(event, row.name)}
+                        onClick={(event) => handleClick(event, row.name, row.id)}
                         role="checkbox"
                         aria-checked={isItemSelected}
                         tabIndex={-1}
