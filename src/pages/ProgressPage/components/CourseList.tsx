@@ -1,23 +1,19 @@
 import React, { useState, useEffect } from 'react'
+import { makeStyles } from '@material-ui/core/styles';
 import {
     CourseDetails,
     CourseElement,
-    TutorName,
     Button,
     Subject,
     EmptyStateText
 } from "../ProgressElements";
-import { makeStyles } from '@material-ui/core/styles';
-import IconButton from '@material-ui/core/IconButton';
-import Avatar from '@material-ui/core/Avatar';
-import Divider from '@material-ui/core/Divider';
-import Grid from '@material-ui/core/Grid';
+import {
+    Avatar, Divider, Grid
+} from "@material-ui/core";
 import { EnrolledCourse } from "../../../apis/Entities/EnrolledCourse";
 import { Account } from "../../../apis/Entities/Account";
 import { Lesson } from "../../../apis/Entities/Lesson";
-import Link from '@material-ui/core/Link';
 import LockIcon from '@material-ui/icons/Lock';
-import InfoIcon from '@material-ui/icons/Info';
 import MultimediaModal from './MultimediaModal';
 import { useHistory } from 'react-router';
 
@@ -39,7 +35,6 @@ function CourseList(props: any) {
     const [myCourses, setMyCourses] = useState<EnrolledCourse[]>([])
     const [myAccount, setMyAccount] = useState<Account>()
     const [showMultimedia, setShowMultimedia] = useState<Boolean>(false)
-    const [selectedLesson, setSelectedLesson] = useState<any>()
     const classes = useStyles();
     const history = useHistory();
 
@@ -47,10 +42,6 @@ function CourseList(props: any) {
         setMyAccount(props.account)
         setMyCourses(props.courses)
     }, [props])
-
-    const openModal = () => {
-        setShowMultimedia(true);
-    }
 
     const getCourseLessons = (course: EnrolledCourse) => {
         var listOfEnrolledLessonId: number[] = course.enrolledLessons.map(x => x.parentLesson.lessonId);
@@ -64,6 +55,7 @@ function CourseList(props: any) {
                 lessonWithStatus = Object.assign(lesson, { isCompleted: false });
             }
             finalListOfLesson.push(lessonWithStatus)
+            return
         })
         return (
             <div>
@@ -77,8 +69,8 @@ function CourseList(props: any) {
                                 </CourseDetails>
                                 <MultimediaModal show={showMultimedia} account={myAccount} lesson={lesson}/>
                                 {
-                                    lesson.isCompleted ? <Button primary={lesson.isCompleted} to={`/overview/lesson/${course.parentCourse.courseId}/${lesson.lessonId}`}>Resume</Button> :
-                                        <LockIcon />
+                                    course.dateTimeOfCompletion === null ? (lesson.isCompleted ? <Button primary={lesson.isCompleted} to={`/overview/lesson/${course.parentCourse.courseId}/${lesson.lessonId}`}>Resume</Button> :
+                                        <LockIcon />) : <Button primary={lesson.isCompleted} to={`/overview/lesson/${course.parentCourse.courseId}/${lesson.lessonId}`}>View</Button>
                                 }
                             </CourseElement>
                         </>
@@ -106,7 +98,7 @@ function CourseList(props: any) {
             }
             {
                 myCourses?.length === 0 &&
-                <EmptyStateText>No courses, sorry!</EmptyStateText>
+                <EmptyStateText>No courses, sorry! 😢</EmptyStateText>
 
             }
         </>

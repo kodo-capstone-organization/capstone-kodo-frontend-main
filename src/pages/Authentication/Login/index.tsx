@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import { Button } from "../../../values/ButtonElements";
 import { useHistory } from "react-router-dom";
@@ -10,7 +9,6 @@ import {
 } from "./LoginElements";
 import TextField from '@material-ui/core/TextField';
 import { login } from '../../../apis/Account/AccountApis';
-import { type } from 'os';
 
 
 // function Login({ isOpen }) {
@@ -26,7 +24,7 @@ function Login() {
         setAuth(!auth);
         e.preventDefault();
         // @ts-ignore: Unreachable code error
-        login(username, password).then(loginCallback.bind(this, username, password)).catch(err => setloginFailed("Login Failed!"));
+        login(username, password).then(loginCallback.bind(this, username, password)).catch(err => setloginFailed("Login Failed! Please use valid credentials!"));
     }
 
     // @ts-ignore: Unreachable code error
@@ -66,11 +64,12 @@ function Login() {
                                 <TextField id="filled-basic" label="Username" variant="filled" type="text" value={username} onChange={e => setUsername(e.target.value)} />
                                 <br/>
                                 <TextField id="filled-basic" label="Password" variant="filled" type="password" value={password} onChange={e => setPassword(e.target.value)} />
-                                <span style={{ color: "red" }}>{loginFailed}</span>
                             </LoginForm>
                         </form>
                         <br />
                         <Button primary big fontBig onClick={btnClick}>Login</Button>
+                        <div style={{textAlign:"center"}}><span style={{ color: "red"}}>{loginFailed}</span></div>
+                        
                     </LoginPaperWrapper>
                 </LoginPaper>
             </div>

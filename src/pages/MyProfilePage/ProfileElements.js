@@ -60,6 +60,7 @@ export const ProfileCardHeader = styled(CardHeader)`
 export const ProfileCardContent = styled(CardContent)`
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     background-color: ${colours.WHITE};
     color: ${colours.GRAY2};
     align-items: center;
