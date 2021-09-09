@@ -18,16 +18,16 @@ import Tooltip from '@material-ui/core/Tooltip';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import DeleteIcon from '@material-ui/icons/Delete';
-import FilterListIcon from '@material-ui/icons/FilterList';
+import AddIcon from '@material-ui/icons/Add';
 import { Multimedia } from '../../../apis/Entities/Multimedia';
 import { Lesson } from '../../../apis/Entities/Lesson';
+import { Button, Dialog, DialogContent, DialogContentText, DialogTitle, InputLabel, Input, FormControl, Grid, DialogActions} from '@material-ui/core';
 
 interface Data {
   id: number,
   name: string,
   description: string,
   type: string,
-  url: string,
   urlFilename: string
 }
 
@@ -36,10 +36,9 @@ function createData(
   name: string,
   description: string,
   type: string,
-  url: string,
   urlFilename: string
 ): Data {
-  return { id, name, description, type, url, urlFilename };
+  return { id, name, description, type, urlFilename };
 }
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
@@ -85,7 +84,6 @@ const headCells: HeadCell[] = [
   { id: 'description', numeric: true, disablePadding: false, label: 'Description' },
   { id: 'type', numeric: true, disablePadding: false, label: 'File Type' },
   { id: 'urlFilename', numeric: true, disablePadding: false, label: 'File Name' },
-  { id: 'url', numeric: true, disablePadding: false, label: 'URL' }
 ];
 
 interface EnhancedTableProps {
@@ -144,8 +142,14 @@ function EnhancedTableHead(props: EnhancedTableProps) {
 const useToolbarStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
+      '& > *': {
+        margin: theme.spacing(1),
+      },
       paddingLeft: theme.spacing(2),
       paddingRight: theme.spacing(1),
+    },
+    input: {
+      display: 'none',
     },
     highlight:
       theme.palette.type === 'light'
@@ -163,6 +167,13 @@ const useToolbarStyles = makeStyles((theme: Theme) =>
   }),
 );
 
+interface NewFileProps {
+  name: string;
+  description: string;
+  urlFileName: string;
+  file: File;
+}
+
 interface EnhancedTableToolbarProps {
   numSelected: number;
   selectedIds: number[];
@@ -175,6 +186,56 @@ interface EnhancedTableToolbarProps {
 const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   const classes = useToolbarStyles();
   const { numSelected, selectedIds, lessonId, handleFormDataChange, setLessons, lessons } = props;
+  const [newFile, setNewFile] = useState<NewFileProps>({ name: "", description: "", urlFileName: "", file: new File([""], "")});
+
+  const [showAddMultimediaDialog, setShowAddMultimediaDialog] = useState<boolean>(false); 
+
+  const openDialog = () => {
+    setShowAddMultimediaDialog(true);
+  }
+
+  const handleClose = () => {
+    setShowAddMultimediaDialog(false);
+  }
+
+  const handleClickSubmit = () => {
+    const updatedLessons = lessons.map((lesson: Lesson) => {
+      if (lesson.lessonId === lessonId) {
+        // const updatedMultimedias = lesson.multimedias.concat([newFile])
+        // lesson.multimedias = updatedMultimedias
+      }
+      return lesson
+    })
+
+    setLessons(updatedLessons)
+
+    let wrapperEvent = {
+      target: {
+        name: "lessons",
+        value: updatedLessons
+      }
+    }
+
+    handleFormDataChange(wrapperEvent)
+  }
+
+  const handleFileChange = (event: any) => {
+    let updatedFile = newFile
+
+    switch (event.target.name) {
+      case "name":
+        updatedFile.name = event.target.value
+        break;
+      case "description":
+        updatedFile.description = event.target.value
+        break;
+      case "file":
+        updatedFile.urlFileName = event.target.files[0].name
+        updatedFile.file = event.target.files[0]
+        break;
+    }
+    setNewFile({...updatedFile})
+  }
 
   // Update multimedias for a particular lesson from courseFormData
   const handleDeleteMultimedia = () => {
@@ -199,6 +260,71 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   }
 
   return (
+    <>
+    <Dialog 
+        fullWidth
+        open={showAddMultimediaDialog}
+        onClose={handleClose}
+        aria-labelledby="simple-modal-title"
+        aria-describedby="simple-modal-description">
+            <DialogTitle>Add a new Multimedia</DialogTitle>
+            <DialogContent
+              style={{height: '300px'}}>
+              <DialogContentText>
+                First, enter some basic details about the new multimedia below.
+              </DialogContentText>
+              <FormControl fullWidth margin="normal">
+                <InputLabel htmlFor="multimedia-name">Multimedia Name</InputLabel>
+                <Input
+                  id="multimedia-name"
+                  name="name"
+                  type="text"
+                  autoFocus
+                  fullWidth
+                  value={newFile.name}
+                  onChange={handleFileChange}
+                />
+                </FormControl>
+                <FormControl fullWidth margin="normal">
+                  <InputLabel htmlFor="multimedia-description">Description</InputLabel>
+                  <Input
+                    id="multimedia-description"
+                    name="description"
+                    type="text"
+                    autoFocus
+                    fullWidth
+                    value={newFile.description}
+                    onChange={handleFileChange}
+                  />
+                </FormControl>
+                <FormControl fullWidth margin="normal">
+                  <input 
+                    accept="image/*" 
+                    className={classes.input} 
+                    id="contained-button-file" 
+                    type="file" 
+                    name="file"
+                    onChange={handleFileChange} />
+                  <InputLabel htmlFor="contained-button-file">
+                    <Button 
+                      variant="contained" 
+                      color="primary" 
+                      aria-label="upload picture" 
+                      component="span">
+                        Upload
+                    </Button>
+                  </InputLabel>
+                </FormControl>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClose}>
+                Cancel
+              </Button>
+              <Button onClick={handleClickSubmit}>
+                Add Multimedia
+              </Button>
+            </DialogActions>
+    </Dialog>
     <Toolbar
       className={clsx(classes.root, {
         [classes.highlight]: numSelected > 0,
@@ -213,6 +339,13 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
           Multimedias
         </Typography>
       )}
+      <Tooltip title="Add Multimedia">
+        <IconButton 
+          aria-label="add" 
+          onClick={openDialog}>
+            <AddIcon />
+        </IconButton>
+        </Tooltip>
       {numSelected > 0 && (
         <Tooltip title="Delete">
           <IconButton aria-label="delete" onClick={handleDeleteMultimedia}>
@@ -221,6 +354,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
         </Tooltip>
       )}
     </Toolbar>
+    </>
   );
 };
 
@@ -254,7 +388,7 @@ export default function MultimediaTable(props: any) {
     const handleFormDataChange = props.handleFormDataChange;
     const [multimedias, setMultimedias] = useState<Multimedia[]>(props.multimedias);
     const [lessons, setLessons] = useState<Lesson[]>(props.lessons);
-    const rows = multimedias?.length > 0 ? multimedias.map((row: Multimedia) => createData(row.contentId, row.name, row.description, row.type, row.url, row.urlFilename)) : []
+    const rows = multimedias?.length > 0 ? multimedias.map((row: Multimedia) => createData(row.contentId, row.name, row.description, row.type, row.urlFilename)) : []
 
     // Used to trigger rerendering of MultimediaTable whenever lessons is updated in Table Header component
     useEffect(() => {
@@ -393,7 +527,6 @@ export default function MultimediaTable(props: any) {
                         <TableCell align="right">{row.description}</TableCell>
                         <TableCell align="right">{row.type}</TableCell>
                         <TableCell align="right">{row.urlFilename}</TableCell>
-                        <TableCell align="right">{row.url}</TableCell>
                         </TableRow>
                     );
                     })}

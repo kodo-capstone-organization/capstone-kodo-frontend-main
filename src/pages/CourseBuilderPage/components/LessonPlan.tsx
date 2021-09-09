@@ -20,28 +20,6 @@ function LessonPlan(props: any) {
         setLessonId(lessonId + 1)
     }
 
-    const updateFiles = (lessonId: number, files: FileList) => {
-        lessons.map((lesson) => {
-            if (lesson.lessonId === lessonId) {
-                // TODO: Fix to get lesson.multimedias... instead
-                // lesson.relatedFiles.push(files[0])
-            }
-            return lesson
-        })
-        setLessons([...lessons])
-    }
-
-    const deleteFile = (lessonId: number, fileToRemove: string) => {
-        lessons.map((lesson) => {
-            if (lesson.lessonId === lessonId) {
-                // TODO: Fix to get lesson.multimedias... instead
-                // lesson.relatedFiles = lesson.relatedFiles.filter((file) => file.name !== fileToRemove)
-            }
-            return lesson
-        })
-        setLessons([...lessons])
-    }
-
     const handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
         setTabValue(newValue);
     }
