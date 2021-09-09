@@ -35,11 +35,6 @@ import { useHistory } from 'react-router';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
-        modal: {
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-        },
         paper: {
             backgroundColor: theme.palette.background.paper,
             boxShadow: theme.shadows[5],
@@ -117,9 +112,6 @@ function MultimediaModal(props: any) {
         setOpen(false);
     };
 
-    const handleAction = () => {
-    };
-
     const handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
         setTab(newValue);
     };
@@ -133,33 +125,29 @@ function MultimediaModal(props: any) {
                 hidden={tab !== index}
             >
                 {tab === index && (
-                    <Box p={3}>
-                        <Typography>
-                            <DialogContent>
-                                <TableContainer component={Paper} className={classes.container}>
-                                    <Table stickyHeader className={classes.table} aria-label="customized table">
-                                        <TableHead>
-                                            <TableRow>
-                                                <StyledTableCell>Name</StyledTableCell>
-                                                <StyledTableCell >URL</StyledTableCell>
-                                            </TableRow>
-                                        </TableHead>
-                                        <TableBody>
-                                            {data.map((row: any) => (
-                                                <StyledTableRow key={row.name}>
-                                                    <StyledTableCell component="th" scope="row">
-                                                        {row.name}
-                                                    </StyledTableCell>
-                                                    {/* // @ts-ignore */}
-                                                    <StyledTableCell><Link onClick={() => { window.open(row.url, "_blank") }}>{row.url}</Link></StyledTableCell>
-                                                </StyledTableRow>
-                                            ))}
-                                        </TableBody>
-                                    </Table>
-                                </TableContainer>
-                            </DialogContent>
-                        </Typography>
-                    </Box>
+                    <DialogContent>
+                        <TableContainer component={Paper} className={classes.container}>
+                            <Table stickyHeader className={classes.table}>
+                                <TableHead>
+                                    <TableRow>
+                                        <StyledTableCell>Name</StyledTableCell>
+                                        {data[0]?.url && <StyledTableCell >URL</StyledTableCell>}
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {data.map((row: any) => (
+                                        <StyledTableRow key={row.name}>
+                                            <StyledTableCell component="th" scope="row">
+                                                {row.name}
+                                            </StyledTableCell>
+                                            {/* // @ts-ignore */}
+                                            {row.url && <StyledTableCell><Link onClick={() => { window.open(row.url, "_blank") }}>{row.url}</Link></StyledTableCell>}
+                                        </StyledTableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    </DialogContent>
                 )}
             </div>
         );
@@ -171,13 +159,14 @@ function MultimediaModal(props: any) {
                 <IconButton onClick={handleOpen}>
                     <InfoIcon />
                 </IconButton>
-                <Dialog open={open} onClose={handleClose}>
+                <Dialog open={open} onClose={handleClose} maxWidth={"lg"}>
                     <DialogTitle id="form-dialog-title">View Lesson Multimedia</DialogTitle>
                     <Tabs
                         value={tab}
                         indicatorColor="primary"
                         textColor="primary"
                         onChange={handleTabChange}
+                        centered
                     >
                         <Tab label="Multimedia" />
                         <Tab label="Quizzes" />
@@ -189,8 +178,6 @@ function MultimediaModal(props: any) {
                         <TabPanel value={tab} index={1} data={quizzesRow}>
                         </TabPanel>
                     </div>
-
-
                     <DialogActions>
                         <Button onClick={handleClose} >
                             Close

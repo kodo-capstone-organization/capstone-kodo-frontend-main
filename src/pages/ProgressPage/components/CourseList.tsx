@@ -75,7 +75,7 @@ function CourseList(props: any) {
                                 <CourseDetails>
                                     <h3>{lesson?.name}</h3>
                                 </CourseDetails>
-                                <MultimediaModal show={showMultimedia} account={myAccount} lesson={lesson} />
+                                <MultimediaModal show={showMultimedia} account={myAccount} lesson={lesson}/>
                                 {
                                     lesson.isCompleted ? <Button primary={lesson.isCompleted} to={`/overview/lesson/${course.parentCourse.courseId}/${lesson.lessonId}`}>Resume</Button> :
                                         <LockIcon />
