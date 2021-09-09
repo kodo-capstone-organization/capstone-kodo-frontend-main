@@ -2,24 +2,21 @@ import React, { useEffect, useReducer, useState } from 'react'
 import { ProfileCard, ProfileCardHeader, ProfileCardContent, ProfileCardActions,
     ProfileAvatar, ProfileInitials, ProfileDetails, ProfileName, ProfileContentText, ProfileSubText, ProfileUsername, BlankStateContainer
 } from "../ProfileElements";
-import {ButtonGroup, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle,
-    FormControl, Grid, IconButton, ImageList, Input, InputAdornment, InputLabel, TextField, Typography } from "@material-ui/core";
+import {CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle,
+    FormControl, Grid, IconButton, Input, InputAdornment, InputLabel, TextField, Typography } from "@material-ui/core";
 import SettingsIcon from '@material-ui/icons/Settings';
 import LocalAtmIcon from '@material-ui/icons/LocalAtm';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
-import PlayCircleFilledWhiteIcon from '@material-ui/icons/PlayCircleFilledWhite';
-import LinkOffIcon from '@material-ui/icons/LinkOff';
-import DoneIcon from '@material-ui/icons/Done';
-import EditIcon from '@material-ui/icons/Edit';
 import { Account } from "../../../apis/Entities/Account";
-import { ImageListItem, ImageListItemBar } from '@material-ui/core';
-import { fontSizes } from '../../../values/FontSizes';
 import { Button } from '../../../values/ButtonElements';
 import ChipInput from 'material-ui-chip-input';
 import { createNewCourse } from '../../../apis/Course/CourseApis';
 import { Course } from '../../../apis/Entities/Course';
 import Chip from '@material-ui/core/Chip';
 import { createStripeAccount } from '../../../apis/Stripe/StripeApis';
+import { EnrolledCourse } from '../../../apis/Entities/EnrolledCourse';
+import CourseCard from '../../../components/CourseCard';
+import { CourseWrapper } from '../../BrowseCourse/BrowseCoursePage/BrowseCourseElements';
 
 
 const formReducer = (state: any, event: any) => {
@@ -203,29 +200,13 @@ function Profile(props: any) {
                         </BlankStateContainer>
                     }
                     { myAccount?.enrolledCourses.length > 0 &&
-                        <ImageList rowHeight={180} style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-around", overflow: "hidden" }}>
-                            { myAccount?.enrolledCourses.map(enrolledCourse => (
-                                /* TODO: Vertical Scrolling */
-                                <ImageListItem key={enrolledCourse.enrolledCourseId}>
-                                    <img src={enrolledCourse.parentCourse.bannerUrl}
-                                         alt={enrolledCourse.parentCourse.name}
-                                         onError={ (e) => { // @ts-ignore
-                                             e.target.onerror = null; e.target.src="placeholder/placeholderbanner.jpg"}
-                                         }
-                                    />
-                                    <ImageListItemBar
-                                        title={<strong>{enrolledCourse.parentCourse.name}</strong>}
-                                        // subtitle={<span>by <i>@{enrolledCourse.parentCourse.tutor.username}</i></span>}
-                                        actionIcon={
-                                            <IconButton color="secondary" aria-label={`Resume ${enrolledCourse.parentCourse.name}`}>
-                                                <PlayCircleFilledWhiteIcon /> &nbsp;<span style={{fontSize: fontSizes.SUBTEXT }}>Resume</span>
-                                            </IconButton>
-                                        }
-                                    />
-                                </ImageListItem>
-                            ))
+                        <CourseWrapper>
+                            { myAccount?.enrolledCourses.map((enrolledCourse: EnrolledCourse) => {
+                                return (
+                                    <CourseCard course={enrolledCourse.parentCourse} redirectUrlBase="/overview"/>
+                                )})
                             }
-                        </ImageList>
+                        </CourseWrapper>
                     }
                 </ProfileCardContent>
             </ProfileCard>
@@ -286,37 +267,13 @@ function Profile(props: any) {
                         </BlankStateContainer>
                     }
                     {myAccount?.courses.length > 0 &&
-                        <ImageList rowHeight={180} style={{
-                            display: "flex",
-                            flexWrap: "wrap",
-                            justifyContent: "space-around",
-                            overflow: "hidden"
-                        }}>
-                            {myAccount?.courses.map(course => (
-                                /* TODO: Vertical Scrolling */
-                                <ImageListItem key={course.courseId}>
-                                    <img src={course.bannerUrl}
-                                         alt={course.name}
-                                         onError={(e) => {
-                                             // @ts-ignore
-                                             e.target.onerror = null;
-                                             // @ts-ignore
-                                             e.target.src = "placeholder/placeholderbanner.jpg"
-                                         }}
-                                    />
-                                    <ImageListItemBar
-                                        title={<strong>{course.name}</strong>}
-                                        // subtitle={<span>by <i>@{enrolledCourse.parentCourse.tutor.username}</i></span>}
-                                        actionIcon={
-                                            <IconButton color="secondary" aria-label={`Manage ${course.name}`}>
-                                                <EditIcon/> &nbsp;<span style={{fontSize: fontSizes.SUBTEXT}}>Manage</span>
-                                            </IconButton>
-                                        }
-                                    />
-                                </ImageListItem>
-                            ))
+                        <CourseWrapper>
+                            { myAccount?.courses.map((myCourse: Course) => {
+                                return (
+                                    <CourseCard course={myCourse} redirectUrlBase="/overview"/>
+                                )})
                             }
-                        </ImageList>
+                        </CourseWrapper>
                     }
                 </ProfileCardContent>
             </ProfileCard>
