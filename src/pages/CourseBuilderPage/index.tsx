@@ -25,7 +25,7 @@ function CourseBuilderPage(props: any) {
 
     const [loading, setLoading] = useState<boolean>(true);
 
-    const [bannerImageFile, setBannerImageFile] = useState<any>();
+    const [bannerImageFile, setBannerImageFile] = useState<File>(new File([""], ""));
     const [courseFormData, setCourseFormData] = useReducer(formReducer, {});
     
     useEffect(() => {
@@ -73,8 +73,42 @@ function CourseBuilderPage(props: any) {
         });
     }
 
+    const buildUpdateCourseReq = (courseFormData: any) => {
+        const updatedCourse = {
+            name: courseFormData.name,
+            description: courseFormData.description,
+            price: courseFormData.price,
+            courseId: courseFormData.courseId,
+        }
+
+        const updatedCourseTagTitles = courseFormData.courseTags.map((tag: Tag) => tag.title)
+
+        const updatedLessonReqs = courseFormData.lessons.map((lesson: Lesson) => {
+            return {
+                lesson: lesson,
+                quizzes: lesson.quizzes,
+                multimediaReqs: lesson.multimedias.map((multimedia: Multimedia) => {
+                    return {
+                        multimedia: multimedia,
+                        multipartFile: multimedia.file
+                    }
+                })
+            }
+        })
+
+        // @ts-ignore
+        const updateCourseReq: UpdateCourseReq = { course: updatedCourse, courseTagTitles: updatedCourseTagTitles, updateLessonReqs: updatedLessonReqs }
+        return updateCourseReq
+    }
+
     const handleUpdateCourse = () => {
-        
+        const updateCourseReq = buildUpdateCourseReq(courseFormData)
+
+        updateCourse(updateCourseReq, bannerImageFile).then((updatedCourse) => {
+            console.log(updatedCourse);
+
+            setCourseFormData(updatedCourse)
+        })
     }
 
     const navigateToPreviousPage = () => {
