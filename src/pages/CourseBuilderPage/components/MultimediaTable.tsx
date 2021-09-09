@@ -181,11 +181,12 @@ interface EnhancedTableToolbarProps {
   handleFormDataChange: any;
   lessons: Lesson[];
   setLessons: any;
+  setSelectedIds: any;
 }
 
 const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   const classes = useToolbarStyles();
-  const { numSelected, selectedIds, lessonId, handleFormDataChange, setLessons, lessons } = props;
+  const { numSelected, selectedIds, lessonId, handleFormDataChange, setLessons, lessons, setSelectedIds } = props;
   const [newFile, setNewFile] = useState<NewFileProps>({ name: "", description: "", urlFileName: "", file: new File([""], "")});
 
   const [showAddMultimediaDialog, setShowAddMultimediaDialog] = useState<boolean>(false); 
@@ -241,7 +242,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   const handleDeleteMultimedia = () => {
     const updatedLessons = lessons.map((lesson: Lesson) => {
       if (lesson.lessonId === lessonId) {
-        const updatedMultimedias = lesson.multimedias.filter((multimedia: Multimedia) => !selectedIds.includes(multimedia.contentId))
+        const updatedMultimedias = lesson.multimedias.filter((multimedia: Multimedia, index: number) => !selectedIds.includes(index))
         lesson.multimedias = updatedMultimedias
       }
       return lesson
@@ -255,7 +256,8 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
         value: updatedLessons
       }
     }
-
+    
+    setSelectedIds([])
     handleFormDataChange(wrapperEvent)
   }
 
@@ -388,7 +390,7 @@ export default function MultimediaTable(props: any) {
     const handleFormDataChange = props.handleFormDataChange;
     const [multimedias, setMultimedias] = useState<Multimedia[]>(props.multimedias);
     const [lessons, setLessons] = useState<Lesson[]>(props.lessons);
-    const rows = multimedias?.length > 0 ? multimedias.map((row: Multimedia) => createData(row.contentId, row.name, row.description, row.type, row.urlFilename)) : []
+    const rows = multimedias?.length > 0 ? multimedias.map((row: Multimedia, index: number) => createData(index, row.name, row.description, row.type, row.urlFilename)) : []
 
     // Used to trigger rerendering of MultimediaTable whenever lessons is updated in Table Header component
     useEffect(() => {
@@ -401,7 +403,6 @@ export default function MultimediaTable(props: any) {
     const classes = useStyles();
     const [order, setOrder] = React.useState<Order>('asc');
     const [orderBy, setOrderBy] = React.useState<keyof Data>('name');
-    const [selected, setSelected] = React.useState<string[]>([]);
     const [selectedIds, setSelectedIds] = React.useState<number[]>([]);
     const [page, setPage] = React.useState(0);
     const [dense, setDense] = React.useState(false);
@@ -415,39 +416,30 @@ export default function MultimediaTable(props: any) {
 
     const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.checked) {
-        const newSelecteds = rows.map((n: any) => n.name);
-        setSelected(newSelecteds);
-        return;
+        const newSelectedIds = rows.map((n: any) => n.id);
+          setSelectedIds(newSelectedIds);
+          return;
         }
-        setSelected([]);
+        setSelectedIds([]);
     };
 
-    const handleClick = (event: React.MouseEvent<unknown>, name: string, id: number) => {
+    const handleClick = (event: React.MouseEvent<unknown>, id: number) => {
       const selectedIndex = selectedIds.indexOf(id);
-      let newSelected: string[] = [];
       let newSelectedIds: number[] = [];
 
       if (selectedIndex === -1) {
-        newSelected = newSelected.concat(selected, name);
         newSelectedIds = newSelectedIds.concat(selectedIds, id);
       } else if (selectedIndex === 0) {
-        newSelected = newSelected.concat(selected.slice(1));
         newSelectedIds = newSelectedIds.concat(selectedIds.slice(1));
-      } else if (selectedIndex === selected.length - 1) {
-        newSelected = newSelected.concat(selected.slice(0, -1));
+      } else if (selectedIndex === selectedIds.length - 1) {
         newSelectedIds = newSelectedIds.concat(selectedIds.slice(0, -1));
       } else if (selectedIndex > 0) {
-        newSelected = newSelected.concat(
-          selected.slice(0, selectedIndex),
-          selected.slice(selectedIndex + 1),
-        );
         newSelectedIds = newSelectedIds.concat(
           selectedIds.slice(0, selectedIndex),
           selectedIds.slice(selectedIndex + 1),
         );
       }
 
-      setSelected(newSelected);
       setSelectedIds(newSelectedIds);
   };
 
@@ -464,7 +456,7 @@ export default function MultimediaTable(props: any) {
         setDense(event.target.checked);
     };
 
-    const isSelected = (name: string) => selected.indexOf(name) !== -1;
+    const isSelected = (index: number) => selectedIds.indexOf(index) !== -1;
 
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
 
@@ -474,12 +466,13 @@ export default function MultimediaTable(props: any) {
         <div className={classes.root}>
         <Paper className={classes.paper}>
             <EnhancedTableToolbar 
-                numSelected={selected.length}
+                numSelected={selectedIds.length}
                 selectedIds={selectedIds}
                 lessonId={props.lessonId}
                 lessons={lessons}
                 setLessons={setLessons}
-                handleFormDataChange={handleFormDataChange} />
+                handleFormDataChange={handleFormDataChange}
+                setSelectedIds={setSelectedIds} />
             <TableContainer>
             <Table
                 className={classes.table}
@@ -489,7 +482,7 @@ export default function MultimediaTable(props: any) {
             >
                 <EnhancedTableHead
                 classes={classes}
-                numSelected={selected.length}
+                numSelected={selectedIds.length}
                 order={order}
                 orderBy={orderBy}
                 onSelectAllClick={handleSelectAllClick}
@@ -501,14 +494,14 @@ export default function MultimediaTable(props: any) {
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row, index) => {
                     // @ts-ignore
-                    const isItemSelected = isSelected(row.name);
+                    const isItemSelected = isSelected(row.id);
                     const labelId = `enhanced-table-checkbox-${index}`;
 
                     return (
                         <TableRow
                         hover
                         // @ts-ignore
-                        onClick={(event) => handleClick(event, row.name, row.id)}
+                        onClick={(event) => handleClick(event, row.id)}
                         role="checkbox"
                         aria-checked={isItemSelected}
                         tabIndex={-1}
