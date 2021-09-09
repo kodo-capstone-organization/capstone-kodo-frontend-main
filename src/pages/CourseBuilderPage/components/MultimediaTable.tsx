@@ -170,7 +170,7 @@ const useToolbarStyles = makeStyles((theme: Theme) =>
 interface EnhancedTableToolbarProps {
   numSelected: number;
   selectedIds: number[];
-  lessonId: number;
+  lessonIndex: number;
   handleFormDataChange: any;
   lessons: Lesson[];
   setLessons: any;
@@ -179,7 +179,7 @@ interface EnhancedTableToolbarProps {
 
 const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   const classes = useToolbarStyles();
-  const { numSelected, selectedIds, lessonId, handleFormDataChange, setLessons, lessons, setSelectedIds } = props;
+  const { numSelected, selectedIds, lessonIndex, handleFormDataChange, setLessons, lessons, setSelectedIds } = props;
   const [newFile, setNewFile] = useState<Multimedia>({ contentId: -1, name: "", description: "", url: "", type: MultimediaType.EMPTY, urlFilename: "", file: new File([""], "")}, );
 
   const [showAddMultimediaDialog, setShowAddMultimediaDialog] = useState<boolean>(false); 
@@ -193,8 +193,8 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   }
 
   const handleClickSubmit = () => {
-    const updatedLessons = lessons.map((lesson: Lesson) => {
-      if (lesson.lessonId === lessonId) {
+    const updatedLessons = lessons.map((lesson: Lesson, index: number) => {
+      if (index === lessonIndex) {
         const updatedMultimedias = lesson.multimedias.concat(newFile)
         lesson.multimedias = updatedMultimedias
       }
@@ -235,9 +235,9 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
 
   // Update multimedias for a particular lesson from courseFormData
   const handleDeleteMultimedia = () => {
-    const updatedLessons = lessons.map((lesson: Lesson) => {
-      if (lesson.lessonId === lessonId) {
-        const updatedMultimedias = lesson.multimedias.filter((multimedia: Multimedia, index: number) => !selectedIds.includes(index))
+    const updatedLessons = lessons.map((lesson: Lesson, lessonIdx: number) => {
+      if (lessonIdx === lessonIndex) {
+        const updatedMultimedias = lesson.multimedias.filter((multimedia: Multimedia, multimediaIdx: number) => !selectedIds.includes(multimediaIdx))
         lesson.multimedias = updatedMultimedias
       }
       return lesson
@@ -462,7 +462,7 @@ export default function MultimediaTable(props: any) {
             <EnhancedTableToolbar 
                 numSelected={selectedIds.length}
                 selectedIds={selectedIds}
-                lessonId={props.lessonId}
+                lessonIndex={props.lessonIndex}
                 lessons={lessons}
                 setLessons={setLessons}
                 handleFormDataChange={handleFormDataChange}

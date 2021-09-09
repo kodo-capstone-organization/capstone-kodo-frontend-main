@@ -162,7 +162,7 @@ const useToolbarStyles = makeStyles((theme: Theme) =>
 interface EnhancedTableToolbarProps {
   numSelected: number;
   selectedIds: number[];
-  lessonId: number;
+  lessonIndex: number;
   handleFormDataChange: any;
   lessons: Lesson[];
   setLessons: any;
@@ -171,12 +171,12 @@ interface EnhancedTableToolbarProps {
 
 const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   const classes = useToolbarStyles();
-  const { numSelected, selectedIds, lessonId, handleFormDataChange, setLessons, lessons, setSelectedIds} = props;
+  const { numSelected, selectedIds, lessonIndex, handleFormDataChange, setLessons, lessons, setSelectedIds} = props;
 
   // Update quizzes for a particular lesson from courseFormData
   const handleDeleteQuiz = () => {
-    const updatedLessons = lessons.map((lesson: Lesson) => {
-      if (lesson.lessonId === lessonId) {
+    const updatedLessons = lessons.map((lesson: Lesson, index: number) => {
+      if (index === lessonIndex) {
         const updatedQuizzes = lesson.quizzes.filter((quiz: Quiz, index: number) => !selectedIds.includes(index))
         lesson.quizzes = updatedQuizzes
       }
@@ -329,7 +329,7 @@ export default function QuizTable(props: any) {
             <EnhancedTableToolbar 
                 numSelected={selectedIds.length} 
                 selectedIds={selectedIds}
-                lessonId={props.lessonId}
+                lessonIndex={props.lessonIndex}
                 lessons={lessons}
                 setLessons={setLessons}
                 handleFormDataChange={handleFormDataChange}

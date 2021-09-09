@@ -10,14 +10,12 @@ import MultimediaTable from './MultimediaTable';
 function LessonPlan(props: any) {
     const handleFormDataChange = props.handleFormDataChange;
     const [lessons, setLessons] = useState<Lesson[]>(props.lessons);
-    const [lessonId, setLessonId] = useState<number>(1);
     const [tabValue, setTabValue] = useState<number>(1);
 
     const addToLessons = () => {
         // @ts-ignore
-        lessons.push({ lessonId: lessonId });
-        setLessons(lessons)
-        setLessonId(lessonId + 1)
+        const updatedLessons = lessons.concat({ multimedias: [], quizzes: [] });
+        setLessons(updatedLessons)
     }
 
     const handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
@@ -26,7 +24,6 @@ function LessonPlan(props: any) {
 
     const handleDeleteLesson = (lessonIdToDelete: number) => {
         const updatedLessons = lessons.filter((lesson: Lesson) => lesson.lessonId !== lessonIdToDelete)
-        setLessons(updatedLessons)
         let wrapperEvent = {
             target: {
                 name: "lessons",
@@ -34,11 +31,12 @@ function LessonPlan(props: any) {
             }
         }
         handleFormDataChange(wrapperEvent)
+        setLessons(updatedLessons)
     }
 
     const handleLessonNameChange = (event: any) => {
-        const updatedLessons = lessons.map((lesson: Lesson) => {
-            if (lesson.lessonId.toString() === event.target.id) {
+        const updatedLessons = lessons.map((lesson: Lesson, index: number) => {
+            if (index.toString() === event.target.id) {
                 lesson.name = event.target.value
             }
             return lesson
@@ -82,7 +80,7 @@ function LessonPlan(props: any) {
                         <Grid container spacing={3}>
                             <Grid item xs={12}>
                                 <TextField fullWidth required 
-                                id={lesson.lessonId.toString()} 
+                                id={index.toString()} 
                                 label="Name" 
                                 value={lesson.name} 
                                 onChange={handleLessonNameChange}/>
@@ -90,14 +88,14 @@ function LessonPlan(props: any) {
                             <Grid item xs={12}>
                                 <QuizTable 
                                 handleFormDataChange={handleFormDataChange} 
-                                lessonId={lesson.lessonId} 
+                                lessonIndex={index} 
                                 quizzes={lesson.quizzes}
                                 lessons={lessons}/>
                             </Grid>
                             <Grid item xs={12}>
                                 <MultimediaTable
                                 handleFormDataChange={handleFormDataChange} 
-                                lessonId={lesson.lessonId} 
+                                lessonIndex={index} 
                                 multimedias={lesson.multimedias}
                                 lessons={lessons}/>
                             </Grid>
