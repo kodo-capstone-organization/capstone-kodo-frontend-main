@@ -69,8 +69,8 @@ function CourseList(props: any) {
                                 </CourseDetails>
                                 <MultimediaModal show={showMultimedia} account={myAccount} lesson={lesson}/>
                                 {
-                                    lesson.isCompleted ? <Button primary={lesson.isCompleted} to={`/overview/lesson/${course.parentCourse.courseId}/${lesson.lessonId}`}>Resume</Button> :
-                                        <LockIcon />
+                                    course.dateTimeOfCompletion === null ? (lesson.isCompleted ? <Button primary={lesson.isCompleted} to={`/overview/lesson/${course.parentCourse.courseId}/${lesson.lessonId}`}>Resume</Button> :
+                                        <LockIcon />) : <Button primary={lesson.isCompleted} to={`/overview/lesson/${course.parentCourse.courseId}/${lesson.lessonId}`}>View</Button>
                                 }
                             </CourseElement>
                         </>
