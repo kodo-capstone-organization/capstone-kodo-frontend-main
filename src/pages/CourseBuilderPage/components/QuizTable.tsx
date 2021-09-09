@@ -172,6 +172,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   const classes = useToolbarStyles();
   const { numSelected, selectedIds, lessonId, handleFormDataChange, setLessons, lessons} = props;
 
+  // Update quizzes for a particular lesson from courseFormData
   const handleDeleteQuiz = () => {
     const updatedLessons = lessons.map((lesson: Lesson) => {
       if (lesson.lessonId === lessonId) {
@@ -257,6 +258,7 @@ export default function QuizTable(props: any) {
     const [lessons, setLessons] = useState<Lesson[]>(props.lessons);
     const rows = quizzes?.length > 0 ? quizzes.map((row: Quiz) => createData(row.contentId, row.name, row.description, row.maxAttemptsPerStudent, row.timeLimit)) : []
 
+    // Used to trigger rerendering of QuizTable whenever lessons is updated in Table Header component
     useEffect(() => {
       const newQuizzes = lessons.find((lesson) => lesson.lessonId === props.lessonId)?.quizzes
       if (newQuizzes) {

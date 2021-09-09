@@ -176,6 +176,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   const classes = useToolbarStyles();
   const { numSelected, selectedIds, lessonId, handleFormDataChange, setLessons, lessons } = props;
 
+  // Update multimedias for a particular lesson from courseFormData
   const handleDeleteMultimedia = () => {
     const updatedLessons = lessons.map((lesson: Lesson) => {
       if (lesson.lessonId === lessonId) {
@@ -261,6 +262,7 @@ export default function MultimediaTable(props: any) {
     const [lessons, setLessons] = useState<Lesson[]>(props.lessons);
     const rows = multimedias?.length > 0 ? multimedias.map((row: Multimedia) => createData(row.contentId, row.name, row.description, row.type, row.url, row.urlFilename)) : []
 
+    // Used to trigger rerendering of MultimediaTable whenever lessons is updated in Table Header component
     useEffect(() => {
       const newMultimedias = lessons.find((lesson) => lesson.lessonId === props.lessonId)?.multimedias
       if (newMultimedias) {
