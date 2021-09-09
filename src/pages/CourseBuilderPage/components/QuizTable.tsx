@@ -166,17 +166,18 @@ interface EnhancedTableToolbarProps {
   handleFormDataChange: any;
   lessons: Lesson[];
   setLessons: any;
+  setSelectedIds: any;
 }
 
 const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   const classes = useToolbarStyles();
-  const { numSelected, selectedIds, lessonId, handleFormDataChange, setLessons, lessons} = props;
+  const { numSelected, selectedIds, lessonId, handleFormDataChange, setLessons, lessons, setSelectedIds} = props;
 
   // Update quizzes for a particular lesson from courseFormData
   const handleDeleteQuiz = () => {
     const updatedLessons = lessons.map((lesson: Lesson) => {
       if (lesson.lessonId === lessonId) {
-        const updatedQuizzes = lesson.quizzes.filter((quiz: Quiz) => !selectedIds.includes(quiz.contentId))
+        const updatedQuizzes = lesson.quizzes.filter((quiz: Quiz, index: number) => !selectedIds.includes(index))
         lesson.quizzes = updatedQuizzes
       }
       return lesson
@@ -192,6 +193,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
     }
 
     handleFormDataChange(wrapperEvent)
+    setSelectedIds([])
   }
 
   return (
@@ -250,7 +252,7 @@ export default function QuizTable(props: any) {
     const handleFormDataChange = props.handleFormDataChange;
     const [quizzes, setQuizzes] = useState<Quiz[]>(props.quizzes);
     const [lessons, setLessons] = useState<Lesson[]>(props.lessons);
-    const rows = quizzes?.length > 0 ? quizzes.map((row: Quiz) => createData(row.contentId, row.name, row.description, row.maxAttemptsPerStudent, row.timeLimit)) : []
+    const rows = quizzes?.length > 0 ? quizzes.map((row: Quiz, index: number) => createData(index, row.name, row.description, row.maxAttemptsPerStudent, row.timeLimit)) : []
 
     // Used to trigger rerendering of QuizTable whenever lessons is updated in Table Header component
     useEffect(() => {
@@ -263,7 +265,6 @@ export default function QuizTable(props: any) {
     const classes = useStyles();
     const [order, setOrder] = React.useState<Order>('asc');
     const [orderBy, setOrderBy] = React.useState<keyof Data>('name');
-    const [selected, setSelected] = React.useState<string[]>([]);
     const [selectedIds, setSelectedIds] = React.useState<number[]>([]);
     const [page, setPage] = React.useState(0);
     const [dense, setDense] = React.useState(false);
@@ -277,43 +278,30 @@ export default function QuizTable(props: any) {
 
     const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.checked) {
-          const newSelecteds = rows.map((n: any) => n.name);
-          setSelected(newSelecteds);
-
           const newSelectedIds = rows.map((n: any) => n.id);
           setSelectedIds(newSelectedIds);
           return;
         }
         setSelectedIds([]);
-        setSelected([]);
     };
 
-    const handleClick = (event: React.MouseEvent<unknown>, name: string, id: number) => {
+    const handleClick = (event: React.MouseEvent<unknown>, id: number) => {
         const selectedIndex = selectedIds.indexOf(id);
-        let newSelected: string[] = [];
         let newSelectedIds: number[] = [];
 
         if (selectedIndex === -1) {
-          newSelected = newSelected.concat(selected, name);
           newSelectedIds = newSelectedIds.concat(selectedIds, id);
         } else if (selectedIndex === 0) {
-          newSelected = newSelected.concat(selected.slice(1));
           newSelectedIds = newSelectedIds.concat(selectedIds.slice(1));
-        } else if (selectedIndex === selected.length - 1) {
-          newSelected = newSelected.concat(selected.slice(0, -1));
+        } else if (selectedIndex === selectedIds.length - 1) {
           newSelectedIds = newSelectedIds.concat(selectedIds.slice(0, -1));
         } else if (selectedIndex > 0) {
-          newSelected = newSelected.concat(
-            selected.slice(0, selectedIndex),
-            selected.slice(selectedIndex + 1),
-          );
           newSelectedIds = newSelectedIds.concat(
             selectedIds.slice(0, selectedIndex),
             selectedIds.slice(selectedIndex + 1),
           );
         }
 
-        setSelected(newSelected);
         setSelectedIds(newSelectedIds);
     };
 
@@ -330,7 +318,7 @@ export default function QuizTable(props: any) {
         setDense(event.target.checked);
     };
 
-    const isSelected = (name: string) => selected.indexOf(name) !== -1;
+    const isSelected = (index: number) => selectedIds.indexOf(index) !== -1;
 
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
 
@@ -340,12 +328,13 @@ export default function QuizTable(props: any) {
         <div className={classes.root}>
         <Paper className={classes.paper}>
             <EnhancedTableToolbar 
-                numSelected={selected.length} 
+                numSelected={selectedIds.length} 
                 selectedIds={selectedIds}
                 lessonId={props.lessonId}
                 lessons={lessons}
                 setLessons={setLessons}
-                handleFormDataChange={handleFormDataChange}/>
+                handleFormDataChange={handleFormDataChange}
+                setSelectedIds={setSelectedIds}/>
             <TableContainer>
             <Table
                 className={classes.table}
@@ -355,7 +344,7 @@ export default function QuizTable(props: any) {
             >
                 <EnhancedTableHead
                 classes={classes}
-                numSelected={selected.length}
+                numSelected={selectedIds.length}
                 order={order}
                 orderBy={orderBy}
                 onSelectAllClick={handleSelectAllClick}
@@ -367,14 +356,14 @@ export default function QuizTable(props: any) {
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row, index) => {
                     // @ts-ignore
-                    const isItemSelected = isSelected(row.name);
+                    const isItemSelected = isSelected(row.id);
                     const labelId = `enhanced-table-checkbox-${index}`;
 
                     return (
                         <TableRow
                         hover
                         // @ts-ignore
-                        onClick={(event) => handleClick(event, row.name, row.id)}
+                        onClick={(event) => handleClick(event, row.id)}
                         role="checkbox"
                         aria-checked={isItemSelected}
                         tabIndex={-1}
