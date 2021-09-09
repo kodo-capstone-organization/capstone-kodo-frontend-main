@@ -176,10 +176,6 @@ function SignUp() {
                             </ToggleButtonGroup>
                             <span style={{ color: "red" }}>{errors["btnTags"]}</span>
                             <br />
-                            <label>What subjects are you interested in?</label>
-                            {/* <ChipInput
-                                onChange={(chips) => handleChipChange(chips)}
-                            /> */}
                             <Autocomplete
                                 multiple
                                 id="tags-filled"
