@@ -56,8 +56,6 @@ function CoursePreviewPage(props: any) {
         tutorStripeAccountId: currentCourse.tutor.stripeAccountId
       }
 
-      console.log(stripePaymentReq)
-
       createStripeSession(stripePaymentReq).then((paymentUrl: string) => {
         let newTab = window.open(paymentUrl, '_blank');
         newTab?.focus();
