@@ -63,8 +63,8 @@ export const ContentLink = styled(Link)`
   transition: 0.2s ease-in-out;
   color: ${colours.GRAY5};
   cursor: pointer;
-  pointer-events: ${({ lessonCompleted }) =>
-    lessonCompleted ? "none" : "auto"};
+  pointer-events: ${({ isCompleted }) =>
+    isCompleted ? "none" : "auto"};
   font-family: "Roboto", sans-serif;
   padding: 0 20px 0 20px;
 
@@ -139,6 +139,11 @@ export const QuizDescriptionTwo = styled.div`
 export const CheckIcon = styled(CheckCircleIcon)`
     margin-left: 20px;
     color: green;
-    visibility: ${({ lessonCompleted }) =>
-    lessonCompleted ? "visible" : "hidden"};
+    visibility: ${({ isCompleted }) =>
+    isCompleted ? "visible" : "hidden"};
+`
+
+export const BtnWrapper = styled.div`
+  margin-left: 1rem;
+  margin-top: -8px;
 `

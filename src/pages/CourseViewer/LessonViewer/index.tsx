@@ -7,6 +7,8 @@ import { getMyAccount } from "../../../apis/Account/AccountApis";
 import { Course } from "../../../apis/Entities/Course";
 import { Lesson } from "../../../apis/Entities/Lesson";
 import { Account } from "../../../apis/Entities/Account";
+import { EnrolledLesson } from "../../../apis/Entities/EnrolledLesson";
+
 
 import { Button } from "../../../values/ButtonElements";
 
@@ -27,7 +29,8 @@ import {
   QuizSubheader,
   QuizDescription,
   QuizDescriptionTwo,
-  CheckIcon
+  CheckIcon,
+  BtnWrapper
 } from "./LessonViewerElements";
 import Sidebar from "../Sidebar/Sidebar";
 
@@ -37,6 +40,7 @@ function LessonViewer(props: any) {
   const [currentCourse, setCourse] = useState<Course>();
   const [currentLesson, setLesson] = useState<Lesson>();
   const [currentUser, setUser] = useState<Account>();
+  const [enrolledLesson, setEnrolledLesson] = useState<EnrolledLesson>();
   const accountId = JSON.parse(
     window.sessionStorage.getItem("loggedInAccountId") || "{}"
   );
@@ -46,7 +50,6 @@ function LessonViewer(props: any) {
       setCourse(receivedCourse);
     });
   }, []);
-  console.log(currentCourse);
 
   useEffect(() => {
     getLessonByLessonId(lessonId).then(receivedLesson => {
@@ -69,7 +72,15 @@ function LessonViewer(props: any) {
 
   let lessonQuizzes = currentLesson?.quizzes;
   let lessonMultimedias = currentLesson?.multimedias;
-  console.log(lessonMultimedias);
+
+  function checkCompleted(courseId: number): boolean  {
+    //let item1 = array.find(i => i.id === 1);
+    let enrolledContent = enrolledLesson?.enrolledContents.find(i => i.content.contentId === courseId);
+    if (enrolledContent?.dateTimeOfCompletion !== null) {
+      return true;
+    }
+    return false;
+  }
 
   return (
     <>
@@ -87,9 +98,9 @@ function LessonViewer(props: any) {
           <ContentMenu>
             {lessonMultimedias?.map(m => {
               return (
-                <ContentLink>
-                  {m.multimediaType == "PDF" ? <ReadingIcon /> : <PlayIcon />}
-                  {m.multimediaType == "PDF" ? "Reading" : "Video"}: {m.name}
+                <ContentLink key={m.contentId} isCompleted={checkCompleted(m.contentId)}>
+                  {m.multimediaType === "PDF" ? <ReadingIcon /> : <PlayIcon />}
+                  {m.multimediaType === "PDF" ? "Reading" : "Video"}: {m.name}
                   <CheckIcon />                
                 </ContentLink>
               );
@@ -106,12 +117,15 @@ function LessonViewer(props: any) {
             <QuizRow>
               <QuizSubheader>TIME LIMIT:</QuizSubheader>
               <QuizDescription>{q.timeLimit} H</QuizDescription>
+              <BtnWrapper><Button primary={true} big={false} fontBig={false}>Start</Button></BtnWrapper>
             </QuizRow>
             <QuizRow>
               <QuizSubheader>No. Attempts:</QuizSubheader>
               <QuizDescriptionTwo>{q.maxAttemptsPerStudent}</QuizDescriptionTwo>
+              {/*
               <QuizSubheader>Grade:</QuizSubheader>
               <QuizDescriptionTwo>[To Finish]</QuizDescriptionTwo>
+              */}
             </QuizRow>
             </>
               );
