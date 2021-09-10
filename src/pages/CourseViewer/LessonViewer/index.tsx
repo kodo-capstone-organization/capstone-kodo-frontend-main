@@ -59,12 +59,13 @@ function LessonViewer(props: any) {
     });
   }, []);
 
+  /*
   useEffect(() => {
     let courseLessons = currentCourse?.lessons;
     var courseLessonIds = courseLessons?.map(function(c) {
       return c.lessonId;
     })
-    if (courseLessonIds?.includes(lessonId)) {
+    if (!courseLessonIds?.includes(lessonId)) {
       getMyAccount(accountId).then(receivedAccount => {
         setUser(receivedAccount);
       });
@@ -72,14 +73,14 @@ function LessonViewer(props: any) {
       history.push('/notfound')
     }
   });
-  
-  /*
+  */
+
+
   useEffect(() => {
     getMyAccount(accountId).then(receivedAccount => {
       setUser(receivedAccount);
     });
   }, []);
-  */
 
   useEffect(() => {
     getEnrolledLesson(accountId, lessonId).then(receivedEnrolledLesson => {
