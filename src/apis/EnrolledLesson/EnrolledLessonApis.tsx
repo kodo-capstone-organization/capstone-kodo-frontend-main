@@ -3,9 +3,9 @@ import { httpClient } from "../HttpClient/HttpClient";
 import { EnrolledLesson } from "../Entities/EnrolledLesson";
 
 
-export async function getEnrolledLesson(accountId: number, lessonId: number): Promise<EnrolledLesson> {
+export async function getEnrolledLesson(studentId: number, lessonId: number): Promise<EnrolledLesson> {
     const getParameters: IHttpClientRequestParameters<undefined> = {
-        url: `/account/getAccountByAccountId/${accountId}`
+        url: `/enrolledLesson/getEnrolledLessonByStudentIdAndLessonId/${studentId}/${lessonId}`
     }
 
     return httpClient.get<undefined, EnrolledLesson>(getParameters);

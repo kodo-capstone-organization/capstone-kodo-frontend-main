@@ -3,12 +3,12 @@ import { withRouter } from "react-router";
 import { getCourseByCourseId } from "../../../apis/Course/CourseApis";
 import { getLessonByLessonId } from "../../../apis/Lesson/LessonApis";
 import { getMyAccount } from "../../../apis/Account/AccountApis";
+import { getEnrolledLesson } from "../../../apis/EnrolledLesson/EnrolledLessonApis";
 
 import { Course } from "../../../apis/Entities/Course";
 import { Lesson } from "../../../apis/Entities/Lesson";
 import { Account } from "../../../apis/Entities/Account";
 import { EnrolledLesson } from "../../../apis/Entities/EnrolledLesson";
-
 
 import { Button } from "../../../values/ButtonElements";
 
@@ -63,6 +63,12 @@ function LessonViewer(props: any) {
     });
   }, []);
 
+  useEffect(() => {
+    getEnrolledLesson(accountId, lessonId).then(receivedEnrolledLesson => {
+      setEnrolledLesson(receivedEnrolledLesson);
+    });
+  }, []);
+
   function isCourseTutor(course: Course): boolean {
     if (course.tutor.accountId == currentUser?.accountId) {
       return true;
@@ -73,9 +79,11 @@ function LessonViewer(props: any) {
   let lessonQuizzes = currentLesson?.quizzes;
   let lessonMultimedias = currentLesson?.multimedias;
 
-  function checkCompleted(courseId: number): boolean  {
-    //let item1 = array.find(i => i.id === 1);
-    let enrolledContent = enrolledLesson?.enrolledContents.find(i => i.content.contentId === courseId);
+  function checkCompleted(courseId: number): boolean {
+    let enrolledContent = enrolledLesson?.enrolledContents.find(
+      i => i.parentContent?.contentId === courseId
+    );
+    console.log(enrolledLesson?.enrolledContents[0].parentContent);
     if (enrolledContent?.dateTimeOfCompletion !== null) {
       return true;
     }
@@ -98,10 +106,13 @@ function LessonViewer(props: any) {
           <ContentMenu>
             {lessonMultimedias?.map(m => {
               return (
-                <ContentLink key={m.contentId} isCompleted={checkCompleted(m.contentId)}>
+                <ContentLink
+                  key={m.contentId}
+                  isCompleted={checkCompleted(m.contentId)}
+                >
                   {m.multimediaType === "PDF" ? <ReadingIcon /> : <PlayIcon />}
                   {m.multimediaType === "PDF" ? "Reading" : "Video"}: {m.name}
-                  <CheckIcon />                
+                  <CheckIcon />
                 </ContentLink>
               );
             })}
@@ -109,25 +120,31 @@ function LessonViewer(props: any) {
         </LessonCard>
         <LessonCard>
           <LessonHeader>Quiz</LessonHeader>
-          <QuizHeading>{}</QuizHeading>          
+          <QuizHeading>{}</QuizHeading>
           <QuizWrapper>
             {lessonQuizzes?.map(q => {
               return (
-            <>
-            <QuizRow>
-              <QuizSubheader>TIME LIMIT:</QuizSubheader>
-              <QuizDescription>{q.timeLimit} H</QuizDescription>
-              <BtnWrapper><Button primary={true} big={false} fontBig={false}>Start</Button></BtnWrapper>
-            </QuizRow>
-            <QuizRow>
-              <QuizSubheader>No. Attempts:</QuizSubheader>
-              <QuizDescriptionTwo>{q.maxAttemptsPerStudent}</QuizDescriptionTwo>
-              {/*
+                <>
+                  <QuizRow>
+                    <QuizSubheader>TIME LIMIT:</QuizSubheader>
+                    <QuizDescription>{q.timeLimit} H</QuizDescription>
+                    <BtnWrapper>
+                      <Button primary={true} big={false} fontBig={false}>
+                        Start
+                      </Button>
+                    </BtnWrapper>
+                  </QuizRow>
+                  <QuizRow>
+                    <QuizSubheader>No. Attempts:</QuizSubheader>
+                    <QuizDescriptionTwo>
+                      {q.maxAttemptsPerStudent}
+                    </QuizDescriptionTwo>
+                    {/*
               <QuizSubheader>Grade:</QuizSubheader>
               <QuizDescriptionTwo>[To Finish]</QuizDescriptionTwo>
               */}
-            </QuizRow>
-            </>
+                  </QuizRow>
+                </>
               );
             })}
           </QuizWrapper>
