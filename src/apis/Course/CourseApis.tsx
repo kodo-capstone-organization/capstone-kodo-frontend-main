@@ -54,7 +54,7 @@ export async function createNewCourse(createNewCourseReq: CreateNewAccountReq, b
     return httpClient.post<FormData, Course>(postParameters)
 }
 
-export async function getCourseToRecommend(accountId: number): Promise<Course[]> {
+export async function getCoursesToRecommend(accountId: number): Promise<Course[]> {
     const getParameters: IHttpClientRequestParameters<undefined> = {
         url: `/course/getAllCoursesToRecommend/${accountId}`
     }

@@ -3,15 +3,12 @@ import { colours } from "../../../values/Colours";
 import { Link } from "react-router-dom";
 import { fontSizes } from "../../../values/FontSizes";
 
-export const SidebarContainer = styled.div`
-  height: 750px;
-`;
 
 export const SidebarWrapper = styled.div`
   width: 240px;
   height: 100%;
   background: ${colours.GRAY7};
-  position: relative;
+  position: fixed;
   margin-left: -10.4rem;
   padding-left: 2rem;
 `;
