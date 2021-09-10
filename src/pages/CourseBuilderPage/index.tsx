@@ -59,7 +59,7 @@ function CourseBuilderPage(props: any) {
 
         let wrapperEvent = {
             target: {
-                name: "bannerUrl",
+                name: "bannerPictureFileName",
                 value: event.target.files[0].name 
             }
         }
@@ -81,8 +81,6 @@ function CourseBuilderPage(props: any) {
             courseId: courseFormData.courseId,
         }
 
-        const updatedCourseTagTitles = courseFormData.courseTags.map((tag: Tag) => tag.title)
-
         const updatedLessonReqs = courseFormData.lessons.map((lesson: Lesson) => {
             return {
                 lesson: lesson,
@@ -97,7 +95,7 @@ function CourseBuilderPage(props: any) {
         })
 
         // @ts-ignore
-        const updateCourseReq: UpdateCourseReq = { course: updatedCourse, courseTagTitles: updatedCourseTagTitles, updateLessonReqs: updatedLessonReqs }
+        const updateCourseReq: UpdateCourseReq = { course: updatedCourse, courseTagTitles: courseFormData.courseTags, updateLessonReqs: updatedLessonReqs }
         return updateCourseReq
     }
 
@@ -148,7 +146,7 @@ function CourseBuilderPage(props: any) {
                             />
                         </Grid>
                         <Grid item xs={10}>
-                            <TextField id="standard-basic" fullWidth disabled value={courseFormData.bannerUrl} label="Banner Image"></TextField>
+                            <TextField id="standard-basic" fullWidth disabled value={courseFormData.bannerPictureFileName} label="Banner Image"></TextField>
                         </Grid>
                         <Grid item xs={2}>
                             <Button

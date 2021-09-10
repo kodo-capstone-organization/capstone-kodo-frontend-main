@@ -14,6 +14,7 @@ export interface Course {
   enrollment: EnrolledCourse[];
   lessons: Lesson[];
   courseTags: Tag[];
+  bannerPictureFileName: string;
 }
 
 // When Frontend is creating a new course
