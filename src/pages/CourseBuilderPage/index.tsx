@@ -29,6 +29,7 @@ function CourseBuilderPage(props: any) {
     const [tagLibrary, setTagLibrary] = useState<Tag[]>([]);
     const [bannerImageFile, setBannerImageFile] = useState<File>(new File([""], ""));
     const [courseFormData, setCourseFormData] = useReducer(formReducer, {});
+    const [isTutorOfCourse, setIsTutorOfCourse] = useState<boolean>(false)
     
     useEffect(() => {
         getCourseByCourseId(courseId).then(receivedCourse => {
@@ -40,15 +41,25 @@ function CourseBuilderPage(props: any) {
                     }
                 }
                 handleFormDataChange(wrapperEvent)
-            })
-            setLoading(false);   
-            }
-        );
+            }) 
+        });
       }, []);
 
     useEffect(() => {
         getAllTags().then((res: any)=> setTagLibrary(res)).catch(() => console.log("error getting tags."))
     }, [])
+
+    useEffect(() => {
+        if (courseFormData.tutor != null) {
+            const accountId = window.sessionStorage.getItem("loggedInAccountId");
+
+            if (accountId !== null) {
+                setIsTutorOfCourse(parseInt(accountId) === courseFormData.tutor.accountId)
+                setLoading(false);
+            }
+        }
+
+    }, [courseFormData.tutor])
 
     const handleChipInputChange = (e: object, value: String[], reason: string) => {
         let wrapperEvent = {
@@ -121,7 +132,7 @@ function CourseBuilderPage(props: any) {
         history.goBack();
     }
 
-    return !loading && (
+    return !loading && ( isTutorOfCourse ?        
         <CourseBuilderContainer>
             <CourseBuilderCard id="course-information">
                 <CourseBuilderCardHeader
@@ -204,7 +215,7 @@ function CourseBuilderPage(props: any) {
                     </Button>
                 </Box>
             </Grid>
-        </CourseBuilderContainer>
+        </CourseBuilderContainer> : <h1>You are not a tutor of this course 😡</h1>
     )
 }
 
