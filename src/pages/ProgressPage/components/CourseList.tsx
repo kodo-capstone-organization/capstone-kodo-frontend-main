@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { makeStyles } from '@material-ui/core/styles';
 import {
-    CourseDetails,
+    LessonAvatar,
     CourseElement,
     Button,
     Subject,
-    EmptyStateText
+    EmptyStateText,
+    ProgressContainer
 } from "../ProgressElements";
 import {
     Avatar, Divider, Grid
@@ -43,6 +44,21 @@ function CourseList(props: any) {
         setMyCourses(props.courses)
     }, [props])
 
+    const displayBannerUrl = (course: EnrolledCourse) => {
+        if (course.parentCourse.bannerUrl !== null) {
+            console.log(course.parentCourse.bannerUrl)
+            return course.parentCourse.bannerUrl;
+        } else {
+            return "/chessplaceholder.png";
+        }
+    }
+
+    const handleImageError = (e: any) => {
+        console.log("image error")
+        e.target.onerror = null;
+        e.target.src = "/chessplaceholder.png"
+    }
+
     const getCourseLessons = (course: EnrolledCourse) => {
         var listOfEnrolledLessonId: number[] = course.enrolledLessons.map(x => x.parentLesson.lessonId);
         var listOfAllLessonId: Lesson[] = course.parentCourse.lessons;
@@ -63,11 +79,10 @@ function CourseList(props: any) {
                     return (
                         <>
                             <CourseElement key={lessonId}>
-                                <Avatar style={{ margin: "auto 10px" }} />
-                                <CourseDetails>
-                                    <h3>{lesson?.name}</h3>
-                                </CourseDetails>
-                                <MultimediaModal show={showMultimedia} account={myAccount} lesson={lesson}/>
+                                <LessonAvatar src="/chessplaceholder.png"
+                                                alt={course.parentCourse.name}/>
+                                <Subject>{lesson?.name}</Subject>
+                                <MultimediaModal show={showMultimedia} account={myAccount} lesson={lesson} />
                                 {
                                     course.dateTimeOfCompletion === null ? (lesson.isCompleted ? <Button primary={lesson.isCompleted} to={`/overview/lesson/${course.parentCourse.courseId}/${lesson.lessonId}`}>Resume</Button> :
                                         <LockIcon />) : <Button primary={lesson.isCompleted} to={`/overview/lesson/${course.parentCourse.courseId}/${lesson.lessonId}`}>View</Button>
@@ -88,7 +103,7 @@ function CourseList(props: any) {
                     {
                         myCourses.map((course, courseId) =>
                             <Grid item xs={5} key={courseId} style={{ margin: "5px" }}>
-                                <Subject>{course.parentCourse.name}</Subject>
+                                <h4>{course.parentCourse.name}</h4>
                                 <Divider />
                                 {getCourseLessons(course)}
                             </Grid>

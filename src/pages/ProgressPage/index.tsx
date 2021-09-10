@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import {
-    Title,
-    Subject
+    ProgressContainer
 } from "./ProgressElements";
 import { makeStyles } from '@material-ui/core/styles';
 import Divider from '@material-ui/core/Divider';
+import { Breadcrumbs, Link, Tabs, Tab } from '@material-ui/core';
 import { getMyAccount } from "../../apis/Account/AccountApis";
 import { EnrolledCourse } from "../../apis/Entities/EnrolledCourse";
 import { Account } from "../../apis/Entities/Account";
@@ -30,6 +30,7 @@ function ProgressPage() {
     const [completedCourses, setCompletedCourses] = useState<EnrolledCourse[]>([])
     const [currentCourses, setCurrentCourses] = useState<EnrolledCourse[]>([])
     const [myAccount, setMyAccount] = useState<Account>()
+    const [tab, setTab] = React.useState(0);
     const accountId = window.sessionStorage.getItem("loggedInAccountId");
 
     useEffect(() => {
@@ -44,23 +45,48 @@ function ProgressPage() {
         }
     }, [accountId])
 
+    const handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
+        setTab(newValue);
+    };
+
+    const TabPanel = (props: any) => {
+        const { index, data } = props;
+        return (
+            <div
+                role="tabpanel"
+                hidden={tab !== index}
+            >
+                {tab === index && (
+                    <CourseList account={myAccount} courses={data} />
+                )}
+            </div>
+        );
+    }
+
     return (
-        <div
-            style={{
-                marginLeft: "16px",
-                color: "#000000",
-                background: "white",
-            }}
-        >
-            <Title>My Progress</Title>
-            <Subject>Current Courses</Subject>
-            <Divider />
-            <CourseList account={myAccount} courses={currentCourses} />
-            <br />
-            <Subject>Completed Courses</Subject>
-            <Divider />
-            <CourseList account={myAccount} courses={completedCourses} />
-        </div>
+        <ProgressContainer>
+            <Breadcrumbs aria-label="breadcrumb">
+                <Link color="primary" href="/progresspage">
+                    Progress
+                </Link>
+            </Breadcrumbs>
+            <Tabs
+                value={tab}
+                indicatorColor="primary"
+                textColor="primary"
+                onChange={handleTabChange}
+            >
+                <Tab label="Current Courses" />
+                <Tab label="Completed Courses" />
+            </Tabs>
+            <div id="panel-group">
+                <TabPanel value={tab} index={0} data={currentCourses}>
+                </TabPanel>
+
+                <TabPanel value={tab} index={1} data={completedCourses}>
+                </TabPanel>
+            </div>
+        </ProgressContainer>
     )
 }
 

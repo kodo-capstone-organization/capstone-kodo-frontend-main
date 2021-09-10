@@ -2,13 +2,20 @@ import styled from "styled-components";
 import { colours } from "../../values/Colours";
 import { fontSizes } from "../../values/FontSizes";
 import { Link as LinkR } from "react-router-dom";
+import {
+  Avatar
+} from "@material-ui/core";
 
 
-export const Title = styled.h1`
-  font-size: ${fontSizes.HEADER};
-  color: ${props => props.primary ? colours.BLUE1 : colours.GRAY3};
-  font-family: "Roboto", sans-serif;
-`;
+export const ProgressContainer = styled.div`
+    padding: 2rem;
+    font-family: "Roboto", sans-serif;
+    font-size: ${fontSizes.CONTENT};
+    > * {
+        margin: 0 0 2rem 0;
+    }
+`; // add bottom margin of 2rem to all direct children of ProfileContainer
+
 
 export const Subject = styled.h1`
   font-size: ${fontSizes.SUBTEXT};
@@ -24,26 +31,20 @@ export const EmptyStateText = styled.h1`
   padding: 50px;
 `;
 
-export const TutorName = styled.h3`
-  font-size: ${fontSizes.SUBTEXT};
-  color: ${props => props.primary ? colours.BLUE1 : colours.GRAY3};
-  font-family: "Roboto", sans-serif;
-`;
-
 export const MultiMediaText = styled.h3`
   font-size: 10px;
   color: ${props => props.primary ? colours.BLUE1 : colours.GRAY3};
   font-family: "Roboto", sans-serif;
 `;
 
-export const CourseDetails = styled.div`
-    display: flex;
-    flex-direction: column;
+export const LessonAvatar = styled(Avatar)`
+  margin: 10px;
 `;
 
 export const CourseElement = styled.div`
   display: flex;
   width: 100%;
+  align-items: center;
 `;
 
 export const Button = styled(LinkR)`
