@@ -71,9 +71,6 @@ export async function updateCourse(updateCourseReq: UpdateCourseReq, updatedBann
         formData.append('bannerPicture', updatedBannerPicture);
     }
 
-    console.log(updateCourseReq)
-    console.log(updatedBannerPicture)
-
     const putParameters: IHttpClientRequestParameters<FormData> = {
         url: '/course/updateCourse',
         payload: formData

@@ -81,6 +81,8 @@ function CourseBuilderPage(props: any) {
             courseId: courseFormData.courseId,
         }
 
+        const updatedCourseTagTitles = courseFormData.courseTags.map((tag: Tag) => { return tag.title })
+
         const updatedLessonReqs = courseFormData.lessons.map((lesson: Lesson) => {
             return {
                 lesson: lesson,
@@ -95,7 +97,7 @@ function CourseBuilderPage(props: any) {
         })
 
         // @ts-ignore
-        const updateCourseReq: UpdateCourseReq = { course: updatedCourse, courseTagTitles: courseFormData.courseTags, updateLessonReqs: updatedLessonReqs }
+        const updateCourseReq: UpdateCourseReq = { course: updatedCourse, courseTagTitles: updatedCourseTagTitles, updateLessonReqs: updatedLessonReqs }
         return updateCourseReq
     }
 

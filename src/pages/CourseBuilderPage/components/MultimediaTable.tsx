@@ -180,7 +180,7 @@ interface EnhancedTableToolbarProps {
 const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   const classes = useToolbarStyles();
   const { numSelected, selectedIds, lessonIndex, handleFormDataChange, setLessons, lessons, setSelectedIds } = props;
-  const [newFile, setNewFile] = useState<Multimedia>({ contentId: -1, name: "", description: "", url: "", type: MultimediaType.EMPTY, urlFilename: "", file: new File([""], "")}, );
+  const [newFile, setNewFile] = useState<Multimedia>({ contentId: -1, name: "", description: "", url: "", mutlimediaType: MultimediaType.EMPTY, urlFilename: "", file: new File([""], ""), type: "multimedia"});
 
   const [showAddMultimediaDialog, setShowAddMultimediaDialog] = useState<boolean>(false); 
 
@@ -227,7 +227,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
       case "file":
         updatedFile.urlFilename = event.target.files[0].name
         updatedFile.file = event.target.files[0]
-        updatedFile.type = getFileType(updatedFile.urlFilename)
+        updatedFile.mutlimediaType = getFileType(updatedFile.urlFilename)
         break;
     }
     setNewFile({...updatedFile})
@@ -385,7 +385,7 @@ export default function MultimediaTable(props: any) {
     const handleFormDataChange = props.handleFormDataChange;
     const [multimedias, setMultimedias] = useState<Multimedia[]>(props.multimedias);
     const [lessons, setLessons] = useState<Lesson[]>(props.lessons);
-    const rows = multimedias?.length > 0 ? multimedias.map((row: Multimedia, index: number) => createData(index, row.name, row.description, row.type, row.urlFilename)) : []
+    const rows = multimedias?.length > 0 ? multimedias.map((row: Multimedia, index: number) => createData(index, row.name, row.description, row.mutlimediaType, row.urlFilename)) : []
 
     // Used to trigger rerendering of MultimediaTable whenever lessons is updated in Table Header component
     useEffect(() => {
