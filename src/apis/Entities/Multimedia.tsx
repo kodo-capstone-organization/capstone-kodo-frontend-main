@@ -2,7 +2,7 @@ import { Content } from "./Content";
 
 export interface Multimedia extends Content {
     url: string,
-    mutlimediaType: MultimediaType,
+    multimediaType: MultimediaType,
     urlFilename: string,
     file: File,
     type: string,

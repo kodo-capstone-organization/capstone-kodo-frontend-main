@@ -10,7 +10,6 @@ import { Account } from "../../../apis/Entities/Account";
 
 import { Button } from "../../../values/ButtonElements";
 
-
 import {
   LessonContainer,
   LessonTitle,
@@ -20,7 +19,15 @@ import {
   LessonHeader,
   ContentMenu,
   ContentLink,
-  ReadingIcon
+  ReadingIcon,
+  PlayIcon,
+  QuizWrapper,
+  QuizRow,
+  QuizHeading,
+  QuizSubheader,
+  QuizDescription,
+  QuizDescriptionTwo,
+  CheckIcon
 } from "./LessonViewerElements";
 import Sidebar from "../Sidebar/Sidebar";
 
@@ -47,13 +54,11 @@ function LessonViewer(props: any) {
     });
   }, []);
 
-
   useEffect(() => {
     getMyAccount(accountId).then(receivedAccount => {
       setUser(receivedAccount);
     });
   }, []);
-
 
   function isCourseTutor(course: Course): boolean {
     if (course.tutor.accountId == currentUser?.accountId) {
@@ -64,7 +69,7 @@ function LessonViewer(props: any) {
 
   let lessonQuizzes = currentLesson?.quizzes;
   let lessonMultimedias = currentLesson?.multimedias;
-  console.log(lessonMultimedias)
+  console.log(lessonMultimedias);
 
   return (
     <>
@@ -77,19 +82,41 @@ function LessonViewer(props: any) {
         </LessonCard>
         <LessonCard>
           <LessonHeader>
-            Section {currentLesson?.sequence}: {currentLesson?.name}
+            Section {currentLesson?.sequence}: {currentLesson?.name} [To Finish]
           </LessonHeader>
           <ContentMenu>
             {lessonMultimedias?.map(m => {
-              return(
-              <ContentLink><ReadingIcon/>{m.type}: {m.name}</ContentLink>
-            );
+              return (
+                <ContentLink>
+                  {m.multimediaType == "PDF" ? <ReadingIcon /> : <PlayIcon />}
+                  {m.multimediaType == "PDF" ? "Reading" : "Video"}: {m.name}
+                  <CheckIcon />                
+                </ContentLink>
+              );
             })}
           </ContentMenu>
         </LessonCard>
         <LessonCard>
           <LessonHeader>Quiz</LessonHeader>
-          <LessonDescription>{currentLesson?.quizzes[0].name}</LessonDescription>
+          <QuizHeading>{}</QuizHeading>          
+          <QuizWrapper>
+            {lessonQuizzes?.map(q => {
+              return (
+            <>
+            <QuizRow>
+              <QuizSubheader>TIME LIMIT:</QuizSubheader>
+              <QuizDescription>{q.timeLimit} H</QuizDescription>
+            </QuizRow>
+            <QuizRow>
+              <QuizSubheader>No. Attempts:</QuizSubheader>
+              <QuizDescriptionTwo>{q.maxAttemptsPerStudent}</QuizDescriptionTwo>
+              <QuizSubheader>Grade:</QuizSubheader>
+              <QuizDescriptionTwo>[To Finish]</QuizDescriptionTwo>
+            </QuizRow>
+            </>
+              );
+            })}
+          </QuizWrapper>
         </LessonCard>
       </LessonContainer>
     </>
