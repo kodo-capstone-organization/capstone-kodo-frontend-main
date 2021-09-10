@@ -1,5 +1,5 @@
 import { IHttpClientRequestParameters } from "./../HttpClient/IHttpClientRequestParameters";
-import { Course, UpdateCourseReq } from "../Entities/Course";
+import { Course, ToggleCourseResp, UpdateCourseReq } from "../Entities/Course";
 import { httpClient } from "../HttpClient/HttpClient";
 import { CreateNewAccountReq } from "../Entities/Account";
 import { transformToBlob } from "../../utils/BlobCreator";
@@ -77,4 +77,12 @@ export async function updateCourse(updateCourseReq: UpdateCourseReq, updatedBann
     }
 
     return httpClient.put<FormData, Course>(putParameters)
+}
+
+export async function toggleEnrollmentActiveStatus(courseId: number, requestingAccountId: number): Promise<ToggleCourseResp> {
+    const deleteParameters: IHttpClientRequestParameters<undefined> = {
+        url: `/course/toggleEnrollmentActiveStatus/${courseId}&${requestingAccountId}`
+    }
+
+    return httpClient.delete<undefined, ToggleCourseResp>(deleteParameters);
 }

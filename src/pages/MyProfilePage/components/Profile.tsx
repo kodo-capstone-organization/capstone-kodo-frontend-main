@@ -3,7 +3,7 @@ import { ProfileCard, ProfileCardHeader, ProfileCardContent, ProfileCardActions,
     ProfileAvatar, ProfileInitials, ProfileDetails, ProfileName, ProfileContentText, ProfileSubText, ProfileUsername, BlankStateContainer
 } from "../ProfileElements";
 import {CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle,
-    FormControl, Grid, IconButton, Input, InputAdornment, InputLabel, Snackbar, TextField, Typography } from "@material-ui/core";
+    FormControl, Grid, IconButton, Input, InputAdornment, InputLabel, TextField, Typography } from "@material-ui/core";
 import SettingsIcon from '@material-ui/icons/Settings';
 import LocalAtmIcon from '@material-ui/icons/LocalAtm';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
@@ -284,7 +284,7 @@ function Profile(props: any) {
 
             {/* Create New Course Dialog Component */}
 
-            <Dialog fullWidth open={isOpen} onClose={handleClose} aria-labelledby="form-dialog-title">
+            <Dialog fullWidth open={isOpen} onClose={handleClose} aria-labelledby="create-course-form-dialog">
                 <DialogTitle id="create-course-form-title">Create A New Course 📚</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
