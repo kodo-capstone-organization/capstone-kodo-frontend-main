@@ -15,6 +15,7 @@ export interface Course {
   lessons: Lesson[];
   courseTags: Tag[];
   bannerPictureFileName: string;
+  isEnrollmentActive: boolean;
 }
 
 // When Frontend is creating a new course
@@ -31,4 +32,8 @@ export interface UpdateCourseReq {
   courseTagTitles: string[];
   updateLessonReqs: UpdateLessonReq[];
   enrolledCourseIds: number[];
+}
+
+export interface ToggleCourseResp {
+  responseBody: string
 }

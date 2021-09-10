@@ -1,15 +1,18 @@
 import React, { useState, useEffect, useReducer } from "react";
 import { useHistory } from "react-router-dom";
-import { Box, Grid, TextField, InputLabel, Input, InputAdornment} from "@material-ui/core";
+import { Box, Grid, TextField, Chip, InputAdornment, IconButton, Dialog, DialogTitle, DialogActions, DialogContent} from "@material-ui/core";
 import { CourseBuilderCard, CourseBuilderCardHeader, CourseBuilderContainer, CourseBuilderContent } from "./CourseBuilderElements";
-import { Button } from "@material-ui/core";
 import LessonPlan from "./components/LessonPlan";
-import ChipInput from 'material-ui-chip-input';
-import { getCourseByCourseId, updateCourse } from './../../apis/Course/CourseApis';
+import { getCourseByCourseId, updateCourse, toggleEnrollmentActiveStatus } from './../../apis/Course/CourseApis';
 import { Tag } from "../../apis/Entities/Tag";
 import { Lesson } from "../../apis/Entities/Lesson";
 import { Multimedia } from "../../apis/Entities/Multimedia"
-import { UpdateCourseReq } from "../../apis/Entities/Course";
+import { UpdateCourseReq, Course } from "../../apis/Entities/Course";
+import { Autocomplete } from "@material-ui/lab";
+import { getAllTags } from '../../apis/Tag/TagApis';
+import BlockIcon from '@material-ui/icons/Block';
+import PlayCircleOutlineIcon from '@material-ui/icons/PlayCircleOutline';
+import { Button } from "../../values/ButtonElements";
 
 const formReducer = (state: any, event: any) => {
     return {
@@ -22,14 +25,16 @@ function CourseBuilderPage(props: any) {
 
     const history = useHistory();
     const courseId = props.match.params.courseId;
-
     const [loading, setLoading] = useState<boolean>(true);
 
+    const [tagLibrary, setTagLibrary] = useState<Tag[]>([]);
     const [bannerImageFile, setBannerImageFile] = useState<File>(new File([""], ""));
+    const [isToggleActiveEnrollmentDialogOpen, setIsToggleActiveEnrollmentDialogOpen] = useState<boolean>(false);
     const [courseFormData, setCourseFormData] = useReducer(formReducer, {});
+    const [isTutorOfCourse, setIsTutorOfCourse] = useState<boolean>(false)
     
     useEffect(() => {
-        getCourseByCourseId(courseId).then(receivedCourse => {
+        getCourseByCourseId(courseId).then((receivedCourse: Course) => {
             Object.keys(receivedCourse).map((key, index) => {
                 let wrapperEvent = {
                     target: {
@@ -38,17 +43,31 @@ function CourseBuilderPage(props: any) {
                     }
                 }
                 handleFormDataChange(wrapperEvent)
-            })
-            setLoading(false);   
-            }
-        );
+            }) 
+        });
       }, []);
 
-    const handleChipInputChange = (newTagTitles: object) => {
+    useEffect(() => {
+        getAllTags().then((res: any)=> setTagLibrary(res)).catch(() => console.log("error getting tags."))
+    }, [])
+
+    useEffect(() => {
+        if (courseFormData.tutor != null) {
+            const accountId = window.sessionStorage.getItem("loggedInAccountId");
+
+            if (accountId !== null) {
+                setIsTutorOfCourse(parseInt(accountId) === courseFormData.tutor.accountId)
+                setLoading(false);
+            }
+        }
+
+    }, [courseFormData.tutor])
+
+    const handleChipInputChange = (e: object, value: String[], reason: string) => {
         let wrapperEvent = {
             target: {
                 name: "courseTags",
-                value: newTagTitles
+                value: value
             }
         }
         return handleFormDataChange(wrapperEvent);
@@ -81,7 +100,7 @@ function CourseBuilderPage(props: any) {
             courseId: courseFormData.courseId,
         }
 
-        const updatedCourseTagTitles = courseFormData.courseTags.map((tag: Tag) => { return tag.title })
+        const updatedCourseTagTitles = courseFormData.courseTags
 
         const updatedLessonReqs = courseFormData.lessons.map((lesson: Lesson) => {
             return {
@@ -111,15 +130,54 @@ function CourseBuilderPage(props: any) {
         })
     }
 
+    const handleOpenToggleEnrollmentDialog = () => {
+        setIsToggleActiveEnrollmentDialogOpen(true)
+    }
+
+    const handleCloseToggleEnrollmentDialog = () => {
+        setIsToggleActiveEnrollmentDialogOpen(false)
+    }
+    
+    const handleToggleConfirmation = () => {
+        const myAccountId = window.sessionStorage.getItem("loggedInAccountId")
+        
+        if (myAccountId !== null)
+        {
+            toggleEnrollmentActiveStatus(courseFormData.courseId, parseInt(myAccountId)).then((res: any) => {
+                // Toggle success, refresh page
+                console.log(res);
+                window.location.reload();
+            }).catch(error => {
+                console.log("Error in deletion", error)
+            });
+        }
+        else
+        {
+            // No account ID found in local storage. Redirect to login
+            history.push('/login')
+        }
+    }
+
+    const  getToggleKeyword = () => {
+        return courseFormData.isEnrollmentActive ? "Pause" : "Resume"
+    }
+
     const navigateToPreviousPage = () => {
         history.goBack();
     }
 
-    return !loading && (
+    return !loading && ( !isTutorOfCourse ? 
+        <h1>You are not a tutor of this course 😡</h1> :       
         <CourseBuilderContainer>
             <CourseBuilderCard id="course-information">
                 <CourseBuilderCardHeader
                     title="Course Information"
+                    action={
+                        <IconButton color={courseFormData.isEnrollmentActive ? "secondary" : "primary"} onClick={handleOpenToggleEnrollmentDialog}>
+                            {courseFormData.isEnrollmentActive && <><BlockIcon/> &nbsp; Pause Enrollment</>}
+                            {!courseFormData.isEnrollmentActive && <><PlayCircleOutlineIcon /> &nbsp; Resume Enrollment</>}
+                        </IconButton>
+                    }
                 />
                 <CourseBuilderContent>
                     <Grid container spacing={3}>
@@ -144,17 +202,25 @@ function CourseBuilderPage(props: any) {
                                 />
                         </Grid>
                         <Grid item xs={12}>
-                            <ChipInput fullWidth label="Tags" defaultValue={courseFormData.courseTags.map((tag: Tag) => tag.title)} onChange={(newChips) => handleChipInputChange(newChips)}
-                            />
+                            <Autocomplete
+                                multiple
+                                options={tagLibrary.map((option) => option.title)}
+                                defaultValue={courseFormData.courseTags.map((tag: Tag) => tag.title)}
+                                onChange={handleChipInputChange}
+                                freeSolo
+                                renderTags={(value: string[], getTagProps) =>
+                                    value.map((option: string, index: number) => (
+                                        <Chip variant="outlined" label={option} {...getTagProps({ index })} />
+                                    ))}
+                                renderInput={(params) => (
+                                    <TextField {...params} id="standard-basic" label="Tags"/>
+                                )}/>
                         </Grid>
                         <Grid item xs={10}>
                             <TextField id="standard-basic" fullWidth disabled value={courseFormData.bannerPictureFileName} label="Banner Image"></TextField>
                         </Grid>
                         <Grid item xs={2}>
-                            <Button
-                                variant="contained"
-                                component="label"
-                                >
+                            <Button variant="contained" component="label" big>
                                 Upload Banner
                                 <input
                                     type="file"
@@ -172,21 +238,40 @@ function CourseBuilderPage(props: any) {
             <Grid container spacing={3} justify="flex-end">
                 <Box m={1} pt={2}>
                     <Button
-                        variant="contained"
-                        component="label"
-                        onClick={navigateToPreviousPage}>
-                        Cancel
-                    </Button>
-                </Box>
-                <Box m={1} pt={2}>
-                    <Button
-                        variant="contained"
-                        component="label"
+                        primary
+                        big
                         onClick={handleUpdateCourse}>
                         Update Course
                     </Button>
                 </Box>
+                <Box m={1} pt={2}>
+                    <Button
+                        big
+                        onClick={navigateToPreviousPage}>
+                        Cancel
+                    </Button>
+                </Box>
             </Grid>
+            {/* Toggle Enrollment Course Dialog */}
+            <Dialog fullWidth open={isToggleActiveEnrollmentDialogOpen} onClose={handleCloseToggleEnrollmentDialog} aria-labelledby="toggle-dialog">
+
+                <DialogTitle id="toggle-dialog-title">
+                    { getToggleKeyword() } Enrollment for {courseFormData.name}?
+                </DialogTitle>
+                <DialogContent>
+                    { courseFormData.isEnrollmentActive &&  <>Users will not be able to enroll in your course. Existing enrolled users will still be able to read your course materials.</> }
+                    { !courseFormData.isEnrollmentActive &&  <>Users will be able to enroll in your course again.</> }
+                </DialogContent>
+                <br/>
+                <DialogActions>
+                    <Button onClick={handleCloseToggleEnrollmentDialog}>
+                        Cancel
+                    </Button>
+                    <Button onClick={handleToggleConfirmation} primary>
+                        Confirm
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </CourseBuilderContainer>
     )
 }
