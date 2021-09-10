@@ -106,24 +106,6 @@ function LessonPlan(props: any) {
                                         Delete Lesson
                                 </Button>
                             </Grid>
-                            {/* <Grid item xs={9}>
-                                <ChipInput fullWidth label="Multimedias" value={lesson.multimedias?.map((multimedia) => multimedia.name)} onDelete={(chip) => deleteFile(lesson.lessonId, chip)}/>
-                            </Grid>
-                            <Grid item xs={3}>
-                                <Button
-                                    variant="contained"
-                                    component="label"
-                                    >
-                                    Upload Files
-                                    <input
-                                        type="file"
-                                        hidden
-                                        onChange={e => {
-                                            if (e.target.files) updateFiles(lesson.lessonId, e.target.files)
-                                        }}
-                                    />
-                                </Button>
-                            </Grid> */}
                         </Grid>
                     </CourseBuilderContent>
                 </TabPanel>
