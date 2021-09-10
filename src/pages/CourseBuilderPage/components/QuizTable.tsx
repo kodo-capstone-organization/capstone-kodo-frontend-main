@@ -256,7 +256,7 @@ export default function QuizTable(props: any) {
 
     // Used to trigger rerendering of QuizTable whenever lessons is updated in Table Header component
     useEffect(() => {
-      const newQuizzes = lessons.find((lesson) => lesson.lessonId === props.lessonId)?.quizzes
+      const newQuizzes = lessons.find((lesson, index) => index === props.lessonIndex)?.quizzes
       if (newQuizzes) {
         setQuizzes(newQuizzes)
       }

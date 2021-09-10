@@ -10,7 +10,7 @@ import MultimediaTable from './MultimediaTable';
 function LessonPlan(props: any) {
     const handleFormDataChange = props.handleFormDataChange;
     const [lessons, setLessons] = useState<Lesson[]>(props.lessons);
-    const [tabValue, setTabValue] = useState<number>(1);
+    const [tabValue, setTabValue] = useState<number>(0);
 
     const addToLessons = () => {
         // @ts-ignore
@@ -76,7 +76,7 @@ function LessonPlan(props: any) {
         {lessons?.map((lesson, index) => {
             return (
                 <TabPanel value={tabValue} index={index}>
-                    <CourseBuilderContent key={lesson.lessonId}>
+                    <CourseBuilderContent key={index}>
                         <Grid container spacing={3}>
                             <Grid item xs={12}>
                                 <TextField fullWidth required 

@@ -389,7 +389,7 @@ export default function MultimediaTable(props: any) {
 
     // Used to trigger rerendering of MultimediaTable whenever lessons is updated in Table Header component
     useEffect(() => {
-      const newMultimedias = lessons.find((lesson) => lesson.lessonId === props.lessonId)?.multimedias
+      const newMultimedias = lessons.find((lesson, index) => index === props.lessonIndex)?.multimedias
       if (newMultimedias) {
         setMultimedias(newMultimedias)
       }
