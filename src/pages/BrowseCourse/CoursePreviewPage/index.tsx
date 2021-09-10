@@ -80,13 +80,14 @@ function CoursePreviewPage(props: any) {
       <EnrollCard>
         <EnrollImage src="/chessplaceholder.png" />
         <EnrollBtn>
-          {currentCourse && !courseIsNotEnrolled(currentCourse) && (
-            <Button primary={true} big={false} fontBig={false} disabled={false} onClick={invokeStripeSessionCreation}>
-              Enroll
-            </Button>
-          )}
+          {currentCourse && currentCourse.isEnrollmentActive && !courseIsNotEnrolled(currentCourse) &&
+            <Button primary onClick={invokeStripeSessionCreation}> Enroll </Button>
+          }
+          {currentCourse && !currentCourse.isEnrollmentActive && !courseIsNotEnrolled(currentCourse) &&
+            <Button disabled> This course is currently not taking in any new enrollment</Button>
+          }
           {currentCourse && courseIsNotEnrolled(currentCourse) && (
-            <Button primary={false} big={false} fontBig={false} disabled={true}>
+            <Button disabled>
               Enrolled
             </Button>
           )}

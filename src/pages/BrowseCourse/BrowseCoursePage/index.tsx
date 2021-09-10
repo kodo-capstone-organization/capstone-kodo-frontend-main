@@ -122,20 +122,21 @@ function BrowseCourse() {
         <Title>Courses</Title>
         <CourseWrapper>
           {courses
-            ?.filter(val => {
+              ?.filter(course => course.isEnrollmentActive )
+              .filter(course => {
               if (searchTerm == "" && tags.length == 0) {
-                return val;
-              } else if (tags.length > 0 && returnTagMatch(val)) {
-                return val;
+                return course;
+              } else if (tags.length > 0 && returnTagMatch(course)) {
+                return course;
               } else if (
                 searchTerm !== "" &&
-                val.name.toLowerCase().includes(searchTerm.toLowerCase())
+                  course.name.toLowerCase().includes(searchTerm.toLowerCase())
               ) {
-                return val;
+                return course;
               }
             })
             .map(course => {
-              return ( <CourseCard course={course} redirectUrlBase="/browsecourse/preview" /> );
+              return ( <CourseCard course={course} myCourseView={false} redirectUrlBase="/browsecourse/preview" /> );
             })}
         </CourseWrapper>
         <Title>Suggested For You</Title>

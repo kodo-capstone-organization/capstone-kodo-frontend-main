@@ -196,7 +196,7 @@ function Profile(props: any) {
                 <ProfileCardContent>
                     { myAccount?.enrolledCourses.length === 0 &&
                         <BlankStateContainer>
-                            <Typography variant="h5">You are not enrolled in any course 🥺</Typography>
+                            <Typography variant="h5">You are not enrolled in any courses 🥺</Typography>
                             <br/>
                             <Typography>Try heading over to our Browse Courses page to look through the multitude of courses we have to offer on Kodo. From there, you can choose to enroll in any course that catches your eye!</Typography>
                             <br/>
@@ -207,7 +207,12 @@ function Profile(props: any) {
                         <CourseWrapper>
                             { myAccount?.enrolledCourses.map((enrolledCourse: EnrolledCourse) => {
                                 return (
-                                    <CourseCard course={enrolledCourse.parentCourse} redirectUrlBase="/overview"/>
+                                    <CourseCard 
+                                        course={enrolledCourse.parentCourse} 
+                                        myCourseView={false} 
+                                        isCourseCompleted={enrolledCourse.dateTimeOfCompletion !== null} 
+                                        redirectUrlBase="/overview"
+                                    />
                                 )})
                             }
                         </CourseWrapper>
@@ -274,7 +279,12 @@ function Profile(props: any) {
                         <CourseWrapper>
                             { myAccount?.courses.map((myCourse: Course) => {
                                 return (
-                                    <CourseCard course={myCourse} redirectUrlBase="/overview"/>
+                                    <CourseCard 
+                                        course={myCourse} 
+                                        myCourseView={true} 
+                                        isCourseCompleted={false} 
+                                        redirectUrlBase="/overview"
+                                    />
                                 )})
                             }
                         </CourseWrapper>
