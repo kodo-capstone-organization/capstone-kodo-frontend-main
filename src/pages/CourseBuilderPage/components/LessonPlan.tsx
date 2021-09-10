@@ -51,6 +51,23 @@ function LessonPlan(props: any) {
         handleFormDataChange(wrapperEvent)
     }
 
+    const handleLessonDescriptionChange = (event: any) => {
+        const updatedLessons = lessons.map((lesson: Lesson, index: number) => {
+            if (index.toString() === event.target.id) {
+                lesson.description = event.target.value
+            }
+            return lesson
+        })
+
+        let wrapperEvent = {
+            target: {
+                name: "lessons",
+                value: updatedLessons
+            }
+        }
+        handleFormDataChange(wrapperEvent)
+    }
+
     return (
         <>
         <CourseBuilderCardHeader
@@ -84,6 +101,13 @@ function LessonPlan(props: any) {
                                 label="Name" 
                                 value={lesson.name} 
                                 onChange={handleLessonNameChange}/>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField fullWidth required 
+                                id={index.toString()} 
+                                label="Description" 
+                                value={lesson.description} 
+                                onChange={handleLessonDescriptionChange}/>
                             </Grid>
                             <Grid item xs={12}>
                                 <QuizTable 
