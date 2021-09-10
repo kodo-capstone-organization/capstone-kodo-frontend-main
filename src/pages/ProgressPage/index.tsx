@@ -1,26 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import {
     Title,
-    MultiMediaText,
-    CourseDetails,
-    CourseElement,
-    TutorName,
-    Button,
     Subject
 } from "./ProgressElements";
 import { makeStyles } from '@material-ui/core/styles';
-import Avatar from '@material-ui/core/Avatar';
 import Divider from '@material-ui/core/Divider';
-import Grid from '@material-ui/core/Grid';
 import { getMyAccount } from "../../apis/Account/AccountApis";
 import { EnrolledCourse } from "../../apis/Entities/EnrolledCourse";
 import { Account } from "../../apis/Entities/Account";
-import { Lesson } from "../../apis/Entities/Lesson";
-import { Content } from "../../apis/Entities/Content";
-import Link from '@material-ui/core/Link';
-import LockIcon from '@material-ui/icons/Lock';
 import CourseList from './components/CourseList';
-import MultimediaModal from './components/MultimediaModal';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -42,7 +30,6 @@ function ProgressPage() {
     const [completedCourses, setCompletedCourses] = useState<EnrolledCourse[]>([])
     const [currentCourses, setCurrentCourses] = useState<EnrolledCourse[]>([])
     const [myAccount, setMyAccount] = useState<Account>()
-    const classes = useStyles();
     const accountId = window.sessionStorage.getItem("loggedInAccountId");
 
     useEffect(() => {
@@ -55,20 +42,7 @@ function ProgressPage() {
                 setCurrentCourses(updatedCurrentCourses)
             });
         }
-    }, [])
-
-    const getLessonMultimedia = (parentLesson: Lesson) => {
-        var contents: Content[] = parentLesson.contents;
-        return (
-            <div style={{ display: "flex" }}>
-                {contents.map(function (content, contentId) {
-                    return (
-                        <Link><MultiMediaText key={contentId}>{content.name},</MultiMediaText></Link>
-                    );
-                })}
-            </div>
-        )
-    }
+    }, [accountId])
 
     return (
         <div

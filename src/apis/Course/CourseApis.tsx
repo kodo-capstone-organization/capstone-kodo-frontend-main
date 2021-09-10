@@ -1,5 +1,5 @@
 import { IHttpClientRequestParameters } from "./../HttpClient/IHttpClientRequestParameters";
-import { Course } from "../Entities/Course";
+import { Course, UpdateCourseReq } from "../Entities/Course";
 import { httpClient } from "../HttpClient/HttpClient";
 import { CreateNewAccountReq } from "../Entities/Account";
 import { transformToBlob } from "../../utils/BlobCreator";
@@ -37,11 +37,14 @@ export async function getCourseByTagTitle(tagTitle: string): Promise<Course[]> {
 }
 
 
-export async function createNewCourse(createNewCourseReq: CreateNewAccountReq, bannerPicture: File): Promise<Course> {
+export async function createNewCourse(createNewCourseReq: CreateNewAccountReq, bannerPicture: File | null): Promise<Course> {
     const formData = new FormData();
 
     formData.append('course', transformToBlob(createNewCourseReq));
-    formData.append('bannerPicture', bannerPicture);
+    if(bannerPicture !== null)
+    {
+        formData.append('bannerPicture', bannerPicture);
+    }
 
     const postParameters: IHttpClientRequestParameters<FormData> = {
         url: '/course/createNewCourse',
@@ -57,4 +60,21 @@ export async function getCourseToRecommend(accountId: number): Promise<Course[]>
     }
 
     return httpClient.get<undefined, Course[]>(getParameters)
+}
+
+export async function updateCourse(updateCourseReq: UpdateCourseReq, updatedBannerPicture: File): Promise<Course> {
+    const formData = new FormData();
+    formData.append('updateCourseReq', transformToBlob(updateCourseReq));
+    
+    // Check whether it's an empty file
+    if (updatedBannerPicture.size !== 0) {
+        formData.append('bannerPicture', updatedBannerPicture);
+    }
+
+    const putParameters: IHttpClientRequestParameters<FormData> = {
+        url: '/course/updateCourse',
+        payload: formData
+    }
+
+    return httpClient.put<FormData, Course>(putParameters)
 }

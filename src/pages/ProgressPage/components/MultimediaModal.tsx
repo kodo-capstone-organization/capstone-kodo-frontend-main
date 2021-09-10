@@ -1,33 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { makeStyles, Theme, createStyles, withStyles } from '@material-ui/core/styles';
 import {
-    CourseDetails,
-    CourseElement
-} from "../ProgressElements";
-import {
-    IconButton, Dialog, DialogActions, DialogContent, DialogContentText,
-    DialogTitle, Link, List, ListItem, ListItemAvatar, ListItemIcon, ListItemSecondaryAction,
-    ListItemText, Avatar, FormGroup, Checkbox, Grid, Typography, FormControlLabel
+    IconButton, Dialog, DialogActions, DialogContent, Table,
+    DialogTitle, Link, TableBody, TableCell, TableContainer, TableHead, TableRow,
+    Paper, TablePagination, Tabs, Tab
 } from "@material-ui/core";
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import TablePagination from '@material-ui/core/TablePagination';
-import Paper from '@material-ui/core/Paper';
-import AppBar from '@material-ui/core/AppBar';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import Box from '@material-ui/core/Box';
-import CloseIcon from '@material-ui/icons/Close';
 import InfoIcon from '@material-ui/icons/Info';
-import FolderIcon from '@material-ui/icons/Folder';
-import DeleteIcon from '@material-ui/icons/Delete';
 import { Button } from "../../../values/ButtonElements";
 import { Account } from "../../../apis/Entities/Account";
-import { Content } from "../../../apis/Entities/Content";
 import { Quiz } from "../../../apis/Entities/Quiz";
 import { Multimedia } from '../../../apis/Entities/Multimedia';
 import { useHistory } from 'react-router';
@@ -89,7 +69,6 @@ function MultimediaModal(props: any) {
     const [myAccount, setMyAccount] = useState<Account>();
     const [multimedias, setMultimedias] = useState<Multimedia[]>([]);
     const [quizzes, setQuizzes] = useState<Quiz[]>([]);
-    const [lesson, setLesson] = useState<any>();
     const [tab, setTab] = React.useState(0);
     const quizzesRow = quizzes?.map(quiz => createData(quiz.name, null))
     const multimediasRow = multimedias?.map(multimedia => createData(multimedia.name, multimedia.url))
@@ -97,7 +76,6 @@ function MultimediaModal(props: any) {
 
     useEffect(() => {
         setMyAccount(props.account)
-        setLesson(props.lesson)
         if (props.lesson !== undefined) {
             setMultimedias(props.lesson.multimedias)
             setQuizzes(props.lesson.quizzes)

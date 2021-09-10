@@ -1,11 +1,7 @@
 import styled from "styled-components";
-import Card from "@material-ui/core/Card";
-import CardContent from "@material-ui/core/CardContent";
 import { fontSizes } from "../../../values/FontSizes";
 import { colours } from "../../../values/Colours";
-import CardMedia from "@material-ui/core/CardMedia";
 import Chip from '@material-ui/core/Chip';
-
 
 export const BrowseContainer = styled.div`
     padding: 2rem;
@@ -37,22 +33,10 @@ export const CourseWrapper = styled.div`
     }
 `
 
-export const CourseCard = styled(Card)`
-    border-radius: 20px !important;
-    width: 220px;
-`
-export const CourseCardContent = styled(CardContent)`
-    height: 30px;
-    font-size: 18px !important;
-`
 
 export const Title = styled.h4`
     color: ${colours.GRAY2};
     margin-top: 50px;
-`
-
-export const CourseCardMedia = styled.div`
-    height: 170px;
 `
 
 export const InputWrapper = styled.div`

@@ -3,7 +3,7 @@ import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import ChipInput from 'material-ui-chip-input';
 import {
     ProfileCard, ProfileSettingField, ProfileSubText,
-    ProfileAvatar, ProfileInitials, ProfileCardHeader, TextSpan
+    ProfileAvatar, ProfileInitials, ProfileCardHeader
 } from "../ProfileElements";
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
@@ -12,7 +12,6 @@ import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import IconButton from '@material-ui/core/IconButton';
 import { Button } from "../../../values/ButtonElements";
-import { colours } from "../../../values/Colours";
 import { Account } from "../../../apis/Entities/Account";
 import { Tag } from "../../../apis/Entities/Tag";
 import DeactivateAccountModal from "./DeactivateAccountModal";

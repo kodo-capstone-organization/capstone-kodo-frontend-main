@@ -4,7 +4,6 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import { Button } from "../../../values/ButtonElements";
 import { Account } from "../../../apis/Entities/Account";
-import { TextSpan } from "../ProfileElements";
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';

@@ -13,7 +13,7 @@ export const CourseBuilderContainer = styled.div`
 `; // add bottom margin of 2rem to all direct children of ProfileContainer
 
 export const CourseBuilderCard = styled(Card)`
-    width: 50%;
+    width: 100%;
 `;
 
 export const CourseBuilderContent = styled(CardContent)`

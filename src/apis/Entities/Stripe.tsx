@@ -1,7 +1,3 @@
-export interface StripeSessionResponse {
-    paymentUrl: string
-}
-
 export interface StripePaymentReq {
     studentId: number
     tutorId: number

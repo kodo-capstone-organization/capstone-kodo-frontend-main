@@ -43,6 +43,25 @@ export class HttpClient implements IHttpClient {
         })
     }
 
+    put<T, R>(parameters: IHttpClientRequestParameters<T>): Promise<R> {
+        return new Promise<R>((resolve, reject) => {
+            const { url, payload } = parameters
+
+            const options: AxiosRequestConfig = {
+                headers: {}
+            }
+
+            axios
+                .put(formatUrl(url), payload, options)
+                .then((response: any) => {
+                    resolve(response.data as R)
+                })
+                .catch((response: any) => {
+                    reject(response)
+                })
+        })
+    }
+
     delete<T, R>(parameters: IHttpClientRequestParameters<T>): Promise<R> {
         return new Promise<R>((resolve, reject) => {
             const { url, payload } = parameters
