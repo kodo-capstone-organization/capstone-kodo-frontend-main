@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { Course } from "../../../apis/Entities/Course";
 import { Account } from "../../../apis/Entities/Account";
-import { getAllCourses, getCourseToRecommend } from "../../../apis/Course/CourseApis";
+import { getAllCourses, getCoursesToRecommend } from "../../../apis/Course/CourseApis";
 import { getMyAccount } from "../../../apis/Account/AccountApis";
 
 import { colours } from "../../../values/Colours";
@@ -60,7 +60,7 @@ function BrowseCourse() {
   }, []);
 
   useEffect(() => {
-    getCourseToRecommend(accountId).then(receivedCourses => {
+    getCoursesToRecommend(accountId).then(receivedCourses => {
       setCoursesRecommended(receivedCourses);
       console.log(coursesRecommended);
     });

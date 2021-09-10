@@ -69,12 +69,8 @@ function LessonViewer(props: any) {
     });
   }, []);
 
-  function isCourseTutor(course: Course): boolean {
-    if (course.tutor.accountId == currentUser?.accountId) {
-      return true;
-    }
-    return false;
-  }
+  let isCourseTutor =
+    currentCourse?.tutor.accountId === currentUser?.accountId ? true : false;
 
   let lessonQuizzes = currentLesson?.quizzes;
   let lessonMultimedias = currentLesson?.multimedias;
@@ -83,8 +79,9 @@ function LessonViewer(props: any) {
     let enrolledContent = enrolledLesson?.enrolledContents.find(
       i => i.parentContent?.contentId === courseId
     );
-    console.log(enrolledLesson?.enrolledContents[0].parentContent);
-    if (enrolledContent?.dateTimeOfCompletion !== null) {
+    console.log(enrolledContent);
+
+    if (enrolledContent?.dateTimeOfCompletion !== null || isCourseTutor) {
       return true;
     }
     return false;
@@ -101,7 +98,7 @@ function LessonViewer(props: any) {
         </LessonCard>
         <LessonCard>
           <LessonHeader>
-            Section {currentLesson?.sequence}: {currentLesson?.name} [To Finish]
+            Section {currentLesson?.sequence}: {currentLesson?.name}
           </LessonHeader>
           <ContentMenu>
             {lessonMultimedias?.map(m => {
@@ -140,9 +137,9 @@ function LessonViewer(props: any) {
                       {q.maxAttemptsPerStudent}
                     </QuizDescriptionTwo>
                     {/*
-              <QuizSubheader>Grade:</QuizSubheader>
-              <QuizDescriptionTwo>[To Finish]</QuizDescriptionTwo>
-              */}
+                    <QuizSubheader>Grade:</QuizSubheader>
+                    <QuizDescriptionTwo>[To Finish]</QuizDescriptionTwo>
+                    */}
                   </QuizRow>
                 </>
               );
