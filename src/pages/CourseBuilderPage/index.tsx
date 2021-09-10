@@ -1,16 +1,18 @@
 import React, { useState, useEffect, useReducer } from "react";
 import { useHistory } from "react-router-dom";
-import { Box, Grid, TextField, InputAdornment, Chip} from "@material-ui/core";
+import { Box, Grid, TextField, Chip, InputAdornment, IconButton, Dialog, DialogTitle, DialogActions, DialogContent} from "@material-ui/core";
 import { CourseBuilderCard, CourseBuilderCardHeader, CourseBuilderContainer, CourseBuilderContent } from "./CourseBuilderElements";
-import { Button } from "@material-ui/core";
 import LessonPlan from "./components/LessonPlan";
-import { getCourseByCourseId, updateCourse } from './../../apis/Course/CourseApis';
+import { getCourseByCourseId, updateCourse, toggleEnrollmentActiveStatus } from './../../apis/Course/CourseApis';
 import { Tag } from "../../apis/Entities/Tag";
 import { Lesson } from "../../apis/Entities/Lesson";
 import { Multimedia } from "../../apis/Entities/Multimedia"
-import { UpdateCourseReq } from "../../apis/Entities/Course";
+import { UpdateCourseReq, Course } from "../../apis/Entities/Course";
 import { Autocomplete } from "@material-ui/lab";
 import { getAllTags } from '../../apis/Tag/TagApis';
+import BlockIcon from '@material-ui/icons/Block';
+import PlayCircleOutlineIcon from '@material-ui/icons/PlayCircleOutline';
+import { Button } from "../../values/ButtonElements";
 
 const formReducer = (state: any, event: any) => {
     return {
@@ -23,16 +25,16 @@ function CourseBuilderPage(props: any) {
 
     const history = useHistory();
     const courseId = props.match.params.courseId;
-
     const [loading, setLoading] = useState<boolean>(true);
 
     const [tagLibrary, setTagLibrary] = useState<Tag[]>([]);
     const [bannerImageFile, setBannerImageFile] = useState<File>(new File([""], ""));
+    const [isToggleActiveEnrollmentDialogOpen, setIsToggleActiveEnrollmentDialogOpen] = useState<boolean>(false);
     const [courseFormData, setCourseFormData] = useReducer(formReducer, {});
     const [isTutorOfCourse, setIsTutorOfCourse] = useState<boolean>(false)
     
     useEffect(() => {
-        getCourseByCourseId(courseId).then(receivedCourse => {
+        getCourseByCourseId(courseId).then((receivedCourse: Course) => {
             Object.keys(receivedCourse).map((key, index) => {
                 let wrapperEvent = {
                     target: {
@@ -128,15 +130,54 @@ function CourseBuilderPage(props: any) {
         })
     }
 
+    const handleOpenToggleEnrollmentDialog = () => {
+        setIsToggleActiveEnrollmentDialogOpen(true)
+    }
+
+    const handleCloseToggleEnrollmentDialog = () => {
+        setIsToggleActiveEnrollmentDialogOpen(false)
+    }
+    
+    const handleToggleConfirmation = () => {
+        const myAccountId = window.sessionStorage.getItem("loggedInAccountId")
+        
+        if (myAccountId !== null)
+        {
+            toggleEnrollmentActiveStatus(courseFormData.courseId, parseInt(myAccountId)).then((res: any) => {
+                // Toggle success, refresh page
+                console.log(res);
+                window.location.reload();
+            }).catch(error => {
+                console.log("Error in deletion", error)
+            });
+        }
+        else
+        {
+            // No account ID found in local storage. Redirect to login
+            history.push('/login')
+        }
+    }
+
+    const  getToggleKeyword = () => {
+        return courseFormData.isEnrollmentActive ? "Pause" : "Resume"
+    }
+
     const navigateToPreviousPage = () => {
         history.goBack();
     }
 
-    return !loading && ( isTutorOfCourse ?        
+    return !loading && ( !isTutorOfCourse ? 
+        <h1>You are not a tutor of this course 😡</h1> :       
         <CourseBuilderContainer>
             <CourseBuilderCard id="course-information">
                 <CourseBuilderCardHeader
                     title="Course Information"
+                    action={
+                        <IconButton color={courseFormData.isEnrollmentActive ? "secondary" : "primary"} onClick={handleOpenToggleEnrollmentDialog}>
+                            {courseFormData.isEnrollmentActive && <><BlockIcon/> &nbsp; Pause Enrollment</>}
+                            {!courseFormData.isEnrollmentActive && <><PlayCircleOutlineIcon /> &nbsp; Resume Enrollment</>}
+                        </IconButton>
+                    }
                 />
                 <CourseBuilderContent>
                     <Grid container spacing={3}>
@@ -179,10 +220,7 @@ function CourseBuilderPage(props: any) {
                             <TextField id="standard-basic" fullWidth disabled value={courseFormData.bannerPictureFileName} label="Banner Image"></TextField>
                         </Grid>
                         <Grid item xs={2}>
-                            <Button
-                                variant="contained"
-                                component="label"
-                                >
+                            <Button variant="contained" component="label" big>
                                 Upload Banner
                                 <input
                                     type="file"
@@ -200,22 +238,41 @@ function CourseBuilderPage(props: any) {
             <Grid container spacing={3} justify="flex-end">
                 <Box m={1} pt={2}>
                     <Button
-                        variant="contained"
-                        component="label"
-                        onClick={navigateToPreviousPage}>
-                        Cancel
-                    </Button>
-                </Box>
-                <Box m={1} pt={2}>
-                    <Button
-                        variant="contained"
-                        component="label"
+                        primary
+                        big
                         onClick={handleUpdateCourse}>
                         Update Course
                     </Button>
                 </Box>
+                <Box m={1} pt={2}>
+                    <Button
+                        big
+                        onClick={navigateToPreviousPage}>
+                        Cancel
+                    </Button>
+                </Box>
             </Grid>
-        </CourseBuilderContainer> : <h1>You are not a tutor of this course 😡</h1>
+            {/* Toggle Enrollment Course Dialog */}
+            <Dialog fullWidth open={isToggleActiveEnrollmentDialogOpen} onClose={handleCloseToggleEnrollmentDialog} aria-labelledby="toggle-dialog">
+
+                <DialogTitle id="toggle-dialog-title">
+                    { getToggleKeyword() } Enrollment for {courseFormData.name}?
+                </DialogTitle>
+                <DialogContent>
+                    { courseFormData.isEnrollmentActive &&  <>Users will not be able to enroll in your course. Existing enrolled users will still be able to read your course materials.</> }
+                    { !courseFormData.isEnrollmentActive &&  <>Users will be able to enroll in your course again.</> }
+                </DialogContent>
+                <br/>
+                <DialogActions>
+                    <Button onClick={handleCloseToggleEnrollmentDialog}>
+                        Cancel
+                    </Button>
+                    <Button onClick={handleToggleConfirmation} primary>
+                        Confirm
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </CourseBuilderContainer>
     )
 }
 

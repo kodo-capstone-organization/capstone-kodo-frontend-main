@@ -21,8 +21,9 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import AddIcon from '@material-ui/icons/Add';
 import { Multimedia, MultimediaType } from '../../../apis/Entities/Multimedia';
 import { Lesson } from '../../../apis/Entities/Lesson';
-import { Button, Dialog, DialogContent, DialogContentText, DialogTitle, InputLabel, Input, FormControl, Grid, DialogActions} from '@material-ui/core';
+import { Dialog, DialogContent, DialogContentText, DialogTitle, InputLabel, Input, FormControl, Grid, DialogActions} from '@material-ui/core';
 import { ACCEPTABLE_FILE_TYPE, getFileType } from '../../../utils/GetFileType';
+import { Button } from "../../../values/ButtonElements";
 
 interface Data {
   id: number,
