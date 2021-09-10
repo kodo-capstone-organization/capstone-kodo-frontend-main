@@ -1,15 +1,16 @@
 import React, { useState, useEffect, useReducer } from "react";
 import { useHistory } from "react-router-dom";
-import { Box, Grid, TextField, InputLabel, Input, InputAdornment} from "@material-ui/core";
+import { Box, Grid, TextField, InputAdornment, Chip} from "@material-ui/core";
 import { CourseBuilderCard, CourseBuilderCardHeader, CourseBuilderContainer, CourseBuilderContent } from "./CourseBuilderElements";
 import { Button } from "@material-ui/core";
 import LessonPlan from "./components/LessonPlan";
-import ChipInput from 'material-ui-chip-input';
 import { getCourseByCourseId, updateCourse } from './../../apis/Course/CourseApis';
 import { Tag } from "../../apis/Entities/Tag";
 import { Lesson } from "../../apis/Entities/Lesson";
 import { Multimedia } from "../../apis/Entities/Multimedia"
 import { UpdateCourseReq } from "../../apis/Entities/Course";
+import { Autocomplete } from "@material-ui/lab";
+import { getAllTags } from '../../apis/Tag/TagApis';
 
 const formReducer = (state: any, event: any) => {
     return {
@@ -25,6 +26,7 @@ function CourseBuilderPage(props: any) {
 
     const [loading, setLoading] = useState<boolean>(true);
 
+    const [tagLibrary, setTagLibrary] = useState<Tag[]>([]);
     const [bannerImageFile, setBannerImageFile] = useState<File>(new File([""], ""));
     const [courseFormData, setCourseFormData] = useReducer(formReducer, {});
     
@@ -44,11 +46,15 @@ function CourseBuilderPage(props: any) {
         );
       }, []);
 
-    const handleChipInputChange = (newTagTitles: object) => {
+    useEffect(() => {
+        getAllTags().then((res: any)=> setTagLibrary(res)).catch(() => console.log("error getting tags."))
+    }, [])
+
+    const handleChipInputChange = (e: object, value: String[], reason: string) => {
         let wrapperEvent = {
             target: {
                 name: "courseTags",
-                value: newTagTitles
+                value: value
             }
         }
         return handleFormDataChange(wrapperEvent);
@@ -81,7 +87,7 @@ function CourseBuilderPage(props: any) {
             courseId: courseFormData.courseId,
         }
 
-        const updatedCourseTagTitles = courseFormData.courseTags.map((tag: Tag) => { return tag.title })
+        const updatedCourseTagTitles = courseFormData.courseTags
 
         const updatedLessonReqs = courseFormData.lessons.map((lesson: Lesson) => {
             return {
@@ -144,8 +150,19 @@ function CourseBuilderPage(props: any) {
                                 />
                         </Grid>
                         <Grid item xs={12}>
-                            <ChipInput fullWidth label="Tags" defaultValue={courseFormData.courseTags.map((tag: Tag) => tag.title)} onChange={(newChips) => handleChipInputChange(newChips)}
-                            />
+                            <Autocomplete
+                                multiple
+                                options={tagLibrary.map((option) => option.title)}
+                                defaultValue={courseFormData.courseTags.map((tag: Tag) => tag.title)}
+                                onChange={handleChipInputChange}
+                                freeSolo
+                                renderTags={(value: string[], getTagProps) =>
+                                    value.map((option: string, index: number) => (
+                                        <Chip variant="outlined" label={option} {...getTagProps({ index })} />
+                                    ))}
+                                renderInput={(params) => (
+                                    <TextField {...params} id="standard-basic" label="Tags"/>
+                                )}/>
                         </Grid>
                         <Grid item xs={10}>
                             <TextField id="standard-basic" fullWidth disabled value={courseFormData.bannerPictureFileName} label="Banner Image"></TextField>
