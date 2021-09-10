@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { withRouter } from "react-router";
+import { useHistory } from "react-router-dom";
 import { getCourseByCourseId } from "../../../apis/Course/CourseApis";
 import { getLessonByLessonId } from "../../../apis/Lesson/LessonApis";
 import { getMyAccount } from "../../../apis/Account/AccountApis";
@@ -41,6 +42,7 @@ function LessonViewer(props: any) {
   const [currentLesson, setLesson] = useState<Lesson>();
   const [currentUser, setUser] = useState<Account>();
   const [enrolledLesson, setEnrolledLesson] = useState<EnrolledLesson>();
+  const history = useHistory();
   const accountId = JSON.parse(
     window.sessionStorage.getItem("loggedInAccountId") || "{}"
   );
@@ -58,10 +60,26 @@ function LessonViewer(props: any) {
   }, []);
 
   useEffect(() => {
+    let courseLessons = currentCourse?.lessons;
+    var courseLessonIds = courseLessons?.map(function(c) {
+      return c.lessonId;
+    })
+    if (courseLessonIds?.includes(lessonId)) {
+      getMyAccount(accountId).then(receivedAccount => {
+        setUser(receivedAccount);
+      });
+    } else {
+      history.push('/notfound')
+    }
+  });
+  
+  /*
+  useEffect(() => {
     getMyAccount(accountId).then(receivedAccount => {
       setUser(receivedAccount);
     });
   }, []);
+  */
 
   useEffect(() => {
     getEnrolledLesson(accountId, lessonId).then(receivedEnrolledLesson => {
