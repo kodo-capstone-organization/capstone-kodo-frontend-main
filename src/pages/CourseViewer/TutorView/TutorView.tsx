@@ -6,10 +6,12 @@ import {
 import { EnrolledCourse } from "../../../apis/Entities/EnrolledCourse";
 import { Course } from "../../../apis/Entities/Course";
 import { EnrolledLesson } from "../../../apis/Entities/EnrolledLesson";
+import { Button } from "../../../values/ButtonElements";
 
 
 import {
   TutorContainer,
+  PageHeadingAndButton,
   PageHeading,
   CourseTitle,
   TutorTitle,
@@ -79,10 +81,14 @@ function TutorView(props: any) {
 
   return (
     <TutorContainer>
-      <PageHeading>
-        <CourseTitle>{currentCourse?.name}</CourseTitle>
-        <TutorTitle>by {currentCourse?.tutor.name}</TutorTitle>
-      </PageHeading>
+      <PageHeadingAndButton>
+        <PageHeading>
+          <CourseTitle>{currentCourse?.name}</CourseTitle>
+          <TutorTitle>by {currentCourse?.tutor.name}</TutorTitle>
+        </PageHeading>
+        <Button primary to={`/builder/${currentCourse?.courseId}`}>Edit</Button>
+      </PageHeadingAndButton>
+      
       <StudentProgressCard>
         <CardTitle>Students</CardTitle>
         <StudentProgressWrapper>

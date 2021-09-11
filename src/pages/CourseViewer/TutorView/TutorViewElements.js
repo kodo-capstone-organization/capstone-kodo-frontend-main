@@ -12,6 +12,12 @@ export const TutorContainer = styled.div`
   }
 `;
 
+export const PageHeadingAndButton = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+`
+
 export const PageHeading = styled.div`
   padding-left:19px;
 `
