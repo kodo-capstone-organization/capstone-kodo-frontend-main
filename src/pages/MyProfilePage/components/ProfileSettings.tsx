@@ -56,8 +56,8 @@ function ProfileSettings(props: any) {
         getAllTags().then(res => setTagLibrary(res)).catch(error => console.log("error getting tags."))
     }, [props.account])
 
-    const message = () => {
-        alert("Hello World!") 
+    const save = () => {
+        
     }
 
     const displayPictureURL = () => {
@@ -183,11 +183,13 @@ function ProfileSettings(props: any) {
                             <div style={{ display: "flex", flexDirection: "row-reverse" }}>
                                 <Button style={{ margin: "10px 0 10px 0" }}
                                     primary
-                                    onClick={message}>
+                                    onClick={save}>
                                     Save
                                 </Button>                                
                                 <div style={{ width: "10px" }}></div>
-                                <Button style={{ margin: "10px 0 10px 0" }}
+                                <Button 
+                                    style={{ margin: "10px 0 10px 0" }}
+                                    to="/profile"
                                     >
                                     Cancel
                                 </Button>                                
