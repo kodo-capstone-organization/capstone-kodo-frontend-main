@@ -27,3 +27,13 @@ export interface CreateNewAccountReq {
   isAdmin: boolean;
   tagTitles: string[];
 }
+
+export interface UpdateAccountReq {
+  account: Account;
+  tagTitles: string[];
+  enrolledCourseIds: string[];
+  courseIds: number[];
+  forumThreadIds: number[];
+  forumPostIds: number[];
+  studentAttemptIds: number[];
+}
