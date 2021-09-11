@@ -31,6 +31,18 @@ export const EmptyStateText = styled.h1`
   padding: 50px;
 `;
 
+export const EmptyStateContainer = styled.div`
+  font-size: ${fontSizes.SUBTEXT};
+  color: ${colours.GRAY4};
+  font-family: "Roboto", sans-serif;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; 
+  text-align: center; 
+  align-items: center;
+  padding: 50px;
+`;
+
 export const MultiMediaText = styled.h3`
   font-size: 10px;
   color: ${props => props.primary ? colours.BLUE1 : colours.GRAY3};

@@ -3,13 +3,16 @@ import { makeStyles } from '@material-ui/core/styles';
 import {
     LessonAvatar,
     CourseElement,
-    Button,
+    // Button,
     Subject,
     EmptyStateText,
-    ProgressContainer
+    ProgressContainer,
+    EmptyStateContainer
 } from "../ProgressElements";
+import { Button } from '../../../values/ButtonElements';
+
 import {
-    Avatar, Divider, Grid
+    Avatar, Divider, Grid, Typography
 } from "@material-ui/core";
 import { EnrolledCourse } from "../../../apis/Entities/EnrolledCourse";
 import { Account } from "../../../apis/Entities/Account";
@@ -53,10 +56,8 @@ function CourseList(props: any) {
         }
     }
 
-    const handleImageError = (e: any) => {
-        console.log("image error")
-        e.target.onerror = null;
-        e.target.src = "/chessplaceholder.png"
+    const navigateToBrowseCoursePage = () => {
+        history.push('/browsecourse');
     }
 
     const getCourseLessons = (course: EnrolledCourse) => {
@@ -80,11 +81,11 @@ function CourseList(props: any) {
                         <>
                             <CourseElement key={lessonId}>
                                 <LessonAvatar src="/chessplaceholder.png"
-                                                alt={course.parentCourse.name}/>
+                                    alt={course.parentCourse.name} />
                                 <Subject>{lesson?.name}</Subject>
                                 <MultimediaModal show={showMultimedia} account={myAccount} lesson={lesson} />
                                 {
-                                    course.dateTimeOfCompletion === null ? (lesson.isCompleted ? <Button primary={lesson.isCompleted} to={`/overview/lesson/${course.parentCourse.courseId}/${lesson.lessonId}`}>Resume</Button> :
+                                    course.dateTimeOfCompletion === null ? (lesson.isCompleted ? <Button variant="outlined" primary={lesson.isCompleted} to={`/overview/lesson/${course.parentCourse.courseId}/${lesson.lessonId}`}>Resume</Button> :
                                         <LockIcon />) : <Button primary={lesson.isCompleted} to={`/overview/lesson/${course.parentCourse.courseId}/${lesson.lessonId}`}>View</Button>
                                 }
                             </CourseElement>
@@ -113,8 +114,11 @@ function CourseList(props: any) {
             }
             {
                 myCourses?.length === 0 &&
-                <EmptyStateText>No courses, sorry! 😢</EmptyStateText>
-
+                <EmptyStateContainer>
+                    <Typography>No courses here! 😢</Typography>
+                    <br/>
+                    <Button onClick={navigateToBrowseCoursePage} style={{ width: "10%" }} big>Browse Courses</Button>
+                </EmptyStateContainer>
             }
         </>
     )
