@@ -31,6 +31,12 @@ module.exports = function(app) {
     })
   );
   app.use(
+    createProxyMiddleware("/enrolledCourse", {
+      target: url,
+      changeOrigin: true
+    })
+  );
+  app.use(
     createProxyMiddleware("/stripe", {
       target: url,
       changeOrigin: true
