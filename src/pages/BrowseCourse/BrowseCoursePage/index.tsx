@@ -1,11 +1,8 @@
 import { useState, useEffect } from "react";
-import { Link as RouterLink } from "react-router-dom";
 import { Course } from "../../../apis/Entities/Course";
 import { Account } from "../../../apis/Entities/Account";
 import { getAllCourses, getCoursesToRecommend } from "../../../apis/Course/CourseApis";
 import { getMyAccount } from "../../../apis/Account/AccountApis";
-
-import { colours } from "../../../values/Colours";
 
 import {
   BrowseContainer,
@@ -17,13 +14,8 @@ import {
 } from "./BrowseCourseElements";
 
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
-import CardActionArea from "@material-ui/core/CardActionArea";
-import CardMedia from "@material-ui/core/CardMedia";
-import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
-import SearchIcon from "@material-ui/icons/Search";
 import ChipInput from "material-ui-chip-input";
-import { Chip } from "@material-ui/core";
 import CourseCard from "../../../components/CourseCard";
 
 const useStyles = makeStyles((theme: Theme) =>
