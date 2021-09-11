@@ -5,8 +5,12 @@ import { Account } from "../../apis/Entities/Account";
 import { getMyAccount } from "../../apis/Account/AccountApis";
 import { getCourseByCourseId } from "../../apis/Course/CourseApis";
 import Sidebar from "./Sidebar/Sidebar";
+<<<<<<< HEAD
 import TutorView from "./TutorView/TutorView"
 import StudentView from "./StudentView/StudentView"
+=======
+import StudentView from "./StudentView/StudentView";
+>>>>>>> 0b229f9c5eafec6fc2add74c0951f43409f8299d
 
 function CourseOverview(props: any) {
   const courseId = props.match.params.courseId;
@@ -30,21 +34,21 @@ function CourseOverview(props: any) {
 
   //if current logged in user is enrolled in this course, returns true
   function courseIsEnrolled(course: Course): boolean {
-        
+
     let userEnrolledCourses = currentUser?.enrolledCourses;
-    var userParentCourses = userEnrolledCourses?.map(function(c) {
-        return c.parentCourse.courseId;
+    var userParentCourses = userEnrolledCourses?.map(function (c) {
+      return c.parentCourse.courseId;
     });
     if (userParentCourses?.includes(course.courseId)) {
-        return true;
+      return true;
     }
     return false;
   }
 
   //if current user is this course's tutor this function, returns true
   function isCourseTutor(course: Course): boolean {
-        
-    if(course.tutor.accountId == currentUser?.accountId) {
+
+    if (course.tutor.accountId == currentUser?.accountId) {
       return true;
     }
     return false;
@@ -54,12 +58,10 @@ function CourseOverview(props: any) {
 
   return (
     <>
-    <div>
       <div>
       {currentCourse && !courseIsEnrolled(currentCourse) && !isCourseTutor(currentCourse) &&
       <h1>You are not enrolled in this course 😡</h1>
       }
-      </div>
       {currentCourse && courseIsEnrolled(currentCourse) &&
       <>
         <StudentView course={currentCourse}/> 
