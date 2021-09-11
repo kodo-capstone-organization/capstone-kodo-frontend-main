@@ -29,7 +29,9 @@ function StudentView(props: any) {
         <h1>student view</h1>
       </div>
 
-      <div className="rating"></div>
+      <div className="rating">
+        
+      </div>
     </div>
   );
 }

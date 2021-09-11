@@ -67,8 +67,9 @@ export async function getAccountByEnrolledCourseId(enrolledCourseId: number): Pr
     }
 
     return httpClient.get<undefined, Account>(getParameters);
+}
 
-    export async function updateAccount(updateAccountReq: UpdateAccountReq, displayPicture: File | null): Promise<Account> {
+export async function updateAccount(updateAccountReq: UpdateAccountReq, displayPicture: File | null): Promise<Account> {
     const formData = new FormData();
 
     formData.append('account', transformToBlob(updateAccountReq));
