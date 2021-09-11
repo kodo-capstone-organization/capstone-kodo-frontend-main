@@ -1,5 +1,5 @@
 import { IHttpClientRequestParameters } from "./../HttpClient/IHttpClientRequestParameters";
-import { Course } from "../Entities/Course";
+import { Course, ToggleCourseResp, UpdateCourseReq } from "../Entities/Course";
 import { httpClient } from "../HttpClient/HttpClient";
 import { CreateNewAccountReq } from "../Entities/Account";
 import { transformToBlob } from "../../utils/BlobCreator";
@@ -54,10 +54,35 @@ export async function createNewCourse(createNewCourseReq: CreateNewAccountReq, b
     return httpClient.post<FormData, Course>(postParameters)
 }
 
-export async function getCourseToRecommend(accountId: number): Promise<Course[]> {
+export async function getCoursesToRecommend(accountId: number): Promise<Course[]> {
     const getParameters: IHttpClientRequestParameters<undefined> = {
         url: `/course/getAllCoursesToRecommend/${accountId}`
     }
 
     return httpClient.get<undefined, Course[]>(getParameters)
+}
+
+export async function updateCourse(updateCourseReq: UpdateCourseReq, updatedBannerPicture: File): Promise<Course> {
+    const formData = new FormData();
+    formData.append('updateCourseReq', transformToBlob(updateCourseReq));
+    
+    // Check whether it's an empty file
+    if (updatedBannerPicture.size !== 0) {
+        formData.append('bannerPicture', updatedBannerPicture);
+    }
+
+    const putParameters: IHttpClientRequestParameters<FormData> = {
+        url: '/course/updateCourse',
+        payload: formData
+    }
+
+    return httpClient.put<FormData, Course>(putParameters)
+}
+
+export async function toggleEnrollmentActiveStatus(courseId: number, requestingAccountId: number): Promise<ToggleCourseResp> {
+    const deleteParameters: IHttpClientRequestParameters<undefined> = {
+        url: `/course/toggleEnrollmentActiveStatus/${courseId}&${requestingAccountId}`
+    }
+
+    return httpClient.delete<undefined, ToggleCourseResp>(deleteParameters);
 }

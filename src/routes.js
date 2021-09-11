@@ -27,9 +27,15 @@ function Routes() {
                         </Route>
                         <Route path="/login" component={Login} exact />
                         <Route path="/signup" component={SignUp} exact />
-                        <Route path="/builder/:courseId" component={CourseBuilderPage} exact />
-                        <Route path="/overview/:courseId" component={CourseOverview} exact />
-                        <Route path="/overview/lesson/:courseId/:lessonId" component={LessonViewerWithRouter} exact />
+                        {window.sessionStorage.getItem("loggedInAccountId") ? 
+                         <Route path="/builder/:courseId" component={CourseBuilderPage} exact />
+                        : <Redirect to="/" />}
+                        {window.sessionStorage.getItem("loggedInAccountId") ? 
+                            <Route path="/overview/:courseId" component={CourseOverview} exact />
+                        : <Redirect to="/" />}
+                        {window.sessionStorage.getItem("loggedInAccountId") ? 
+                            <Route path="/overview/lesson/:courseId/:lessonId" component={LessonViewerWithRouter} exact />
+                        : <Redirect to="/" />}
                         {
                             RouteItemsWithSidebar.map(item => {
                                 return (

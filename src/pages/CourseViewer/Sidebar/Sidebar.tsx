@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Course } from "../../../apis/Entities/Course";
 
 import {
-  SidebarContainer,
   SidebarWrapper,
   SidebarMenu,
   CourseBannerWrapper,
@@ -21,7 +20,6 @@ function Sidebar(props: any) {
   let allLessons = currentCourse?.lessons;
 
   return (
-    <SidebarContainer>
       <SidebarWrapper>
         <CourseBannerWrapper>
             <CourseBanner src="/chessplaceholder.png" alt={currentCourse.name}/>
@@ -31,14 +29,13 @@ function Sidebar(props: any) {
           {allLessons?.map(lesson => {
             return (
               <LessonLink key={lesson.lessonId}>
-                <SidebarLink to={`/overview/lesson/${currentCourse.courseId}/${lesson.lessonId}`}>{lesson.name}</SidebarLink>
+                <SidebarLink to={`/overview/lesson/${currentCourse.courseId}/${lesson.lessonId}`}>Week {lesson.sequence}</SidebarLink>
               </LessonLink>
             );
           })}
           <SidebarLink>Discussion Forum</SidebarLink>
         </SidebarMenu>
       </SidebarWrapper>
-    </SidebarContainer>
   );
 }
 

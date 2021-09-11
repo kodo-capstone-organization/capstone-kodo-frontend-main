@@ -1,7 +1,7 @@
 import { Course } from "./Course";
 import { Content } from "./Content";
 import { Quiz } from "./Quiz";
-import { Multimedia } from "./Multimedia";
+import { Multimedia, MultimediaReq} from "./Multimedia";
 
 export interface Lesson {
     lessonId: number
@@ -13,3 +13,9 @@ export interface Lesson {
     quizzes: Quiz[]
     multimedias: Multimedia[]
 }
+
+export interface UpdateLessonReq {
+    lesson: Lesson
+    quizzes: Quiz[];
+    multimediaReqs: MultimediaReq[];
+  }

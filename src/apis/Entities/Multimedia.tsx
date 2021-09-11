@@ -2,12 +2,22 @@ import { Content } from "./Content";
 
 export interface Multimedia extends Content {
     url: string,
-    type: MultimediaType
+    multimediaType: MultimediaType,
+    urlFilename: string,
+    file: File,
+    type: string,
 }
 
 export enum MultimediaType {
     PDF = "PDF",
     IMAGE = "IMAGE",
     VIDEO = "VIDEO",
-    ZIP = "ZIP"
+    ZIP = "ZIP",
+    DOCUMENT = "DOCUMENT",
+    EMPTY = "",
+}
+
+export interface MultimediaReq {
+    multimedia: Multimedia,
+    multipartFile: File
 }

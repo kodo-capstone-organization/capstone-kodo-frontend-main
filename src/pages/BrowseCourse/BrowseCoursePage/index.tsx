@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { Course } from "../../../apis/Entities/Course";
 import { Account } from "../../../apis/Entities/Account";
-import { getAllCourses, getCourseToRecommend } from "../../../apis/Course/CourseApis";
+import { getAllCourses, getCoursesToRecommend } from "../../../apis/Course/CourseApis";
 import { getMyAccount } from "../../../apis/Account/AccountApis";
 
 import { colours } from "../../../values/Colours";
@@ -60,7 +60,7 @@ function BrowseCourse() {
   }, []);
 
   useEffect(() => {
-    getCourseToRecommend(accountId).then(receivedCourses => {
+    getCoursesToRecommend(accountId).then(receivedCourses => {
       setCoursesRecommended(receivedCourses);
       console.log(coursesRecommended);
     });
@@ -122,20 +122,21 @@ function BrowseCourse() {
         <Title>Courses</Title>
         <CourseWrapper>
           {courses
-            ?.filter(val => {
+              ?.filter(course => course.isEnrollmentActive )
+              .filter(course => {
               if (searchTerm == "" && tags.length == 0) {
-                return val;
-              } else if (tags.length > 0 && returnTagMatch(val)) {
-                return val;
+                return course;
+              } else if (tags.length > 0 && returnTagMatch(course)) {
+                return course;
               } else if (
                 searchTerm !== "" &&
-                val.name.toLowerCase().includes(searchTerm.toLowerCase())
+                  course.name.toLowerCase().includes(searchTerm.toLowerCase())
               ) {
-                return val;
+                return course;
               }
             })
             .map(course => {
-              return ( <CourseCard course={course} redirectUrlBase="/browsecourse/preview" /> );
+              return ( <CourseCard course={course} myCourseView={false} redirectUrlBase="/browsecourse/preview" /> );
             })}
         </CourseWrapper>
         <Title>Suggested For You</Title>

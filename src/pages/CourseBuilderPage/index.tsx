@@ -1,64 +1,231 @@
-import React, { useState } from "react";
-import { Grid, TextField } from "@material-ui/core";
+import React, { useState, useEffect, useReducer } from "react";
+import { useHistory } from "react-router-dom";
+import { Box, Grid, TextField, Chip, InputAdornment, IconButton, Dialog, DialogTitle, DialogActions, DialogContent} from "@material-ui/core";
 import { CourseBuilderCard, CourseBuilderCardHeader, CourseBuilderContainer, CourseBuilderContent } from "./CourseBuilderElements";
-import { Button } from "@material-ui/core";
 import LessonPlan from "./components/LessonPlan";
-import ChipInput from 'material-ui-chip-input';
+import { getCourseByCourseId, updateCourse, toggleEnrollmentActiveStatus } from './../../apis/Course/CourseApis';
+import { Tag } from "../../apis/Entities/Tag";
+import { Lesson } from "../../apis/Entities/Lesson";
+import { Multimedia } from "../../apis/Entities/Multimedia"
+import { UpdateCourseReq, Course } from "../../apis/Entities/Course";
+import { Autocomplete } from "@material-ui/lab";
+import { getAllTags } from '../../apis/Tag/TagApis';
+import BlockIcon from '@material-ui/icons/Block';
+import PlayCircleOutlineIcon from '@material-ui/icons/PlayCircleOutline';
+import { Button } from "../../values/ButtonElements";
 
+const formReducer = (state: any, event: any) => {
+    return {
+        ...state,
+        [event.name]: event.value
+    }
+}
 
 function CourseBuilderPage(props: any) {
 
-    // TODO: Get course ID from url path
+    const history = useHistory();
+    const courseId = props.match.params.courseId;
+    const [loading, setLoading] = useState<boolean>(true);
 
-    const [courseName, setCourseName] = useState<string>("");
-    const [courseDescription, setCourseDescription] = useState<string>("");
-    const [fileName, setFileName] = useState<string>("");
-    const [file, setFile] = useState<any>();
-    const [tags, setTags] = useState<string[]>([]);
+    const [tagLibrary, setTagLibrary] = useState<Tag[]>([]);
+    const [bannerImageFile, setBannerImageFile] = useState<File>(new File([""], ""));
+    const [isToggleActiveEnrollmentDialogOpen, setIsToggleActiveEnrollmentDialogOpen] = useState<boolean>(false);
+    const [courseFormData, setCourseFormData] = useReducer(formReducer, {});
+    const [isTutorOfCourse, setIsTutorOfCourse] = useState<boolean>(false)
     
-    // TODO: Fetch course using retrieved course ID
+    useEffect(() => {
+        getCourseByCourseId(courseId).then((receivedCourse: Course) => {
+            Object.keys(receivedCourse).map((key, index) => {
+                let wrapperEvent = {
+                    target: {
+                        name: key,
+                        value: Object.values(receivedCourse)[index]
+                    }
+                }
+                handleFormDataChange(wrapperEvent)
+            }) 
+        });
+      }, []);
 
-    const handleChipChange = (chips: string[]) => {
-        setTags(chips)
+    useEffect(() => {
+        getAllTags().then((res: any)=> setTagLibrary(res)).catch(() => console.log("error getting tags."))
+    }, [])
+
+    useEffect(() => {
+        if (courseFormData.tutor != null) {
+            const accountId = window.sessionStorage.getItem("loggedInAccountId");
+
+            if (accountId !== null) {
+                setIsTutorOfCourse(parseInt(accountId) === courseFormData.tutor.accountId)
+                setLoading(false);
+            }
+        }
+
+    }, [courseFormData.tutor])
+
+    const handleChipInputChange = (e: object, value: String[], reason: string) => {
+        let wrapperEvent = {
+            target: {
+                name: "courseTags",
+                value: value
+            }
+        }
+        return handleFormDataChange(wrapperEvent);
     }
 
-    return (
+    const handleBannerImageChange = (event: any) => {
+        setBannerImageFile(event.target.files[0])
+
+        let wrapperEvent = {
+            target: {
+                name: "bannerPictureFileName",
+                value: event.target.files[0].name 
+            }
+        }
+        handleFormDataChange(wrapperEvent)
+    }
+
+    const handleFormDataChange = (event: any) => {
+        setCourseFormData({
+            name: event.target.name,
+            value: event.target.value,
+        });
+    }
+
+    const buildUpdateCourseReq = (courseFormData: any) => {
+        const updatedCourse = {
+            name: courseFormData.name,
+            description: courseFormData.description,
+            price: courseFormData.price,
+            courseId: courseFormData.courseId,
+        }
+
+        const updatedCourseTagTitles = courseFormData.courseTags
+
+        const updatedLessonReqs = courseFormData.lessons.map((lesson: Lesson) => {
+            return {
+                lesson: lesson,
+                quizzes: lesson.quizzes,
+                multimediaReqs: lesson.multimedias.map((multimedia: Multimedia) => {
+                    return {
+                        multimedia: multimedia,
+                        multipartFile: multimedia.file
+                    }
+                })
+            }
+        })
+
+        // @ts-ignore
+        const updateCourseReq: UpdateCourseReq = { course: updatedCourse, courseTagTitles: updatedCourseTagTitles, updateLessonReqs: updatedLessonReqs }
+        return updateCourseReq
+    }
+
+    const handleUpdateCourse = () => {
+        const updateCourseReq = buildUpdateCourseReq(courseFormData)
+
+        updateCourse(updateCourseReq, bannerImageFile).then((updatedCourse) => {
+            console.log(updatedCourse);
+
+            setCourseFormData(updatedCourse)
+        })
+    }
+
+    const handleOpenToggleEnrollmentDialog = () => {
+        setIsToggleActiveEnrollmentDialogOpen(true)
+    }
+
+    const handleCloseToggleEnrollmentDialog = () => {
+        setIsToggleActiveEnrollmentDialogOpen(false)
+    }
+    
+    const handleToggleConfirmation = () => {
+        const myAccountId = window.sessionStorage.getItem("loggedInAccountId")
+        
+        if (myAccountId !== null)
+        {
+            toggleEnrollmentActiveStatus(courseFormData.courseId, parseInt(myAccountId)).then((res: any) => {
+                // Toggle success, refresh page
+                console.log(res);
+                window.location.reload();
+            }).catch(error => {
+                console.log("Error in deletion", error)
+            });
+        }
+        else
+        {
+            // No account ID found in local storage. Redirect to login
+            history.push('/login')
+        }
+    }
+
+    const  getToggleKeyword = () => {
+        return courseFormData.isEnrollmentActive ? "Pause" : "Resume"
+    }
+
+    const navigateToPreviousPage = () => {
+        history.goBack();
+    }
+
+    return !loading && ( !isTutorOfCourse ? 
+        <h1>You are not a tutor of this course 😡</h1> :       
         <CourseBuilderContainer>
             <CourseBuilderCard id="course-information">
                 <CourseBuilderCardHeader
                     title="Course Information"
+                    action={
+                        <IconButton color={courseFormData.isEnrollmentActive ? "secondary" : "primary"} onClick={handleOpenToggleEnrollmentDialog}>
+                            {courseFormData.isEnrollmentActive && <><BlockIcon/> &nbsp; Pause Enrollment</>}
+                            {!courseFormData.isEnrollmentActive && <><PlayCircleOutlineIcon /> &nbsp; Resume Enrollment</>}
+                        </IconButton>
+                    }
                 />
                 <CourseBuilderContent>
                     <Grid container spacing={3}>
                         <Grid item xs={12}>
-                            <TextField id="standard-basic" fullWidth required label="Name" value={courseName} onChange={e => setCourseName(e.target.value)}/>
+                            <TextField id="standard-basic" fullWidth label="Name" name="name" value={courseFormData.name} onChange={handleFormDataChange}/>
                         </Grid>
                         <Grid item xs={12}>
-                            <TextField id="standard-basic" fullWidth multiline maxRows={3} required label="Description" value={courseDescription} onChange={e => setCourseDescription(e.target.value)}/>
+                            <TextField id="standard-basic" fullWidth multiline maxRows={3} name="description" label="Description" value={courseFormData.description} onChange={handleFormDataChange}/>
                         </Grid>
                         <Grid item xs={12}>
-                            <ChipInput fullWidth label="Tags" value={tags}
-                                onChange={(chips) => handleChipChange(chips)}
-                            />
+                            <TextField
+                                fullWidth
+                                label="Price"
+                                name="price"
+                                id="start-adornment"
+                                type="number"
+                                InputProps={{
+                                    startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                                }}
+                                value={courseFormData.price}
+                                onChange={handleFormDataChange}
+                                />
                         </Grid>
-                        <Grid item xs={9}>
-                            <TextField id="standard-basic" fullWidth disabled value={fileName} label="Banner Image"></TextField>
+                        <Grid item xs={12}>
+                            <Autocomplete
+                                multiple
+                                options={tagLibrary.map((option) => option.title)}
+                                defaultValue={courseFormData.courseTags.map((tag: Tag) => tag.title)}
+                                onChange={handleChipInputChange}
+                                freeSolo
+                                renderTags={(value: string[], getTagProps) =>
+                                    value.map((option: string, index: number) => (
+                                        <Chip variant="outlined" label={option} {...getTagProps({ index })} />
+                                    ))}
+                                renderInput={(params) => (
+                                    <TextField {...params} id="standard-basic" label="Tags"/>
+                                )}/>
                         </Grid>
-                        <Grid item xs={3}>
-                            <Button
-                                variant="contained"
-                                component="label"
-                                >
+                        <Grid item xs={10}>
+                            <TextField id="standard-basic" fullWidth disabled value={courseFormData.bannerPictureFileName} label="Banner Image"></TextField>
+                        </Grid>
+                        <Grid item xs={2}>
+                            <Button variant="contained" component="label" big>
                                 Upload Banner
                                 <input
                                     type="file"
                                     hidden
-                                    onChange={e => {
-                                        // @ts-ignore
-                                        setFile(e.target.files[0])
-                                        // @ts-ignore
-                                        setFileName(e.target.files[0].name)
-                                    }}
+                                    onChange={handleBannerImageChange}
                                 />
                             </Button>
                         </Grid>
@@ -66,8 +233,45 @@ function CourseBuilderPage(props: any) {
                 </CourseBuilderContent>
             </CourseBuilderCard>
             <CourseBuilderCard id="lesson-plan">
-                <LessonPlan/>
+                <LessonPlan courseFormData={courseFormData} lessons={courseFormData.lessons} handleFormDataChange={handleFormDataChange}/>
             </CourseBuilderCard>
+            <Grid container spacing={3} justify="flex-end">
+                <Box m={1} pt={2}>
+                    <Button
+                        primary
+                        big
+                        onClick={handleUpdateCourse}>
+                        Update Course
+                    </Button>
+                </Box>
+                <Box m={1} pt={2}>
+                    <Button
+                        big
+                        onClick={navigateToPreviousPage}>
+                        Cancel
+                    </Button>
+                </Box>
+            </Grid>
+            {/* Toggle Enrollment Course Dialog */}
+            <Dialog fullWidth open={isToggleActiveEnrollmentDialogOpen} onClose={handleCloseToggleEnrollmentDialog} aria-labelledby="toggle-dialog">
+
+                <DialogTitle id="toggle-dialog-title">
+                    { getToggleKeyword() } Enrollment for {courseFormData.name}?
+                </DialogTitle>
+                <DialogContent>
+                    { courseFormData.isEnrollmentActive &&  <>Users will not be able to enroll in your course. Existing enrolled users will still be able to read your course materials.</> }
+                    { !courseFormData.isEnrollmentActive &&  <>Users will be able to enroll in your course again.</> }
+                </DialogContent>
+                <br/>
+                <DialogActions>
+                    <Button onClick={handleCloseToggleEnrollmentDialog}>
+                        Cancel
+                    </Button>
+                    <Button onClick={handleToggleConfirmation} primary>
+                        Confirm
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </CourseBuilderContainer>
     )
 }

@@ -21,12 +21,8 @@ import {
 } from "./CoursePreviewElements";
 import { Button } from "../../../values/ButtonElements";
 import { getMyAccount } from "../../../apis/Account/AccountApis";
-
-import { createStyles, Theme, makeStyles } from "@material-ui/core/styles";
-import Avatar from "@material-ui/core/Avatar";
-import Chip from "@material-ui/core/Chip";
-import FaceIcon from "@material-ui/icons/Face";
-import DoneIcon from "@material-ui/icons/Done";
+import { createStripeSession } from "../../../apis/Stripe/StripeApis";
+import { StripePaymentReq } from "../../../apis/Entities/Stripe"
 
 function CoursePreviewPage(props: any) {
   const courseId = props.match.params.courseId;
@@ -49,6 +45,24 @@ function CoursePreviewPage(props: any) {
     });
   }, []);
 
+  const invokeStripeSessionCreation = () => {
+    if (currentCourse !== undefined && currentUser !== undefined) {
+      const stripePaymentReq: StripePaymentReq = {
+        studentId: currentUser.accountId,
+        tutorId: currentCourse.tutor.accountId,
+        courseId: currentCourse.courseId,
+        tutorName: currentCourse.tutor.name,
+        amount: currentCourse.price,
+        tutorStripeAccountId: currentCourse.tutor.stripeAccountId
+      }
+
+      createStripeSession(stripePaymentReq).then((paymentUrl: string) => {
+        let newTab = window.open(paymentUrl, '_blank');
+        newTab?.focus();
+      })
+    }
+  }
+
   /** HELPER METHODS */
   function courseIsNotEnrolled(course: Course): boolean {
     let userEnrolledCourses = currentUser?.enrolledCourses;
@@ -66,13 +80,14 @@ function CoursePreviewPage(props: any) {
       <EnrollCard>
         <EnrollImage src="/chessplaceholder.png" />
         <EnrollBtn>
-          {currentCourse && !courseIsNotEnrolled(currentCourse) && (
-            <Button primary={true} big={false} fontBig={false} disabled={false}>
-              Enroll
-            </Button>
-          )}
+          {currentCourse && currentCourse.isEnrollmentActive && !courseIsNotEnrolled(currentCourse) &&
+            <Button primary onClick={invokeStripeSessionCreation}> Enroll </Button>
+          }
+          {currentCourse && !currentCourse.isEnrollmentActive && !courseIsNotEnrolled(currentCourse) &&
+            <Button disabled> This course is currently not taking in any new enrollment</Button>
+          }
           {currentCourse && courseIsNotEnrolled(currentCourse) && (
-            <Button primary={false} big={false} fontBig={false} disabled={true}>
+            <Button disabled>
               Enrolled
             </Button>
           )}

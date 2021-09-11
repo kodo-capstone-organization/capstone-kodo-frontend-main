@@ -3,7 +3,7 @@ import { ProfileCard, ProfileCardHeader, ProfileCardContent, ProfileCardActions,
     ProfileAvatar, ProfileInitials, ProfileDetails, ProfileName, ProfileContentText, ProfileSubText, ProfileUsername, BlankStateContainer
 } from "../ProfileElements";
 import {CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle,
-    FormControl, Grid, IconButton, Input, InputAdornment, InputLabel, Snackbar, TextField, Typography } from "@material-ui/core";
+    FormControl, Grid, IconButton, Input, InputAdornment, InputLabel, TextField, Typography } from "@material-ui/core";
 import SettingsIcon from '@material-ui/icons/Settings';
 import LocalAtmIcon from '@material-ui/icons/LocalAtm';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
@@ -196,7 +196,7 @@ function Profile(props: any) {
                 <ProfileCardContent>
                     { myAccount?.enrolledCourses.length === 0 &&
                         <BlankStateContainer>
-                            <Typography variant="h5">You are not enrolled in any course 🥺</Typography>
+                            <Typography variant="h5">You are not enrolled in any courses 🥺</Typography>
                             <br/>
                             <Typography>Try heading over to our Browse Courses page to look through the multitude of courses we have to offer on Kodo. From there, you can choose to enroll in any course that catches your eye!</Typography>
                             <br/>
@@ -207,7 +207,12 @@ function Profile(props: any) {
                         <CourseWrapper>
                             { myAccount?.enrolledCourses.map((enrolledCourse: EnrolledCourse) => {
                                 return (
-                                    <CourseCard course={enrolledCourse.parentCourse} redirectUrlBase="/overview"/>
+                                    <CourseCard 
+                                        course={enrolledCourse.parentCourse} 
+                                        myCourseView={false} 
+                                        isCourseCompleted={enrolledCourse.dateTimeOfCompletion !== null} 
+                                        redirectUrlBase="/overview"
+                                    />
                                 )})
                             }
                         </CourseWrapper>
@@ -274,7 +279,12 @@ function Profile(props: any) {
                         <CourseWrapper>
                             { myAccount?.courses.map((myCourse: Course) => {
                                 return (
-                                    <CourseCard course={myCourse} redirectUrlBase="/overview"/>
+                                    <CourseCard 
+                                        course={myCourse} 
+                                        myCourseView={true} 
+                                        isCourseCompleted={false} 
+                                        redirectUrlBase="/overview"
+                                    />
                                 )})
                             }
                         </CourseWrapper>
@@ -284,7 +294,7 @@ function Profile(props: any) {
 
             {/* Create New Course Dialog Component */}
 
-            <Dialog fullWidth open={isOpen} onClose={handleClose} aria-labelledby="form-dialog-title">
+            <Dialog fullWidth open={isOpen} onClose={handleClose} aria-labelledby="create-course-form-dialog">
                 <DialogTitle id="create-course-form-title">Create A New Course 📚</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
