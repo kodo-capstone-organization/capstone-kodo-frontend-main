@@ -5,6 +5,8 @@ import {
 } from "../../../apis/EnrolledCourse/EnrolledCourse";
 import { EnrolledCourse } from "../../../apis/Entities/EnrolledCourse";
 import { Course } from "../../../apis/Entities/Course";
+import { EnrolledLesson } from "../../../apis/Entities/EnrolledLesson";
+
 
 import {
   TutorContainer,
@@ -57,9 +59,23 @@ function TutorView(props: any) {
   let courseEnrollment = currentCourse.enrollment;
   console.log(courseEnrollment)
 
-  /*
-   
-   */
+  function getPercentage(enrolledLessons: EnrolledLesson[]) {
+    var total = enrolledLessons.length;
+    var completed = 0;
+    for(var ec of enrolledLessons) {
+      if (ec.dateTimeOfCompletion != null) {
+        completed = completed + 1;
+      }
+    }
+    return (completed/total)*100
+  }
+
+  function getName(enrolledCourse: EnrolledCourse) {
+    //var student = getStudentWithEnrolledCourseId(enrolledCourse.enrolledCourseId)
+    //return student.name    
+  }
+
+
 
   return (
     <TutorContainer>
@@ -70,20 +86,17 @@ function TutorView(props: any) {
       <StudentProgressCard>
         <CardTitle>Students</CardTitle>
         <StudentProgressWrapper>
-          <p>Jason</p>
-          <LinearProgressWithLabel value={60} />
-          <p>Jason</p>
-          <LinearProgressWithLabel value={60} />
-          <p>Jason</p>
-          <LinearProgressWithLabel value={60} />
-          <p>Jason</p>
-          <LinearProgressWithLabel value={60} />
-          <p>Jason</p>
-          <LinearProgressWithLabel value={60} />
-          <p>Jason</p>
-          <LinearProgressWithLabel value={60} />
-          <p>Jason</p>
-          <LinearProgressWithLabel value={60} />
+          {courseEnrollment.map((enrolledCourse) => { 
+            return (
+              <>
+              {/*
+              <p>{getName(enrolledCourse)}</p>
+              */}
+              <p>Student Name:</p>
+              <LinearProgressWithLabel value={getPercentage(enrolledCourse.enrolledLessons)} />
+              </>
+            );
+          })}
         </StudentProgressWrapper>
       </StudentProgressCard>
     </TutorContainer>
