@@ -1,21 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-import ChipInput from 'material-ui-chip-input';
+import { TextField, Chip, InputAdornment, Input, InputLabel, IconButton } from "@material-ui/core";
+import { Autocomplete } from "@material-ui/lab";
 import {
     ProfileCard, ProfileSettingField, ProfileSubText,
     ProfileAvatar, ProfileInitials, ProfileCardHeader
 } from "../ProfileElements";
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import Input from '@material-ui/core/Input';
-import InputLabel from '@material-ui/core/InputLabel';
-import IconButton from '@material-ui/core/IconButton';
 import { Button } from "../../../values/ButtonElements";
 import { Account } from "../../../apis/Entities/Account";
 import { Tag } from "../../../apis/Entities/Tag";
 import DeactivateAccountModal from "./DeactivateAccountModal";
-import { Chip } from '@material-ui/core';
+import { getAllTags } from '../../../apis/Tag/TagApis';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -42,6 +39,7 @@ function ProfileSettings(props: any) {
     const [email, setEmail] = useState<String>("");
     const [bio, setBio] = useState<String>("");
     const [isActive, setIsActive] = useState<Boolean>();
+    const [tagLibrary, setTagLibrary] = useState<Tag[]>([]);
     const classes = useStyles();
 
     useEffect(() => {
@@ -55,7 +53,12 @@ function ProfileSettings(props: any) {
             setInterests(props.account.interests.map((x: Tag) => x.title))
 
         }
+        getAllTags().then(res => setTagLibrary(res)).catch(error => console.log("error getting tags."))
     }, [props.account])
+
+    const save = () => {
+        
+    }
 
     const displayPictureURL = () => {
         return myAccount?.displayPictureUrl ? myAccount?.displayPictureUrl : "";
@@ -75,10 +78,11 @@ function ProfileSettings(props: any) {
         setInterests(interests)
     };
 
-    const handleDeleteChip = (interest: string, index: number) => {
-        interests.filter(x => x !== interest)
-        setInterests(interests)
-    };
+    const handleChipChange = (e: object, value: String[], reason: string) => {
+        console.log(value)
+        setInterests(value)
+    }
+    
     const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
     };
@@ -93,7 +97,7 @@ function ProfileSettings(props: any) {
                     />
                     <form
                         // className={classes.root}
-                        noValidate autoComplete="off" style={{ display: "flex" }}>
+                        noValidate autoComplete="off" style={{ display: "flex", justifyContent: "center" }}>
                         <div style={{ padding: "20px" }}>
                             <ProfileAvatar
                                 alt={myAccount?.username}
@@ -112,23 +116,35 @@ function ProfileSettings(props: any) {
                                 type="file"
                             />
                             <label htmlFor="contained-button-file">
-                                <Button variant="contained" color="primary" component="span"
+                                <Button 
+                                    variant="contained" 
+                                    color="primary" 
+                                    component="span"                                    
                                     style={{ margin: "10px" }}>
                                     Change Display Picture
-                            </Button>
+                                </Button>
                             </label>
                             <ProfileSubText style={{textAlign:"center"}}>Status: <Chip variant="outlined" label={isActive ? "Activated" : "Deactivated"} style={{ color: isActive ? "green" : "red", border: isActive ? "1px solid green" : "1px solid red" }} /></ProfileSubText>
+                            <DeactivateAccountModal account={myAccount} style={{ margin: "auto" }} />
                         </div>
                         <div style={{ margin: "20px" }}>
-                            <ProfileSettingField label="Name" value={name} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setName(e.target.value)} />
-                            <ProfileSettingField label="Email" value={email} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setEmail(e.target.value)} />
-                            <ProfileSettingField label="Bio" value={bio} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setBio(e.target.value)} />
-                            <InputLabel htmlFor="standard-adornment-password">Password</InputLabel>
+                            <ProfileSettingField style={{ margin: "0 0 10px 0" }} label="Name" value={name} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setName(e.target.value)} />
+                            <ProfileSettingField style={{ margin: "0 0 10px 0" }} label="Email" value={email} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setEmail(e.target.value)} />
+                            <ProfileSettingField style={{ margin: "0 0 10px 0" }} label="Bio" value={bio} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setBio(e.target.value)} />
+                            <InputLabel
+                                style={{
+                                    color: "rgba(0, 0, 0, 0.54)",
+                                    padding: "0",
+                                    fontSize: "0.75rem",
+                                    lineHeight: "1",
+                                    letterSpacing: "0.00938em"
+                                }}
+                                htmlFor="standard-adornment-password">Password</InputLabel>
                             <Input
                                 id="standard-adornment-password"
                                 type={showPassword ? 'text' : 'password'}
                                 value={password}
-                                style={{ width: "100%" }}
+                                style={{ margin: "0 0 10px 0", width: "100%" }}
                                 onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setPassword(e.target.value)}
                                 endAdornment={
                                     <InputAdornment position="end">
@@ -142,15 +158,45 @@ function ProfileSettings(props: any) {
                                     </InputAdornment>
                                 }
                             />
-                            <label>Interests</label>
-                            <ChipInput
-                                value={interests}
-                                onAdd={(interest) => handleAddChip(interest)}
-                                onDelete={(interest, index) => handleDeleteChip(interest, index)}
-                            />
-                        </div>
+                            <label style={{
+                                    color: "rgba(0, 0, 0, 0.54)",
+                                    padding: "0",
+                                    fontSize: "0.75rem",
+                                    lineHeight: "1",
+                                    letterSpacing: "0.00938em"
+                                }}>Interests</label>
+                            <Autocomplete
+                                    multiple
+                                    options={tagLibrary.map((option) => option.title)}
+                                    defaultValue={[]}
+                                    onChange={handleChipChange}
+                                    freeSolo
+                                    renderTags={(value: string[], getTagProps) =>
+                                        value.map((option: string, index: number) => (
+                                            <Chip variant="outlined" label={option} {...getTagProps({ index })} />
+                                        ))
+                                    }
+                                    renderInput={(params) => (
+                                        <TextField {...params} variant="filled" label="What subjects are you interested in?" />
+                                    )}
+                                />
+                            <div style={{ display: "flex", flexDirection: "row-reverse" }}>
+                                <Button style={{ margin: "10px 0 10px 0" }}
+                                    primary
+                                    onClick={save}>
+                                    Save
+                                </Button>                                
+                                <div style={{ width: "10px" }}></div>
+                                <Button 
+                                    style={{ margin: "10px 0 10px 0" }}
+                                    to="/profile"
+                                    >
+                                    Cancel
+                                </Button>                                
+                            </div>
+                        </div>                        
                     </form>
-                    <DeactivateAccountModal account={myAccount} style={{ margin: "auto" }} />
+                    
                 </ProfileCard>
             }
         </>
