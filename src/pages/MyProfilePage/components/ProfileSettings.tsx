@@ -32,7 +32,6 @@ function ProfileSettings(props: any) {
 
     const [myAccount, setMyAccount] = useState<Account>();
     const [showPassword, setShowPassword] = useState<Boolean>(false);
-<<<<<<< HEAD
     const [password, setPassword] = useState<string | null>("");
     const [interests, setInterests] = useState<string[]>([]);
     const [name, setName] = useState<string>("");
@@ -41,15 +40,6 @@ function ProfileSettings(props: any) {
     const [isActive, setIsActive] = useState<Boolean>();
     const [tagLibrary, setTagLibrary] = useState<Tag[]>([]);
     const [displayPictureUrl, setDisplayPictureUrl] = useState<Tag[]>([]);
-=======
-    const [password, setPassword] = useState<String | null>('');
-    const [interests, setInterests] = useState<string[]>([]);
-    const [name, setName] = useState<String>("");
-    const [email, setEmail] = useState<String>("");
-    const [bio, setBio] = useState<String>("");
-    const [isActive, setIsActive] = useState<Boolean>();
-    const [tagLibrary, setTagLibrary] = useState<Tag[]>([]);
->>>>>>> 0b229f9c5eafec6fc2add74c0951f43409f8299d
     var [errors, setErrors] = useState<IErrors<any>>({
         name: "",
         username: "",
@@ -95,6 +85,7 @@ function ProfileSettings(props: any) {
 
         const updateAccountReq = {
             account: updatedAccountObject,
+            password: password,
             tagTitles: interests,
             enrolledCourseIds: null,
             courseIds: null,
@@ -188,8 +179,6 @@ function ProfileSettings(props: any) {
                                     {avatarInitials()}
                                 </ProfileInitials>
                             </ProfileAvatar>
-<<<<<<< HEAD
-=======
                             <input
                                 accept="image/*"
                                 className={classes.input}
@@ -206,7 +195,6 @@ function ProfileSettings(props: any) {
                                     Change Display Picture
                                 </Button>
                             </label>
->>>>>>> 0b229f9c5eafec6fc2add74c0951f43409f8299d
                             <ProfileSubText style={{ textAlign: "center" }}>Status: <Chip variant="outlined" label={isActive ? "Activated" : "Deactivated"} style={{ color: isActive ? "green" : "red", border: isActive ? "1px solid green" : "1px solid red" }} /></ProfileSubText>
                             <DeactivateAccountModal account={myAccount} style={{ margin: "auto" }} />
                         </div>
@@ -264,7 +252,6 @@ function ProfileSettings(props: any) {
                                     <TextField {...params} variant="standard" label="Interests" />
                                 )}
                             />
-<<<<<<< HEAD
                             <FormControl fullWidth margin="normal" style={{ display: "flex", flexDirection: "row" }}>
                                 <Grid xs={9}>
                                     <TextField id="banner-image-name" fullWidth disabled value={displayPictureUrl} label="Display Picture"></TextField>
@@ -285,8 +272,6 @@ function ProfileSettings(props: any) {
                                     </Button>
                                 </Grid>
                             </FormControl>
-=======
->>>>>>> 0b229f9c5eafec6fc2add74c0951f43409f8299d
                             <div style={{ display: "flex", flexDirection: "row-reverse" }}>
                                 <Button style={{ margin: "10px 0 10px 0" }}
                                     primary

@@ -144,8 +144,6 @@ function StudentView(props: any) {
         return completed.has(step);
     }
     return (
-        <div>
-
             <div id="stepper" className={classes.root}>
                 <Stepper alternativeLabel nonLinear activeStep={activeStep}>
                     {steps.map((label, index) => {
