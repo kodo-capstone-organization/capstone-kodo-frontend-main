@@ -67,7 +67,7 @@ function CourseBuilderPage(props: any) {
         let wrapperEvent = {
             target: {
                 name: "courseTags",
-                value: value
+                value: value.map((tagTitle: String) => { return { title: tagTitle }})
             }
         }
         return handleFormDataChange(wrapperEvent);
@@ -100,7 +100,7 @@ function CourseBuilderPage(props: any) {
             courseId: courseFormData.courseId,
         }
 
-        const updatedCourseTagTitles = courseFormData.courseTags
+        const updatedCourseTagTitles = courseFormData.courseTags.map((tag: Tag) => tag.title)
 
         const updatedLessonReqs = courseFormData.lessons.map((lesson: Lesson) => {
             return {
@@ -127,6 +127,8 @@ function CourseBuilderPage(props: any) {
             console.log(updatedCourse);
 
             setCourseFormData(updatedCourse)
+
+            history.push(`/overview/${courseFormData.courseId}`)
         })
     }
 

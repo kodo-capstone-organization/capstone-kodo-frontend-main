@@ -213,6 +213,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
 
     handleFormDataChange(wrapperEvent)
     setShowAddMultimediaDialog(false)
+    setNewFile({ contentId: -1, name: "", description: "", url: "", multimediaType: MultimediaType.EMPTY, urlFilename: "", file: new File([""], ""), type: "multimedia"})
   }
 
   const handleFileChange = (event: any) => {
