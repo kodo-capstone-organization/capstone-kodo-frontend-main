@@ -134,7 +134,9 @@ function LessonViewer(props: any) {
                 >
                   {m.multimediaType === "PDF" ? <ReadingIcon /> : <PlayIcon />}
                   {m.multimediaType === "PDF" ? "Reading" : "Video"}: {m.name}
+                  {checkCompleted(m.contentId) &&
                   <CheckIcon />
+                  }
                 </ContentLink>
               );
             })}
