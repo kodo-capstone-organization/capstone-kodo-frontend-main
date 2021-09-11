@@ -62,7 +62,7 @@ function CourseOverview(props: any) {
       </div>
       {currentCourse && courseIsEnrolled(currentCourse) &&
       <>
-        <StudentView /> 
+        <StudentView course={currentCourse}/> 
       </>
       }
       {currentCourse && isCourseTutor(currentCourse) &&
