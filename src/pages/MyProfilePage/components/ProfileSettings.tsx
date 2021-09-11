@@ -18,28 +18,33 @@ const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         input: {
             display: 'none',
-        },
-        // root: {
-        //     '& .MuiProfileSettingField-root': {
-        //         margin: theme.spacing(2),
-        //         width: '25ch',
-        //     },
-        // },
+        }
     }),
 );
 
+interface IErrors<TValue> {
+    [id: string]: TValue;
+}
 
 function ProfileSettings(props: any) {
 
     const [myAccount, setMyAccount] = useState<Account>();
     const [showPassword, setShowPassword] = useState<Boolean>(false);
     const [password, setPassword] = useState<String | null>('');
-    const [interests, setInterests] = useState<String[]>([]);
+    const [interests, setInterests] = useState<string[]>([]);
     const [name, setName] = useState<String>("");
     const [email, setEmail] = useState<String>("");
     const [bio, setBio] = useState<String>("");
     const [isActive, setIsActive] = useState<Boolean>();
     const [tagLibrary, setTagLibrary] = useState<Tag[]>([]);
+    var [errors, setErrors] = useState<IErrors<any>>({
+        name: "",
+        username: "",
+        email: "",
+        password: "",
+        btnTags: "",
+        signUp: ""
+    });
     const classes = useStyles();
 
     useEffect(() => {
@@ -56,8 +61,9 @@ function ProfileSettings(props: any) {
         getAllTags().then(res => setTagLibrary(res)).catch(error => console.log("error getting tags."))
     }, [props.account])
 
-    const save = () => {
-        
+    const handleSave = () => {
+        console.log('details', interests)
+
     }
 
     const displayPictureURL = () => {
@@ -73,16 +79,49 @@ function ProfileSettings(props: any) {
     const handleClickShowPassword = () => {
         setShowPassword(!showPassword)
     };
-    const handleAddChip = (interest: string) => {
-        interests.push(interest)
-        setInterests(interests)
-    };
 
-    const handleChipChange = (e: object, value: String[], reason: string) => {
+    const handleValidation = () => {
+        let formIsValid = true;
+        errors = {};
+
+        //Name
+        if (name === "") {
+            formIsValid = false;
+            errors["name"] = true;
+        }
+        //Email
+        if (email === "") {
+            formIsValid = false;
+            errors["email"] = true;
+        }
+        if (typeof email !== "undefined") {
+            let lastAtPos = email.lastIndexOf('@');
+            let lastDotPos = email.lastIndexOf('.');
+            if (!(lastAtPos < lastDotPos && lastAtPos > 0 && email.indexOf('@@') === -1 && lastDotPos > 2 && (email.length - lastDotPos) > 2)) {
+                formIsValid = false;
+                errors["email"] = true;
+            }
+        }
+
+        //Password
+        if (password === "") {
+            formIsValid = false;
+            errors["password"] = true;
+        }
+
+        setErrors(errors);
+        if (formIsValid) {
+            handleSave();
+        }
+        console.log('validate', formIsValid)
+        return formIsValid;
+    }
+
+    const handleChipChange = (e: object, value: string[], reason: string) => {
         console.log(value)
         setInterests(value)
     }
-    
+
     const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
     };
@@ -116,20 +155,20 @@ function ProfileSettings(props: any) {
                                 type="file"
                             />
                             <label htmlFor="contained-button-file">
-                                <Button 
-                                    variant="contained" 
-                                    color="primary" 
-                                    component="span"                                    
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    component="span"
                                     style={{ margin: "10px" }}>
                                     Change Display Picture
                                 </Button>
                             </label>
-                            <ProfileSubText style={{textAlign:"center"}}>Status: <Chip variant="outlined" label={isActive ? "Activated" : "Deactivated"} style={{ color: isActive ? "green" : "red", border: isActive ? "1px solid green" : "1px solid red" }} /></ProfileSubText>
+                            <ProfileSubText style={{ textAlign: "center" }}>Status: <Chip variant="outlined" label={isActive ? "Activated" : "Deactivated"} style={{ color: isActive ? "green" : "red", border: isActive ? "1px solid green" : "1px solid red" }} /></ProfileSubText>
                             <DeactivateAccountModal account={myAccount} style={{ margin: "auto" }} />
                         </div>
                         <div style={{ margin: "20px" }}>
-                            <ProfileSettingField style={{ margin: "0 0 10px 0" }} label="Name" value={name} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setName(e.target.value)} />
-                            <ProfileSettingField style={{ margin: "0 0 10px 0" }} label="Email" value={email} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setEmail(e.target.value)} />
+                            <ProfileSettingField error={errors["name"]} style={{ margin: "0 0 10px 0" }} label="Name" value={name} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setName(e.target.value)} />
+                            <ProfileSettingField error={errors["email"]} style={{ margin: "0 0 10px 0" }} label="Email" value={email} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setEmail(e.target.value)} />
                             <ProfileSettingField style={{ margin: "0 0 10px 0" }} label="Bio" value={bio} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setBio(e.target.value)} />
                             <InputLabel
                                 style={{
@@ -141,6 +180,7 @@ function ProfileSettings(props: any) {
                                 }}
                                 htmlFor="standard-adornment-password">Password</InputLabel>
                             <Input
+                                error={errors["password"]}
                                 id="standard-adornment-password"
                                 type={showPassword ? 'text' : 'password'}
                                 value={password}
@@ -158,45 +198,45 @@ function ProfileSettings(props: any) {
                                     </InputAdornment>
                                 }
                             />
-                            <label style={{
+                            {/* <label style={{
                                     color: "rgba(0, 0, 0, 0.54)",
                                     padding: "0",
                                     fontSize: "0.75rem",
                                     lineHeight: "1",
                                     letterSpacing: "0.00938em"
-                                }}>Interests</label>
+                                }}>Interests</label> */}
                             <Autocomplete
-                                    multiple
-                                    options={tagLibrary.map((option) => option.title)}
-                                    defaultValue={[]}
-                                    onChange={handleChipChange}
-                                    freeSolo
-                                    renderTags={(value: string[], getTagProps) =>
-                                        value.map((option: string, index: number) => (
-                                            <Chip variant="outlined" label={option} {...getTagProps({ index })} />
-                                        ))
-                                    }
-                                    renderInput={(params) => (
-                                        <TextField {...params} variant="filled" label="What subjects are you interested in?" />
-                                    )}
-                                />
+                                multiple
+                                options={tagLibrary.map((option) => option.title)}
+                                value={interests}
+                                onChange={handleChipChange}
+                                freeSolo
+                                renderTags={(value: string[], getTagProps) =>
+                                    value.map((option: string, index: number) => (
+                                        <Chip variant="outlined" label={option} {...getTagProps({ index })} />
+                                    ))
+                                }
+                                renderInput={(params) => (
+                                    <TextField {...params} variant="standard" label="Interests" />
+                                )}
+                            />
                             <div style={{ display: "flex", flexDirection: "row-reverse" }}>
                                 <Button style={{ margin: "10px 0 10px 0" }}
                                     primary
-                                    onClick={save}>
+                                    onClick={handleValidation}>
                                     Save
-                                </Button>                                
+                                </Button>
                                 <div style={{ width: "10px" }}></div>
-                                <Button 
+                                <Button
                                     style={{ margin: "10px 0 10px 0" }}
                                     to="/profile"
-                                    >
+                                >
                                     Cancel
-                                </Button>                                
+                                </Button>
                             </div>
-                        </div>                        
+                        </div>
                     </form>
-                    
+
                 </ProfileCard>
             }
         </>

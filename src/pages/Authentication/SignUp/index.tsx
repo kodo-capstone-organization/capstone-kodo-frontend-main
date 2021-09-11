@@ -92,7 +92,7 @@ function SignUp() {
             let lastDotPos = email.lastIndexOf('.');
             if (!(lastAtPos < lastDotPos && lastAtPos > 0 && email.indexOf('@@') === -1 && lastDotPos > 2 && (email.length - lastDotPos) > 2)) {
                 formIsValid = false;
-                errors["email"] = "Email is not valid";
+                errors["email"] = true;
             }
         }
 
