@@ -59,7 +59,11 @@ function CourseOverview(props: any) {
       }
       </div>
       {currentCourse && courseIsEnrolled(currentCourse) && 
-        <Sidebar course={currentCourse}/>
+      <>
+      {/** 
+        <Sidebar course={currentCourse}/>  
+      */}    
+      </>
       }
     </div>
     </>
