@@ -91,12 +91,14 @@ function LessonViewer(props: any) {
   let isCourseTutor =
     currentCourse?.tutor.accountId === currentUser?.accountId ? true : false;
 
+  console.log(isCourseTutor)
+
   let lessonQuizzes = currentLesson?.quizzes;
   let lessonMultimedias = currentLesson?.multimedias;
 
-  function checkCompleted(courseId: number): boolean {
+  function checkCompleted(contentId: number): boolean {
     let enrolledContent = enrolledLesson?.enrolledContents.find(
-      i => i.parentContent?.contentId === courseId
+      i => i.parentContent?.contentId === contentId
     );
     console.log(enrolledContent);
 
@@ -105,6 +107,10 @@ function LessonViewer(props: any) {
     }
     return false;
   }
+
+  /**function quizCompleted(contentId: number): booelan {
+
+  }*/
 
   return (
     <>
@@ -145,9 +151,16 @@ function LessonViewer(props: any) {
                     <QuizSubheader>TIME LIMIT:</QuizSubheader>
                     <QuizDescription>{q.timeLimit} H</QuizDescription>
                     <BtnWrapper>
-                      <Button primary={true} big={false} fontBig={false}>
+                      {checkCompleted(q.contentId) &&
+                      <Button disabled>
                         Start
                       </Button>
+                      }
+                      {!checkCompleted(q.contentId) &&
+                      <Button primary={true} big={false} fontBig={false} disabled={false}>
+                        Start
+                      </Button>
+                      }
                     </BtnWrapper>
                   </QuizRow>
                   <QuizRow>

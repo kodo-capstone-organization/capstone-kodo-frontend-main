@@ -5,7 +5,7 @@ function StudentView() {
         <div>
             
             <div className="stepper">
-
+                <h1>student view</h1>
 
             </div>
 
