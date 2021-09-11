@@ -66,14 +66,11 @@ function BrowseCourse() {
     });
   }, []);
 
-  /** 
   useEffect(() => {
     getMyAccount(accountId).then(receivedAccount => {
       setAccount(receivedAccount);
-      console.log(myAccount);
     });
   }, []);
-  */
 
   /** HELPER METHODS */
   const handleChipChange = (chips: any) => {
@@ -146,38 +143,11 @@ function BrowseCourse() {
           <TagChip label={tag.title} />
         ))}
         </CourseTags>
-        {/* 
         <CourseWrapper>
           {coursesRecommended?.map(course => {
-              return ( 
-                <>
-                  <CourseCard key={course.courseId}>
-                    <CardActionArea
-                      component={RouterLink}
-                      to={`/browsecourse/preview/${course.courseId}`}
-                    >
-                      <CardMedia
-                        className={classes.media}
-                        image="/chessplaceholder.png"
-                        title={course.name}
-                      />
-                      <CourseCardContent>
-                        <Typography>{course.name}</Typography>
-                        <Typography
-                          variant="body2"
-                          color="textSecondary"
-                          component="p"
-                        >
-                          {course.tutor.name}
-                        </Typography>
-                      </CourseCardContent>
-                    </CardActionArea>
-                  </CourseCard>
-                </>
-              );
+              return ( <CourseCard course={course} myCourseView={false} redirectUrlBase="/browsecourse/preview" /> );
             })}
         </CourseWrapper>
-        */}
       </BrowseContainer>
     </>
   );
