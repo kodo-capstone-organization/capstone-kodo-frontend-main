@@ -6,6 +6,7 @@ import { Tag } from "./Tag";
 export interface Account {
   accountId: number;
   username: string;
+  password: string | null;
   name: string;
   bio: string;
   email: string;
@@ -37,8 +38,4 @@ export interface UpdateAccountReq {
   forumThreadIds: number[];
   forumPostIds: number[];
   studentAttemptIds: number[];
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> initialise updateAccount api method

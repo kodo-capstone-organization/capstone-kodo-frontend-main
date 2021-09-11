@@ -63,11 +63,7 @@ export async function deactivateAccount(deactivatingAccountId: number, requestin
 export async function updateAccount(updateAccountReq: UpdateAccountReq, displayPicture: File | null): Promise<Account> {
     const formData = new FormData();
 
-<<<<<<< HEAD
     formData.append('account', transformToBlob(updateAccountReq));
-=======
-    formData.append('account', transformToBlob(UpdateAccountReq));
->>>>>>> initialise updateAccount api method
     if (displayPicture !== null)
     {
         formData.append('displayPicture', displayPicture);

@@ -5,12 +5,8 @@ import { Account } from "../../apis/Entities/Account";
 import { getMyAccount } from "../../apis/Account/AccountApis";
 import { getCourseByCourseId } from "../../apis/Course/CourseApis";
 import Sidebar from "./Sidebar/Sidebar";
-<<<<<<< HEAD
 import TutorView from "./TutorView/TutorView"
 import StudentView from "./StudentView/StudentView"
-=======
-import StudentView from "./StudentView/StudentView";
->>>>>>> placeholder stepper created
 
 function CourseOverview(props: any) {
   const courseId = props.match.params.courseId;
@@ -62,7 +58,6 @@ function CourseOverview(props: any) {
       {currentCourse && !courseIsEnrolled(currentCourse) && !isCourseTutor(currentCourse) &&
       <h1>You are not enrolled in this course 😡</h1>
       }
-      </div>
       {currentCourse && courseIsEnrolled(currentCourse) &&
       <>
         <StudentView course={currentCourse}/> 

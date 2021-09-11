@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-import { TextField, Chip, InputAdornment, Input, InputLabel, IconButton } from "@material-ui/core";
+import { TextField, Chip, InputAdornment, Input, InputLabel, IconButton,
+    FormControl, Grid, } from "@material-ui/core";
 import { Autocomplete } from "@material-ui/lab";
 import {
     ProfileCard, ProfileSettingField, ProfileSubText,
@@ -13,6 +14,7 @@ import { Account } from "../../../apis/Entities/Account";
 import { Tag } from "../../../apis/Entities/Tag";
 import DeactivateAccountModal from "./DeactivateAccountModal";
 import { getAllTags } from '../../../apis/Tag/TagApis';
+import { updateAccount } from '../../../apis/Account/AccountApis';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -30,13 +32,14 @@ function ProfileSettings(props: any) {
 
     const [myAccount, setMyAccount] = useState<Account>();
     const [showPassword, setShowPassword] = useState<Boolean>(false);
-    const [password, setPassword] = useState<String | null>('');
+    const [password, setPassword] = useState<string | null>("");
     const [interests, setInterests] = useState<string[]>([]);
-    const [name, setName] = useState<String>("");
-    const [email, setEmail] = useState<String>("");
-    const [bio, setBio] = useState<String>("");
+    const [name, setName] = useState<string>("");
+    const [email, setEmail] = useState<string>("");
+    const [bio, setBio] = useState<string>("");
     const [isActive, setIsActive] = useState<Boolean>();
     const [tagLibrary, setTagLibrary] = useState<Tag[]>([]);
+    const [displayPictureUrl, setDisplayPictureUrl] = useState<Tag[]>([]);
     var [errors, setErrors] = useState<IErrors<any>>({
         name: "",
         username: "",
@@ -56,13 +59,41 @@ function ProfileSettings(props: any) {
             setBio(props.account.bio)
             setIsActive(props.account.isActive)
             setInterests(props.account.interests.map((x: Tag) => x.title))
-
+            setDisplayPictureUrl(props.account.displayPictureUrl)
         }
         getAllTags().then(res => setTagLibrary(res)).catch(error => console.log("error getting tags."))
     }, [props.account])
 
     const handleSave = () => {
-        console.log('details', interests)
+        const updatedAccountObject : Account = {
+            accountId: props.account.accountId,
+            username: props.account.username,
+            name,
+            bio,
+            email,
+            password,
+            displayPictureUrl: props.account.displayPictureUrl,
+            isAdmin: props.account.isAdmin,
+            isActive: props.account.isActive,
+            interests: props.account.interests,
+            enrolledCourses: props.account.enrolledCourses,
+            courses: props.account.courses,
+            studentAttempts: props.account.studentAttempts,
+            stripeAccountId: props.account.stripeAccountId,
+        }
+        console.log('xx', updatedAccountObject)
+
+        const updateAccountReq = {
+            account: updatedAccountObject,
+            tagTitles: interests,
+            enrolledCourseIds: null,
+            courseIds: null,
+            forumThreadIds: null,
+            forumPostIds: null,
+            studentAttemptIds: null,
+        }
+        //@ts-ignore
+        updateAccount(updateAccountReq, null).then((res) => {console.log("res", res)}).catch(err => {console.log("error", err)})
 
     }
 
@@ -147,22 +178,6 @@ function ProfileSettings(props: any) {
                                     {avatarInitials()}
                                 </ProfileInitials>
                             </ProfileAvatar>
-                            <input
-                                accept="image/*"
-                                className={classes.input}
-                                id="contained-button-file"
-                                multiple
-                                type="file"
-                            />
-                            <label htmlFor="contained-button-file">
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-                                    component="span"
-                                    style={{ margin: "10px" }}>
-                                    Change Display Picture
-                                </Button>
-                            </label>
                             <ProfileSubText style={{ textAlign: "center" }}>Status: <Chip variant="outlined" label={isActive ? "Activated" : "Deactivated"} style={{ color: isActive ? "green" : "red", border: isActive ? "1px solid green" : "1px solid red" }} /></ProfileSubText>
                             <DeactivateAccountModal account={myAccount} style={{ margin: "auto" }} />
                         </div>
@@ -220,6 +235,26 @@ function ProfileSettings(props: any) {
                                     <TextField {...params} variant="standard" label="Interests" />
                                 )}
                             />
+                            <FormControl fullWidth margin="normal" style={{ display: "flex", flexDirection: "row" }}>
+                                <Grid xs={9}>
+                                    <TextField id="banner-image-name" fullWidth disabled value={displayPictureUrl} label="Display Picture"></TextField>
+                                </Grid>
+                                <Grid xs={3} style={{ display: "flex", alignItems: "center" }}>
+                                    <Button variant="contained" component="label">
+                                        Upload Banner
+                                <input
+                                            id="banner-image-upload"
+                                            type="file"
+                                            accept="image/*"
+                                            hidden
+                                            onChange={e => {
+                                                // @ts-ignore
+                                                setDisplayPictureUrl(e.target.files[0])
+                                            }}
+                                        />
+                                    </Button>
+                                </Grid>
+                            </FormControl>
                             <div style={{ display: "flex", flexDirection: "row-reverse" }}>
                                 <Button style={{ margin: "10px 0 10px 0" }}
                                     primary
