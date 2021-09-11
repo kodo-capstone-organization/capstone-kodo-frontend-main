@@ -53,7 +53,7 @@ function StudentView(props: any) {
     const [skipped, setSkipped] = React.useState(new Set<number>());
     const [account, setAccount] = React.useState<Account>();
     const [course, setCourse] = React.useState<Course>();
-    const [lessons, setLessons] = React.useState<(Lesson|EnrolledLesson)[]>([]);
+    const [lessons, setLessons] = React.useState<(EnrolledLesson)[]>([]);
     const steps = getSteps();
 
     useEffect(() => {
@@ -134,12 +134,6 @@ function StudentView(props: any) {
         if (completed.size !== totalSteps() - skippedSteps()) {
             handleNext();
         }
-    };
-
-    const handleReset = () => {
-        setActiveStep(0);
-        setCompleted(new Set<number>());
-        setSkipped(new Set<number>());
     };
 
     const isStepSkipped = (step: number) => {
