@@ -16,6 +16,7 @@ export interface Course {
   courseTags: Tag[];
   bannerPictureFileName: string;
   isEnrollmentActive: boolean;
+  //rating: number;
 }
 
 // When Frontend is creating a new course
