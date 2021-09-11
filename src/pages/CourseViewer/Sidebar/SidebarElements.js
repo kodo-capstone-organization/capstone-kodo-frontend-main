@@ -8,7 +8,7 @@ export const SidebarWrapper = styled.div`
   width: 240px;
   height: 100%;
   background: ${colours.GRAY7};
-  position: fixed;
+  position: relative;
   margin-left: -10.4rem;
   padding-left: 2rem;
 `;
