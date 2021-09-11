@@ -139,8 +139,6 @@ export const QuizDescriptionTwo = styled.div`
 export const CheckIcon = styled(CheckCircleIcon)`
     margin-left: 20px;
     color: green;
-    visibility: ${({ isCompleted }) =>
-    isCompleted ? "visible" : "hidden"};
 `
 
 export const BtnWrapper = styled.div`

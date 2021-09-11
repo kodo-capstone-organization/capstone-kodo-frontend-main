@@ -52,6 +52,7 @@ export const CourseTags = styled.div`
 `;
 
 export const TagChip = styled(Chip)`
+    margin: 2px !important;
     min-width: 80px;
 `;
 
