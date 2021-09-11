@@ -28,10 +28,12 @@ export const TutorTitle = styled.div`
 `;
 
 export const StudentProgressCard = styled.div`
-  height: auto;
+  height: 294px;
   width: auto;
   padding: 20px;
   border: 1px solid ${colours.GRAY6};
+  overflow-x: hidden;
+
 `;
 
 export const CardTitle = styled.div`
@@ -41,5 +43,14 @@ export const CardTitle = styled.div`
 `;
 
 export const StudentProgressWrapper = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  > * {
+    flex: 0 0 50%;
+  }
 
 `
+
+export const ProgressBarWrapper = styled.div``
+
+

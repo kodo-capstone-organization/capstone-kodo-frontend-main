@@ -67,7 +67,7 @@ function CourseOverview(props: any) {
       }
       {currentCourse && isCourseTutor(currentCourse) &&
       <>
-        <TutorView />
+        <TutorView course={currentCourse}/>
       </>
       }
     </div>
