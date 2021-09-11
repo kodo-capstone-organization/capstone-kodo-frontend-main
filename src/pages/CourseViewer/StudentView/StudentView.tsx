@@ -171,6 +171,31 @@ function StudentView(props: any) {
                     })}
                 </Stepper>
 
+            <div id="stepper" className={classes.root}>
+                <Stepper alternativeLabel nonLinear activeStep={activeStep}>
+                    {steps.map((label, index) => {
+                        const stepProps: { completed?: boolean } = {};
+                        const buttonProps: { optional?: React.ReactNode } = {};
+                        if (isStepOptional(index)) {
+                            buttonProps.optional = <Typography variant="caption">Optional</Typography>;
+                        }
+                        if (isStepSkipped(index)) {
+                            stepProps.completed = false;
+                        }
+                        return (
+                            <Step key={label} {...stepProps}>
+                                <StepButton
+                                    onClick={handleStep(index)}
+                                    completed={isStepComplete(index)}
+                                    {...buttonProps}
+                                >
+                                    {label}
+                                </StepButton>
+                            </Step>
+                        );
+                    })}
+                </Stepper>
+
 
             </div>
         </div>
