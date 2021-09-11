@@ -1,4 +1,4 @@
-import { IHttpClientRequestParameters } from "./../HttpClient/IHttpClientRequestParameters";
+import { IHttpClientRequestParameters } from "../HttpClient/IHttpClientRequestParameters";
 import { httpClient } from "../HttpClient/HttpClient";
 import { EnrolledCourse } from "../Entities/EnrolledCourse";
 
@@ -18,3 +18,4 @@ export async function setCourseRatingByEnrolledCourseId(enrolledCourseId: number
 
     return httpClient.get<undefined, EnrolledCourse>(getParameters);
 }
+

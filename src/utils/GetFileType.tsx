@@ -4,11 +4,16 @@ export function getFileType(filename: string): MultimediaType {
     const fileType = filename.split('.').pop()
 
     switch (fileType) {
-        case "png" || "jpg":
+        case "png":
+        case "jpg":
+        case "jpeg":
             return MultimediaType.IMAGE
-        case "doc" || "docx" || "pdf":
+        case "doc":
+        case "docx":
+        case "pdf":
             return MultimediaType.DOCUMENT
-        case "mp4" || "mov":
+        case "mp4":
+        case "mov":
             return MultimediaType.VIDEO
         case "zip":
             return MultimediaType.ZIP

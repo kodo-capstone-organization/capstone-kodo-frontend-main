@@ -75,12 +75,21 @@ function CoursePreviewPage(props: any) {
     return false;
   }
 
+   //if current user is this course's tutor this function, returns true
+  function isCourseTutor(course: Course): boolean {
+        
+    if(course.tutor.accountId == currentUser?.accountId) {
+      return true;
+    }
+      return false;
+  }
+
   return (
     <PreviewContainer>
       <EnrollCard>
         <EnrollImage src="/chessplaceholder.png" />
         <EnrollBtn>
-          {currentCourse && currentCourse.isEnrollmentActive && !courseIsNotEnrolled(currentCourse) &&
+          {currentCourse && currentCourse.isEnrollmentActive && !courseIsNotEnrolled(currentCourse) && !isCourseTutor(currentCourse) &&
             <Button primary onClick={invokeStripeSessionCreation}> Enroll </Button>
           }
           {currentCourse && !currentCourse.isEnrollmentActive && !courseIsNotEnrolled(currentCourse) &&
@@ -89,6 +98,11 @@ function CoursePreviewPage(props: any) {
           {currentCourse && courseIsNotEnrolled(currentCourse) && (
             <Button disabled>
               Enrolled
+            </Button>
+          )}
+          {currentCourse && isCourseTutor(currentCourse) && (
+            <Button primary to={`/overview/${currentCourse.courseId}`}>
+              Go to overview
             </Button>
           )}
         </EnrollBtn>
