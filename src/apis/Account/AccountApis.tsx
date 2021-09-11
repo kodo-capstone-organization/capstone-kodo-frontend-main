@@ -1,5 +1,5 @@
 import { IHttpClientRequestParameters } from "./../HttpClient/IHttpClientRequestParameters";
-import { Account, CreateNewAccountReq } from "../Entities/Account";
+import { Account, CreateNewAccountReq, UpdateAccountReq } from "../Entities/Account";
 import { httpClient } from "../HttpClient/HttpClient";
 import { LoginResponse } from "../Entities/Login";
 import { transformToBlob } from "./../../utils/BlobCreator";
@@ -58,4 +58,21 @@ export async function deactivateAccount(deactivatingAccountId: number, requestin
     }
 
     return httpClient.delete<undefined, DeactivateAccountResponse>(deleteParameters);
+}
+
+export async function updateAccount(updateAccountReq: UpdateAccountReq, displayPicture: File | null): Promise<Account> {
+    const formData = new FormData();
+
+    formData.append('account', transformToBlob(updateAccountReq));
+    if (displayPicture !== null)
+    {
+        formData.append('displayPicture', displayPicture);
+    }
+
+    const postParameters: IHttpClientRequestParameters<FormData> = {
+        url: '/account/updateAccount',
+        payload: formData
+    }
+
+    return httpClient.put<FormData, Account>(postParameters)
 }
