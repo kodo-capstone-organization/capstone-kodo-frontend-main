@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { getEnrolledCourseByStudentIdAndCourseId, setCourseRatingByEnrolledCourseId } from "../../../apis/EnrolledCourse/EnrolledCourse";
+import {
+  getEnrolledCourseByStudentIdAndCourseId,
+  setCourseRatingByEnrolledCourseId
+} from "../../../apis/EnrolledCourse/EnrolledCourse";
 import { EnrolledCourse } from "../../../apis/Entities/EnrolledCourse";
 import { Course } from "../../../apis/Entities/Course";
-
 
 import {
   TutorContainer,
@@ -11,16 +13,19 @@ import {
   TutorTitle,
   StudentProgressCard,
   CardTitle,
-  StudentProgressWrapper,
+  StudentProgressWrapper
 } from "./TutorViewElements";
 
+import { makeStyles } from "@material-ui/core/styles";
+import LinearProgress, {
+  LinearProgressProps
+} from "@material-ui/core/LinearProgress";
+import Typography from "@material-ui/core/Typography";
+import Box from "@material-ui/core/Box";
 
-import { makeStyles } from '@material-ui/core/styles';
-import LinearProgress, { LinearProgressProps } from '@material-ui/core/LinearProgress';
-import Typography from '@material-ui/core/Typography';
-import Box from '@material-ui/core/Box';
-
-function LinearProgressWithLabel(props: LinearProgressProps & { value: number }) {
+function LinearProgressWithLabel(
+  props: LinearProgressProps & { value: number }
+) {
   return (
     <Box display="flex" alignItems="center">
       <Box width="100%" mr={1}>
@@ -28,7 +33,7 @@ function LinearProgressWithLabel(props: LinearProgressProps & { value: number })
       </Box>
       <Box minWidth={35}>
         <Typography variant="body2" color="textSecondary">{`${Math.round(
-          props.value,
+          props.value
         )}%`}</Typography>
       </Box>
     </Box>
@@ -37,47 +42,50 @@ function LinearProgressWithLabel(props: LinearProgressProps & { value: number })
 
 const useStyles = makeStyles({
   root: {
-    width: '100%',
-  },
+    width: "100%"
+  }
 });
 
 function TutorView(props: any) {
   const [currentCourse, setCourse] = useState<Course>({ ...props.course });
+  var studentProgress = {}
 
   useEffect(() => {
     setCourse(props.course);
   }, []);
 
-  console.log(currentCourse)
+  let courseEnrollment = currentCourse.enrollment;
+  console.log(courseEnrollment)
 
-
+  /*
+   
+   */
 
   return (
     <TutorContainer>
-        <PageHeading>
-            <CourseTitle>{currentCourse?.name}</CourseTitle>
-            <TutorTitle>by {currentCourse?.tutor.name}</TutorTitle>
-        </PageHeading>
-        <StudentProgressCard>
-            <CardTitle>Students</CardTitle>
-            <StudentProgressWrapper>
-              <p>Jason</p>
-              <LinearProgressWithLabel value={60} />
-              <p>Jason</p>
-              <LinearProgressWithLabel value={60} />
-              <p>Jason</p>
-              <LinearProgressWithLabel value={60} />
-              <p>Jason</p>
-              <LinearProgressWithLabel value={60} />
-              <p>Jason</p>
-              <LinearProgressWithLabel value={60} />
-              <p>Jason</p>
-              <LinearProgressWithLabel value={60} />
-              <p>Jason</p>
-              <LinearProgressWithLabel value={60} />
-
-            </StudentProgressWrapper>
-        </StudentProgressCard>
+      <PageHeading>
+        <CourseTitle>{currentCourse?.name}</CourseTitle>
+        <TutorTitle>by {currentCourse?.tutor.name}</TutorTitle>
+      </PageHeading>
+      <StudentProgressCard>
+        <CardTitle>Students</CardTitle>
+        <StudentProgressWrapper>
+          <p>Jason</p>
+          <LinearProgressWithLabel value={60} />
+          <p>Jason</p>
+          <LinearProgressWithLabel value={60} />
+          <p>Jason</p>
+          <LinearProgressWithLabel value={60} />
+          <p>Jason</p>
+          <LinearProgressWithLabel value={60} />
+          <p>Jason</p>
+          <LinearProgressWithLabel value={60} />
+          <p>Jason</p>
+          <LinearProgressWithLabel value={60} />
+          <p>Jason</p>
+          <LinearProgressWithLabel value={60} />
+        </StudentProgressWrapper>
+      </StudentProgressCard>
     </TutorContainer>
   );
 }
