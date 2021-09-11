@@ -2,12 +2,13 @@ import React, { useState, useEffect } from "react";
 import {
   getEnrolledCourseByStudentIdAndCourseId,
   setCourseRatingByEnrolledCourseId
-} from "../../../apis/EnrolledCourse/EnrolledCourse";
+} from "../../../apis/EnrolledCourse/EnrolledCourseApis";
+import { getAccountByEnrolledCourseId } from "../../../apis/Account/AccountApis";
 import { EnrolledCourse } from "../../../apis/Entities/EnrolledCourse";
 import { Course } from "../../../apis/Entities/Course";
+import { Account } from "../../../apis/Entities/Account";
 import { EnrolledLesson } from "../../../apis/Entities/EnrolledLesson";
 import { Button } from "../../../values/ButtonElements";
-
 
 import {
   TutorContainer,
@@ -52,32 +53,28 @@ const useStyles = makeStyles({
 
 function TutorView(props: any) {
   const [currentCourse, setCourse] = useState<Course>({ ...props.course });
-  var studentProgress = {}
-
+  const [student, setStudent] = useState<Account>();
   useEffect(() => {
     setCourse(props.course);
   }, []);
 
   let courseEnrollment = currentCourse.enrollment;
-  console.log(courseEnrollment)
+  console.log(courseEnrollment);
 
   function getPercentage(enrolledLessons: EnrolledLesson[]) {
     var total = enrolledLessons.length;
     var completed = 0;
-    for(var ec of enrolledLessons) {
+    for (var ec of enrolledLessons) {
       if (ec.dateTimeOfCompletion != null) {
         completed = completed + 1;
       }
     }
-    return (completed/total)*100
+    return (completed / total) * 100;
   }
 
-  function getName(enrolledCourse: EnrolledCourse) {
-    //var student = getStudentWithEnrolledCourseId(enrolledCourse.enrolledCourseId)
-    //return student.name    
+  async function getName(enrolledCourse: EnrolledCourse) {
+    //getAccountByEnrolledCourseId(enrolledCourse.enrolledCourseId)
   }
-
-
 
   return (
     <TutorContainer>
@@ -86,20 +83,21 @@ function TutorView(props: any) {
           <CourseTitle>{currentCourse?.name}</CourseTitle>
           <TutorTitle>by {currentCourse?.tutor.name}</TutorTitle>
         </PageHeading>
-        <Button primary to={`/builder/${currentCourse?.courseId}`}>Edit</Button>
+        <Button primary to={`/builder/${currentCourse?.courseId}`}>
+          Edit
+        </Button>
       </PageHeadingAndButton>
-      
+
       <StudentProgressCard>
         <CardTitle>Students</CardTitle>
         <StudentProgressWrapper>
-          {courseEnrollment.map((enrolledCourse) => { 
+          {courseEnrollment.map(enrolledCourse => {
             return (
               <>
-              {/*
-              <p>{getName(enrolledCourse)}</p>
-              */}
-              <p>Student Name:</p>
-              <LinearProgressWithLabel value={getPercentage(enrolledCourse.enrolledLessons)} />
+              <p>Name</p>
+                <LinearProgressWithLabel
+                  value={getPercentage(enrolledCourse.enrolledLessons)}
+                />
               </>
             );
           })}

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getEnrolledCourseByStudentIdAndCourseId, setCourseRatingByEnrolledCourseId } from "../../../apis/EnrolledCourse/EnrolledCourse";
+import { getEnrolledCourseByStudentIdAndCourseId, setCourseRatingByEnrolledCourseId } from "../../../apis/EnrolledCourse/EnrolledCourseApis";
 import { EnrolledCourse } from "../../../apis/Entities/EnrolledCourse";
 import { Course } from "../../../apis/Entities/Course";
 

@@ -59,3 +59,12 @@ export async function deactivateAccount(deactivatingAccountId: number, requestin
 
     return httpClient.delete<undefined, DeactivateAccountResponse>(deleteParameters);
 }
+
+
+export async function getAccountByEnrolledCourseId(enrolledCourseId: number): Promise<Account> {
+    const getParameters: IHttpClientRequestParameters<undefined> = {
+        url: `/account/getAccountByEnrolledCourseId/${enrolledCourseId}`
+    }
+
+    return httpClient.get<undefined, Account>(getParameters);
+}
