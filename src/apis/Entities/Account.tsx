@@ -2,6 +2,7 @@ import { Course } from "./Course";
 import { EnrolledCourse } from "./EnrolledCourse";
 import { StudentAttempt } from "./StudentAttempt";
 import { Tag } from "./Tag";
+
 export interface Account {
   accountId: number;
   username: string;

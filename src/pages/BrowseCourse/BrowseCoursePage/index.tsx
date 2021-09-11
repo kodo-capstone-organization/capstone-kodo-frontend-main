@@ -47,7 +47,6 @@ function BrowseCourse() {
   useEffect(() => {
     getAllCourses().then(allCourses => {
       setCourses(allCourses);
-      console.log(courses);
     });
   }, []);
 
@@ -68,7 +67,6 @@ function BrowseCourse() {
   const handleChipChange = (chips: any) => {
     setTags(chips);
   };
-  console.log("tags", tags);
 
   const handleSearchTerm = (term: any) => {
     setSearchTerm(term);
@@ -80,7 +78,6 @@ function BrowseCourse() {
     var result = courseAllTags.map(function(a) {
       return a.title.toLowerCase();
     });
-    console.log(tags.every(t => result.includes(t.toLowerCase())));
     return tags.every(t => result.includes(t.toLowerCase()));
   }
 

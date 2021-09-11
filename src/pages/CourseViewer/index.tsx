@@ -8,6 +8,8 @@ import Sidebar from "./Sidebar/Sidebar";
 import TutorView from "./TutorView/TutorView"
 import StudentView from "./StudentView/StudentView"
 
+import { LayoutContainer } from "./CourseViewerElements";
+
 function CourseOverview(props: any) {
   const courseId = props.match.params.courseId;
   const [currentUser, setUser] = useState<Account>();
@@ -54,23 +56,25 @@ function CourseOverview(props: any) {
 
   return (
     <>
-    <div>
+    <LayoutContainer>
       <div>
       {currentCourse && !courseIsEnrolled(currentCourse) && !isCourseTutor(currentCourse) &&
       <h1>You are not enrolled in this course 😡</h1>
       }
       </div>
       {currentCourse && courseIsEnrolled(currentCourse) &&
-      <>
-        <StudentView course={currentCourse}/> 
+      <> 
+        <Sidebar course={currentCourse}/>
+        <StudentView course={currentCourse} account={currentUser}/> 
       </>
       }
       {currentCourse && isCourseTutor(currentCourse) &&
       <>
-        <TutorView />
+        <Sidebar course={currentCourse}/>
+        <TutorView course={currentCourse}/>
       </>
       }
-    </div>
+    </LayoutContainer>
     </>
   );
 }
