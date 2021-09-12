@@ -250,7 +250,7 @@ function ProfileSettings(props: any) {
                                 </Grid>
                                 <Grid xs={3} style={{ display: "flex", alignItems: "center"}}>
                                     <Button variant="contained" component="label">
-                                        Change DP
+                                        Change Display Picture
                                         <input
                                             id="banner-image-upload"
                                             type="file"
