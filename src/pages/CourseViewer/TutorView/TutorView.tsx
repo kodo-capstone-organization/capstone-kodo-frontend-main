@@ -94,7 +94,7 @@ function TutorView(props: any) {
           {courseEnrollment.map(enrolledCourse => {
             return (
               <>
-              <p>Name</p>
+                <p>Name</p>
                 <LinearProgressWithLabel
                   value={getPercentage(enrolledCourse.enrolledLessons)}
                 />

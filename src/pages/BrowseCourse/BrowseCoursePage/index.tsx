@@ -99,14 +99,12 @@ function BrowseCourse() {
   }
   */
 
-/*
   function getSuggestedTags(coursesRecommended: Course[]) {
     const tagArray = []
     for (var course of coursesRecommended) {
-      tagTitleArray.push(course.)
+      tagArray.push(course.courseTags)
     }
   }
-*/
 
 
   return (
