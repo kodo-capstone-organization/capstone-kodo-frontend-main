@@ -44,6 +44,7 @@ function BrowseCourse() {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [tags, setTags] = useState<string[]>([]);
   const [coursesRecommended, setCoursesRecommended] = useState<Course[]>();
+  const [tagsRecommended, setTagsRecommended] = useState<Tag[]>();
   const [myAccount, setAccount] = useState<Account>();
   const [tagLibrary, setTagLibrary] = useState<Tag[]>([]);
 
@@ -51,6 +52,8 @@ function BrowseCourse() {
   const accountId = JSON.parse(
     window.sessionStorage.getItem("loggedInAccountId") || "{}"
   );
+
+  const recommendationLimit = 5;
 
   useEffect(() => {
     getAllCourses().then(allCourses => {
@@ -63,8 +66,9 @@ function BrowseCourse() {
 }, [])
 
   useEffect(() => {
-    getCoursesToRecommend(accountId).then(receivedCourses => {
-      setCoursesRecommended(receivedCourses);
+    getCoursesToRecommend(accountId, recommendationLimit).then(receivedCoursesWithTags => {
+      setCoursesRecommended(receivedCoursesWithTags.courses);
+      setTagsRecommended(receivedCoursesWithTags.tags);
       console.log(coursesRecommended);
     });
   }, []);
@@ -153,8 +157,8 @@ function BrowseCourse() {
         <Title>Suggested For You</Title>
         <p>Since you like: </p>
         <CourseTags>
-        {coursesRecommended && getSuggestedTags(coursesRecommended).map(tag => (
-          <TagChip label={tag} />
+        {tagsRecommended && tagsRecommended.map(tag => (
+          <TagChip label={tag.title} />
         ))}
         </CourseTags>
         <CourseWrapper>

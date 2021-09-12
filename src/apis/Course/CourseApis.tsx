@@ -1,8 +1,9 @@
 import { IHttpClientRequestParameters } from "./../HttpClient/IHttpClientRequestParameters";
-import { Course, ToggleCourseResp, UpdateCourseReq } from "../Entities/Course";
+import { Course, RecommendedCoursesWithTags, ToggleCourseResp, UpdateCourseReq } from "../Entities/Course";
 import { httpClient } from "../HttpClient/HttpClient";
 import { CreateNewAccountReq } from "../Entities/Account";
 import { transformToBlob } from "../../utils/BlobCreator";
+import { EnrolledCourseWithStudentResp } from "../Entities/EnrolledCourse";
 
 export async function getAllCourses(): Promise<Course[]> {
     const getParameters: IHttpClientRequestParameters<undefined> = {
@@ -54,12 +55,12 @@ export async function createNewCourse(createNewCourseReq: CreateNewAccountReq, b
     return httpClient.post<FormData, Course>(postParameters)
 }
 
-export async function getCoursesToRecommend(accountId: number): Promise<Course[]> {
+export async function getCoursesToRecommend(accountId: number, limit: number): Promise<RecommendedCoursesWithTags> {
     const getParameters: IHttpClientRequestParameters<undefined> = {
-        url: `/course/getAllCoursesToRecommend/${accountId}`
+        url: `/course/getAllCoursesToRecommendWithLimitByAccountId/${accountId}/${limit}`
     }
 
-    return httpClient.get<undefined, Course[]>(getParameters)
+    return httpClient.get<undefined, RecommendedCoursesWithTags>(getParameters)
 }
 
 export async function updateCourse(updateCourseReq: UpdateCourseReq, updatedBannerPicture: File): Promise<Course> {

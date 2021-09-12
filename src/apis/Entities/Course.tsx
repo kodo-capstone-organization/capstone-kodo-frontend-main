@@ -38,3 +38,8 @@ export interface UpdateCourseReq {
 export interface ToggleCourseResp {
   responseBody: string
 }
+
+export interface RecommendedCoursesWithTags {
+  courses: Course[];
+  tags: Tag[];
+}
