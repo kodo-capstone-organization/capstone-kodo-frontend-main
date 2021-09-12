@@ -3,17 +3,12 @@ import { makeStyles } from '@material-ui/core/styles';
 import {
     LessonAvatar,
     CourseElement,
-    // Button,
     Subject,
-    EmptyStateText,
-    ProgressContainer,
     EmptyStateContainer
 } from "../ProgressElements";
 import { Button } from '../../../values/ButtonElements';
 
-import {
-    Avatar, Divider, Grid, Typography
-} from "@material-ui/core";
+import { Divider, Grid, Typography } from "@material-ui/core";
 import { EnrolledCourse } from "../../../apis/Entities/EnrolledCourse";
 import { Account } from "../../../apis/Entities/Account";
 import { Lesson } from "../../../apis/Entities/Lesson";
@@ -39,7 +34,6 @@ function CourseList(props: any) {
     const [myCourses, setMyCourses] = useState<EnrolledCourse[]>([])
     const [myAccount, setMyAccount] = useState<Account>()
     const [showMultimedia, setShowMultimedia] = useState<Boolean>(false)
-    const classes = useStyles();
     const history = useHistory();
 
     useEffect(() => {

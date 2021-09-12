@@ -35,19 +35,26 @@ export const CourseWrapper = styled.div`
 
 export const Title = styled.h4`
     color: ${colours.GRAY2};
-    margin-top: 50px;
 `
 
 export const InputWrapper = styled.div`
     width: 100%;
-`
+`;
+
+
+export const TagsContainer = styled.div`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+`;
 
 export const CourseTags = styled.div`
     display: flex;
     justify-content: flex-start;
     flex-wrap: wrap;
     > * {
-    margin: theme.spacing(0.5)
+        margin: theme.spacing(0.5)
+    }
 `;
 
 export const TagChip = styled(Chip)`

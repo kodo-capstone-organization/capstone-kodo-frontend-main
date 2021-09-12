@@ -63,15 +63,12 @@ function ProgressPage() {
                 onChange={handleTabChange}
                 style={{ backgroundColor: colours.GRAY7 }}
             >
-                <Tab label="Current Courses" />
-                <Tab label="Completed Courses" />
+                <Tab label="Current Courses" style={{ minWidth: "36ch"}} />
+                <Tab label="Completed Courses" style={{ minWidth: "36ch"}}/>
             </Tabs>
             <div id="panel-group">
-                <TabPanel value={tab} index={0} data={currentCourses}>
-                </TabPanel>
-
-                <TabPanel value={tab} index={1} data={completedCourses}>
-                </TabPanel>
+                <TabPanel value={tab} index={0} data={currentCourses} />
+                <TabPanel value={tab} index={1} data={completedCourses} />
             </div>
         </ProgressContainer>
     )
