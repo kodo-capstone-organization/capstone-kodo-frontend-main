@@ -6,20 +6,24 @@ import {
 import { EnrolledCourse } from "../../../apis/Entities/EnrolledCourse";
 import { Course } from "../../../apis/Entities/Course";
 import { Account } from "../../../apis/Entities/Account";
-import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-import { Stepper, Step, StepButton, Button, Typography } from "@material-ui/core";
+import clsx from 'clsx';
+import { makeStyles, createStyles, Theme, withStyles } from '@material-ui/core/styles';
+import { Stepper, Step, StepButton, Typography, StepLabel, Link, StepConnector } from "@material-ui/core";
 import { Lesson } from '../../../apis/Entities/Lesson';
 import { EnrolledLesson } from '../../../apis/Entities/EnrolledLesson';
-import Box from '@material-ui/core/Box';
+import { Button } from '../../../values/ButtonElements';
 import Rating from '@material-ui/lab/Rating';
-
-
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+import LockIcon from '@material-ui/icons/Lock';
+import { StepIconProps } from '@material-ui/core/StepIcon';
 import {
   StudentContainer,
   PageHeading,
   CourseTitle,
   TutorTitle,
   StudentViewCard,
+  StudentViewCardHeader,
+  StudentViewCardContent,
   CardTitle,
   TutorDetails,
   TutorDepartment,
@@ -33,56 +37,19 @@ import {
   RatingDescription,
   CourseRatingWrapper
 } from "./StudentViewElements";
+import { LessonDescription, CheckIcon } from "../LessonViewer/LessonViewerElements";
+import { useHistory } from "react-router";
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      width: '100%',
-    },
-    button: {
-      marginRight: theme.spacing(1),
-    },
-    backButton: {
-      marginRight: theme.spacing(1),
-    },
-    completed: {
-      display: 'inline-block',
-    },
-    instructions: {
-      marginTop: theme.spacing(1),
-      marginBottom: theme.spacing(1),
-    },
-  }),
-);
-
-const getSteps = () => {
-  return ['Select campaign settings', 'Create an ad group', 'Create an ad'];
-}
-
-const getStepContent = (step: number) => {
-  switch (step) {
-    case 0:
-      return 'Step 1: Select campaign settings...';
-    case 1:
-      return 'Step 2: What is an ad group anyways?';
-    case 2:
-      return 'Step 3: This is the bit I really care about!';
-    default:
-      return 'Unknown step';
-  }
-}
 
 function StudentView(props: any) {
   const [currentCourse, setCourse] = useState<Course>({ ...props.course });
   const [enrolledCourse, setEnrolledCourse] = useState<EnrolledCourse>();
   const [myAccount, setMyAccount] = useState<Account>({ ...props.account });
   const [rating, setRating] = useState<number | null>(1);
-  const classes = useStyles();
-  const [activeStep, setActiveStep] = React.useState(0);
-  const [completed, setCompleted] = React.useState(new Set<number>());
-  const [skipped, setSkipped] = React.useState(new Set<number>());
-  const [lessons, setLessons] = React.useState<(EnrolledLesson)[]>([]);
-  const steps = getSteps();
+  const [activeStep, setActiveStep] = React.useState(-1);
+  const [latestLesson, setLatestLesson] = React.useState<EnrolledLesson>();
+  const [steps, setSteps] = React.useState<EnrolledLesson[]>([])
+  const history = useHistory();
 
   const accountId = JSON.parse(
     window.sessionStorage.getItem("loggedInAccountId") || "{}"
@@ -90,107 +57,53 @@ function StudentView(props: any) {
 
   useEffect(() => {
     setCourse(props.course);
-  }, [props.course]);
+    setMyAccount(props.account);
 
-  useEffect(() => {
-    setMyAccount(props.account)
-  }, [props.account])
-
-
-  const totalSteps = () => {
-    return getSteps().length;
-  };
-
-  const isStepOptional = (step: number) => {
-    return step === 1;
-  };
-
-  const handleSkip = () => {
-    if (!isStepOptional(activeStep)) {
-      // You probably want to guard against something like this
-      // it should never occur unless someone's actively trying to break something.
-      throw new Error("You can't skip a step that isn't optional.");
-    }
-
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    setSkipped((prevSkipped) => {
-      const newSkipped = new Set(prevSkipped.values());
-      newSkipped.add(activeStep);
-      return newSkipped;
-    });
-  };
-
-  const skippedSteps = () => {
-    return skipped.size;
-  };
-
-  const completedSteps = () => {
-    return completed.size;
-  };
-
-  const allStepsCompleted = () => {
-    return completedSteps() === totalSteps() - skippedSteps();
-  };
-
-  const isLastStep = () => {
-    return activeStep === totalSteps() - 1;
-  };
-
-  const handleNext = () => {
-    const newActiveStep =
-      isLastStep() && !allStepsCompleted()
-        ? // It's the last step, but not all steps have been completed
-        // find the first step that has been completed
-        steps.findIndex((step, i) => !completed.has(i))
-        : activeStep + 1;
-
-    setActiveStep(newActiveStep);
-  };
-
-  const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
-  };
-
-  const handleStep = (step: number) => () => {
-    setActiveStep(step);
-  };
-
-  const handleComplete = () => {
-    const newCompleted = new Set(completed);
-    newCompleted.add(activeStep);
-    setCompleted(newCompleted);
-
-    /**
-     * Sigh... it would be much nicer to replace the following if conditional with
-     * `if (!this.allStepsComplete())` however state is not set when we do this,
-     * thus we have to resort to not being very DRY.
-     */
-    if (completed.size !== totalSteps() - skippedSteps()) {
-      handleNext();
-    }
-  };
-
-  const isStepSkipped = (step: number) => {
-    return skipped.has(step);
-  };
-
-  function isStepComplete(step: number) {
-    return completed.has(step);
-  }
-
-
-  useEffect(() => {
     getEnrolledCourseByStudentIdAndCourseId(
       accountId,
       currentCourse.courseId
     ).then(receivedEnrolledCourse => {
       setEnrolledCourse(receivedEnrolledCourse);
+      var proxyActiveStep = 0
+      var latestLessonCounter = 0
+      receivedEnrolledCourse.enrolledLessons.map(x => {
+        if (x.dateTimeOfCompletion !== null) {
+          proxyActiveStep++;
+          setActiveStep(proxyActiveStep);
+          setLatestLesson(x);
+        } else if (x.dateTimeOfCompletion === null && latestLessonCounter === 0) {
+          setLatestLesson(x);
+          latestLessonCounter++;
+        }
+      })
+      console.log(proxyActiveStep)
+      // const arrayOfLessonName = receivedEnrolledCourse.enrolledLessons.map(x => {x.parentLesson.name});
+      //@ts-ignore
+      setSteps(receivedEnrolledCourse.enrolledLessons);
     });
-  }, []);
+  }, [props.course]);
 
-  const displayPictureURL = () => {
-    return myAccount?.displayPictureUrl ? myAccount?.displayPictureUrl : "";
-  }
+
+  const useStyles = makeStyles((theme: Theme) =>
+    createStyles({
+      root: {
+        width: '100%',
+      },
+      button: {
+        marginRight: theme.spacing(1),
+      },
+      backButton: {
+        marginRight: theme.spacing(1),
+      },
+      completed: {
+        display: 'inline-block',
+      },
+      instructions: {
+        marginTop: theme.spacing(1),
+        marginBottom: theme.spacing(1),
+      }
+    }),
+  );
 
   const handleRatingChange = (newRating: any) => {
     setRating(newRating);
@@ -199,37 +112,93 @@ function StudentView(props: any) {
     }
   };
 
+  const displayPictureURL = () => {
+    return myAccount?.displayPictureUrl ? myAccount?.displayPictureUrl : "";
+  }
+
+  // const handlePressStepper = () => {
+  //   // history.push(`overview/lesson/${currentCourse?.courseId}/${lessonId}`)
+  // }
+
+  const StepIconStyles = makeStyles({
+    root: {
+      color: '#eaeaf0',
+      display: 'flex',
+      height: 22,
+      alignItems: 'center',
+    },
+    active: {
+      color: '#784af4',
+    },
+    circle: {
+      // width: 8,
+      // height: 8,
+      // borderRadius: '50%',
+      // backgroundColor: 'currentColor',
+      color: 'grey',
+      zIndex: 1,
+      fontSize: 18,
+    },
+    completed: {
+      color: 'green',
+      zIndex: 1,
+      fontSize: 18,
+    },
+  });
+  const StepIcon = (props: StepIconProps) => {
+    const classes = StepIconStyles();
+    const { active, completed } = props;
+
+    return (
+      <div
+        className={clsx(classes.root, {
+          [classes.active]: active,
+        })}
+      >
+        {completed ? <CheckCircleIcon className={classes.completed} /> : <LockIcon className={classes.circle} />}
+      </div>
+    );
+  }
+
+  const navigateToLatestLesson = () => {
+    history.push(`/overview/lesson/${currentCourse?.courseId}/${latestLesson?.parentLesson.lessonId}`)
+  }
+
+  const classes = useStyles();
+
+
   return (
     <StudentContainer>
       <PageHeading>
         <CourseTitle>{currentCourse?.name}</CourseTitle>
         <TutorTitle>by {currentCourse?.tutor.name}</TutorTitle>
       </PageHeading>
+
       <div className={classes.root}>
-        <Stepper alternativeLabel nonLinear activeStep={activeStep}>
-          {steps.map((label, index) => {
-            const stepProps: { completed?: boolean } = {};
-            const buttonProps: { optional?: React.ReactNode } = {};
-            if (isStepOptional(index)) {
-              buttonProps.optional = <Typography variant="caption">Optional</Typography>;
-            }
-            if (isStepSkipped(index)) {
-              stepProps.completed = false;
-            }
-            return (
-              <Step key={label} {...stepProps}>
-                <StepButton
-                  onClick={handleStep(index)}
-                  completed={isStepComplete(index)}
-                  {...buttonProps}
-                >
-                  {label}
-                </StepButton>
-              </Step>
-            );
-          })}
+        <Stepper alternativeLabel activeStep={activeStep}>
+          {steps.map((enrolledLesson) => (
+            <Step key={enrolledLesson.parentLesson.lessonId}>
+              <StepLabel StepIconComponent={StepIcon}>
+                <Link color="inherit" href={`/overview/lesson/${currentCourse.courseId}/${enrolledLesson.parentLesson.lessonId}`}>
+                  {enrolledLesson.parentLesson.name}
+                </Link>
+              </StepLabel>
+            </Step>
+          ))}
         </Stepper>
       </div>
+
+      <StudentViewCard id="my-details">
+        <StudentViewCardHeader
+          title="Course Overview"
+        />
+        <StudentViewCardContent>
+          <RatingTitle>{currentCourse.description}</RatingTitle>
+          <Button primary style={{ marginLeft: "auto" }} onClick={navigateToLatestLesson}>Continue Course</Button>
+        </StudentViewCardContent>
+
+      </StudentViewCard>
+
 
       <CardTitle>This course is taught by:</CardTitle>
       <TutorDetails>
