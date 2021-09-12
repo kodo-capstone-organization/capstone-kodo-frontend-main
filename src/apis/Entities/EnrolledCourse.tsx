@@ -10,3 +10,10 @@ export interface EnrolledCourse {
     parentCourse: Course
     enrolledLessons: EnrolledLesson[] // Todo
 }
+
+export interface EnrolledCourseWithStudentResp {
+    studentId: number,
+    enrolledCourseId: number,
+    studentName: string,
+    completionPercentage: number
+}

@@ -52,16 +52,15 @@ function CourseOverview(props: any) {
     return false;
   }
 
+  const notEnrolledMessage = "You are not enrolled in this course 😡"
 
 
   return (
     <>
     <LayoutContainer>
-      <div>
       {currentCourse && !courseIsEnrolled(currentCourse) && !isCourseTutor(currentCourse) &&
-      <h1>You are not enrolled in this course 😡</h1>
+      <h1>{notEnrolledMessage}</h1>
       }
-      </div>
       {currentCourse && courseIsEnrolled(currentCourse) &&
       <> 
         <Sidebar course={currentCourse}/>

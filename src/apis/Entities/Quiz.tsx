@@ -8,3 +8,10 @@ export interface Quiz extends Content {
     quizQuestions: QuizQuestion[],
     studentAttempts: StudentAttempt[]
 }
+
+export interface QuizWithStudentAttemptCountResp {
+    contentId: number,
+    timeLimit: string,
+    maxAttemptsPerStudent: number,
+    studentAttemptCount: number
+}

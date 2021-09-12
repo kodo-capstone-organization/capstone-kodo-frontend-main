@@ -43,6 +43,12 @@ module.exports = function(app) {
     })
   );
   app.use(
+    createProxyMiddleware("/quiz", {
+      target: url,
+      changeOrigin: true
+    })
+  );
+  app.use(
     createProxyMiddleware("/stripe", {
       target: url,
       changeOrigin: true
