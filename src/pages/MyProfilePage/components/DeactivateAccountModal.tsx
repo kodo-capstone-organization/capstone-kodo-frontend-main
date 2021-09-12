@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import { Button } from "../../../values/ButtonElements";
@@ -12,31 +11,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import { Chip } from '@material-ui/core';
 import { deactivateAccount } from '../../../apis/Account/AccountApis';
 
-const useStyles = makeStyles((theme: Theme) =>
-    createStyles({
-        modal: {
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-        },
-        paper: {
-            backgroundColor: theme.palette.background.paper,
-            boxShadow: theme.shadows[5],
-            padding: theme.spacing(2, 4, 3),
-        },
-        // closeButton: {
-        //     position: 'absolute',
-        //     right: theme.spacing(1),
-        //     top: theme.spacing(1),
-        //     color: theme.palette.grey[500],
-        // },
-    }),
-);
-
-
 function DeactivateAccountModal(props: any) {
-
-    const classes = useStyles();
     const [open, setOpen] = React.useState(false);
     const [myAccount, setMyAccount] = useState<Account>()
     const [isActive, setIsActive] = useState<Boolean>()
@@ -69,10 +44,10 @@ function DeactivateAccountModal(props: any) {
     return (
         <>
             <div>
-                <Button big style={{ width: "fit-content", margin: "20px auto 10px auto" }} onClick={handleOpen}>{isActive ? "Deactivate" : "Activate"} Account</Button>
+                <Button style={{ width: "fit-content", margin: "20px auto 10px auto" }} onClick={handleOpen}>{isActive ? "Deactivate" : "Activate"} Account</Button>
                 <Dialog open={open} onClose={handleClose}>
                     <div style={{ display: "flex" }}>
-                        <DialogTitle id="form-dialog-title">Deactivate/Reactivate Your Kodo Account</DialogTitle>
+                        <DialogTitle id="form-dialog-title">{ isActive ? "Deactivate" : "Reactivate" } Your Kodo Account</DialogTitle>
                         <IconButton onClick={handleClose}>
                             <CloseIcon />
                         </IconButton>
@@ -84,7 +59,7 @@ function DeactivateAccountModal(props: any) {
                     </DialogContent>
                     <DialogActions>
                         <Button onClick={handleAction} primary>
-                            {isActive ? "Deactivate" : "Activate"} My Account
+                            Confirm
                         </Button>
                     </DialogActions>
                 </Dialog>

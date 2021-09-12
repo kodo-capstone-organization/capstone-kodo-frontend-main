@@ -69,13 +69,13 @@ export async function getAccountByEnrolledCourseId(enrolledCourseId: number): Pr
     return httpClient.get<undefined, Account>(getParameters);
 }
 
-export async function updateAccount(updateAccountReq: UpdateAccountReq, displayPicture: File | null): Promise<Account> {
+export async function updateAccount(updateAccountReq: UpdateAccountReq, displayPictureFile: File): Promise<Account> {
     const formData = new FormData();
 
     formData.append('account', transformToBlob(updateAccountReq));
-    if (displayPicture !== null)
-    {
-        formData.append('displayPicture', displayPicture);
+    // Check whether it's an empty file
+    if (displayPictureFile.size !== 0) {
+        formData.append('displayPicture', displayPictureFile);
     }
 
     const postParameters: IHttpClientRequestParameters<FormData> = {

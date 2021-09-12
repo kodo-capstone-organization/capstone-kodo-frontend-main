@@ -25,24 +25,12 @@ function TopMenu(props) {
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
   };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
+  
   const handleLogOut = () => {
     window.sessionStorage.removeItem("loggedInAccountId");
     window.sessionStorage.removeItem("loggedInAccountUsername");
     window.sessionStorage.removeItem("loggedInAccountPassword");
   };
-
-  const handleClick = () => {
-    if(window.location.pathname === "/login"){
-      history.push("/signup")
-    }else {
-      history.push("login")
-    }
-  }
 
   useEffect(() => {
     window.addEventListener("scroll", changeNav);

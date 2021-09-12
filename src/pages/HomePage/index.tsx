@@ -29,7 +29,7 @@ function HomePage(props: any) {
             }}
             >
                 <div style={{display: "flex", marginTop:"100px"}}>
-                    <img src={img} alt="people-image" style={{height: "350px"}}/>
+                    <img src={img} alt="people" style={{height: "350px"}}/>
                     <MenuBtn>
                         <Title>Start Your Coding<br /> Journey with Kodo</Title>
                         <Button primary big fontBig to="/signup">Sign Up</Button>

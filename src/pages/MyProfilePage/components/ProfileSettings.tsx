@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from "react-router";
-import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import {
     TextField, Chip, InputAdornment, Input, InputLabel, IconButton,
     FormControl, Grid, Snackbar
@@ -20,14 +19,6 @@ import DeactivateAccountModal from "./DeactivateAccountModal";
 import { getAllTags } from '../../../apis/Tag/TagApis';
 import { updateAccount } from '../../../apis/Account/AccountApis';
 
-const useStyles = makeStyles((theme: Theme) =>
-    createStyles({
-        input: {
-            display: 'none',
-        }
-    }),
-);
-
 interface IErrors<TValue> {
     [id: string]: TValue;
 }
@@ -43,7 +34,9 @@ function ProfileSettings(props: any) {
     const [bio, setBio] = useState<string>("");
     const [isActive, setIsActive] = useState<Boolean>();
     const [tagLibrary, setTagLibrary] = useState<Tag[]>([]);
-    const [displayPictureUrl, setDisplayPictureUrl] = useState<Tag[]>([]);
+    const [displayPictureFilename, setDisplayPictureFilename] = useState<string>("");
+    
+    const [displayPictureFile, setDisplayPictureFile] = useState<File>(new File([], ""));
     var [errors, setErrors] = useState<IErrors<any>>({
         name: "",
         username: "",
@@ -52,26 +45,25 @@ function ProfileSettings(props: any) {
         btnTags: "",
         signUp: ""
     });
-    const classes = useStyles();
     const [openSnackbar, setOpenSnackbar] = React.useState(false);
     const history = useHistory();
 
     useEffect(() => {
-        setMyAccount(props.account)
         setPassword(window.sessionStorage.getItem("loggedInAccountPassword"))
+        
         if (props.account !== undefined) {
+            setMyAccount(props.account)
             setName(props.account.name)
             setEmail(props.account.email)
             setBio(props.account.bio)
             setIsActive(props.account.isActive)
             setInterests(props.account.interests.map((x: Tag) => x.title))
-            setDisplayPictureUrl(props.account.displayPictureUrl)
+            setDisplayPictureFilename(props.account.displayPictureFilename)
         }
         getAllTags().then(res => setTagLibrary(res)).catch(error => console.log("error getting tags."))
     }, [props.account])
 
     const handleSave = () => {
-        console.log("displayPictureURL", displayPictureUrl)
         const updatedAccountObject: Account = {
             accountId: props.account.accountId,
             username: props.account.username,
@@ -80,6 +72,7 @@ function ProfileSettings(props: any) {
             email,
             password,
             displayPictureUrl: props.account.displayPictureUrl,
+            displayPictureFilename: "", // Computed value on the backend. Cannot be updated.
             isAdmin: props.account.isAdmin,
             isActive: props.account.isActive,
             interests: props.account.interests,
@@ -88,7 +81,6 @@ function ProfileSettings(props: any) {
             studentAttempts: props.account.studentAttempts,
             stripeAccountId: props.account.stripeAccountId,
         }
-        console.log('xx', updatedAccountObject)
 
         const updateAccountReq = {
             account: updatedAccountObject,
@@ -101,12 +93,22 @@ function ProfileSettings(props: any) {
             studentAttemptIds: null,
         }
         //@ts-ignore
-        updateAccount(updateAccountReq, displayPictureUrl).then((res) => { history.push("/profile") }).catch(err => { console.log("error", err) })
-
+        updateAccount(updateAccountReq, displayPictureFile).then((res) => { history.push("/profile") }).catch(err => { console.log("error", err) })
     }
 
     const displayPictureURL = () => {
-        return myAccount?.displayPictureUrl ? myAccount?.displayPictureUrl : "";
+
+        if (displayPictureFile.size !== 0)
+        {
+            // Check for new display picture
+            const tempPath = (window.URL || window.webkitURL).createObjectURL(displayPictureFile);
+            return tempPath;
+        }
+        else
+        {
+            // Else return old dp
+            return myAccount?.displayPictureUrl ? myAccount?.displayPictureUrl : "";
+        }
     }
     const avatarInitials = () => {
         if (myAccount?.name) {
@@ -178,7 +180,6 @@ function ProfileSettings(props: any) {
                         title="Account Settings"
                     />
                     <form
-                        // className={classes.root}
                         noValidate autoComplete="off" style={{ display: "flex", justifyContent: "center" }}>
                         <div style={{ padding: "20px" }}>
                             <ProfileAvatar
@@ -190,7 +191,10 @@ function ProfileSettings(props: any) {
                                     {avatarInitials()}
                                 </ProfileInitials>
                             </ProfileAvatar>
-                            <ProfileSubText style={{ textAlign: "center" }}>Status: <Chip variant="outlined" label={isActive ? "Activated" : "Deactivated"} style={{ color: isActive ? "green" : "red", border: isActive ? "1px solid green" : "1px solid red" }} /></ProfileSubText>
+                            <br/>
+                            <ProfileSubText style={{ textAlign: "center" }}>
+                                Status: <Chip variant="outlined" label={isActive ? "Activated" : "Deactivated"} style={{ color: isActive ? "green" : "red", border: isActive ? "1px solid green" : "1px solid red" }} />
+                            </ProfileSubText>
                             <DeactivateAccountModal account={myAccount} style={{ margin: "auto" }} />
                         </div>
                         <div style={{ margin: "20px" }}>
@@ -242,19 +246,21 @@ function ProfileSettings(props: any) {
                             />
                             <FormControl fullWidth margin="normal" style={{ display: "flex", flexDirection: "row" }}>
                                 <Grid xs={10}>
-                                    <TextField id="banner-image-name" fullWidth disabled value={displayPictureUrl} label="Display Picture"></TextField>
+                                    <TextField id="banner-image-name" fullWidth disabled value={displayPictureFilename} label="Display Picture"></TextField>
                                 </Grid>
-                                <Grid xs={3} style={{ display: "flex", alignItems: "center" }}>
+                                <Grid xs={3} style={{ display: "flex", alignItems: "center"}}>
                                     <Button variant="contained" component="label">
-                                        Upload
-                                <input
+                                        Change DP
+                                        <input
                                             id="banner-image-upload"
                                             type="file"
                                             accept="image/*"
                                             hidden
                                             onChange={e => {
                                                 // @ts-ignore
-                                                setDisplayPictureUrl(e.target.files[0])
+                                                setDisplayPictureFile(e.target.files[0])
+                                                // @ts-ignore
+                                                setDisplayPictureFilename(e.target.files[0].name)
                                             }}
                                         />
                                     </Button>

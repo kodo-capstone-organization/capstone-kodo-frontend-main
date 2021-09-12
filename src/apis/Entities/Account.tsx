@@ -11,6 +11,7 @@ export interface Account {
   bio: string;
   email: string;
   displayPictureUrl: string;
+  displayPictureFilename: string;
   isAdmin: boolean;
   isActive: boolean;
   interests: Tag[];
