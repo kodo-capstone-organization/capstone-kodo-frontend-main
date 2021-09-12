@@ -47,6 +47,7 @@ function BrowseCourse() {
   const [myAccount, setAccount] = useState<Account>();
   const [tagLibrary, setTagLibrary] = useState<Tag[]>([]);
 
+
   const accountId = JSON.parse(
     window.sessionStorage.getItem("loggedInAccountId") || "{}"
   );
@@ -59,7 +60,7 @@ function BrowseCourse() {
 
   useEffect(() => {
     getAllTags().then(res => setTagLibrary(res)).catch(error => console.log("error getting tags."))
-  }, [])
+}, [])
 
   useEffect(() => {
     getCoursesToRecommend(accountId).then(receivedCourses => {
@@ -75,10 +76,9 @@ function BrowseCourse() {
   }, []);
 
   /** HELPER METHODS */
-  const handleChipChange = (e: object, value: string[], reason: string) => {
-    console.log(value)
-    setTags(value)
-  }
+  const handleChipChange = (chips: any) => {
+    setTags(chips);
+  };
 
   const handleSearchTerm = (term: any) => {
     setSearchTerm(term);
@@ -87,7 +87,7 @@ function BrowseCourse() {
   //Return an array of Courses that match the tags entered by user
   function returnTagMatch(val: Course): boolean {
     let courseAllTags = val.courseTags;
-    var result = courseAllTags.map(function (a) {
+    var result = courseAllTags.map(function(a) {
       return a.title.toLowerCase();
     });
     return tags.every(t => result.includes(t.toLowerCase()));
@@ -101,11 +101,11 @@ function BrowseCourse() {
         tagArray.push(tag.title)
       }
     }
-    var uniqueArr = tagArray.filter(function (elem, index, self) {
+    var uniqueArr = tagArray.filter(function(elem, index, self) {
       return index === self.indexOf(elem);
     })
     console.log(uniqueArr)
-    return (uniqueArr)
+    return(uniqueArr)
   }
   /*
   if (coursesRecommended) {
@@ -125,53 +125,42 @@ function BrowseCourse() {
               setSearchTerm(event.target.value);
             }}
           />
-          <Autocomplete
-            multiple
-            freeSolo
-            options={tagLibrary.map((option) => option.title)}
-            defaultValue={[]}
-            onChange={handleChipChange}
-            renderTags={(value: string[], getTagProps) =>
-              value.map((option: string, index: number) => (
-                <Chip {...getTagProps({ index })} variant="outlined" label={option} />
-              ))
-            }
-            renderInput={(params) => (
-              <TextField {...params} variant="outlined" label="Search By Tags" />
-            )}
+          <ChipInput
+            label="Search By Tags"
+            onChange={chips => handleChipChange(chips)}
           />
         </form>
         <Title>Courses</Title>
         <CourseWrapper>
           {courses
-            ?.filter(course => course.isEnrollmentActive)
-            .filter(course => {
+              ?.filter(course => course.isEnrollmentActive )
+              .filter(course => {
               if (searchTerm == "" && tags.length == 0) {
                 return course;
               } else if (tags.length > 0 && returnTagMatch(course)) {
                 return course;
               } else if (
                 searchTerm !== "" &&
-                course.name.toLowerCase().includes(searchTerm.toLowerCase())
+                  course.name.toLowerCase().includes(searchTerm.toLowerCase())
               ) {
                 return course;
               }
             })
             .map(course => {
-              return (<CourseCard course={course} myCourseView={false} redirectUrlBase="/browsecourse/preview" />);
+              return ( <CourseCard course={course} myCourseView={false} redirectUrlBase="/browsecourse/preview" /> );
             })}
         </CourseWrapper>
         <Title>Suggested For You</Title>
         <p>Since you like: </p>
         <CourseTags>
-          {myAccount?.interests.map(tag => (
-            <TagChip label={tag.title} />
-          ))}
+        {coursesRecommended && getSuggestedTags(coursesRecommended).map(tag => (
+          <TagChip label={tag} />
+        ))}
         </CourseTags>
         <CourseWrapper>
           {coursesRecommended?.map(course => {
-            return (<CourseCard course={course} myCourseView={false} redirectUrlBase="/browsecourse/preview" />);
-          })}
+              return ( <CourseCard course={course} myCourseView={false} redirectUrlBase="/browsecourse/preview" /> );
+            })}
         </CourseWrapper>
       </BrowseContainer>
     </>
