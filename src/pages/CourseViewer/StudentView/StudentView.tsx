@@ -48,7 +48,7 @@ function StudentView(props: any) {
   const [rating, setRating] = useState<number | null>(1);
   const [activeStep, setActiveStep] = React.useState(-1);
   const [latestLesson, setLatestLesson] = React.useState<EnrolledLesson>();
-  const [steps, setSteps] = React.useState<string[]>([])
+  const [steps, setSteps] = React.useState<EnrolledLesson[]>([])
   const history = useHistory();
 
   const accountId = JSON.parse(
@@ -77,9 +77,9 @@ function StudentView(props: any) {
         }
       })
       console.log(proxyActiveStep)
-      const arrayOfLessonName = receivedEnrolledCourse.enrolledLessons.map(x => x.parentLesson.name);
+      // const arrayOfLessonName = receivedEnrolledCourse.enrolledLessons.map(x => {x.parentLesson.name});
       //@ts-ignore
-      setSteps(arrayOfLessonName);
+      setSteps(receivedEnrolledCourse.enrolledLessons);
     });
   }, [props.course]);
 
@@ -116,9 +116,9 @@ function StudentView(props: any) {
     return myAccount?.displayPictureUrl ? myAccount?.displayPictureUrl : "";
   }
 
-  const handleStepClick = () => {
-    console.log("handleStepClick")
-  }
+  // const handlePressStepper = () => {
+  //   // history.push(`overview/lesson/${currentCourse?.courseId}/${lessonId}`)
+  // }
 
   const StepIconStyles = makeStyles({
     root: {
@@ -176,9 +176,13 @@ function StudentView(props: any) {
 
       <div className={classes.root}>
         <Stepper alternativeLabel activeStep={activeStep}>
-          {steps.map((label) => (
-            <Step key={label}>
-              <StepLabel StepIconComponent={StepIcon}>{label}</StepLabel>
+          {steps.map((enrolledLesson) => (
+            <Step key={enrolledLesson.parentLesson.lessonId}>
+              <StepLabel StepIconComponent={StepIcon}>
+                <Link color="inherit" href={`/overview/lesson/${currentCourse.courseId}/${enrolledLesson.parentLesson.lessonId}`}>
+                  {enrolledLesson.parentLesson.name}
+                </Link>
+              </StepLabel>
             </Step>
           ))}
         </Stepper>
