@@ -162,6 +162,7 @@ export const ExitWrapper = styled(Link)`
 export const ExitIcon = styled(CancelOutlinedIcon)`
   color: ${colours.BLUE2};
   padding: 2rem;
+  font-size: 40px;
 `
 
 export const ExitText = styled.p`

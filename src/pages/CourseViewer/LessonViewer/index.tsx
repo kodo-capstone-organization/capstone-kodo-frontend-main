@@ -15,6 +15,8 @@ import { EnrolledLesson } from "../../../apis/Entities/EnrolledLesson";
 import { QuizWithStudentAttemptCountResp } from "../../../apis/Entities/Quiz"
 
 import { Button } from "../../../values/ButtonElements";
+import { colours } from "../../../values/Colours";
+
 
 import {
   LessonContainer,
@@ -42,6 +44,9 @@ import {
   ExitText
 } from "./LessonViewerElements";
 import Sidebar from "../Sidebar/Sidebar";
+
+import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
+
 
 function LessonViewer(props: any) {
   const lessonId = props.match.params.lessonId;
@@ -129,7 +134,7 @@ function LessonViewer(props: any) {
           <CourseTitle>{currentCourse?.name}</CourseTitle> 
         </PageHeading>
         <ExitWrapper to={`/overview/${currentCourse?.courseId}`}>
-            <ExitIcon />
+            <CancelOutlinedIcon fontSize="large" style={{ color: colours.BLUE2, padding: 20 }}/>
         </ExitWrapper>
       </PageHeadingAndButton>
         <LessonCard>
