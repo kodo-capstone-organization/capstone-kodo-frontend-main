@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { useHistory } from "react-router";
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-import { TextField, Chip, InputAdornment, Input, InputLabel, IconButton,
-    FormControl, Grid, } from "@material-ui/core";
+import {
+    TextField, Chip, InputAdornment, Input, InputLabel, IconButton,
+    FormControl, Grid, Snackbar
+} from "@material-ui/core";
 import { Autocomplete } from "@material-ui/lab";
+import CloseIcon from '@material-ui/icons/Close';
 import {
     ProfileCard, ProfileSettingField, ProfileSubText,
     ProfileAvatar, ProfileInitials, ProfileCardHeader
@@ -49,6 +53,8 @@ function ProfileSettings(props: any) {
         signUp: ""
     });
     const classes = useStyles();
+    const [openSnackbar, setOpenSnackbar] = React.useState(false);
+    const history = useHistory();
 
     useEffect(() => {
         setMyAccount(props.account)
@@ -65,7 +71,8 @@ function ProfileSettings(props: any) {
     }, [props.account])
 
     const handleSave = () => {
-        const updatedAccountObject : Account = {
+        console.log("displayPictureURL", displayPictureUrl)
+        const updatedAccountObject: Account = {
             accountId: props.account.accountId,
             username: props.account.username,
             name,
@@ -94,7 +101,7 @@ function ProfileSettings(props: any) {
             studentAttemptIds: null,
         }
         //@ts-ignore
-        updateAccount(updateAccountReq, null).then((res) => {console.log("res", res)}).catch(err => {console.log("error", err)})
+        updateAccount(updateAccountReq, displayPictureUrl).then((res) => { history.push("/profile") }).catch(err => { console.log("error", err) })
 
     }
 
@@ -149,6 +156,10 @@ function ProfileSettings(props: any) {
         return formIsValid;
     }
 
+    const handleSnackbar = () => {
+        setOpenSnackbar(!openSnackbar);
+    };
+
     const handleChipChange = (e: object, value: string[], reason: string) => {
         console.log(value)
         setInterests(value)
@@ -179,22 +190,6 @@ function ProfileSettings(props: any) {
                                     {avatarInitials()}
                                 </ProfileInitials>
                             </ProfileAvatar>
-                            <input
-                                accept="image/*"
-                                className={classes.input}
-                                id="contained-button-file"
-                                multiple
-                                type="file"
-                            />
-                            <label htmlFor="contained-button-file">
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-                                    component="span"
-                                    style={{ margin: "10px" }}>
-                                    Change Display Picture
-                                </Button>
-                            </label>
                             <ProfileSubText style={{ textAlign: "center" }}>Status: <Chip variant="outlined" label={isActive ? "Activated" : "Deactivated"} style={{ color: isActive ? "green" : "red", border: isActive ? "1px solid green" : "1px solid red" }} /></ProfileSubText>
                             <DeactivateAccountModal account={myAccount} style={{ margin: "auto" }} />
                         </div>
@@ -230,13 +225,6 @@ function ProfileSettings(props: any) {
                                     </InputAdornment>
                                 }
                             />
-                            {/* <label style={{
-                                    color: "rgba(0, 0, 0, 0.54)",
-                                    padding: "0",
-                                    fontSize: "0.75rem",
-                                    lineHeight: "1",
-                                    letterSpacing: "0.00938em"
-                                }}>Interests</label> */}
                             <Autocomplete
                                 multiple
                                 options={tagLibrary.map((option) => option.title)}
@@ -253,12 +241,12 @@ function ProfileSettings(props: any) {
                                 )}
                             />
                             <FormControl fullWidth margin="normal" style={{ display: "flex", flexDirection: "row" }}>
-                                <Grid xs={9}>
+                                <Grid xs={10}>
                                     <TextField id="banner-image-name" fullWidth disabled value={displayPictureUrl} label="Display Picture"></TextField>
                                 </Grid>
                                 <Grid xs={3} style={{ display: "flex", alignItems: "center" }}>
                                     <Button variant="contained" component="label">
-                                        Upload Banner
+                                        Upload
                                 <input
                                             id="banner-image-upload"
                                             type="file"
@@ -291,6 +279,23 @@ function ProfileSettings(props: any) {
 
                 </ProfileCard>
             }
+            <Snackbar
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                }}
+                open={openSnackbar}
+                autoHideDuration={6000}
+                onClose={handleSnackbar}
+                message="Profile Updated."
+                action={
+                    <React.Fragment>
+                        <IconButton size="small" aria-label="close" color="inherit" onClick={handleSnackbar}>
+                            <CloseIcon fontSize="small" />
+                        </IconButton>
+                    </React.Fragment>
+                }
+            />
         </>
     )
 }

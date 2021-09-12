@@ -5,8 +5,8 @@ import { Account } from "../../apis/Entities/Account";
 import { getMyAccount } from "../../apis/Account/AccountApis";
 import { getCourseByCourseId } from "../../apis/Course/CourseApis";
 import Sidebar from "./Sidebar/Sidebar";
-import TutorView from "./TutorView/TutorView"
-import StudentView from "./StudentView/StudentView"
+import TutorView from "./TutorView/TutorView";
+import StudentView from "./StudentView/StudentView";
 
 function CourseOverview(props: any) {
   const courseId = props.match.params.courseId;
