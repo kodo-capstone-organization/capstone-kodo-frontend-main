@@ -20,12 +20,6 @@ function TopMenu(props) {
     }
   };
 
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const open = Boolean(anchorEl);
-  const handleMenu = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-  
   const handleLogOut = () => {
     window.sessionStorage.removeItem("loggedInAccountId");
     window.sessionStorage.removeItem("loggedInAccountUsername");

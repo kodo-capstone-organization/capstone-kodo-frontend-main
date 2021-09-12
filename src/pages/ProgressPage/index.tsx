@@ -2,27 +2,12 @@ import React, { useState, useEffect } from 'react'
 import {
     ProgressContainer
 } from "./ProgressElements";
-import { makeStyles } from '@material-ui/core/styles';
-import Divider from '@material-ui/core/Divider';
 import { Breadcrumbs, Link, Tabs, Tab } from '@material-ui/core';
 import { getMyAccount } from "../../apis/Account/AccountApis";
 import { EnrolledCourse } from "../../apis/Entities/EnrolledCourse";
 import { Account } from "../../apis/Entities/Account";
 import CourseList from './components/CourseList';
-
-
-const useStyles = makeStyles((theme) => ({
-    root: {
-        flexGrow: 1,
-    },
-    paper: {
-        height: 140,
-        width: 100,
-    },
-    control: {
-        padding: theme.spacing(2),
-    },
-}));
+import { colours } from '../../values/Colours';
 
 function ProgressPage() {
 
@@ -70,11 +55,13 @@ function ProgressPage() {
                     Progress
                 </Link>
             </Breadcrumbs>
+            <br/>
             <Tabs
                 value={tab}
                 indicatorColor="primary"
                 textColor="primary"
                 onChange={handleTabChange}
+                style={{ backgroundColor: colours.GRAY7 }}
             >
                 <Tab label="Current Courses" />
                 <Tab label="Completed Courses" />

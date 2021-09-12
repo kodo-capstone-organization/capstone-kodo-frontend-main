@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { fontSizes } from "../../../values/FontSizes";
 import { colours } from "../../../values/Colours";
 import Chip from '@material-ui/core/Chip';
 
