@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { colours } from "../../../values/Colours";
 import { fontSizes } from "../../../values/FontSizes";
-import { Avatar } from "@material-ui/core";
+import { Avatar, Card, CardHeader, CardContent } from "@material-ui/core";
 import Chip from '@material-ui/core/Chip';
 
 
@@ -28,15 +28,6 @@ export const TutorTitle = styled.div`
   margin-top: 10px;
   font-size: ${fontSizes.SUBTEXT};
   color: ${colours.GRAY4};
-`;
-
-export const StudentViewCard = styled.div`
-  height: 294px;
-  width: auto;
-  padding: 20px;
-  border: 1px solid ${colours.GRAY6};
-  overflow-x: hidden;
-
 `;
 
 export const CardTitle = styled.div`
@@ -122,3 +113,49 @@ export const CourseRatingWrapper = styled.div`
   > * {
   margin: theme.spacing(0.5)
 `
+
+export const StudentViewCard = styled(Card)`
+    width: 100%;
+`;
+
+// export const StudentViewCard = styled.div`
+//   height: 294px;
+//   width: auto;
+//   padding: 20px;
+//   border: 1px solid ${colours.GRAY6};
+//   overflow-x: hidden;
+// `;
+
+export const StudentViewCardHeader = styled(CardHeader)`
+    display: flex;
+    flex-direction: row;
+    background-color: ${colours.GRAYHALF6};
+    color: ${colours.GRAY3};
+    height: 1.5rem;
+    
+    > .MuiCardHeader-content > span {
+        font-size: ${fontSizes.CONTENT};
+        font-weight: bold;
+    }
+    
+    > .MuiCardHeader-action {
+        margin: initial;
+        align-self: center;
+        color: ${colours.GRAY2};
+        
+        >.MuiIconButton-root >.MuiIconButton-label {
+           font-size: ${fontSizes.SUBTEXT} !important;
+        }
+    }
+`;
+
+export const StudentViewCardContent = styled(CardContent)`
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    background-color: ${colours.WHITE};
+    color: ${colours.GRAY2};
+    align-items: center;
+    padding: 2rem !important;
+    padding: ${({ removePadTop }) => (removePadTop ? "0 2rem 2rem 2rem !important" : "2rem !important")};
+`;

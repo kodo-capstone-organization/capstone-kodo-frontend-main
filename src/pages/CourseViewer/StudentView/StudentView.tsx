@@ -6,22 +6,24 @@ import {
 import { EnrolledCourse } from "../../../apis/Entities/EnrolledCourse";
 import { Course } from "../../../apis/Entities/Course";
 import { Account } from "../../../apis/Entities/Account";
-import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-import { Stepper, Step, StepButton, Button, Typography, StepLabel, Link } from "@material-ui/core";
+import clsx from 'clsx';
+import { makeStyles, createStyles, Theme, withStyles } from '@material-ui/core/styles';
+import { Stepper, Step, StepButton, Typography, StepLabel, Link, StepConnector } from "@material-ui/core";
 import { Lesson } from '../../../apis/Entities/Lesson';
 import { EnrolledLesson } from '../../../apis/Entities/EnrolledLesson';
-import Box from '@material-ui/core/Box';
+import { Button } from '../../../values/ButtonElements';
 import Rating from '@material-ui/lab/Rating';
-import CheckIcon from '@material-ui/icons/Check';
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+import LockIcon from '@material-ui/icons/Lock';
 import { StepIconProps } from '@material-ui/core/StepIcon';
-
-
 import {
   StudentContainer,
   PageHeading,
   CourseTitle,
   TutorTitle,
   StudentViewCard,
+  StudentViewCardHeader,
+  StudentViewCardContent,
   CardTitle,
   TutorDetails,
   TutorDepartment,
@@ -35,48 +37,8 @@ import {
   RatingDescription,
   CourseRatingWrapper
 } from "./StudentViewElements";
-import { LessonDescription } from "../LessonViewer/LessonViewerElements";
-
-// import {
-//   StudentContainer,
-//   PageHeading,
-//   CourseTitle,
-//   TutorTitle,
-//   StudentViewCard,
-//   CardTitle,
-//   TutorDetails,
-//   TutorDepartment,
-//   TutorName,
-//   ProfileAvatar,
-//   TutorText,
-//   RatingCard,
-//   RatingTitle,
-//   TagWrapper,
-//   TagChip,
-//   RatingDescription,
-//   CourseRatingWrapper
-// } from "./StudentViewElements";
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      width: '100%',
-    },
-    button: {
-      marginRight: theme.spacing(1),
-    },
-    backButton: {
-      marginRight: theme.spacing(1),
-    },
-    completed: {
-      display: 'inline-block',
-    },
-    instructions: {
-      marginTop: theme.spacing(1),
-      marginBottom: theme.spacing(1),
-    },
-  }),
-);
+import { LessonDescription, CheckIcon } from "../LessonViewer/LessonViewerElements";
+import { useHistory } from "react-router";
 
 
 function StudentView(props: any) {
@@ -84,12 +46,10 @@ function StudentView(props: any) {
   const [enrolledCourse, setEnrolledCourse] = useState<EnrolledCourse>();
   const [myAccount, setMyAccount] = useState<Account>({ ...props.account });
   const [rating, setRating] = useState<number | null>(1);
-  const classes = useStyles();
   const [activeStep, setActiveStep] = React.useState(-1);
-  const [completed, setCompleted] = React.useState(new Set<number>());
-  const [skipped, setSkipped] = React.useState(new Set<number>());
-  const [lessons, setLessons] = React.useState<(EnrolledLesson)[]>([]);
+  const [latestLesson, setLatestLesson] = React.useState<EnrolledLesson>();
   const [steps, setSteps] = React.useState<string[]>([])
+  const history = useHistory();
 
   const accountId = JSON.parse(
     window.sessionStorage.getItem("loggedInAccountId") || "{}"
@@ -97,25 +57,23 @@ function StudentView(props: any) {
 
   useEffect(() => {
     setCourse(props.course);
-  }, [props.course]);
+    setMyAccount(props.account);
 
-  useEffect(() => {
-    setMyAccount(props.account)
-  }, [props.account])
-
-  useEffect(() => {
     getEnrolledCourseByStudentIdAndCourseId(
       accountId,
       currentCourse.courseId
     ).then(receivedEnrolledCourse => {
       setEnrolledCourse(receivedEnrolledCourse);
-      console.log(receivedEnrolledCourse)
-      var proxyActiveStep = -1
+      var proxyActiveStep = 0
+      var latestLessonCounter = 0
       receivedEnrolledCourse.enrolledLessons.map(x => {
         if (x.dateTimeOfCompletion !== null) {
-          console.log("x", x.dateTimeOfCompletion !== null)
           proxyActiveStep++;
           setActiveStep(proxyActiveStep);
+          setLatestLesson(x);
+        } else if (x.dateTimeOfCompletion === null && latestLessonCounter === 0) {
+          setLatestLesson(x);
+          latestLessonCounter++;
         }
       })
       console.log(proxyActiveStep)
@@ -123,7 +81,29 @@ function StudentView(props: any) {
       //@ts-ignore
       setSteps(arrayOfLessonName);
     });
-  }, []);
+  }, [props.course]);
+
+
+  const useStyles = makeStyles((theme: Theme) =>
+    createStyles({
+      root: {
+        width: '100%',
+      },
+      button: {
+        marginRight: theme.spacing(1),
+      },
+      backButton: {
+        marginRight: theme.spacing(1),
+      },
+      completed: {
+        display: 'inline-block',
+      },
+      instructions: {
+        marginTop: theme.spacing(1),
+        marginBottom: theme.spacing(1),
+      }
+    }),
+  );
 
   const handleRatingChange = (newRating: any) => {
     setRating(newRating);
@@ -140,44 +120,52 @@ function StudentView(props: any) {
     console.log("handleStepClick")
   }
 
-  const stepStyleLibrary = makeStyles({
+  const StepIconStyles = makeStyles({
     root: {
-      backgroundColor: '#ccc',
-      zIndex: 1,
-      color: '#fff',
-      width: 50,
-      height: 50,
+      color: '#eaeaf0',
       display: 'flex',
-      borderRadius: '50%',
-      justifyContent: 'center',
+      height: 22,
       alignItems: 'center',
     },
     active: {
-      backgroundImage:
-        'linear-gradient( 136deg, rgb(242,113,33) 0%, rgb(233,64,87) 50%, rgb(138,35,135) 100%)',
-      boxShadow: '0 4px 10px 0 rgba(0,0,0,.25)',
+      color: '#784af4',
+    },
+    circle: {
+      // width: 8,
+      // height: 8,
+      // borderRadius: '50%',
+      // backgroundColor: 'currentColor',
+      color: 'grey',
+      zIndex: 1,
+      fontSize: 18,
     },
     completed: {
-      backgroundImage:
-        'linear-gradient( 136deg, rgb(242,113,33) 0%, rgb(233,64,87) 50%, rgb(138,35,135) 100%)',
+      color: 'green',
+      zIndex: 1,
+      fontSize: 18,
     },
-  })
-
-  const StepIconPopulation = (props: StepIconProps) => {
-    const classes = stepStyleLibrary();
+  });
+  const StepIcon = (props: StepIconProps) => {
+    const classes = StepIconStyles();
     const { active, completed } = props;
-  
+
     return (
       <div
-        // className={(classes.root, {
-        //   [classes.active]: active,
-        // })}
+        className={clsx(classes.root, {
+          [classes.active]: active,
+        })}
       >
-        <CheckIcon/>
-        {/* {completed ? <Check className={classes.completed} /> : <div className={classes.circle} />} */}
+        {completed ? <CheckCircleIcon className={classes.completed} /> : <LockIcon className={classes.circle} />}
       </div>
     );
   }
+
+  const navigateToLatestLesson = () => {
+    history.push(`/overview/lesson/${currentCourse?.courseId}/${latestLesson?.parentLesson.lessonId}`)
+  }
+
+  const classes = useStyles();
+
 
   return (
     <StudentContainer>
@@ -187,23 +175,26 @@ function StudentView(props: any) {
       </PageHeading>
 
       <div className={classes.root}>
-        <Stepper activeStep={activeStep}>
-          {steps.map((label, index) => {
-            const stepProps: { completed?: boolean } = {};
-            const labelProps: { optional?: React.ReactNode } = {};
-            return (
-              <Step key={label} {...stepProps}>
-                <StepLabel {...labelProps} StepIconComponent={StepIconPopulation}>
-                  {/* <Link onClick={handleStepClick}> */}
-                    {label}
-                  {/* </Link> */}
-                </StepLabel>
-              </Step>
-
-            );
-          })}
+        <Stepper alternativeLabel activeStep={activeStep}>
+          {steps.map((label) => (
+            <Step key={label}>
+              <StepLabel StepIconComponent={StepIcon}>{label}</StepLabel>
+            </Step>
+          ))}
         </Stepper>
       </div>
+
+      <StudentViewCard id="my-details">
+        <StudentViewCardHeader
+          title="Course Overview"
+        />
+        <StudentViewCardContent>
+          <RatingTitle>{currentCourse.description}</RatingTitle>
+          <Button primary style={{ marginLeft: "auto" }} onClick={navigateToLatestLesson}>Continue Course</Button>
+        </StudentViewCardContent>
+
+      </StudentViewCard>
+
 
       <CardTitle>This course is taught by:</CardTitle>
       <TutorDetails>
@@ -222,7 +213,6 @@ function StudentView(props: any) {
         <RatingDescription>You need to pass all graded quizzes to complete this course</RatingDescription>
         <RatingTitle>Course Rating</RatingTitle>
         <Rating name="read-only" value={currentCourse.courseRating} readOnly />
-        <CourseRatingWrapper>⭐ ⭐ ⭐</CourseRatingWrapper>
         <RatingTitle>Categories</RatingTitle>
         <TagWrapper>
           {currentCourse?.courseTags.map(tag => (
