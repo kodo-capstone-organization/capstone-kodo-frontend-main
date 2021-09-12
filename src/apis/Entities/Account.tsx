@@ -6,6 +6,7 @@ import { Tag } from "./Tag";
 export interface Account {
   accountId: number;
   username: string;
+  password: string | null;
   name: string;
   bio: string;
   email: string;

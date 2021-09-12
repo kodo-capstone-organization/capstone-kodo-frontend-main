@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { useHistory } from "react-router";
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-import { TextField, Chip, InputAdornment, Input, InputLabel, IconButton } from "@material-ui/core";
+import {
+    TextField, Chip, InputAdornment, Input, InputLabel, IconButton,
+    FormControl, Grid, Snackbar
+} from "@material-ui/core";
 import { Autocomplete } from "@material-ui/lab";
+import CloseIcon from '@material-ui/icons/Close';
 import {
     ProfileCard, ProfileSettingField, ProfileSubText,
     ProfileAvatar, ProfileInitials, ProfileCardHeader
@@ -13,34 +18,43 @@ import { Account } from "../../../apis/Entities/Account";
 import { Tag } from "../../../apis/Entities/Tag";
 import DeactivateAccountModal from "./DeactivateAccountModal";
 import { getAllTags } from '../../../apis/Tag/TagApis';
+import { updateAccount } from '../../../apis/Account/AccountApis';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         input: {
             display: 'none',
-        },
-        // root: {
-        //     '& .MuiProfileSettingField-root': {
-        //         margin: theme.spacing(2),
-        //         width: '25ch',
-        //     },
-        // },
+        }
     }),
 );
 
+interface IErrors<TValue> {
+    [id: string]: TValue;
+}
 
 function ProfileSettings(props: any) {
 
     const [myAccount, setMyAccount] = useState<Account>();
     const [showPassword, setShowPassword] = useState<Boolean>(false);
-    const [password, setPassword] = useState<String | null>('');
-    const [interests, setInterests] = useState<String[]>([]);
-    const [name, setName] = useState<String>("");
-    const [email, setEmail] = useState<String>("");
-    const [bio, setBio] = useState<String>("");
+    const [password, setPassword] = useState<string | null>("");
+    const [interests, setInterests] = useState<string[]>([]);
+    const [name, setName] = useState<string>("");
+    const [email, setEmail] = useState<string>("");
+    const [bio, setBio] = useState<string>("");
     const [isActive, setIsActive] = useState<Boolean>();
     const [tagLibrary, setTagLibrary] = useState<Tag[]>([]);
+    const [displayPictureUrl, setDisplayPictureUrl] = useState<Tag[]>([]);
+    var [errors, setErrors] = useState<IErrors<any>>({
+        name: "",
+        username: "",
+        email: "",
+        password: "",
+        btnTags: "",
+        signUp: ""
+    });
     const classes = useStyles();
+    const [openSnackbar, setOpenSnackbar] = React.useState(false);
+    const history = useHistory();
 
     useEffect(() => {
         setMyAccount(props.account)
@@ -51,13 +65,44 @@ function ProfileSettings(props: any) {
             setBio(props.account.bio)
             setIsActive(props.account.isActive)
             setInterests(props.account.interests.map((x: Tag) => x.title))
-
+            setDisplayPictureUrl(props.account.displayPictureUrl)
         }
         getAllTags().then(res => setTagLibrary(res)).catch(error => console.log("error getting tags."))
     }, [props.account])
 
-    const save = () => {
-        
+    const handleSave = () => {
+        console.log("displayPictureURL", displayPictureUrl)
+        const updatedAccountObject: Account = {
+            accountId: props.account.accountId,
+            username: props.account.username,
+            name,
+            bio,
+            email,
+            password,
+            displayPictureUrl: props.account.displayPictureUrl,
+            isAdmin: props.account.isAdmin,
+            isActive: props.account.isActive,
+            interests: props.account.interests,
+            enrolledCourses: props.account.enrolledCourses,
+            courses: props.account.courses,
+            studentAttempts: props.account.studentAttempts,
+            stripeAccountId: props.account.stripeAccountId,
+        }
+        console.log('xx', updatedAccountObject)
+
+        const updateAccountReq = {
+            account: updatedAccountObject,
+            password: password,
+            tagTitles: interests,
+            enrolledCourseIds: null,
+            courseIds: null,
+            forumThreadIds: null,
+            forumPostIds: null,
+            studentAttemptIds: null,
+        }
+        //@ts-ignore
+        updateAccount(updateAccountReq, displayPictureUrl).then((res) => { history.push("/profile") }).catch(err => { console.log("error", err) })
+
     }
 
     const displayPictureURL = () => {
@@ -73,16 +118,53 @@ function ProfileSettings(props: any) {
     const handleClickShowPassword = () => {
         setShowPassword(!showPassword)
     };
-    const handleAddChip = (interest: string) => {
-        interests.push(interest)
-        setInterests(interests)
+
+    const handleValidation = () => {
+        let formIsValid = true;
+        errors = {};
+
+        //Name
+        if (name === "") {
+            formIsValid = false;
+            errors["name"] = true;
+        }
+        //Email
+        if (email === "") {
+            formIsValid = false;
+            errors["email"] = true;
+        }
+        if (typeof email !== "undefined") {
+            let lastAtPos = email.lastIndexOf('@');
+            let lastDotPos = email.lastIndexOf('.');
+            if (!(lastAtPos < lastDotPos && lastAtPos > 0 && email.indexOf('@@') === -1 && lastDotPos > 2 && (email.length - lastDotPos) > 2)) {
+                formIsValid = false;
+                errors["email"] = true;
+            }
+        }
+
+        //Password
+        if (password === "") {
+            formIsValid = false;
+            errors["password"] = true;
+        }
+
+        setErrors(errors);
+        if (formIsValid) {
+            handleSave();
+        }
+        console.log('validate', formIsValid)
+        return formIsValid;
+    }
+
+    const handleSnackbar = () => {
+        setOpenSnackbar(!openSnackbar);
     };
 
-    const handleChipChange = (e: object, value: String[], reason: string) => {
+    const handleChipChange = (e: object, value: string[], reason: string) => {
         console.log(value)
         setInterests(value)
     }
-    
+
     const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
     };
@@ -108,28 +190,12 @@ function ProfileSettings(props: any) {
                                     {avatarInitials()}
                                 </ProfileInitials>
                             </ProfileAvatar>
-                            <input
-                                accept="image/*"
-                                className={classes.input}
-                                id="contained-button-file"
-                                multiple
-                                type="file"
-                            />
-                            <label htmlFor="contained-button-file">
-                                <Button 
-                                    variant="contained" 
-                                    color="primary" 
-                                    component="span"                                    
-                                    style={{ margin: "10px" }}>
-                                    Change Display Picture
-                                </Button>
-                            </label>
-                            <ProfileSubText style={{textAlign:"center"}}>Status: <Chip variant="outlined" label={isActive ? "Activated" : "Deactivated"} style={{ color: isActive ? "green" : "red", border: isActive ? "1px solid green" : "1px solid red" }} /></ProfileSubText>
+                            <ProfileSubText style={{ textAlign: "center" }}>Status: <Chip variant="outlined" label={isActive ? "Activated" : "Deactivated"} style={{ color: isActive ? "green" : "red", border: isActive ? "1px solid green" : "1px solid red" }} /></ProfileSubText>
                             <DeactivateAccountModal account={myAccount} style={{ margin: "auto" }} />
                         </div>
                         <div style={{ margin: "20px" }}>
-                            <ProfileSettingField style={{ margin: "0 0 10px 0" }} label="Name" value={name} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setName(e.target.value)} />
-                            <ProfileSettingField style={{ margin: "0 0 10px 0" }} label="Email" value={email} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setEmail(e.target.value)} />
+                            <ProfileSettingField error={errors["name"]} style={{ margin: "0 0 10px 0" }} label="Name" value={name} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setName(e.target.value)} />
+                            <ProfileSettingField error={errors["email"]} style={{ margin: "0 0 10px 0" }} label="Email" value={email} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setEmail(e.target.value)} />
                             <ProfileSettingField style={{ margin: "0 0 10px 0" }} label="Bio" value={bio} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setBio(e.target.value)} />
                             <InputLabel
                                 style={{
@@ -141,6 +207,7 @@ function ProfileSettings(props: any) {
                                 }}
                                 htmlFor="standard-adornment-password">Password</InputLabel>
                             <Input
+                                error={errors["password"]}
                                 id="standard-adornment-password"
                                 type={showPassword ? 'text' : 'password'}
                                 value={password}
@@ -158,47 +225,77 @@ function ProfileSettings(props: any) {
                                     </InputAdornment>
                                 }
                             />
-                            <label style={{
-                                    color: "rgba(0, 0, 0, 0.54)",
-                                    padding: "0",
-                                    fontSize: "0.75rem",
-                                    lineHeight: "1",
-                                    letterSpacing: "0.00938em"
-                                }}>Interests</label>
                             <Autocomplete
-                                    multiple
-                                    options={tagLibrary.map((option) => option.title)}
-                                    defaultValue={[]}
-                                    onChange={handleChipChange}
-                                    freeSolo
-                                    renderTags={(value: string[], getTagProps) =>
-                                        value.map((option: string, index: number) => (
-                                            <Chip variant="outlined" label={option} {...getTagProps({ index })} />
-                                        ))
-                                    }
-                                    renderInput={(params) => (
-                                        <TextField {...params} variant="filled" label="What subjects are you interested in?" />
-                                    )}
-                                />
+                                multiple
+                                options={tagLibrary.map((option) => option.title)}
+                                value={interests}
+                                onChange={handleChipChange}
+                                freeSolo
+                                renderTags={(value: string[], getTagProps) =>
+                                    value.map((option: string, index: number) => (
+                                        <Chip variant="outlined" label={option} {...getTagProps({ index })} />
+                                    ))
+                                }
+                                renderInput={(params) => (
+                                    <TextField {...params} variant="standard" label="Interests" />
+                                )}
+                            />
+                            <FormControl fullWidth margin="normal" style={{ display: "flex", flexDirection: "row" }}>
+                                <Grid xs={10}>
+                                    <TextField id="banner-image-name" fullWidth disabled value={displayPictureUrl} label="Display Picture"></TextField>
+                                </Grid>
+                                <Grid xs={3} style={{ display: "flex", alignItems: "center" }}>
+                                    <Button variant="contained" component="label">
+                                        Upload
+                                <input
+                                            id="banner-image-upload"
+                                            type="file"
+                                            accept="image/*"
+                                            hidden
+                                            onChange={e => {
+                                                // @ts-ignore
+                                                setDisplayPictureUrl(e.target.files[0])
+                                            }}
+                                        />
+                                    </Button>
+                                </Grid>
+                            </FormControl>
                             <div style={{ display: "flex", flexDirection: "row-reverse" }}>
                                 <Button style={{ margin: "10px 0 10px 0" }}
                                     primary
-                                    onClick={save}>
+                                    onClick={handleValidation}>
                                     Save
-                                </Button>                                
+                                </Button>
                                 <div style={{ width: "10px" }}></div>
-                                <Button 
+                                <Button
                                     style={{ margin: "10px 0 10px 0" }}
                                     to="/profile"
-                                    >
+                                >
                                     Cancel
-                                </Button>                                
+                                </Button>
                             </div>
-                        </div>                        
+                        </div>
                     </form>
-                    
+
                 </ProfileCard>
             }
+            <Snackbar
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                }}
+                open={openSnackbar}
+                autoHideDuration={6000}
+                onClose={handleSnackbar}
+                message="Profile Updated."
+                action={
+                    <React.Fragment>
+                        <IconButton size="small" aria-label="close" color="inherit" onClick={handleSnackbar}>
+                            <CloseIcon fontSize="small" />
+                        </IconButton>
+                    </React.Fragment>
+                }
+            />
         </>
     )
 }
