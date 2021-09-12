@@ -194,9 +194,9 @@ function StudentView(props: any) {
             return (
               <Step key={label} {...stepProps}>
                 <StepLabel {...labelProps} StepIconComponent={StepIconPopulation}>
-                  <Link onClick={handleStepClick}>
+                  {/* <Link onClick={handleStepClick}> */}
                     {label}
-                  </Link>
+                  {/* </Link> */}
                 </StepLabel>
               </Step>
 
