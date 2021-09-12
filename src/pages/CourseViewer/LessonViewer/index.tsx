@@ -5,16 +5,21 @@ import { getCourseByCourseId } from "../../../apis/Course/CourseApis";
 import { getLessonByLessonId } from "../../../apis/Lesson/LessonApis";
 import { getMyAccount } from "../../../apis/Account/AccountApis";
 import { getEnrolledLesson } from "../../../apis/EnrolledLesson/EnrolledLessonApis";
+import { getNumberOfStudentAttemptsLeft } from "../../../apis/StudentAttempt/StudentAttemptApis"
+import { getAllQuizzesWithStudentAttemptCountByEnrolledLessonId } from "../../../apis/Quiz/QuizApis";
 
 import { Course } from "../../../apis/Entities/Course";
 import { Lesson } from "../../../apis/Entities/Lesson";
 import { Account } from "../../../apis/Entities/Account";
 import { EnrolledLesson } from "../../../apis/Entities/EnrolledLesson";
+import { QuizWithStudentAttemptCountResp } from "../../../apis/Entities/Quiz"
 
 import { Button } from "../../../values/ButtonElements";
 
 import {
   LessonContainer,
+  PageHeadingAndButton,
+  PageHeading,
   LessonTitle,
   CourseTitle,
   LessonCard,
@@ -31,7 +36,10 @@ import {
   QuizDescription,
   QuizDescriptionTwo,
   CheckIcon,
-  BtnWrapper
+  BtnWrapper,
+  ExitWrapper,
+  ExitIcon,
+  ExitText
 } from "./LessonViewerElements";
 import Sidebar from "../Sidebar/Sidebar";
 
@@ -42,6 +50,7 @@ function LessonViewer(props: any) {
   const [currentLesson, setLesson] = useState<Lesson>();
   const [currentUser, setUser] = useState<Account>();
   const [enrolledLesson, setEnrolledLesson] = useState<EnrolledLesson>();
+  const [quizAttempts, setQuizAttempts] = useState<QuizWithStudentAttemptCountResp[]>();
   const history = useHistory();
   const accountId = JSON.parse(
     window.sessionStorage.getItem("loggedInAccountId") || "{}"
@@ -88,35 +97,41 @@ function LessonViewer(props: any) {
     });
   }, []);
 
+  useEffect(() => {
+    getAllQuizzesWithStudentAttemptCountByEnrolledLessonId(lessonId).then(receivedQuizAttempts => {
+      setQuizAttempts(receivedQuizAttempts);
+    });
+  }, []);
+
   let isCourseTutor =
     currentCourse?.tutor.accountId === currentUser?.accountId ? true : false;
 
-  console.log(isCourseTutor)
 
-  let lessonQuizzes = currentLesson?.quizzes;
   let lessonMultimedias = currentLesson?.multimedias;
 
   function checkCompleted(contentId: number): boolean {
     let enrolledContent = enrolledLesson?.enrolledContents.find(
       i => i.parentContent?.contentId === contentId
     );
-    console.log(enrolledContent);
-
     if (enrolledContent?.dateTimeOfCompletion !== null || isCourseTutor) {
       return true;
     }
     return false;
   }
 
-  /**function quizCompleted(contentId: number): booelan {
-
-  }*/
 
   return (
     <>
       <LessonContainer>
-        <LessonTitle>Week {currentLesson?.sequence}</LessonTitle>
-        <CourseTitle>{currentCourse?.name}</CourseTitle>
+      <PageHeadingAndButton>
+        <PageHeading>
+          <LessonTitle>Week {currentLesson?.sequence}</LessonTitle>
+          <CourseTitle>{currentCourse?.name}</CourseTitle> 
+        </PageHeading>
+        <ExitWrapper to={`/overview/${currentCourse?.courseId}`}>
+            <ExitIcon />
+        </ExitWrapper>
+      </PageHeadingAndButton>
         <LessonCard>
           <LessonHeader>Lesson Overview</LessonHeader>
           <LessonDescription>{currentLesson?.description}</LessonDescription>
@@ -146,19 +161,19 @@ function LessonViewer(props: any) {
           <LessonHeader>Quiz</LessonHeader>
           <QuizHeading>{}</QuizHeading>
           <QuizWrapper>
-            {lessonQuizzes?.map(q => {
+            {quizAttempts?.map(q => {
               return (
                 <>
                   <QuizRow>
                     <QuizSubheader>TIME LIMIT:</QuizSubheader>
                     <QuizDescription>{q.timeLimit} H</QuizDescription>
                     <BtnWrapper>
-                      {checkCompleted(q.contentId) &&
+                      {q.studentAttemptCount == 0 &&
                       <Button disabled>
                         Start
                       </Button>
                       }
-                      {!checkCompleted(q.contentId) &&
+                      {q.studentAttemptCount > 0 &&
                       <Button primary={true} big={false} fontBig={false} disabled={false}>
                         Start
                       </Button>

@@ -25,7 +25,7 @@ function Sidebar(props: any) {
             <CourseBanner src="/chessplaceholder.png" alt={currentCourse.name}/>
         </CourseBannerWrapper>
         <SidebarMenu>
-          <SidebarLink>Overview</SidebarLink>
+          <SidebarLink to={`/overview/${currentCourse.courseId}`}>Overview</SidebarLink>
           {allLessons?.map(lesson => {
             return (
               <LessonLink key={lesson.lessonId}>

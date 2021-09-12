@@ -188,7 +188,6 @@ function StudentView(props: any) {
     });
   }, []);
 
-
   const displayPictureURL = () => {
     return myAccount?.displayPictureUrl ? myAccount?.displayPictureUrl : "";
   }
@@ -248,7 +247,7 @@ function StudentView(props: any) {
         <RatingTitle>Passing Requirement</RatingTitle>
         <RatingDescription>You need to pass all graded quizzes to complete this course</RatingDescription>
         <RatingTitle>Course Rating</RatingTitle>
-        <CourseRatingWrapper>⭐ ⭐ ⭐</CourseRatingWrapper>
+        <Rating name="read-only" value={currentCourse.courseRating} readOnly />
         <RatingTitle>Categories</RatingTitle>
         <TagWrapper>
           {currentCourse?.courseTags.map(tag => (

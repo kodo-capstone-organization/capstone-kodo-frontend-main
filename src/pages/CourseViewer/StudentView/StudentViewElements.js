@@ -111,6 +111,7 @@ export const TagWrapper = styled.div`
 
 export const TagChip = styled(Chip)`
   color: ${colours.BLUE2};
+  margin-right: 12px;
   min-width: 80px;
 `;
 

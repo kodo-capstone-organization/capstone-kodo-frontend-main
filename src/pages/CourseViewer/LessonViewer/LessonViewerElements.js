@@ -5,6 +5,7 @@ import PlayCircleFilledIcon from "@material-ui/icons/PlayCircleFilled";
 import { colours } from "../../../values/Colours";
 import { fontSizes } from "../../../values/FontSizes";
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
 
 export const LessonContainer = styled.div`
   display: flex;
@@ -16,14 +17,22 @@ export const LessonContainer = styled.div`
   }
 `;
 
+export const PageHeadingAndButton = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+`
+
+export const PageHeading = styled.div`
+  padding-left:19px;
+`
+
 export const LessonTitle = styled.div`
-  padding-left: 19px;
   font-size: ${fontSizes.HEADER};
   color: ${colours.GRAY3};
 `;
 
 export const CourseTitle = styled.div`
-  padding-left: 19px;
   font-size: ${fontSizes.SUBHEADER};
   color: ${colours.GRAY4};
 `;
@@ -145,3 +154,17 @@ export const BtnWrapper = styled.div`
   margin-left: 1rem;
   margin-top: -8px;
 `
+
+export const ExitWrapper = styled(Link)`
+  display: flex;
+`
+
+export const ExitIcon = styled(CancelOutlinedIcon)`
+  color: ${colours.BLUE2};
+  padding: 2rem;
+`
+
+export const ExitText = styled.p`
+
+`
+

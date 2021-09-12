@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { CardMedia } from "@material-ui/core";
-import { CourseCardWrapper, CourseCardContent } from "./CourseCardElements";
+import { CourseCardWrapper, CourseCardContent, TypoGraphyCustom } from "./CourseCardElements";
 import { Course } from "../../apis/Entities/Course";
 import Chip from "@material-ui/core/Chip";
 
@@ -42,7 +42,7 @@ function CourseCard(props: any) {
                 />
                 <CourseCardContent>
                     <div style={{ display: "flex", flexDirection: "row"}}>
-                        <Typography>{course?.name} &nbsp;</Typography>
+                        <TypoGraphyCustom>{course?.name} &nbsp;</TypoGraphyCustom>
                         { !course?.isEnrollmentActive && myCourseView &&
                             <Chip
                                 variant="outlined"
@@ -60,13 +60,13 @@ function CourseCard(props: any) {
                             />
                         }
                     </div>
-                    <Typography
+                    <TypoGraphyCustom
                         variant="body2"
                         color="textSecondary"
                         component="p"
                     >
                         {course?.tutor?.name || "" }
-                    </Typography>
+                    </TypoGraphyCustom>
                 </CourseCardContent>
             </CardActionArea>
         </CourseCardWrapper>

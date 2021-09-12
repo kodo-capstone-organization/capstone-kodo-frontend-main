@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from "react";
 import {
   getEnrolledCourseByStudentIdAndCourseId,
-  setCourseRatingByEnrolledCourseId
+  setCourseRatingByEnrolledCourseId,
+  getEnrolledCoursesWithStudentCompletion
 } from "../../../apis/EnrolledCourse/EnrolledCourseApis";
 import { getAccountByEnrolledCourseId } from "../../../apis/Account/AccountApis";
-import { EnrolledCourse } from "../../../apis/Entities/EnrolledCourse";
+import { EnrolledCourse, EnrolledCourseWithStudentResp } from "../../../apis/Entities/EnrolledCourse";
 import { Course } from "../../../apis/Entities/Course";
 import { Account } from "../../../apis/Entities/Account";
 import { EnrolledLesson } from "../../../apis/Entities/EnrolledLesson";
 import { Button } from "../../../values/ButtonElements";
+
 
 import {
   TutorContainer,
@@ -53,10 +55,18 @@ const useStyles = makeStyles({
 
 function TutorView(props: any) {
   const [currentCourse, setCourse] = useState<Course>({ ...props.course });
-  const [student, setStudent] = useState<Account>();
+  const [enrolledStudentsAndCompleteion, setEnrolledStudentsAndCompletion] = useState<EnrolledCourseWithStudentResp[]>();
+  
   useEffect(() => {
     setCourse(props.course);
   }, []);
+
+  useEffect(() => {
+    getEnrolledCoursesWithStudentCompletion(currentCourse.courseId).then(receivedList => {
+      setEnrolledStudentsAndCompletion(receivedList);
+    });
+  }, []);
+
 
   let courseEnrollment = currentCourse.enrollment;
   console.log(courseEnrollment);
@@ -70,10 +80,6 @@ function TutorView(props: any) {
       }
     }
     return (completed / total) * 100;
-  }
-
-  async function getName(enrolledCourse: EnrolledCourse) {
-    //getAccountByEnrolledCourseId(enrolledCourse.enrolledCourseId)
   }
 
   return (
@@ -91,12 +97,12 @@ function TutorView(props: any) {
       <StudentProgressCard>
         <CardTitle>Students</CardTitle>
         <StudentProgressWrapper>
-          {courseEnrollment.map(enrolledCourse => {
+          {enrolledStudentsAndCompleteion?.map(enrolledCourse => {
             return (
               <>
-              <p>Name</p>
+                <p>{enrolledCourse.studentName}</p>
                 <LinearProgressWithLabel
-                  value={getPercentage(enrolledCourse.enrolledLessons)}
+                  value={enrolledCourse.completionPercentage * 100}
                 />
               </>
             );
