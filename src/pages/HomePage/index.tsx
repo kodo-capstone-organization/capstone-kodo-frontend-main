@@ -28,22 +28,21 @@ function HomePage(props: any) {
                 flexDirection: "column",
             }}
             >
-                <div style={{display: "flex", marginTop:"200px"}}>
+                <div style={{display: "flex", marginTop:"100px"}}>
                     <img src={img} alt="people-image" style={{height: "350px"}}/>
                     <MenuBtn>
-                        <Title>Start Your Coding <br /> Journey with Kodo</Title>
-                        <Button primary={true} big={true} fontBig={true} to="/signup">Sign Up</Button>
+                        <Title>Start Your Coding<br /> Journey with Kodo</Title>
+                        <Button primary big fontBig to="/signup">Sign Up</Button>
                     </MenuBtn>
                 </div>
 
                 <br />
-                <Title>What is Kodo?</Title>
-                <TextBox primary={true}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-                incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-                exercitation ullamco laboris nisi ut aliquip ex ea commodoconsequat. Duis aute irure
-                dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-                Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit
-                        anim id est laborum.</TextBox>
+                <TextBox primary>
+                    <Title>Why Kodo?</Title>
+                    <h3>
+                        Kodo boasts a catalogue of computing-related courses to specifically address market shifts towards a digital world.
+                    </h3>
+                </TextBox>
                 <Container>
                     <InfoCard primary>
                         <h2><b>Computing-centric</b></h2>

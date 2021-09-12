@@ -70,6 +70,7 @@ export const ProfileCardContent = styled(CardContent)`
 
 export const ProfileCardActions = styled(CardActions)`
     padding: 1rem 2rem !important;
+    flex-wrap: wrap;
 `;
 
 export const ProfileAvatar = styled(Avatar)`

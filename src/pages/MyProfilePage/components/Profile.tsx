@@ -17,7 +17,6 @@ import { createStripeAccount } from '../../../apis/Stripe/StripeApis';
 import { EnrolledCourse } from '../../../apis/Entities/EnrolledCourse';
 import { CourseWrapper } from '../../BrowseCourse/BrowseCoursePage/BrowseCourseElements';
 import CourseCard from '../../../components/CourseCard';
-import { Alert } from '@material-ui/lab';
 
 
 const formReducer = (state: any, event: any) => {
