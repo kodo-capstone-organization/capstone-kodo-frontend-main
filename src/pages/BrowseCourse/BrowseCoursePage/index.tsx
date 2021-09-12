@@ -93,19 +93,24 @@ function BrowseCourse() {
     return tags.every(t => result.includes(t.toLowerCase()));
   }
 
-  /** 
-  function handleSelectedTags(items: any) {
-      setTags(items);
-  }
-  */
-
+  // This method is to be integrated after Theo finishes new recommended query
   function getSuggestedTags(coursesRecommended: Course[]) {
     const tagArray = []
     for (var course of coursesRecommended) {
-      tagArray.push(course.courseTags)
+      for (var tag of course.courseTags) {
+        tagArray.push(tag.title)
+      }
     }
+    var uniqueArr = tagArray.filter(function(elem, index, self) {
+      return index === self.indexOf(elem);
+    })
+    console.log(uniqueArr)
+    return(uniqueArr)
   }
-
+  /*
+  if (coursesRecommended) {
+    console.log(getSuggestedTags(coursesRecommended))
+  }*/
 
   return (
     //This would encompass the whole container for component
