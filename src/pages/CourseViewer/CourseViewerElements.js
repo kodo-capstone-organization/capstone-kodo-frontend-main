@@ -5,5 +5,4 @@ export const LayoutContainer = styled.div`
   display: flex;
   flex-direction: row;
   background: ${colours.WHITE};
-
 `

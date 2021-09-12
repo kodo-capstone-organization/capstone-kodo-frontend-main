@@ -1,9 +1,8 @@
 import { IHttpClientRequestParameters } from "./../HttpClient/IHttpClientRequestParameters";
 import { Course, RecommendedCoursesWithTags, ToggleCourseResp, UpdateCourseReq } from "../Entities/Course";
 import { httpClient } from "../HttpClient/HttpClient";
-import { CreateNewAccountReq } from "../Entities/Account";
+import { CreateNewCourseReq } from "../Entities/Course";
 import { transformToBlob } from "../../utils/BlobCreator";
-import { EnrolledCourseWithStudentResp } from "../Entities/EnrolledCourse";
 
 export async function getAllCourses(): Promise<Course[]> {
     const getParameters: IHttpClientRequestParameters<undefined> = {
@@ -38,7 +37,7 @@ export async function getCourseByTagTitle(tagTitle: string): Promise<Course[]> {
 }
 
 
-export async function createNewCourse(createNewCourseReq: CreateNewAccountReq, bannerPicture: File | null): Promise<Course> {
+export async function createNewCourse(createNewCourseReq: CreateNewCourseReq, bannerPicture: File | null): Promise<Course> {
     const formData = new FormData();
 
     formData.append('course', transformToBlob(createNewCourseReq));

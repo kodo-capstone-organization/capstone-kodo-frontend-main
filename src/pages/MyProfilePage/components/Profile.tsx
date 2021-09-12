@@ -9,7 +9,6 @@ import LocalAtmIcon from '@material-ui/icons/LocalAtm';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import { Account } from "../../../apis/Entities/Account";
 import { Button } from '../../../values/ButtonElements';
-import ChipInput from 'material-ui-chip-input';
 import { createNewCourse } from '../../../apis/Course/CourseApis';
 import { Course } from '../../../apis/Entities/Course';
 import Chip from '@material-ui/core/Chip';
@@ -17,6 +16,9 @@ import { createStripeAccount } from '../../../apis/Stripe/StripeApis';
 import { EnrolledCourse } from '../../../apis/Entities/EnrolledCourse';
 import { CourseWrapper } from '../../BrowseCourse/BrowseCoursePage/BrowseCourseElements';
 import CourseCard from '../../../components/CourseCard';
+import { Autocomplete } from '@material-ui/lab';
+import { Tag } from '../../../apis/Entities/Tag';
+import { getAllTags } from '../../../apis/Tag/TagApis';
 
 
 const formReducer = (state: any, event: any) => {
@@ -25,7 +27,7 @@ const formReducer = (state: any, event: any) => {
             tutorId: null,
             name: '',
             description: '',
-            price: null,
+            price: 0,
             tagTitles: []
         }
     }
@@ -44,10 +46,18 @@ function Profile(props: any) {
     const [courseFormData, setCourseFormData] = useReducer(formReducer, {});
     const [courseBannerImageFile, setCourseBannerImageFile] = useState<File|null>(null);
     const [createCourseLoading, setCreateCourseLoading] = useState<boolean>(false);
+    const [tagLibrary, setTagLibrary] = useState<Tag[]>([]);
 
     /***********************
      * Use Effects         *
      ***********************/
+
+    useEffect(() => {
+        setCourseFormData({ reset: true })
+        getAllTags()
+            .then((res: any) => setTagLibrary(res))
+            .catch(() => console.log("error getting tags"))
+    }, [])
 
     useEffect(() => {
         setMyAccount(props.account)
@@ -88,11 +98,11 @@ function Profile(props: any) {
         });
     }
 
-    const handleChipInputChange = (newTagTitles: object) => {
+    const handleChipInputChange = (e: object, value: String[], reason: string) => {
         let wrapperEvent = {
             target: {
                 name: "tagTitles",
-                value: newTagTitles
+                value: value
             }
         }
         return handleFormDataChange(wrapperEvent);
@@ -328,7 +338,8 @@ function Profile(props: any) {
                         <Input
                             id="course-price"
                             name="price"
-                            value={courseFormData.price || 0 }
+                            defaultValue={0}
+                            value={courseFormData.price}
                             onChange={handleFormDataChange}
                             type="number"
                             inputProps={{
@@ -364,9 +375,20 @@ function Profile(props: any) {
                         Now add some tags to your course! You can use spaces in your tags.
                     </DialogContentText>
                     <FormControl fullWidth>
-                        <ChipInput
-                            id="course-tags"
-                            onChange={(newChips) => handleChipInputChange(newChips)}
+                        <Autocomplete
+                            multiple
+                            options={tagLibrary.map((tag) => tag.title)}
+                            defaultValue={[]}
+                            onChange={handleChipInputChange}
+                            freeSolo
+                            renderTags={(value: string[], getTagProps) =>
+                                value.map((tagTitle: string, index: number) => (
+                                    <Chip variant="outlined" label={tagTitle} {...getTagProps({ index })} />
+                                ))
+                            }
+                            renderInput={(params) => (
+                                <TextField {...params} label="Course Tags" />
+                            )}
                         />
                     </FormControl>
                 </DialogContent>

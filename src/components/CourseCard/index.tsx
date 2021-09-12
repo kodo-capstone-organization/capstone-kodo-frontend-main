@@ -1,4 +1,4 @@
-import { CardActionArea, Typography } from "@material-ui/core";
+import { CardActionArea } from "@material-ui/core";
 import { useEffect } from "react";
 import { useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
@@ -19,10 +19,9 @@ function CourseCard(props: any) {
         setMyCourseView(props.myCourseView)
         setIsCourseCompleted(props.isCourseCompleted)
         setRedirectUrlBase(props.redirectUrlBase)
-    }, [props.course])
+    }, [props.course, props.isCourseCompleted, props.myCourseView, props.redirectUrlBase])
 
     const handleImageError = (e: any) => {
-        console.log("image error")
         e.target.onerror = null;
         e.target.src = "/chessplaceholder.png"
     }
