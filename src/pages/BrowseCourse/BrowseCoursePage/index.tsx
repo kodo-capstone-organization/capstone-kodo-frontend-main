@@ -3,6 +3,9 @@ import { Course } from "../../../apis/Entities/Course";
 import { Account } from "../../../apis/Entities/Account";
 import { getAllCourses, getCoursesToRecommend } from "../../../apis/Course/CourseApis";
 import { getMyAccount } from "../../../apis/Account/AccountApis";
+import { getAllTags } from '../../../apis/Tag/TagApis';
+import { Tag } from "../../../apis/Entities/Tag";
+
 
 import {
   BrowseContainer,
@@ -14,9 +17,12 @@ import {
 } from "./BrowseCourseElements";
 
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
-import TextField from "@material-ui/core/TextField";
 import ChipInput from "material-ui-chip-input";
 import CourseCard from "../../../components/CourseCard";
+import { Autocomplete } from "@material-ui/lab";
+import {
+  Typography, TextField, Chip
+} from "@material-ui/core";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -39,6 +45,8 @@ function BrowseCourse() {
   const [tags, setTags] = useState<string[]>([]);
   const [coursesRecommended, setCoursesRecommended] = useState<Course[]>();
   const [myAccount, setAccount] = useState<Account>();
+  const [tagLibrary, setTagLibrary] = useState<Tag[]>([]);
+
 
   const accountId = JSON.parse(
     window.sessionStorage.getItem("loggedInAccountId") || "{}"
@@ -49,6 +57,10 @@ function BrowseCourse() {
       setCourses(allCourses);
     });
   }, []);
+
+  useEffect(() => {
+    getAllTags().then(res => setTagLibrary(res)).catch(error => console.log("error getting tags."))
+}, [])
 
   useEffect(() => {
     getCoursesToRecommend(accountId).then(receivedCourses => {
@@ -86,6 +98,16 @@ function BrowseCourse() {
       setTags(items);
   }
   */
+
+/*
+  function getSuggestedTags(coursesRecommended: Course[]) {
+    const tagArray = []
+    for (var course of coursesRecommended) {
+      tagTitleArray.push(course.)
+    }
+  }
+*/
+
 
   return (
     //This would encompass the whole container for component

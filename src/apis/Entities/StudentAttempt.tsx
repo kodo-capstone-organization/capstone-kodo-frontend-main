@@ -6,3 +6,8 @@ export interface StudentAttempt {
     dateTimeOfCompletion: Date,
     quiz: Quiz
 }
+
+export interface GetNumberOfStudentAttemptsLeftReq {
+    accountId: number,
+    quizId: number,
+}
