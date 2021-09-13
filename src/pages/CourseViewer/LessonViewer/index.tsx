@@ -57,8 +57,8 @@ function LessonViewer(props: any) {
   const [currentLesson, setLesson] = useState<Lesson>();
   const [currentUser, setUser] = useState<Account>();
   const [enrolledLesson, setEnrolledLesson] = useState<EnrolledLesson>();
-  const [enrolledCourse, setEnrolledCourse] = useState<EnrolledCourse>();
   const [quizAttempts, setQuizAttempts] = useState<QuizWithStudentAttemptCountResp[]>();
+  const [enrolledCourse, setEnrolledCourse] = useState<EnrolledCourse>();
   const [previousLesson, setPreviousLesson] = useState<EnrolledLesson>();
   const accountId = JSON.parse(
     window.sessionStorage.getItem("loggedInAccountId") || "{}"
@@ -92,10 +92,21 @@ function LessonViewer(props: any) {
   }, []);
 
 
-  let allEnrolledLessons = enrolledCourse?.enrolledLessons;
-  if (allEnrolledLessons && enrolledLesson && enrolledLesson?.parentLesson.sequence > 1) {
-    setPreviousLesson(allEnrolledLessons[(enrolledLesson.parentLesson.sequence) - 2])
+  function previousLessonCompleted(): boolean {
+   let allEnrolledLessons = enrolledCourse?.enrolledLessons;
+   if (allEnrolledLessons && enrolledLesson && enrolledLesson?.parentLesson.sequence > 1) {
+     let sequence = enrolledLesson.parentLesson.sequence
+     let pLesson = allEnrolledLessons[sequence - 2];
+     if (pLesson.dateTimeOfCompletion !== null) {
+       return true;
+     } else {
+       return false;
+     }
+    }
+    return true;
   }
+   
+  console.log(enrolledCourse)
 
   let isCourseTutor =
     currentCourse?.tutor.accountId === currentUser?.accountId ? true : false;
@@ -140,6 +151,7 @@ function LessonViewer(props: any) {
                 <ContentLink
                   key={m.contentId}
                   isCompleted={checkCompleted(m.contentId)}
+                  isUnlocked={previousLessonCompleted()}
                 >
                   {m.multimediaType === "PDF" ? <ReadingIcon /> : <PlayIcon />}
                   {m.multimediaType === "PDF" ? "Reading" : "Video"}: {m.name}
