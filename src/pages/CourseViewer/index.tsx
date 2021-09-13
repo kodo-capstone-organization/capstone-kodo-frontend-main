@@ -16,7 +16,7 @@ function CourseOverview(props: any) {
   const courseId = props.match.params.courseId;
   const [currentUser, setUser] = useState<Account>();
   const [currentCourse, setCourse] = useState<Course>();
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<Boolean>(true);
 
   const accountId = JSON.parse(
     window.sessionStorage.getItem("loggedInAccountId") || "{}"
@@ -65,7 +65,7 @@ function CourseOverview(props: any) {
     <MessageContainer><CircularProgress /></MessageContainer>
   );
 
-  if (!courseIsEnrolled() && !isCourseTutor()) return (
+  if (currentUser && currentCourse && !courseIsEnrolled() && !isCourseTutor()) return (
     <>
     <MessageContainer isEnrolled={courseIsEnrolled()} isTutor={isCourseTutor()}>
       <Message>You are not enrolled in this course 😡</Message>

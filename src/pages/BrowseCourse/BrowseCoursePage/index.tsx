@@ -18,10 +18,14 @@ import {
   CourseTags,
   TagChip,
   TagsContainer,
-  SearchContainer
+  SearchContainer,
+  Message,
+  MessageContainer,
+  
 } from "./BrowseCourseElements";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import ChipInput from "material-ui-chip-input";
+import CircularProgress from '@material-ui/core/CircularProgress';
 import { TextField, Tabs, Tab, Link, Chip } from "@material-ui/core";
 import { colours } from "../../../values/Colours";
 import BrowseCourseTabPanel from "./components/BrowseCourseTabPanel";
@@ -41,37 +45,32 @@ function BrowseCourse() {
   const [myAccount, setAccount] = useState<Account>();
   const [tab, setTab] = useState<number>(0); // track tab index
   const [tagLibrary, setTagLibrary] = useState<Tag[]>([]);
+  const [loading, setLoading] = useState<Boolean>(true);
 
   const accountId = JSON.parse(
     window.sessionStorage.getItem("loggedInAccountId") || "{}"
   );
 
   useEffect(() => {
+    setLoading(true);
     getAllCourses().then(allCourses => {
       setCourses(allCourses);
     });
-  }, []);
-
-  useEffect(() => {
     getCoursesToRecommend(accountId, recommendationLimit).then(
       (receivedCoursesWithTags: RecommendedCoursesWithTags) => {
         setCoursesRecommended(receivedCoursesWithTags.courses);
         setTagsRecommended(receivedCoursesWithTags.tags);
       }
     );
-  }, []);
-
-  useEffect(() => {
     getMyAccount(accountId).then(receivedAccount => {
       setAccount(receivedAccount);
     });
-  }, []);
-
-  useEffect(() => {
     getAllTags()
       .then(res => setTagLibrary(res))
       .catch(error => console.log("error getting tags."));
+    setLoading(false);
   }, []);
+
 
   /** HELPER METHODS */
   const handleChipChange = (e: object, value: string[], reason: string) => {
@@ -127,6 +126,11 @@ function BrowseCourse() {
       }
     ];
   };
+
+  if (loading) return (
+    <MessageContainer><CircularProgress /></MessageContainer>
+  );
+  
 
   return (
     <>

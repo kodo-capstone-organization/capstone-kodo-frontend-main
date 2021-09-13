@@ -66,5 +66,18 @@ export const SearchContainer = styled.form`
     display: flex;
 `
 
+export const MessageContainer = styled.div`
+  display: flex;
+  margin: 150px;
+  padding: 150px;
+  align-items: center;
+  justify-content: center;
+`
+
+export const Message = styled.h1`
+  display: flex;
+  color: ${colours.BLUE1}
+`
+
 
 

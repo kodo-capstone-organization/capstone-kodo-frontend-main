@@ -10,7 +10,7 @@ export const LayoutContainer = styled.div`
 `
 export const MessageContainer = styled.div`
   display: ${({ isEnrolled, isTutor}) =>
-  isEnrolled || isTutor ? "flex" : "none"};
+  isEnrolled || isTutor ? "none" : "flex"};
   margin: 3rem;
   align-items: center;
   justify-content: center;
@@ -18,13 +18,13 @@ export const MessageContainer = styled.div`
 
 export const Message = styled.h1`
   display: ${({ isEnrolled, isTutor}) =>
-  isEnrolled || isTutor ? "flex" : "none"};
+  isEnrolled || isTutor ? "none" : "flex"};
   color: ${colours.BLUE1}
 `
 
 export const BtnWrapper = styled.div`
   display: ${({ isEnrolled, isTutor}) =>
-  isEnrolled || isTutor ? "flex" : "none"};
+  isEnrolled || isTutor ? "none" : "flex"};
   align-items: center;
   justify-content: center;
   align-self: center

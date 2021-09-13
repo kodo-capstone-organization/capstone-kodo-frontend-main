@@ -5,11 +5,12 @@ import {
   CourseElement,
   Subject,
   EmptyStateContainer,
-  SubjectContainer
+  SubjectContainer,
 } from "../ProgressElements";
 import { Button } from "../../../values/ButtonElements";
 
 import { Divider, Grid, Typography } from "@material-ui/core";
+import CircularProgress from '@material-ui/core/CircularProgress';
 import { EnrolledCourse } from "../../../apis/Entities/EnrolledCourse";
 import { Account } from "../../../apis/Entities/Account";
 import { Lesson } from "../../../apis/Entities/Lesson";
@@ -34,11 +35,14 @@ function CourseList(props: any) {
   const [myCourses, setMyCourses] = useState<EnrolledCourse[]>([]);
   const [myAccount, setMyAccount] = useState<Account>();
   const [showMultimedia, setShowMultimedia] = useState<Boolean>(false);
+  const [loading, setLoading] = useState<Boolean>(true);
   const history = useHistory();
 
   useEffect(() => {
+    setLoading(true);
     setMyAccount(props.account);
     setMyCourses(props.courses);
+    setLoading(false);
   }, [props]);
 
   const displayBannerUrl = (course: EnrolledCourse) => {
@@ -107,21 +111,17 @@ function CourseList(props: any) {
     );
   };
 
-  return (
-    <>
-      {myCourses?.length > 0 && (
-        <Grid container>
-          {myCourses.map((course, courseId) => (
-            <Grid item xs={5} key={courseId} style={{ margin: "5px" }}>
-              <h4>{course.parentCourse.name}</h4>
-              <Divider />
-              {getCourseLessons(course)}
-            </Grid>
-          ))}
-        </Grid>
-      )}
-      {myCourses?.length === 0 && (
-        <EmptyStateContainer>
+  function coursesExist() {
+    console.log(myCourses?.length)
+    return myCourses?.length > 0;
+  }
+
+  if (loading) return (
+    <EmptyStateContainer><CircularProgress /></EmptyStateContainer>
+  );
+
+  if (myAccount && myCourses && !coursesExist()) return (
+    <EmptyStateContainer coursesExist={coursesExist()}>
           <Typography>No courses here! 😢</Typography>
           <br />
           <Button
@@ -131,8 +131,20 @@ function CourseList(props: any) {
           >
             Browse Courses
           </Button>
-        </EmptyStateContainer>
-      )}
+    </EmptyStateContainer>
+  );
+
+  return (
+    <>
+        <Grid container>
+          {myCourses.map((course, courseId) => (
+            <Grid item xs={5} key={courseId} style={{ margin: "5px" }}>
+              <h4>{course.parentCourse.name}</h4>
+              <Divider />
+              {getCourseLessons(course)}
+            </Grid>
+          ))}
+        </Grid>
     </>
   );
 }
