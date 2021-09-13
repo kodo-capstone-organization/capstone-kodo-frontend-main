@@ -1,35 +1,37 @@
 import { useState, useEffect } from "react";
-import { Course, RecommendedCoursesWithTags } from "../../../apis/Entities/Course";
+import {
+  Course,
+  RecommendedCoursesWithTags
+} from "../../../apis/Entities/Course";
 import { Account } from "../../../apis/Entities/Account";
-import { getAllCourses, getCoursesToRecommend } from "../../../apis/Course/CourseApis";
+import {
+  getAllCourses,
+  getCoursesToRecommend
+} from "../../../apis/Course/CourseApis";
 import { getMyAccount } from "../../../apis/Account/AccountApis";
 import { Tag } from "../../../apis/Entities/Tag";
+import { getAllTags } from "../../../apis/Tag/TagApis";
+
 import {
   BrowseContainer,
   Title,
   CourseTags,
   TagChip,
-  TagsContainer
+  TagsContainer,
+  SearchContainer
 } from "./BrowseCourseElements";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import ChipInput from "material-ui-chip-input";
-import { TextField, Tabs, Tab, Link } from "@material-ui/core";
+import { TextField, Tabs, Tab, Link, Chip } from "@material-ui/core";
 import { colours } from "../../../values/Colours";
 import BrowseCourseTabPanel from "./components/BrowseCourseTabPanel";
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      "& > *": {
-        margin: theme.spacing(1),
-        width: "31ch"
-      }
-    }
-  })
-);
+import {
+  ToggleButton,
+  ToggleButtonGroup,
+  Autocomplete
+} from "@material-ui/lab";
 
 function BrowseCourse() {
-  const classes = useStyles();
   const [courses, setCourses] = useState<Course[]>();
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [tags, setTags] = useState<string[]>([]);
@@ -38,6 +40,7 @@ function BrowseCourse() {
   const [tagsRecommended, setTagsRecommended] = useState<Tag[]>();
   const [myAccount, setAccount] = useState<Account>();
   const [tab, setTab] = useState<number>(0); // track tab index
+  const [tagLibrary, setTagLibrary] = useState<Tag[]>([]);
 
   const accountId = JSON.parse(
     window.sessionStorage.getItem("loggedInAccountId") || "{}"
@@ -50,10 +53,12 @@ function BrowseCourse() {
   }, []);
 
   useEffect(() => {
-    getCoursesToRecommend(accountId, recommendationLimit).then((receivedCoursesWithTags: RecommendedCoursesWithTags) => {
-      setCoursesRecommended(receivedCoursesWithTags.courses);
-      setTagsRecommended(receivedCoursesWithTags.tags);
-    });
+    getCoursesToRecommend(accountId, recommendationLimit).then(
+      (receivedCoursesWithTags: RecommendedCoursesWithTags) => {
+        setCoursesRecommended(receivedCoursesWithTags.courses);
+        setTagsRecommended(receivedCoursesWithTags.tags);
+      }
+    );
   }, []);
 
   useEffect(() => {
@@ -62,55 +67,53 @@ function BrowseCourse() {
     });
   }, []);
 
+  useEffect(() => {
+    getAllTags()
+      .then(res => setTagLibrary(res))
+      .catch(error => console.log("error getting tags."));
+  }, []);
+
   /** HELPER METHODS */
-  const handleChipChange = (chips: any) => {
-    setTags(chips);
+  const handleChipChange = (e: object, value: string[], reason: string) => {
+    console.log(value);
+    setTags(value);
   };
 
   const handleSearchTerm = (newSearchTerm: string) => {
     setSearchTerm(newSearchTerm);
   };
-  
-  // This method is to be integrated after Theo finishes new recommended query
-  // function getSuggestedTags(coursesRecommended: Course[]) {
-  //   const tagArray = []
-  //   for (var course of coursesRecommended) {
-  //     for (var tag of course.courseTags) {
-  //       tagArray.push(tag.title)
-  //     }
-  //   }
-  //   var uniqueArr = tagArray.filter(function(elem, index, self) {
-  //     return index === self.indexOf(elem);
-  //   })
-  //   console.log(uniqueArr)
-  //   return(uniqueArr)
-  // }
 
   const handleTabChange = (event: any, newTabIndex: number) => {
-    setTab(newTabIndex)
-  }
+    setTab(newTabIndex);
+  };
 
   // Build Tab and their props here
   const getTabItems = () => {
     return [
-      { myTabIdx: 0,
+      {
+        myTabIdx: 0,
         myTabName: "Suggested For Me",
         courseList: coursesRecommended,
-        titleComponent: () => 
+        titleComponent: () => (
           <TagsContainer>
             <Title>Because you liked: &nbsp;&nbsp;</Title>
             <CourseTags>
-              { tagsRecommended?.map(tag => <TagChip variant="outlined" key={tag.tagId} label={tag.title} /> )}
+              {tagsRecommended?.map(tag => (
+                <TagChip variant="outlined" key={tag.tagId} label={tag.title} />
+              ))}
             </CourseTags>
           </TagsContainer>
+        )
       },
-      { // TODO: Browsing via popularity e.g. top x number of enrollments OR ratings? :O
+      {
+        // TODO: Browsing via popularity e.g. top x number of enrollments OR ratings? :O
         myTabIdx: 1,
         myTabName: "Popular On Kodo",
         courseList: null,
         titleComponent: () => <></>
       },
-      { // TODO: Browsing via newest creation e.g. last 10 days?
+      {
+        // TODO: Browsing via newest creation e.g. last 10 days?
         myTabIdx: 2,
         myTabName: "New Releases",
         courseList: null,
@@ -122,39 +125,78 @@ function BrowseCourse() {
         courseList: courses,
         titleComponent: () => <></>
       }
-    ]
-  }
+    ];
+  };
 
   return (
-    //This would encompass the whole container for component
     <>
       <BrowseContainer>
         {/* Search Inputs */}
-        <form className={classes.root} noValidate autoComplete="off">
-          <TextField id="name-search" label="Search By Name"  onChange={event => handleSearchTerm(event.target.value)} />
+        <SearchContainer>
+          <TextField
+            id="name-search"
+            variant="outlined"
+            label="Search By Name"
+            onChange={event => handleSearchTerm(event.target.value)}
+            style={{ width: 300 }}
+          />
           &nbsp;&nbsp;
-          <ChipInput id="tag-search"  label="Search By Tags"  onChange={chips => handleChipChange(chips)} style={{ margin: "0" }} />
-        </form>
+          <Autocomplete
+            multiple
+            freeSolo
+            options={tagLibrary.map(option => option.title)}
+            defaultValue={[]}
+            onChange={handleChipChange}
+            renderTags={(value: string[], getTagProps) =>
+              value.map((option: string, index: number) => (
+                <Chip
+                  {...getTagProps({ index })}
+                  variant="outlined"
+                  label={option}
+                />
+              ))
+            }
+            style={{ width: 300 }}
+            renderInput={params => (
+              <TextField
+                {...params}
+                variant="outlined"
+                label="Search By Tags"
+              />
+            )}
+          />
+        </SearchContainer>
 
         {/* Tabs*/}
-        <Tabs value={tab} indicatorColor="primary"  textColor="primary"  onChange={handleTabChange}  style={{ backgroundColor: colours.GRAY7, marginBottom: "1.5rem" }}>
-          { getTabItems().map(tabItem => <Tab key={tabItem.myTabIdx} label={tabItem.myTabName} style={{ minWidth: "36ch"}}/>) }
+        <Tabs
+          value={tab}
+          indicatorColor="primary"
+          textColor="primary"
+          onChange={handleTabChange}
+          style={{ backgroundColor: colours.GRAY7, marginBottom: "1.5rem" }}
+        >
+          {getTabItems().map(tabItem => (
+            <Tab
+              key={tabItem.myTabIdx}
+              label={tabItem.myTabName}
+              style={{ minWidth: "36ch" }}
+            />
+          ))}
         </Tabs>
 
         <div id="browse-course-panel-group">
-          { getTabItems().map(tabItem => (
-              <BrowseCourseTabPanel
-                  curTabIdx={tab}
-                  textSearchTerm={searchTerm}
-                  tagSearchTerms={tags}
-                  key={tabItem.myTabIdx}
-                  myTabIdx={tabItem.myTabIdx}
-                  myTabName={tabItem.myTabName}
-                  courseList={tabItem.courseList}
-                  titleComponent={tabItem.titleComponent}
-              />
-            ))
-          }
+          {getTabItems().map(tabItem => (
+            <BrowseCourseTabPanel
+              curTabIdx={tab}
+              textSearchTerm={searchTerm}
+              tagSearchTerms={tags}
+              key={tabItem.myTabIdx}
+              myTabIdx={tabItem.myTabIdx}
+              myTabName={tabItem.myTabName}
+              courseList={tabItem.courseList}
+              titleComponent={tabItem.titleComponent}
+            />
+          ))}
         </div>
       </BrowseContainer>
     </>
