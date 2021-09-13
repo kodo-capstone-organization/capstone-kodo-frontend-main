@@ -21,6 +21,11 @@ export const Subject = styled.h1`
   font-size: ${fontSizes.SUBTEXT};
   color: ${props => props.primary ? colours.BLUE1 : colours.GRAY3};
   font-family: "Roboto", sans-serif;
+  margin: 2px;
+`;
+
+export const SubjectContainer = styled.h1`
+  width: 300px;
 `;
 
 export const EmptyStateText = styled.h1`

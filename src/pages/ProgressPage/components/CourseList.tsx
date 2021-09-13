@@ -4,7 +4,8 @@ import {
     LessonAvatar,
     CourseElement,
     Subject,
-    EmptyStateContainer
+    EmptyStateContainer,
+    SubjectContainer
 } from "../ProgressElements";
 import { Button } from '../../../values/ButtonElements';
 
@@ -55,33 +56,26 @@ function CourseList(props: any) {
     }
 
     const getCourseLessons = (course: EnrolledCourse) => {
-        var listOfEnrolledLessonId: number[] = course.enrolledLessons.map(x => x.parentLesson.lessonId);
-        var listOfAllLessonId: Lesson[] = course.parentCourse.lessons;
-        var finalListOfLesson: any[] = []
-        listOfAllLessonId.map((lesson) => {
-            var lessonWithStatus: any;
-            if (listOfEnrolledLessonId.includes(lesson.lessonId)) { //lesson is completed
-                lessonWithStatus = Object.assign(lesson, { isCompleted: true });
-            } else {
-                lessonWithStatus = Object.assign(lesson, { isCompleted: false });
-            }
-            finalListOfLesson.push(lessonWithStatus)
-            return
-        })
+        console.log(course.enrolledLessons)
         return (
             <div>
-                {finalListOfLesson.map(function (lesson, lessonId) {
+                {course.enrolledLessons.map(function (lesson, lessonId) {
                     return (
                         <>
                             <CourseElement key={lessonId}>
                                 <LessonAvatar src="/chessplaceholder.png"
                                     alt={course.parentCourse.name} />
-                                <Subject>{lesson?.name}</Subject>
-                                <MultimediaModal show={showMultimedia} account={myAccount} lesson={lesson} />
+                                    <SubjectContainer>
+                                    <Subject>{lesson?.parentLesson.name}</Subject>
+
+                                    </SubjectContainer>
+                                <MultimediaModal show={showMultimedia} account={myAccount} lesson={lesson.parentLesson} />
+                                <div style={{width:"100px"}}>
                                 {
-                                    course.dateTimeOfCompletion === null ? (lesson.isCompleted ? <Button variant="outlined" primary={lesson.isCompleted} to={`/overview/lesson/${course.parentCourse.courseId}/${lesson.lessonId}`}>Resume</Button> :
-                                        <LockIcon />) : <Button primary={lesson.isCompleted} to={`/overview/lesson/${course.parentCourse.courseId}/${lesson.lessonId}`}>View</Button>
+                                    course.dateTimeOfCompletion === null ? (lesson.dateTimeOfCompletion !== null || lesson.parentLesson.sequence === 1 ? <Button variant="outlined" primary={true} to={`/overview/lesson/${course.parentCourse.courseId}/${lesson.parentLesson.lessonId}`}>Resume</Button> :
+                                    <Button variant="outlined" primary={false} disabled><LockIcon/></Button>) : <Button primary={true} to={`/overview/lesson/${course.parentCourse.courseId}/${lesson.parentLesson.lessonId}`}>View</Button>
                                 }
+                                </div>
                             </CourseElement>
                         </>
                     );

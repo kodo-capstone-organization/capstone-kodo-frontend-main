@@ -74,10 +74,12 @@ function StudentView(props: any) {
         } else if (x.dateTimeOfCompletion === null && latestLessonCounter === 0) {
           setLatestLesson(x);
           latestLessonCounter++;
+          if (x.parentLesson.sequence === 1) {
+            proxyActiveStep++;
+            setActiveStep(proxyActiveStep);
+          }
         }
       })
-      console.log(proxyActiveStep)
-      // const arrayOfLessonName = receivedEnrolledCourse.enrolledLessons.map(x => {x.parentLesson.name});
       //@ts-ignore
       setSteps(receivedEnrolledCourse.enrolledLessons);
     });
@@ -116,10 +118,6 @@ function StudentView(props: any) {
     return myAccount?.displayPictureUrl ? myAccount?.displayPictureUrl : "";
   }
 
-  // const handlePressStepper = () => {
-  //   // history.push(`overview/lesson/${currentCourse?.courseId}/${lessonId}`)
-  // }
-
   const StepIconStyles = makeStyles({
     root: {
       color: '#eaeaf0',
@@ -131,10 +129,6 @@ function StudentView(props: any) {
       color: '#784af4',
     },
     circle: {
-      // width: 8,
-      // height: 8,
-      // borderRadius: '50%',
-      // backgroundColor: 'currentColor',
       color: 'grey',
       zIndex: 1,
       fontSize: 18,
@@ -188,10 +182,8 @@ function StudentView(props: any) {
         </Stepper>
       </div>
 
-      <StudentViewCard id="my-details">
-        <StudentViewCardHeader
-          title="Course Overview"
-        />
+      <StudentViewCard>
+        <StudentViewCardHeader title="Course Overview"/>
         <StudentViewCardContent>
           <RatingTitle>{currentCourse.description}</RatingTitle>
           <Button primary style={{ marginLeft: "auto" }} onClick={navigateToLatestLesson}>Continue Course</Button>
