@@ -98,6 +98,7 @@ function CourseBuilderPage(props: any) {
             description: courseFormData.description,
             price: courseFormData.price,
             courseId: courseFormData.courseId,
+            bannerUrl: bannerImageFile.size === 0 ? courseFormData.bannerUrl : ""
         }
 
         const updatedCourseTagTitles = courseFormData.courseTags.map((tag: Tag) => tag.title)
