@@ -47,7 +47,7 @@ function StudentView(props: any) {
   const [currentCourse, setCourse] = useState<Course>({ ...props.course });
   const [enrolledCourse, setEnrolledCourse] = useState<EnrolledCourse>({...props.enrolledCourse});
   const [myAccount, setMyAccount] = useState<Account>({ ...props.account });
-  const [rating, setRating] = useState<number | undefined>(enrolledCourse.courseRating);
+  const [rating, setRating] = useState<number | undefined>(enrolledCourse.courseRating == 0 ? 1 : enrolledCourse.courseRating);
   const [activeStep, setActiveStep] = React.useState<number>();
   const [latestLesson, setLatestLesson] = React.useState<EnrolledLesson>();
   const [steps, setSteps] = React.useState<EnrolledLesson[]>([])
