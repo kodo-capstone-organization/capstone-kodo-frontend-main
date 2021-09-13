@@ -73,6 +73,7 @@ function LessonViewer(props: any) {
     });
   }, []);
 
+
   /*
   useEffect(() => {
     let courseLessons = currentCourse?.lessons;
