@@ -135,12 +135,10 @@ function StudentView(props: any) {
     },
     circle: {
       color: 'grey',
-      zIndex: 1,
       fontSize: 20,
     },
     completed: {
       color: 'green',
-      zIndex: 1,
       fontSize: 20,
     },
   });
@@ -166,8 +164,7 @@ function StudentView(props: any) {
   }
 
   const classes = useStyles();
-
-
+  
   return (
     <StudentContainer>
       <PageHeading>
@@ -180,8 +177,9 @@ function StudentView(props: any) {
           <Stepper alternativeLabel activeStep={activeStep}>
             {steps.map((enrolledLesson) => (
               <Step key={enrolledLesson.parentLesson.lessonId}>
+                
                 <StepLabel StepIconComponent={StepIcon}>
-                  <Link color="inherit" href={`/overview/lesson/${currentCourse.courseId}/${enrolledLesson.parentLesson.lessonId}`}>
+                  <Link color="primary" href={`/overview/lesson/${currentCourse.courseId}/${enrolledLesson.parentLesson.lessonId}`}>
                     Week {enrolledLesson.parentLesson.sequence}
                   </Link>
                 </StepLabel>
@@ -210,6 +208,7 @@ function StudentView(props: any) {
         />
         <TutorText>
           <TutorName>{currentCourse?.tutor.name}</TutorName>
+          <TutorName><i>@{currentCourse?.tutor.username}</i></TutorName>
           <TutorDepartment>{currentCourse?.tutor.email}</TutorDepartment>
         </TutorText>
       </TutorDetails>
