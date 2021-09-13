@@ -14,6 +14,10 @@ import BlockIcon from '@material-ui/icons/Block';
 import PlayCircleOutlineIcon from '@material-ui/icons/PlayCircleOutline';
 import { Button } from "../../values/ButtonElements";
 
+interface IErrors<TValue> {
+    [id: string]: TValue;
+}
+
 const formReducer = (state: any, event: any) => {
     return {
         ...state,
@@ -31,7 +35,12 @@ function CourseBuilderPage(props: any) {
     const [bannerImageFile, setBannerImageFile] = useState<File>(new File([""], ""));
     const [isToggleActiveEnrollmentDialogOpen, setIsToggleActiveEnrollmentDialogOpen] = useState<boolean>(false);
     const [courseFormData, setCourseFormData] = useReducer(formReducer, {});
-    const [isTutorOfCourse, setIsTutorOfCourse] = useState<boolean>(false)
+    const [isTutorOfCourse, setIsTutorOfCourse] = useState<boolean>(false);
+    var [errors, setErrors] = useState<IErrors<boolean>>({
+        name: false,
+        description: false,
+        price: false
+    });
     
     useEffect(() => {
         getCourseByCourseId(courseId).then((receivedCourse: Course) => {
@@ -92,6 +101,30 @@ function CourseBuilderPage(props: any) {
         });
     }
 
+    const handleValidation = () => {
+        let formIsValid = true;
+        errors = {};
+
+        if (courseFormData.name === "") {
+            formIsValid = false;
+            errors['name'] = true;
+        }
+
+        if (courseFormData.description === "") {
+            formIsValid = false;
+            errors['description'] = true;
+        }
+
+        if (courseFormData.price === "") {
+            formIsValid = false;
+            errors['price'] = true;
+        }
+
+        setErrors(errors);
+
+        return formIsValid;
+    }
+
     const buildUpdateCourseReq = (courseFormData: any) => {
         const updatedCourse = {
             name: courseFormData.name,
@@ -122,6 +155,10 @@ function CourseBuilderPage(props: any) {
     }
 
     const handleUpdateCourse = () => {
+        if (!handleValidation()) {
+            return
+        }
+
         const updateCourseReq = buildUpdateCourseReq(courseFormData)
 
         updateCourse(updateCourseReq, bannerImageFile).then((updatedCourse) => {
@@ -185,10 +222,10 @@ function CourseBuilderPage(props: any) {
                 <CourseBuilderContent>
                     <Grid container spacing={3}>
                         <Grid item xs={12}>
-                            <TextField id="standard-basic" fullWidth label="Name" name="name" value={courseFormData.name} onChange={handleFormDataChange}/>
+                            <TextField required error={errors['name']} id="standard-basic" fullWidth label="Name" name="name" value={courseFormData.name} onChange={handleFormDataChange}/>
                         </Grid>
                         <Grid item xs={12}>
-                            <TextField id="standard-basic" fullWidth multiline maxRows={3} name="description" label="Description" value={courseFormData.description} onChange={handleFormDataChange}/>
+                            <TextField required error={errors['description']} id="standard-basic" fullWidth multiline maxRows={3} name="description" label="Description" value={courseFormData.description} onChange={handleFormDataChange}/>
                         </Grid>
                         <Grid item xs={12}>
                             <TextField
@@ -202,6 +239,8 @@ function CourseBuilderPage(props: any) {
                                 }}
                                 value={courseFormData.price}
                                 onChange={handleFormDataChange}
+                                required
+                                error={errors['price']}
                                 />
                         </Grid>
                         <Grid item xs={12}>
