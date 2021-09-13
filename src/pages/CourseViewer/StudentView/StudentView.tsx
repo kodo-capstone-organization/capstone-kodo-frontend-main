@@ -38,6 +38,7 @@ import {
 } from "./StudentViewElements";
 import { LessonDescription, CheckIcon } from "../LessonViewer/LessonViewerElements";
 import { useHistory } from "react-router";
+import LockOpenIcon from '@material-ui/icons/LockOpen';
 
 
 function StudentView(props: any) {
@@ -72,7 +73,7 @@ function StudentView(props: any) {
   }, [props.course]);
 
   const initialiseActiveStep = (receivedEnrolledCourse : EnrolledCourse) => {
-    var proxyActiveStep = -1 // to set stepper
+    var proxyActiveStep = 0 // to set stepper
     var latestLessonCounter = 0 // to redirect in course overview section
     receivedEnrolledCourse.enrolledLessons.map(x => {
       if (x.dateTimeOfCompletion !== null) { // if lesson has been completed, increase activeStep
@@ -148,6 +149,7 @@ function StudentView(props: any) {
   const StepIcon = (props: StepIconProps) => {
     const classes = StepIconStyles();
     const { active, completed } = props;
+    console.log(props)
     return (
       <div
         className={clsx(classes.root, {
@@ -155,7 +157,7 @@ function StudentView(props: any) {
         })}
       >
         {
-        active ? <CheckCircleIcon className={classes.completed} /> : <LockIcon className={classes.circle} />
+        completed ? <CheckCircleIcon className={classes.completed} /> : active ? <LockOpenIcon className={classes.completed}/>: <LockIcon className={classes.circle} />
         }
       </div>
     );
