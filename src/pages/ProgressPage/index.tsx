@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import {
     ProgressContainer,
-    MessageContainer,
-    Message,
+    MessageContainer
 } from "./ProgressElements";
 import { Breadcrumbs, Link, Tabs, Tab } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';

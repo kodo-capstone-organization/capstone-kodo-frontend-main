@@ -3,15 +3,12 @@ import { makeStyles, Theme, createStyles, withStyles } from '@material-ui/core/s
 import {
     IconButton, Dialog, DialogActions, DialogContent, Table,
     DialogTitle, Link, TableBody, TableCell, TableContainer, TableHead, TableRow,
-    Paper, TablePagination, Tabs, Tab
+    Paper, Tabs, Tab
 } from "@material-ui/core";
 import InfoIcon from '@material-ui/icons/Info';
 import { Button } from "../../../values/ButtonElements";
-import { Account } from "../../../apis/Entities/Account";
 import { Quiz } from "../../../apis/Entities/Quiz";
 import { Multimedia } from '../../../apis/Entities/Multimedia';
-import { useHistory } from 'react-router';
-
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -70,16 +67,13 @@ function MultimediaModal(props: any) {
 
     const classes = useStyles();
     const [open, setOpen] = React.useState(false);
-    const [myAccount, setMyAccount] = useState<Account>();
     const [multimedias, setMultimedias] = useState<Multimedia[]>([]);
     const [quizzes, setQuizzes] = useState<Quiz[]>([]);
     const [tab, setTab] = React.useState(0);
     const quizzesRow = quizzes?.map(quiz => createData(quiz.name, null))
     const multimediasRow = multimedias?.map(multimedia => createData(multimedia.name, multimedia.url))
-    const history = useHistory();
 
     useEffect(() => {
-        setMyAccount(props.account)
         if (props.lesson !== undefined) {
             setMultimedias(props.lesson.multimedias)
             setQuizzes(props.lesson.quizzes)

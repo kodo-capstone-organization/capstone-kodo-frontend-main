@@ -19,21 +19,13 @@ import {
   TagChip,
   TagsContainer,
   SearchContainer,
-  Message,
   MessageContainer,
-  
 } from "./BrowseCourseElements";
-import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
-import ChipInput from "material-ui-chip-input";
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { TextField, Tabs, Tab, Link, Chip } from "@material-ui/core";
+import { TextField, Tabs, Tab, Chip } from "@material-ui/core";
 import { colours } from "../../../values/Colours";
 import BrowseCourseTabPanel from "./components/BrowseCourseTabPanel";
-import {
-  ToggleButton,
-  ToggleButtonGroup,
-  Autocomplete
-} from "@material-ui/lab";
+import { Autocomplete } from "@material-ui/lab";
 
 function BrowseCourse() {
   const [courses, setCourses] = useState<Course[]>();

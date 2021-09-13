@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { withRouter } from "react-router";
-import { useHistory } from "react-router-dom";
 import { getCourseByCourseId } from "../../../apis/Course/CourseApis";
 import { getLessonByLessonId } from "../../../apis/Lesson/LessonApis";
 import { getMyAccount } from "../../../apis/Account/AccountApis";
@@ -42,11 +41,8 @@ import {
   QuizDescriptionTwo,
   CheckIcon,
   BtnWrapper,
-  ExitWrapper,
-  ExitIcon,
-  ExitText
+  ExitWrapper
 } from "./LessonViewerElements";
-import Sidebar from "../Sidebar/Sidebar";
 
 import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
 
@@ -60,7 +56,6 @@ function LessonViewer(props: any) {
   const [enrolledLesson, setEnrolledLesson] = useState<EnrolledLesson>();
   const [quizAttempts, setQuizAttempts] = useState<QuizWithStudentAttemptCountResp[]>();
   const [enrolledCourse, setEnrolledCourse] = useState<EnrolledCourse>();
-  const [previousLesson, setPreviousLesson] = useState<EnrolledLesson>();
   const accountId = JSON.parse(
     window.sessionStorage.getItem("loggedInAccountId") || "{}"
   );
@@ -186,7 +181,7 @@ function LessonViewer(props: any) {
                         Start
                       </Button>
                       }
-                      {previousLessonCompleted() && q.studentAttemptCount == 0 && 
+                      {previousLessonCompleted() && q.studentAttemptCount === 0 &&
                       <Button disabled>
                         Start
                       </Button>

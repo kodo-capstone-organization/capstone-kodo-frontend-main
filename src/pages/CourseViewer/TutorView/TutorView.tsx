@@ -5,9 +5,8 @@ import {
   getEnrolledCoursesWithStudentCompletion
 } from "../../../apis/EnrolledCourse/EnrolledCourseApis";
 import { getAccountByEnrolledCourseId } from "../../../apis/Account/AccountApis";
-import { EnrolledCourse, EnrolledCourseWithStudentResp } from "../../../apis/Entities/EnrolledCourse";
+import { EnrolledCourseWithStudentResp } from "../../../apis/Entities/EnrolledCourse";
 import { Course } from "../../../apis/Entities/Course";
-import { Account } from "../../../apis/Entities/Account";
 import { EnrolledLesson } from "../../../apis/Entities/EnrolledLesson";
 import { Button } from "../../../values/ButtonElements";
 
@@ -22,8 +21,6 @@ import {
   CardTitle,
   StudentProgressWrapper
 } from "./TutorViewElements";
-
-import { makeStyles } from "@material-ui/core/styles";
 import LinearProgress, {
   LinearProgressProps
 } from "@material-ui/core/LinearProgress";
@@ -47,12 +44,6 @@ function LinearProgressWithLabel(
   );
 }
 
-const useStyles = makeStyles({
-  root: {
-    width: "100%"
-  }
-});
-
 function TutorView(props: any) {
   const [currentCourse, setCourse] = useState<Course>({ ...props.course });
   const [enrolledStudentsAndCompleteion, setEnrolledStudentsAndCompletion] = useState<EnrolledCourseWithStudentResp[]>();
@@ -67,9 +58,7 @@ function TutorView(props: any) {
     });
   }, []);
 
-
   let courseEnrollment = currentCourse.enrollment;
-  console.log(courseEnrollment);
 
   function getPercentage(enrolledLessons: EnrolledLesson[]) {
     var total = enrolledLessons.length;

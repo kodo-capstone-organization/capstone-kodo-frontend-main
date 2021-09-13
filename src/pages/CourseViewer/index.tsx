@@ -60,7 +60,7 @@ function CourseOverview(props: any) {
   //if current user is this course's tutor this function, returns true
    function isCourseTutor(): boolean {
      if (currentUser && currentCourse) {
-       if (currentCourse.tutor.accountId == currentUser?.accountId) {
+       if (currentCourse.tutor.accountId === currentUser?.accountId) {
        return true;
      }
     }

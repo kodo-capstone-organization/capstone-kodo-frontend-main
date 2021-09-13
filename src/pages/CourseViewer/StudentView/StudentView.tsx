@@ -7,9 +7,8 @@ import { EnrolledCourse } from "../../../apis/Entities/EnrolledCourse";
 import { Course } from "../../../apis/Entities/Course";
 import { Account } from "../../../apis/Entities/Account";
 import clsx from 'clsx';
-import { makeStyles, createStyles, Theme, withStyles } from '@material-ui/core/styles';
-import { Stepper, Step, StepButton, Typography, StepLabel, Link, StepConnector, Box } from "@material-ui/core";
-import { Lesson } from '../../../apis/Entities/Lesson';
+import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
+import { Stepper, Step, StepLabel, Link, Box } from "@material-ui/core";
 import { EnrolledLesson } from '../../../apis/Entities/EnrolledLesson';
 import { Button } from '../../../values/ButtonElements';
 import Rating from '@material-ui/lab/Rating';
@@ -34,28 +33,20 @@ import {
   RatingTitle,
   TagWrapper,
   TagChip,
-  RatingDescription,
-  StepperIcon
+  RatingDescription
 } from "./StudentViewElements";
-import { LessonDescription, CheckIcon } from "../LessonViewer/LessonViewerElements";
 import { useHistory } from "react-router";
 import LockOpenIcon from '@material-ui/icons/LockOpen';
-import { createNewAccount } from "../../../apis/Account/AccountApis";
-
 
 function StudentView(props: any) {
   const [currentCourse, setCourse] = useState<Course>({ ...props.course });
   const [enrolledCourse, setEnrolledCourse] = useState<EnrolledCourse>({...props.enrolledCourse});
   const [myAccount, setMyAccount] = useState<Account>({ ...props.account });
-  const [rating, setRating] = useState<number | undefined>(enrolledCourse.courseRating == 0 ? 1 : enrolledCourse.courseRating);
+  const [rating, setRating] = useState<number | undefined>(enrolledCourse.courseRating === 0 ? 1 : enrolledCourse.courseRating);
   const [activeStep, setActiveStep] = React.useState<number>();
   const [latestLesson, setLatestLesson] = React.useState<EnrolledLesson>();
   const [steps, setSteps] = React.useState<EnrolledLesson[]>([])
   const history = useHistory();
-
-  const accountId = JSON.parse(
-    window.sessionStorage.getItem("loggedInAccountId") || "{}"
-  );
 
   useEffect(() => {
     setCourse(props.course);
@@ -164,7 +155,7 @@ function StudentView(props: any) {
   }
 
   const classes = useStyles();
-  
+
   return (
     <StudentContainer>
       <PageHeading>

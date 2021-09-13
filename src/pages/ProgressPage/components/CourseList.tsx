@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { makeStyles } from "@material-ui/core/styles";
 import {
   LessonAvatar,
   CourseElement,
@@ -8,29 +7,14 @@ import {
   SubjectContainer,
 } from "../ProgressElements";
 import { Button } from "../../../values/ButtonElements";
-
 import { Divider, Grid, Typography } from "@material-ui/core";
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { EnrolledCourse } from "../../../apis/Entities/EnrolledCourse";
 import { EnrolledLesson } from "../../../apis/Entities/EnrolledLesson";
 import { Account } from "../../../apis/Entities/Account";
-import { Lesson } from "../../../apis/Entities/Lesson";
 import LockIcon from "@material-ui/icons/Lock";
 import MultimediaModal from "./MultimediaModal";
 import { useHistory } from "react-router";
-
-const useStyles = makeStyles(theme => ({
-  root: {
-    flexGrow: 1
-  },
-  paper: {
-    height: 140,
-    width: 100
-  },
-  control: {
-    padding: theme.spacing(2)
-  }
-}));
 
 function CourseList(props: any) {
   const [myCourses, setMyCourses] = useState<EnrolledCourse[]>([]);
@@ -48,7 +32,6 @@ function CourseList(props: any) {
 
   const displayBannerUrl = (course: EnrolledCourse) => {
     if (course.parentCourse.bannerUrl !== null) {
-      console.log(course.parentCourse.bannerUrl);
       return course.parentCourse.bannerUrl;
     } else {
       return "/chessplaceholder.png";
@@ -70,7 +53,6 @@ function CourseList(props: any) {
   }
 
   const getCourseLessons = (course: EnrolledCourse) => {
-    console.log(course.enrolledLessons);
     return (
       <div>
         {course.enrolledLessons.map(function (lesson, lessonId) {

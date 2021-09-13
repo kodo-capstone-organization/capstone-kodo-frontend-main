@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { Course } from "../../../../apis/Entities/Course";
 import CourseCard from "../../../../components/CourseCard";
-import { CourseWrapper, Title } from "../BrowseCourseElements";
+import { CourseWrapper } from "../BrowseCourseElements";
 
 
 function BrowseCourseTabPanel (props: any) {

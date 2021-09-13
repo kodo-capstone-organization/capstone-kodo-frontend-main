@@ -2,9 +2,7 @@ import styled from "styled-components";
 import { colours } from "../../values/Colours";
 import { fontSizes } from "../../values/FontSizes";
 import { Link as LinkR } from "react-router-dom";
-import {
-  Avatar, Typography
-} from "@material-ui/core";
+import { Avatar } from "@material-ui/core";
 
 
 

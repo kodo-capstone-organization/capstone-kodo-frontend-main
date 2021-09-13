@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import { colours } from "../../../values/Colours";
 import { Link } from "react-router-dom";
-import { fontSizes } from "../../../values/FontSizes";
 
 
 export const SidebarWrapper = styled.div`

@@ -78,7 +78,7 @@ function CoursePreviewPage(props: any) {
    //if current user is this course's tutor this function, returns true
   function isCourseTutor(course: Course): boolean {
         
-    if(course.tutor.accountId == currentUser?.accountId) {
+    if(course.tutor.accountId === currentUser?.accountId) {
       return true;
     }
       return false;
@@ -118,7 +118,7 @@ function CoursePreviewPage(props: any) {
       <CourseDescription>{currentCourse?.description}</CourseDescription>
       <CourseHeader>Syllabus and Schedule</CourseHeader>
       <SyllabusCard>
-        {currentCourse && currentCourse?.lessons.length == 0 &&
+        {currentCourse && currentCourse?.lessons.length === 0 &&
         <CourseDescription>There are no lessons under this course yet 😅</CourseDescription>
         }
         {currentCourse && currentCourse?.lessons.length > 0 &&
