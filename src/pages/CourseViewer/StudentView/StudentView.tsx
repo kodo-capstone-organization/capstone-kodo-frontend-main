@@ -47,7 +47,7 @@ function StudentView(props: any) {
   const [currentCourse, setCourse] = useState<Course>({ ...props.course });
   const [enrolledCourse, setEnrolledCourse] = useState<EnrolledCourse>({...props.enrolledCourse});
   const [myAccount, setMyAccount] = useState<Account>({ ...props.account });
-  const [rating, setRating] = useState<number | undefined>(enrolledCourse.courseRating);
+  const [rating, setRating] = useState<number | undefined>(enrolledCourse.courseRating == 0 ? 1 : enrolledCourse.courseRating);
   const [activeStep, setActiveStep] = React.useState<number>();
   const [latestLesson, setLatestLesson] = React.useState<EnrolledLesson>();
   const [steps, setSteps] = React.useState<EnrolledLesson[]>([])
@@ -68,6 +68,8 @@ function StudentView(props: any) {
     console.log(enrolledCourse.enrolledLessons)
     // setSteps(test);
     }, [props.course]);
+
+    console.log(enrolledCourse)
 
   const initialiseActiveStep = (receivedEnrolledCourse: EnrolledCourse) => {
     var proxyActiveStep = 0 // to set stepper
@@ -114,9 +116,7 @@ function StudentView(props: any) {
 
   const handleRatingChange = (newRating: any) => {
     setRating(newRating);
-    if (enrolledCourse) {
-      setCourseRatingByEnrolledCourseId(enrolledCourse?.enrolledCourseId, newRating);
-    }
+    setCourseRatingByEnrolledCourseId(enrolledCourse.enrolledCourseId, newRating);
   };
 
   const displayPictureURL = () => {
