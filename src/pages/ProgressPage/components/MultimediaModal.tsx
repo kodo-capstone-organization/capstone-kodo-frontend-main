@@ -32,6 +32,10 @@ const useStyles = makeStyles((theme: Theme) =>
         container: {
             maxHeight: 440,
         },
+        dialogPaper: {
+            height : "400px",
+            width: 1000,
+        },
     }),
 );
 
@@ -137,7 +141,7 @@ function MultimediaModal(props: any) {
                 <IconButton onClick={handleOpen}>
                     <InfoIcon />
                 </IconButton>
-                <Dialog open={open} onClose={handleClose} maxWidth={"lg"}>
+                <Dialog open={open} onClose={handleClose} maxWidth={false} classes={{ paper : classes.dialogPaper}}>
                     <DialogTitle id="form-dialog-title">View Lesson Multimedia</DialogTitle>
                     <Tabs
                         value={tab}
