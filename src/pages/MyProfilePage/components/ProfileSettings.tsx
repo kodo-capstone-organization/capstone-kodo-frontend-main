@@ -27,7 +27,7 @@ function ProfileSettings(props: any) {
 
     const [myAccount, setMyAccount] = useState<Account>();
     const [showPassword, setShowPassword] = useState<Boolean>(false);
-    const [password, setPassword] = useState<string | null>("");
+    const [password, setPassword] = useState<string>("");
     const [interests, setInterests] = useState<string[]>([]);
     const [name, setName] = useState<string>("");
     const [email, setEmail] = useState<string>("");
@@ -49,8 +49,10 @@ function ProfileSettings(props: any) {
     const history = useHistory();
 
     useEffect(() => {
-        setPassword(window.sessionStorage.getItem("loggedInAccountPassword"))
-        
+        setPassword(window.sessionStorage.getItem("loggedInAccountPassword") || "")
+    }, [])
+
+    useEffect(() => {
         if (props.account !== undefined) {
             setMyAccount(props.account)
             setName(props.account.name)
@@ -93,7 +95,10 @@ function ProfileSettings(props: any) {
             studentAttemptIds: null,
         }
         //@ts-ignore
-        updateAccount(updateAccountReq, displayPictureFile).then((res) => { history.push("/profile") }).catch(err => { console.log("error", err) })
+        updateAccount(updateAccountReq, displayPictureFile).then((res) => {
+            window.sessionStorage.setItem("loggedInAccountPassword", password); // re-set the password in storage in case it is updated
+            history.push("/profile")
+        }).catch(err => { console.log("error", err) })
     }
 
     const displayPictureURL = () => {
@@ -179,9 +184,8 @@ function ProfileSettings(props: any) {
                     <ProfileCardHeader
                         title="Account Settings"
                     />
-                    <form
-                        noValidate autoComplete="off" style={{ display: "flex", justifyContent: "center" }}>
-                        <div style={{ padding: "20px" }}>
+                    <form noValidate autoComplete="off" style={{ display: "flex", justifyContent: "center" }}>
+                        <div style={{ padding: "20px"}}>
                             <ProfileAvatar
                                 alt={myAccount?.username}
                                 src={displayPictureURL()}
@@ -197,7 +201,7 @@ function ProfileSettings(props: any) {
                             </ProfileSubText>
                             <DeactivateAccountModal account={myAccount} style={{ margin: "auto" }} />
                         </div>
-                        <div style={{ margin: "20px" }}>
+                        <div id="profile-details" style={{ margin: "20px", width: "70%" }}>
                             <ProfileSettingField error={errors["name"]} style={{ margin: "0 0 10px 0" }} label="Name" value={name} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setName(e.target.value)} />
                             <ProfileSettingField error={errors["email"]} style={{ margin: "0 0 10px 0" }} label="Email" value={email} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setEmail(e.target.value)} />
                             <ProfileSettingField style={{ margin: "0 0 10px 0" }} label="Bio" value={bio} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setBio(e.target.value)} />
@@ -244,11 +248,11 @@ function ProfileSettings(props: any) {
                                     <TextField {...params} variant="standard" label="Interests" />
                                 )}
                             />
-                            <FormControl fullWidth margin="normal" style={{ display: "flex", flexDirection: "row" }}>
-                                <Grid xs={10}>
+                            <FormControl margin="normal" style={{ display: "flex", flexDirection: "row", width: "100%" }}>
+                                <Grid style={{ width: "80%"}}>
                                     <TextField id="banner-image-name" fullWidth disabled value={displayPictureFilename} label="Display Picture"></TextField>
                                 </Grid>
-                                <Grid xs={3} style={{ display: "flex", alignItems: "center"}}>
+                                <Grid style={{ display: "flex", alignItems: "center", marginLeft: "auto"}}>
                                     <Button variant="contained" component="label">
                                         Change Display Picture
                                         <input
