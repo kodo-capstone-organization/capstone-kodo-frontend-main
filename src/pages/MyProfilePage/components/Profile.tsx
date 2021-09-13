@@ -349,11 +349,11 @@ function Profile(props: any) {
                             startAdornment={<InputAdornment position="start">$</InputAdornment>}
                         />
                     </FormControl>
-                    <FormControl fullWidth margin="normal" style={{ display: "flex", flexDirection: "row"}}>
-                        <Grid xs={9}>
-                            <TextField id="banner-image-name" fullWidth disabled value={courseBannerImageFile?.name} label="Banner Image"></TextField>
+                    <FormControl fullWidth margin="normal" style={{ display: "flex", flexDirection: "row", width: "100%"}}>
+                        <Grid style={{ width: "80%"}}>
+                            <TextField id="banner-image-name" fullWidth disabled value={courseBannerImageFile?.name || ""} label="Banner Image" />
                         </Grid>
-                        <Grid xs={3} style={{ display: "flex", alignItems: "center"}}>
+                        <Grid style={{ display: "flex", alignItems: "center", marginLeft: "auto"}}>
                             <Button variant="contained"  component="label">
                                 Upload Banner
                                 <input

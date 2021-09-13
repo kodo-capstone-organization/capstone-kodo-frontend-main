@@ -263,7 +263,7 @@ function CourseBuilderPage(props: any) {
                         </Grid>
                         <Grid item xs={2}>
                             <Button variant="contained" component="label" big>
-                                Upload Banner
+                                Change Banner Image
                                 <input
                                     type="file"
                                     hidden
