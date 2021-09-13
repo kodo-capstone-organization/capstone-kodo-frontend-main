@@ -7,11 +7,9 @@ import { getCourseByCourseId } from "../../apis/Course/CourseApis";
 import Sidebar from "./Sidebar/Sidebar";
 import TutorView from "./TutorView/TutorView";
 import StudentView from "./StudentView/StudentView";
-import loader from "../../assets/loader.gif"
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 import { LayoutContainer, MessageContainer, Message, BtnWrapper } from "./CourseViewerElements";
-import NoAccess from "../../components/NoAccess/NoAccess"
 import { Button } from "../../values/ButtonElements";
 
 function CourseOverview(props: any) {
@@ -69,10 +67,10 @@ function CourseOverview(props: any) {
 
   if (!courseIsEnrolled() && !isCourseTutor()) return (
     <>
-    <MessageContainer isEnrolled={courseIsEnrolled()}>
-      <Message isTutor={isCourseTutor()}>You are not enrolled in this course 😡</Message>
+    <MessageContainer isEnrolled={courseIsEnrolled()} isTutor={isCourseTutor()}>
+      <Message>You are not enrolled in this course 😡</Message>
     </MessageContainer>
-    <BtnWrapper isEnrolled={courseIsEnrolled()}>
+    <BtnWrapper isEnrolled={courseIsEnrolled()} isTutor={isCourseTutor()}>
       <Button primary to={`/browsecourse`}>Browse Courses</Button>
     </BtnWrapper>
     </>

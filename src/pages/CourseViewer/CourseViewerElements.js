@@ -9,22 +9,22 @@ export const LayoutContainer = styled.div`
   background: ${colours.WHITE};
 `
 export const MessageContainer = styled.div`
-  display: ${({ isEnrolled }) =>
-  isEnrolled ? "flex" : "none"};
+  display: ${({ isEnrolled, isTutor}) =>
+  isEnrolled || isTutor ? "flex" : "none"};
   margin: 3rem;
   align-items: center;
   justify-content: center;
 `
 
 export const Message = styled.h1`
-  display: ${({ isTutor }) =>
-  isTutor ? "auto" : "none"};
+  display: ${({ isEnrolled, isTutor}) =>
+  isEnrolled || isTutor ? "flex" : "none"};
   color: ${colours.BLUE1}
 `
 
 export const BtnWrapper = styled.div`
-  display: ${({ isEnrolled }) =>
-  isEnrolled ? "flex" : "none"};;
+  display: ${({ isEnrolled, isTutor}) =>
+  isEnrolled || isTutor ? "flex" : "none"};
   align-items: center;
   justify-content: center;
   align-self: center
