@@ -39,6 +39,7 @@ import {
 import { LessonDescription, CheckIcon } from "../LessonViewer/LessonViewerElements";
 import { useHistory } from "react-router";
 import LockOpenIcon from '@material-ui/icons/LockOpen';
+import { createNewAccount } from "../../../apis/Account/AccountApis";
 
 
 function StudentView(props: any) {
@@ -68,18 +69,23 @@ function StudentView(props: any) {
       // const test = receivedEnrolledCourse.enrolledLessons.concat(receivedEnrolledCourse.enrolledLessons).concat(receivedEnrolledCourse.enrolledLessons).concat(receivedEnrolledCourse.enrolledLessons)
       //@ts-ignore
       setSteps(receivedEnrolledCourse.enrolledLessons);
+      console.log(receivedEnrolledCourse.enrolledLessons)
       // setSteps(test);
     });
   }, [props.course]);
 
-  const initialiseActiveStep = (receivedEnrolledCourse : EnrolledCourse) => {
-    var proxyActiveStep = 0 // to set stepper
+  const initialiseActiveStep = (receivedEnrolledCourse: EnrolledCourse) => {
+    var proxyActiveStep = -1 // to set stepper
     var latestLessonCounter = 0 // to redirect in course overview section
-    receivedEnrolledCourse.enrolledLessons.map(x => {
+    receivedEnrolledCourse.enrolledLessons.map((x, index) => {
       if (x.dateTimeOfCompletion !== null) { // if lesson has been completed, increase activeStep
         proxyActiveStep++;
+        if (index === receivedEnrolledCourse.enrolledLessons.length - 1) {// set this lesson to be completed, not active
+          proxyActiveStep++;
+        }
         setActiveStep(proxyActiveStep);
         setLatestLesson(x);
+        console.log("x.dateTimeOfCompletion !== null", proxyActiveStep)
       } else if (x.dateTimeOfCompletion === null && latestLessonCounter === 0) { // if lesson has not been completed for the first time, set latestLesson
         setLatestLesson(x);
         latestLessonCounter++;
@@ -89,6 +95,7 @@ function StudentView(props: any) {
         }
       }
     })
+    console.log(proxyActiveStep)
   }
 
 
@@ -157,7 +164,7 @@ function StudentView(props: any) {
         })}
       >
         {
-        completed ? <CheckCircleIcon className={classes.completed} /> : active ? <LockOpenIcon className={classes.completed}/>: <LockIcon className={classes.circle} />
+          completed ? <CheckCircleIcon className={classes.completed} /> : active ? <LockOpenIcon className={classes.completed} /> : <LockIcon className={classes.circle} />
         }
       </div>
     );
