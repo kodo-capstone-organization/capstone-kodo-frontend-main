@@ -265,7 +265,9 @@ function CourseBuilderPage(props: any) {
                             <Button variant="contained" component="label" big>
                                 Change Banner Image
                                 <input
+                                    id="banner-image-upload"
                                     type="file"
+                                    accept="image/*"
                                     hidden
                                     onChange={handleBannerImageChange}
                                 />
