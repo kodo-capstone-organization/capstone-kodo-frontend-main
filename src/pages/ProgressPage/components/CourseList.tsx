@@ -12,6 +12,7 @@ import { Button } from "../../../values/ButtonElements";
 import { Divider, Grid, Typography } from "@material-ui/core";
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { EnrolledCourse } from "../../../apis/Entities/EnrolledCourse";
+import { EnrolledLesson } from "../../../apis/Entities/EnrolledLesson";
 import { Account } from "../../../apis/Entities/Account";
 import { Lesson } from "../../../apis/Entities/Lesson";
 import LockIcon from "@material-ui/icons/Lock";
@@ -58,11 +59,21 @@ function CourseList(props: any) {
     history.push("/browsecourse");
   };
 
+  const getLatestLessonToResume = (enrolledLessons: EnrolledLesson[]) => {
+    var lessonIndex = 1;
+    enrolledLessons.map(lesson => {
+      if (lesson.dateTimeOfCompletion !== null) {
+        lessonIndex++;
+      }
+    })
+    return lessonIndex
+  }
+
   const getCourseLessons = (course: EnrolledCourse) => {
     console.log(course.enrolledLessons);
     return (
       <div>
-        {course.enrolledLessons.map(function(lesson, lessonId) {
+        {course.enrolledLessons.map(function (lesson, lessonId) {
           return (
             <>
               <CourseElement key={lessonId}>
@@ -81,27 +92,27 @@ function CourseList(props: any) {
                 <div style={{ width: "100px" }}>
                   {course.dateTimeOfCompletion === null ? (
                     lesson.dateTimeOfCompletion !== null ||
-                    lesson.parentLesson.sequence === 1 ? (
+                      lessonId < getLatestLessonToResume(course.enrolledLessons) ? (
+                        <Button
+                          variant="outlined"
+                          primary={true}
+                          to={`/overview/lesson/${course.parentCourse.courseId}/${lesson.parentLesson.lessonId}`}
+                        >
+                          Resume
+                        </Button>
+                      ) : (
+                        <Button variant="outlined" primary={false} disabled>
+                          <LockIcon />
+                        </Button>
+                      )
+                  ) : (
                       <Button
-                        variant="outlined"
                         primary={true}
                         to={`/overview/lesson/${course.parentCourse.courseId}/${lesson.parentLesson.lessonId}`}
                       >
-                        Resume
+                        View
                       </Button>
-                    ) : (
-                      <Button variant="outlined" primary={false} disabled>
-                        <LockIcon />
-                      </Button>
-                    )
-                  ) : (
-                    <Button
-                      primary={true}
-                      to={`/overview/lesson/${course.parentCourse.courseId}/${lesson.parentLesson.lessonId}`}
-                    >
-                      View
-                    </Button>
-                  )}
+                    )}
                 </div>
               </CourseElement>
             </>
@@ -122,29 +133,29 @@ function CourseList(props: any) {
 
   if (myAccount && myCourses && !coursesExist()) return (
     <EmptyStateContainer coursesExist={coursesExist()}>
-          <Typography>No courses here! 😢</Typography>
-          <br />
-          <Button
-            onClick={navigateToBrowseCoursePage}
-            style={{ width: "10%" }}
-            big
-          >
-            Browse Courses
+      <Typography>No courses here! 😢</Typography>
+      <br />
+      <Button
+        onClick={navigateToBrowseCoursePage}
+        style={{ width: "10%" }}
+        big
+      >
+        Browse Courses
           </Button>
     </EmptyStateContainer>
   );
 
   return (
     <>
-        <Grid container>
-          {myCourses.map((course, courseId) => (
-            <Grid item xs={5} key={courseId} style={{ margin: "5px" }}>
-              <h4>{course.parentCourse.name}</h4>
-              <Divider />
-              {getCourseLessons(course)}
-            </Grid>
-          ))}
-        </Grid>
+      <Grid container>
+        {myCourses.map((course, courseId) => (
+          <Grid item xs={5} key={courseId} style={{ margin: "5px" }}>
+            <h4>{course.parentCourse.name}</h4>
+            <Divider />
+            {getCourseLessons(course)}
+          </Grid>
+        ))}
+      </Grid>
     </>
   );
 }
