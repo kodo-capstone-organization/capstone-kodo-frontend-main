@@ -62,5 +62,9 @@ export const TagChip = styled(Chip)`
     min-width: 80px;
 `;
 
+export const SearchContainer = styled.form`
+    display: flex;
+`
+
 
 
