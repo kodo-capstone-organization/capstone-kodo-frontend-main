@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useHistory } from "react-router-dom";
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import { Button } from "../../../values/ButtonElements";
@@ -15,6 +16,7 @@ function DeactivateAccountModal(props: any) {
     const [open, setOpen] = React.useState(false);
     const [myAccount, setMyAccount] = useState<Account>()
     const [isActive, setIsActive] = useState<Boolean>()
+    const history = useHistory();
 
     useEffect(() => {
         setMyAccount(props.account)
@@ -35,7 +37,13 @@ function DeactivateAccountModal(props: any) {
     const handleAction = () => {
         if (myAccount !== undefined) {
             deactivateAccount(myAccount.accountId, myAccount.accountId)
-                .then((res) => { console.log(res); window.location.reload(); })
+                .then((res) => {
+                     console.log(res);
+                     window.sessionStorage.removeItem("loggedInAccountId");
+                     window.sessionStorage.removeItem("loggedInAccountUsername");
+                     window.sessionStorage.removeItem("loggedInAccountPassword");
+                     history.push("/")
+                 })
                 .catch(error => console.log("error in deactivating", error));
         }
 
