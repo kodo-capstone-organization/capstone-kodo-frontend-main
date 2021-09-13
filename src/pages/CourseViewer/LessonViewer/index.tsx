@@ -5,6 +5,7 @@ import { getCourseByCourseId } from "../../../apis/Course/CourseApis";
 import { getLessonByLessonId } from "../../../apis/Lesson/LessonApis";
 import { getMyAccount } from "../../../apis/Account/AccountApis";
 import { getEnrolledLesson } from "../../../apis/EnrolledLesson/EnrolledLessonApis";
+import { getEnrolledCourseByStudentIdAndCourseId } from "../../../apis/EnrolledCourse/EnrolledCourseApis";
 import { getNumberOfStudentAttemptsLeft } from "../../../apis/StudentAttempt/StudentAttemptApis"
 import { getAllQuizzesWithStudentAttemptCountByEnrolledLessonId } from "../../../apis/Quiz/QuizApis";
 
@@ -12,6 +13,7 @@ import { Course } from "../../../apis/Entities/Course";
 import { Lesson } from "../../../apis/Entities/Lesson";
 import { Account } from "../../../apis/Entities/Account";
 import { EnrolledLesson } from "../../../apis/Entities/EnrolledLesson";
+import { EnrolledCourse } from "../../../apis/Entities/EnrolledCourse";
 import { QuizWithStudentAttemptCountResp } from "../../../apis/Entities/Quiz"
 
 import { Button } from "../../../values/ButtonElements";
@@ -22,6 +24,7 @@ import {
   LessonContainer,
   PageHeadingAndButton,
   PageHeading,
+  HeadingDescription,
   LessonTitle,
   CourseTitle,
   LessonCard,
@@ -56,7 +59,8 @@ function LessonViewer(props: any) {
   const [currentUser, setUser] = useState<Account>();
   const [enrolledLesson, setEnrolledLesson] = useState<EnrolledLesson>();
   const [quizAttempts, setQuizAttempts] = useState<QuizWithStudentAttemptCountResp[]>();
-  const history = useHistory();
+  const [enrolledCourse, setEnrolledCourse] = useState<EnrolledCourse>();
+  const [previousLesson, setPreviousLesson] = useState<EnrolledLesson>();
   const accountId = JSON.parse(
     window.sessionStorage.getItem("loggedInAccountId") || "{}"
   );
@@ -65,48 +69,49 @@ function LessonViewer(props: any) {
     getCourseByCourseId(courseId).then(receivedCourse => {
       setCourse(receivedCourse);
     });
-  }, []);
-
-  useEffect(() => {
     getLessonByLessonId(lessonId).then(receivedLesson => {
       setLesson(receivedLesson);
     });
-  }, []);
-
-  /*
-  useEffect(() => {
-    let courseLessons = currentCourse?.lessons;
-    var courseLessonIds = courseLessons?.map(function(c) {
-      return c.lessonId;
-    })
-    if (!courseLessonIds?.includes(lessonId)) {
-      getMyAccount(accountId).then(receivedAccount => {
-        setUser(receivedAccount);
-      });
-    } else {
-      history.push('/notfound')
-    }
-  });
-  */
-
-
-  useEffect(() => {
     getMyAccount(accountId).then(receivedAccount => {
       setUser(receivedAccount);
     });
-  }, []);
-
-  useEffect(() => {
     getEnrolledLesson(accountId, lessonId).then(receivedEnrolledLesson => {
       setEnrolledLesson(receivedEnrolledLesson);
     });
-  }, []);
-
-  useEffect(() => {
     getAllQuizzesWithStudentAttemptCountByEnrolledLessonId(lessonId).then(receivedQuizAttempts => {
       setQuizAttempts(receivedQuizAttempts);
     });
   }, []);
+
+  useEffect(() => {
+    console.log(accountId, courseId)
+    if (accountId !== null && courseId !== null ) {
+      getEnrolledCourseByStudentIdAndCourseId(accountId, courseId).then(receivedEnrolledCourse => {
+        setEnrolledCourse(receivedEnrolledCourse);
+      });
+    }
+  }, []);
+
+
+  function previousLessonCompleted(): boolean {
+   let allEnrolledLessons = enrolledCourse?.enrolledLessons;
+   if (allEnrolledLessons && enrolledLesson && enrolledLesson?.parentLesson.sequence > 1) {
+     let sequence = enrolledLesson.parentLesson.sequence
+     let pLesson = allEnrolledLessons[sequence - 2];
+     if (pLesson.dateTimeOfCompletion !== null) {
+       console.log("true 1st")
+       return true;
+     } else {
+        console.log("false 2nd")
+       return false;
+     }
+    }
+    console.log(enrolledLesson?.parentLesson.sequence)
+    console.log("true last")
+    return true;
+  }
+   
+  console.log(enrolledCourse)
 
   let isCourseTutor =
     currentCourse?.tutor.accountId === currentUser?.accountId ? true : false;
@@ -124,7 +129,6 @@ function LessonViewer(props: any) {
     return false;
   }
 
-
   return (
     <>
       <LessonContainer>
@@ -132,6 +136,9 @@ function LessonViewer(props: any) {
         <PageHeading>
           <LessonTitle>Week {currentLesson?.sequence}</LessonTitle>
           <CourseTitle>{currentCourse?.name}</CourseTitle> 
+          {!previousLessonCompleted() &&
+          <HeadingDescription>You do not have access to this page. Complete your previous lessons.</HeadingDescription>
+          }
         </PageHeading>
         <ExitWrapper to={`/overview/${currentCourse?.courseId}`}>
             <CancelOutlinedIcon fontSize="large" style={{ color: colours.BLUE2, padding: 20 }}/>
@@ -151,6 +158,7 @@ function LessonViewer(props: any) {
                 <ContentLink
                   key={m.contentId}
                   isCompleted={checkCompleted(m.contentId)}
+                  previousCompleted={previousLessonCompleted()}
                 >
                   {m.multimediaType === "PDF" ? <ReadingIcon /> : <PlayIcon />}
                   {m.multimediaType === "PDF" ? "Reading" : "Video"}: {m.name}
@@ -173,12 +181,17 @@ function LessonViewer(props: any) {
                     <QuizSubheader>TIME LIMIT:</QuizSubheader>
                     <QuizDescription>{q.timeLimit} H</QuizDescription>
                     <BtnWrapper>
-                      {q.studentAttemptCount == 0 &&
+                      {!previousLessonCompleted() && 
                       <Button disabled>
                         Start
                       </Button>
                       }
-                      {q.studentAttemptCount > 0 &&
+                      {previousLessonCompleted() && q.studentAttemptCount == 0 && 
+                      <Button disabled>
+                        Start
+                      </Button>
+                      }
+                      {previousLessonCompleted() && q.studentAttemptCount > 0 && 
                       <Button primary={true} big={false} fontBig={false} disabled={false}>
                         Start
                       </Button>
@@ -186,9 +199,9 @@ function LessonViewer(props: any) {
                     </BtnWrapper>
                   </QuizRow>
                   <QuizRow>
-                    <QuizSubheader>No. Attempts:</QuizSubheader>
+                    <QuizSubheader>No. Attempts Left:</QuizSubheader>
                     <QuizDescriptionTwo>
-                      {q.maxAttemptsPerStudent}
+                      {q.studentAttemptCount}
                     </QuizDescriptionTwo>
                     {/*
                     <QuizSubheader>Grade:</QuizSubheader>

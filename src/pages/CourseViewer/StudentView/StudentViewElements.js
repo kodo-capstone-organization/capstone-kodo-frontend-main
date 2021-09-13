@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { Link } from "react-router-dom";
 import { colours } from "../../../values/Colours";
 import { fontSizes } from "../../../values/FontSizes";
 import { Avatar, Card, CardHeader, CardContent } from "@material-ui/core";
@@ -159,3 +160,6 @@ export const StudentViewCardContent = styled(CardContent)`
     padding: 2rem !important;
     padding: ${({ removePadTop }) => (removePadTop ? "0 2rem 2rem 2rem !important" : "2rem !important")};
 `;
+
+export const StepperIcon = styled(Link)`
+`

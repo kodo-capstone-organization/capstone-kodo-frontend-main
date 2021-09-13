@@ -4,7 +4,7 @@ import BookIcon from "@material-ui/icons/Book";
 import PlayCircleFilledIcon from "@material-ui/icons/PlayCircleFilled";
 import { colours } from "../../../values/Colours";
 import { fontSizes } from "../../../values/FontSizes";
-import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
 
 export const LessonContainer = styled.div`
@@ -36,6 +36,13 @@ export const CourseTitle = styled.div`
   font-size: ${fontSizes.SUBHEADER};
   color: ${colours.GRAY4};
 `;
+
+export const HeadingDescription = styled.div`
+  margin-top: 10px;
+  font-size: ${fontSizes.SUBTEXT};
+  color: red;
+`;
+
 export const LessonCard = styled.div`
   height: auto;
   width: auto;
@@ -72,8 +79,8 @@ export const ContentLink = styled(Link)`
   transition: 0.2s ease-in-out;
   color: ${colours.GRAY5};
   cursor: pointer;
-  pointer-events: ${({ isCompleted }) =>
-    isCompleted ? "none" : "auto"};
+  pointer-events: ${({ isCompleted, previousCompleted }) =>
+    (isCompleted || !previousCompleted) ? "none" : "auto"};
   font-family: "Roboto", sans-serif;
   padding: 0 20px 0 20px;
 
@@ -145,7 +152,7 @@ export const QuizDescriptionTwo = styled.div`
     margin-right: 5rem;
 `
 
-export const CheckIcon = styled(CheckCircleIcon)`
+export const CheckIcon = styled(CheckCircleOutlineIcon)`
     margin-left: 20px;
     color: green;
 `

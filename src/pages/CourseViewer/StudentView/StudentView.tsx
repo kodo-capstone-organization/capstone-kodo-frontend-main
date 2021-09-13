@@ -35,6 +35,7 @@ import {
   TagWrapper,
   TagChip,
   RatingDescription,
+  StepperIcon
 } from "./StudentViewElements";
 import { LessonDescription, CheckIcon } from "../LessonViewer/LessonViewerElements";
 import { useHistory } from "react-router";
@@ -136,7 +137,7 @@ function StudentView(props: any) {
     root: {
       color: '#eaeaf0',
       display: 'flex',
-      height: 22,
+      height: 20,
       alignItems: 'center',
     },
     active: {
@@ -145,12 +146,12 @@ function StudentView(props: any) {
     circle: {
       color: 'grey',
       zIndex: 1,
-      fontSize: 18,
+      fontSize: 20,
     },
     completed: {
       color: 'green',
       zIndex: 1,
-      fontSize: 18,
+      fontSize: 20,
     },
   });
   const StepIcon = (props: StepIconProps) => {
@@ -191,7 +192,7 @@ function StudentView(props: any) {
               <Step key={enrolledLesson.parentLesson.lessonId}>
                 <StepLabel StepIconComponent={StepIcon}>
                   <Link color="inherit" href={`/overview/lesson/${currentCourse.courseId}/${enrolledLesson.parentLesson.lessonId}`}>
-                    {enrolledLesson.parentLesson.name}
+                    Week {enrolledLesson.parentLesson.sequence}
                   </Link>
                 </StepLabel>
               </Step>
