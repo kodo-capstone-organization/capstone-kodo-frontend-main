@@ -179,7 +179,7 @@ function BrowseCourse() {
             <Tab
               key={tabItem.myTabIdx}
               label={tabItem.myTabName}
-              style={{ minWidth: "36ch" }}
+              style={{ width: "25%"}}
             />
           ))}
         </Tabs>
