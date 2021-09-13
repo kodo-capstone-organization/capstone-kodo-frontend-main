@@ -2,8 +2,12 @@ import React, { useEffect, useState } from "react";
 import { withRouter } from "react-router";
 import { Course } from "../../apis/Entities/Course";
 import { Account } from "../../apis/Entities/Account";
+import { EnrolledCourse } from "../../apis/Entities/EnrolledCourse";
 import { getMyAccount } from "../../apis/Account/AccountApis";
 import { getCourseByCourseId } from "../../apis/Course/CourseApis";
+import {
+  getEnrolledCourseByStudentIdAndCourseId,
+} from "../../apis/EnrolledCourse/EnrolledCourseApis";
 import Sidebar from "./Sidebar/Sidebar";
 import TutorView from "./TutorView/TutorView";
 import StudentView from "./StudentView/StudentView";
@@ -16,6 +20,7 @@ function CourseOverview(props: any) {
   const courseId = props.match.params.courseId;
   const [currentUser, setUser] = useState<Account>();
   const [currentCourse, setCourse] = useState<Course>();
+  const [enrolledCourse, setEnrolledCourse] = useState<EnrolledCourse>();
   const [loading, setLoading] = useState<Boolean>(true);
 
   const accountId = JSON.parse(
@@ -32,6 +37,9 @@ function CourseOverview(props: any) {
       setCourse(receivedCourse);
       setLoading(false);
     });
+    getEnrolledCourseByStudentIdAndCourseId(accountId, courseId).then(receivedEC => {
+      setEnrolledCourse(receivedEC)
+    })
   }, []);
 
   //if current logged in user is enrolled in this course, returns true
@@ -83,7 +91,7 @@ function CourseOverview(props: any) {
       {courseIsEnrolled() &&
       <> 
         <Sidebar course={currentCourse}/>
-        <StudentView course={currentCourse} account={currentUser}/> 
+        <StudentView course={currentCourse} account={currentUser} enrolledCourse={enrolledCourse}/> 
       </>
       }
       {isCourseTutor() &&

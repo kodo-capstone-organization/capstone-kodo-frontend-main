@@ -45,9 +45,9 @@ import { createNewAccount } from "../../../apis/Account/AccountApis";
 
 function StudentView(props: any) {
   const [currentCourse, setCourse] = useState<Course>({ ...props.course });
-  const [enrolledCourse, setEnrolledCourse] = useState<EnrolledCourse>();
+  const [enrolledCourse, setEnrolledCourse] = useState<EnrolledCourse>({...props.enrolledCourse});
   const [myAccount, setMyAccount] = useState<Account>({ ...props.account });
-  const [rating, setRating] = useState<number | null>(1);
+  const [rating, setRating] = useState<number | undefined>(enrolledCourse.courseRating);
   const [activeStep, setActiveStep] = React.useState<number>();
   const [latestLesson, setLatestLesson] = React.useState<EnrolledLesson>();
   const [steps, setSteps] = React.useState<EnrolledLesson[]>([])
@@ -59,21 +59,15 @@ function StudentView(props: any) {
 
   useEffect(() => {
     setCourse(props.course);
-    setMyAccount(props.account);
-
-    getEnrolledCourseByStudentIdAndCourseId(
-      accountId,
-      currentCourse.courseId
-    ).then(receivedEnrolledCourse => {
-      setEnrolledCourse(receivedEnrolledCourse);
-      initialiseActiveStep(receivedEnrolledCourse);
-      // const test = receivedEnrolledCourse.enrolledLessons.concat(receivedEnrolledCourse.enrolledLessons).concat(receivedEnrolledCourse.enrolledLessons).concat(receivedEnrolledCourse.enrolledLessons)
-      //@ts-ignore
-      setSteps(receivedEnrolledCourse.enrolledLessons);
-      console.log(receivedEnrolledCourse.enrolledLessons)
-      // setSteps(test);
-    });
-  }, [props.course]);
+    setMyAccount(props.account);     
+    setEnrolledCourse(props.enrolledCourse);
+    initialiseActiveStep(enrolledCourse);
+    // const test = receivedEnrolledCourse.enrolledLessons.concat(receivedEnrolledCourse.enrolledLessons).concat(receivedEnrolledCourse.enrolledLessons).concat(receivedEnrolledCourse.enrolledLessons)
+    //@ts-ignore
+    setSteps(enrolledCourse.enrolledLessons);
+    console.log(enrolledCourse.enrolledLessons)
+    // setSteps(test);
+    }, [props.course]);
 
   const initialiseActiveStep = (receivedEnrolledCourse: EnrolledCourse) => {
     var proxyActiveStep = -1 // to set stepper
