@@ -3,8 +3,9 @@ import { colours } from "../../values/Colours";
 import { fontSizes } from "../../values/FontSizes";
 import { Link as LinkR } from "react-router-dom";
 import {
-  Avatar
+  Avatar, Typography
 } from "@material-ui/core";
+
 
 
 export const ProgressContainer = styled.div`
@@ -37,10 +38,11 @@ export const EmptyStateText = styled.h1`
 `;
 
 export const EmptyStateContainer = styled.div`
+  display: ${({ coursesExist }) =>
+  coursesExist ? "none" : "flex"};
   font-size: ${fontSizes.SUBTEXT};
   color: ${colours.GRAY4};
   font-family: "Roboto", sans-serif;
-  display: flex;
   flex-direction: column;
   justify-content: center; 
   text-align: center; 
@@ -92,3 +94,17 @@ export const Button = styled(LinkR)`
     color: ${({ primary }) => (primary ? colours.WHITE : colours.GRAY1 )};
   }
 `;
+
+export const MessageContainer = styled.div`
+  display: flex;
+  margin: 3rem;
+  align-items: center;
+  justify-content: center;
+`
+
+export const Message = styled.h1`
+  display: flex;
+  color: ${colours.BLUE1}
+`
+
+

@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import {
-    ProgressContainer
+    ProgressContainer,
+    MessageContainer,
+    Message,
 } from "./ProgressElements";
 import { Breadcrumbs, Link, Tabs, Tab } from '@material-ui/core';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import { getMyAccount } from "../../apis/Account/AccountApis";
 import { EnrolledCourse } from "../../apis/Entities/EnrolledCourse";
 import { Account } from "../../apis/Entities/Account";
@@ -16,9 +19,11 @@ function ProgressPage() {
     const [currentCourses, setCurrentCourses] = useState<EnrolledCourse[]>([])
     const [myAccount, setMyAccount] = useState<Account>()
     const [tab, setTab] = React.useState(0);
+    const [loading, setLoading] = useState<boolean>(true);
     const accountId = window.sessionStorage.getItem("loggedInAccountId");
 
     useEffect(() => {
+        setLoading(true);
         if (accountId !== null) {
             getMyAccount(parseInt(accountId)).then((receivedAccount: Account) => {
                 setMyAccount(receivedAccount)
@@ -28,6 +33,7 @@ function ProgressPage() {
                 setCurrentCourses(updatedCurrentCourses)
             });
         }
+        setLoading(false);
     }, [accountId])
 
     const handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
@@ -47,6 +53,10 @@ function ProgressPage() {
             </div>
         );
     }
+
+    if (loading) return (
+        <MessageContainer><CircularProgress /></MessageContainer>
+    );
 
     return (
         <ProgressContainer>
