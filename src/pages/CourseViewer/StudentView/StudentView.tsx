@@ -69,6 +69,8 @@ function StudentView(props: any) {
     // setSteps(test);
     }, [props.course]);
 
+    console.log(enrolledCourse)
+
   const initialiseActiveStep = (receivedEnrolledCourse: EnrolledCourse) => {
     var proxyActiveStep = 0 // to set stepper
     var latestLessonCounter = 0 // to redirect in course overview section
@@ -114,9 +116,7 @@ function StudentView(props: any) {
 
   const handleRatingChange = (newRating: any) => {
     setRating(newRating);
-    if (enrolledCourse) {
-      setCourseRatingByEnrolledCourseId(enrolledCourse?.enrolledCourseId, newRating);
-    }
+    setCourseRatingByEnrolledCourseId(enrolledCourse.enrolledCourseId, newRating);
   };
 
   const displayPictureURL = () => {
