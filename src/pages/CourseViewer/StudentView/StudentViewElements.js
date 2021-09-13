@@ -36,16 +36,15 @@ export const CardTitle = styled.div`
   color: ${colours.GRAY1};
   font-weight: bold !important;
   margin-left: 20px;
+  margin-top: 80px;
+
 `;
 
 export const TutorDetails = styled.div`
-    display: flex;
-    width: 295px;
-    flex-wrap: wrap;
-    > * {
-    flex: 0 0 50%;
-    }
-    margin-bottom: 100px;
+  display: grid;
+  grid-template-columns: 160px 500px;
+  margin-bottom: 120px;
+  margin-left: 10px;
 `
 
 export const ProfileAvatar = styled(Avatar)`
@@ -55,6 +54,7 @@ export const TutorText = styled.div`
     display: flex;
     flex-direction: column;
     padding-top: 20px;
+    margin-left: 10px;
     
 `
 export const TutorName = styled.div`
