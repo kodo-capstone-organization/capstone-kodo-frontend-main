@@ -24,6 +24,7 @@ import {
   LessonContainer,
   PageHeadingAndButton,
   PageHeading,
+  HeadingDescription,
   LessonTitle,
   CourseTitle,
   LessonCard,
@@ -98,11 +99,15 @@ function LessonViewer(props: any) {
      let sequence = enrolledLesson.parentLesson.sequence
      let pLesson = allEnrolledLessons[sequence - 2];
      if (pLesson.dateTimeOfCompletion !== null) {
+       console.log("true 1st")
        return true;
      } else {
+        console.log("false 2nd")
        return false;
      }
     }
+    console.log(enrolledLesson?.parentLesson.sequence)
+    console.log("true last")
     return true;
   }
    
@@ -124,7 +129,6 @@ function LessonViewer(props: any) {
     return false;
   }
 
-
   return (
     <>
       <LessonContainer>
@@ -132,6 +136,9 @@ function LessonViewer(props: any) {
         <PageHeading>
           <LessonTitle>Week {currentLesson?.sequence}</LessonTitle>
           <CourseTitle>{currentCourse?.name}</CourseTitle> 
+          {!previousLessonCompleted() &&
+          <HeadingDescription>You do not have access to this page. Complete your previous lessons.</HeadingDescription>
+          }
         </PageHeading>
         <ExitWrapper to={`/overview/${currentCourse?.courseId}`}>
             <CancelOutlinedIcon fontSize="large" style={{ color: colours.BLUE2, padding: 20 }}/>
@@ -151,7 +158,7 @@ function LessonViewer(props: any) {
                 <ContentLink
                   key={m.contentId}
                   isCompleted={checkCompleted(m.contentId)}
-                  isUnlocked={previousLessonCompleted()}
+                  previousCompleted={previousLessonCompleted()}
                 >
                   {m.multimediaType === "PDF" ? <ReadingIcon /> : <PlayIcon />}
                   {m.multimediaType === "PDF" ? "Reading" : "Video"}: {m.name}
@@ -174,12 +181,17 @@ function LessonViewer(props: any) {
                     <QuizSubheader>TIME LIMIT:</QuizSubheader>
                     <QuizDescription>{q.timeLimit} H</QuizDescription>
                     <BtnWrapper>
-                      {q.studentAttemptCount == 0 &&
+                      {!previousLessonCompleted() && 
                       <Button disabled>
                         Start
                       </Button>
                       }
-                      {q.studentAttemptCount > 0 &&
+                      {previousLessonCompleted() && q.studentAttemptCount == 0 && 
+                      <Button disabled>
+                        Start
+                      </Button>
+                      }
+                      {previousLessonCompleted() && q.studentAttemptCount > 0 && 
                       <Button primary={true} big={false} fontBig={false} disabled={false}>
                         Start
                       </Button>
@@ -187,9 +199,9 @@ function LessonViewer(props: any) {
                     </BtnWrapper>
                   </QuizRow>
                   <QuizRow>
-                    <QuizSubheader>No. Attempts:</QuizSubheader>
+                    <QuizSubheader>No. Attempts Left:</QuizSubheader>
                     <QuizDescriptionTwo>
-                      {q.maxAttemptsPerStudent}
+                      {q.studentAttemptCount}
                     </QuizDescriptionTwo>
                     {/*
                     <QuizSubheader>Grade:</QuizSubheader>

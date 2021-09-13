@@ -53,40 +53,6 @@ function CourseList(props: any) {
   const navigateToBrowseCoursePage = () => {
     history.push("/browsecourse");
   };
-    const getCourseLessons = (course: EnrolledCourse) => {
-        console.log(course.enrolledLessons)
-        var unlockedSequence = 1; // minimum unlocked lesson is sequence 1
-        course.enrolledLessons.map(lesson => {
-            if(lesson.dateTimeOfCompletion !== null){
-                unlockedSequence++;
-            }
-        })
-        return (
-            <div>
-                {course.enrolledLessons.map(function (lesson, lessonId) {
-                    return (
-                        <>
-                            <CourseElement key={lessonId}>
-                                <LessonAvatar src="/chessplaceholder.png"
-                                    alt={course.parentCourse.name} />
-                                    <SubjectContainer>
-                                    <Subject>{lesson?.parentLesson.name}</Subject>
-
-                                    </SubjectContainer>
-                                <MultimediaModal show={showMultimedia} account={myAccount} lesson={lesson.parentLesson} />
-                                <div style={{width:"100px"}}>
-                                {
-                                    course.dateTimeOfCompletion === null ? (lesson.dateTimeOfCompletion !== null || lesson.parentLesson.sequence === unlockedSequence ? <Button variant="outlined" primary={true} to={`/overview/lesson/${course.parentCourse.courseId}/${lesson.parentLesson.lessonId}`}>Resume</Button> :
-                                    <Button variant="outlined" primary={false} disabled><LockIcon/></Button>) : <Button primary={true} to={`/overview/lesson/${course.parentCourse.courseId}/${lesson.parentLesson.lessonId}`}>View</Button>
-                                }
-                                </div>
-                            </CourseElement>
-                        </>
-                    );
-                })}
-            </div>
-        )
-    }
 
   const getCourseLessons = (course: EnrolledCourse) => {
     console.log(course.enrolledLessons);
