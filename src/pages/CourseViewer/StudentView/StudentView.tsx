@@ -8,7 +8,7 @@ import { Course } from "../../../apis/Entities/Course";
 import { Account } from "../../../apis/Entities/Account";
 import clsx from 'clsx';
 import { makeStyles, createStyles, Theme, withStyles } from '@material-ui/core/styles';
-import { Stepper, Step, StepButton, Typography, StepLabel, Link, StepConnector } from "@material-ui/core";
+import { Stepper, Step, StepButton, Typography, StepLabel, Link, StepConnector, Box } from "@material-ui/core";
 import { Lesson } from '../../../apis/Entities/Lesson';
 import { EnrolledLesson } from '../../../apis/Entities/EnrolledLesson';
 import { Button } from '../../../values/ButtonElements';
@@ -35,7 +35,6 @@ import {
   TagWrapper,
   TagChip,
   RatingDescription,
-  CourseRatingWrapper
 } from "./StudentViewElements";
 import { LessonDescription, CheckIcon } from "../LessonViewer/LessonViewerElements";
 import { useHistory } from "react-router";
@@ -46,7 +45,7 @@ function StudentView(props: any) {
   const [enrolledCourse, setEnrolledCourse] = useState<EnrolledCourse>();
   const [myAccount, setMyAccount] = useState<Account>({ ...props.account });
   const [rating, setRating] = useState<number | null>(1);
-  const [activeStep, setActiveStep] = React.useState(-1);
+  const [activeStep, setActiveStep] = React.useState<number>();
   const [latestLesson, setLatestLesson] = React.useState<EnrolledLesson>();
   const [steps, setSteps] = React.useState<EnrolledLesson[]>([])
   const history = useHistory();
@@ -64,32 +63,39 @@ function StudentView(props: any) {
       currentCourse.courseId
     ).then(receivedEnrolledCourse => {
       setEnrolledCourse(receivedEnrolledCourse);
-      var proxyActiveStep = 0
-      var latestLessonCounter = 0
-      receivedEnrolledCourse.enrolledLessons.map(x => {
-        if (x.dateTimeOfCompletion !== null) {
-          proxyActiveStep++;
-          setActiveStep(proxyActiveStep);
-          setLatestLesson(x);
-        } else if (x.dateTimeOfCompletion === null && latestLessonCounter === 0) {
-          setLatestLesson(x);
-          latestLessonCounter++;
-          if (x.parentLesson.sequence === 1) {
-            proxyActiveStep++;
-            setActiveStep(proxyActiveStep);
-          }
-        }
-      })
+      initialiseActiveStep(receivedEnrolledCourse);
+      // const test = receivedEnrolledCourse.enrolledLessons.concat(receivedEnrolledCourse.enrolledLessons).concat(receivedEnrolledCourse.enrolledLessons).concat(receivedEnrolledCourse.enrolledLessons)
       //@ts-ignore
       setSteps(receivedEnrolledCourse.enrolledLessons);
+      // setSteps(test);
     });
   }, [props.course]);
+
+  const initialiseActiveStep = (receivedEnrolledCourse : EnrolledCourse) => {
+    var proxyActiveStep = -1 // to set stepper
+    var latestLessonCounter = 0 // to redirect in course overview section
+    receivedEnrolledCourse.enrolledLessons.map(x => {
+      if (x.dateTimeOfCompletion !== null) { // if lesson has been completed, increase activeStep
+        proxyActiveStep++;
+        setActiveStep(proxyActiveStep);
+        setLatestLesson(x);
+      } else if (x.dateTimeOfCompletion === null && latestLessonCounter === 0) { // if lesson has not been completed for the first time, set latestLesson
+        setLatestLesson(x);
+        latestLessonCounter++;
+        if (x.parentLesson.sequence === 1) { // if latestLesson is lesson 1
+          proxyActiveStep++;
+          setActiveStep(proxyActiveStep);
+        }
+      }
+    })
+  }
 
 
   const useStyles = makeStyles((theme: Theme) =>
     createStyles({
       root: {
-        width: '100%',
+        // width: '100%',
+        width: '900px',
       },
       button: {
         marginRight: theme.spacing(1),
@@ -142,14 +148,15 @@ function StudentView(props: any) {
   const StepIcon = (props: StepIconProps) => {
     const classes = StepIconStyles();
     const { active, completed } = props;
-
     return (
       <div
         className={clsx(classes.root, {
           [classes.active]: active,
         })}
       >
-        {completed ? <CheckCircleIcon className={classes.completed} /> : <LockIcon className={classes.circle} />}
+        {
+        active ? <CheckCircleIcon className={classes.completed} /> : <LockIcon className={classes.circle} />
+        }
       </div>
     );
   }
@@ -169,21 +176,23 @@ function StudentView(props: any) {
       </PageHeading>
 
       <div className={classes.root}>
-        <Stepper alternativeLabel activeStep={activeStep}>
-          {steps.map((enrolledLesson) => (
-            <Step key={enrolledLesson.parentLesson.lessonId}>
-              <StepLabel StepIconComponent={StepIcon}>
-                <Link color="inherit" href={`/overview/lesson/${currentCourse.courseId}/${enrolledLesson.parentLesson.lessonId}`}>
-                  {enrolledLesson.parentLesson.name}
-                </Link>
-              </StepLabel>
-            </Step>
-          ))}
-        </Stepper>
+        <Box component="div" my={2} overflow="auto" bgcolor="background.paper">
+          <Stepper alternativeLabel activeStep={activeStep}>
+            {steps.map((enrolledLesson) => (
+              <Step key={enrolledLesson.parentLesson.lessonId}>
+                <StepLabel StepIconComponent={StepIcon}>
+                  <Link color="inherit" href={`/overview/lesson/${currentCourse.courseId}/${enrolledLesson.parentLesson.lessonId}`}>
+                    {enrolledLesson.parentLesson.name}
+                  </Link>
+                </StepLabel>
+              </Step>
+            ))}
+          </Stepper>
+        </Box>
       </div>
 
       <StudentViewCard>
-        <StudentViewCardHeader title="Course Overview"/>
+        <StudentViewCardHeader title="Course Overview" />
         <StudentViewCardContent>
           <RatingTitle>{currentCourse.description}</RatingTitle>
           <Button primary style={{ marginLeft: "auto" }} onClick={navigateToLatestLesson}>Continue Course</Button>
