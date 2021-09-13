@@ -93,6 +93,7 @@ export const ProfileName = styled.div`
 export const ProfileContentText = styled.div`
     font-size: ${fontSizes.CONTENT};
     color: ${colours.GRAY3};
+    white-space: pre-line;
 `;
 
 

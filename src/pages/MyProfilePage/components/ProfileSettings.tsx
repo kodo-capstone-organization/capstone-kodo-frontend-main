@@ -204,7 +204,7 @@ function ProfileSettings(props: any) {
                         <div id="profile-details" style={{ margin: "20px", width: "70%" }}>
                             <ProfileSettingField error={errors["name"]} style={{ margin: "0 0 10px 0" }} label="Name" value={name} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setName(e.target.value)} />
                             <ProfileSettingField error={errors["email"]} style={{ margin: "0 0 10px 0" }} label="Email" value={email} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setEmail(e.target.value)} />
-                            <ProfileSettingField style={{ margin: "0 0 10px 0" }} label="Bio" value={bio} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setBio(e.target.value)} />
+                            <ProfileSettingField style={{ margin: "0 0 10px 0" }} multiline label="Bio" value={bio} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setBio(e.target.value)} />
                             <InputLabel
                                 style={{
                                     color: "rgba(0, 0, 0, 0.54)",
