@@ -137,11 +137,9 @@ function SignUp() {
             window.sessionStorage.setItem("loggedInAccountUsername", username);
             window.sessionStorage.setItem("loggedInAccountPassword", password);
             history.push('/progresspage');
-        }).catch(err => {
-            setSignUpFailed("Sign up failed! Please use valid credentials!")
-        }
-        )
-
+        }).catch(err => {            
+            setSignUpFailed(err.response.data.message)
+        })
     };
 
     return (
