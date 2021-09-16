@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Alert from '@material-ui/lab/Alert';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button } from "../../../values/ButtonElements";
 import {
@@ -40,7 +41,7 @@ function SignUp() {
     const [chips, setChips] = useState<String[]>([]);
     const [tagLibrary, setTagLibrary] = useState<Tag[]>([]);
     const [signUpFailed, setSignUpFailed] = useState<String>("");
-    const [btnTagFailed, setBtnTagFailed] = useState<String>("");
+    const [btnTagFailed, setBtnTagFailed] = useState<Boolean>(false);
     var [errors, setErrors] = useState<IErrors<any>>({
         name: "",
         username: "",
@@ -63,13 +64,14 @@ function SignUp() {
     }
 
     const handleBtnTag = (event: React.SyntheticEvent, newBtnTag: string) => {
+        setBtnTagFailed(false)
         setBtnTags([newBtnTag])
     }
 
     const handleValidation = () => {
         let formIsValid = true;
         errors = {};
-        setBtnTagFailed("")
+        setBtnTagFailed(false)
 
         //Username
         if (username === "") {
@@ -107,7 +109,7 @@ function SignUp() {
             console.log('btn invalid');
             formIsValid = false;
             errors["btnTags"] = true;
-            setBtnTagFailed("Please choose a level.")
+            setBtnTagFailed(true)
         }
 
         setErrors(errors);
@@ -117,6 +119,16 @@ function SignUp() {
         return formIsValid;
     }
 
+    const showErrors = () => {
+        if (signUpFailed)
+        {
+            return(<Alert variant="filled" severity="error">{signUpFailed}</Alert>);
+        }
+        else
+        {
+            return "";
+        }
+    }
 
     const handleSignUp = () => {
         // const chipsToString = chips.map((chip) => chip.title)
@@ -176,16 +188,38 @@ function SignUp() {
                                     value={btnTags}
                                     exclusive
                                     onChange={handleBtnTag}
-                                    style={{ justifyContent: "center" }}
+                                    style={{ 
+                                        justifyContent: "center"
+                                    }}
                                 >
-                                    <ToggleButton value="beginner"> Beginner
-                                </ToggleButton>
-                                    <ToggleButton value="intermediate" > Intermediate
-                                </ToggleButton>
-                                    <ToggleButton value="expert"> Expert
-                                </ToggleButton>
+                                    <ToggleButton 
+                                        style={{ 
+                                            borderColor: btnTagFailed ? "#f44336" : "rgba(0, 0, 0, 0.12)",
+                                            color: btnTagFailed ? "#f44336" : "rgba(0, 0, 0, 0.38)"                                          
+                                        }} 
+                                        value="beginner"
+                                    >
+                                            Beginner
+                                    </ToggleButton>
+                                    <ToggleButton 
+                                        style={{ 
+                                            borderColor: btnTagFailed ? "#f44336" : "rgba(0, 0, 0, 0.12)",
+                                            color: btnTagFailed ? "#f44336" : "rgba(0, 0, 0, 0.38)"                           
+                                        }} 
+                                        value="intermediate"
+                                    >
+                                            Intermediate
+                                    </ToggleButton>
+                                    <ToggleButton 
+                                        style={{ 
+                                            borderColor: btnTagFailed ? "#f44336" : "rgba(0, 0, 0, 0.12)",
+                                            color: btnTagFailed ? "#f44336" : "rgba(0, 0, 0, 0.38)"                       
+                                        }} 
+                                        value="expert"
+                                    >
+                                        Expert
+                                    </ToggleButton>
                                 </ToggleButtonGroup>
-                                <span style={{ color: "red" }}>{btnTagFailed}</span>
                                 <br />
                                 <Autocomplete
                                     multiple
@@ -204,7 +238,8 @@ function SignUp() {
                                 />
                                 <br />
                                 <Button onClick={handleValidation}>Sign Up</Button>
-                                <span style={{ color: "red" }}>{signUpFailed}</span>
+                                <br />
+                                { showErrors() }
                             </SignUpForm>
                         </form>
                     </SignUpPaperWrapper>

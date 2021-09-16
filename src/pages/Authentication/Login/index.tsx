@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Typography } from '@material-ui/core';
+import TextField from '@material-ui/core/TextField';
+import Alert from '@material-ui/lab/Alert';
 import { Button } from "../../../values/ButtonElements";
 import { useHistory } from "react-router-dom";
 import {
@@ -7,7 +9,6 @@ import {
     LoginPaperWrapper,
     LoginForm
 } from "./LoginElements";
-import TextField from '@material-ui/core/TextField';
 import { login } from '../../../apis/Account/AccountApis';
 
 
@@ -39,6 +40,17 @@ function Login() {
         // and redirect accordingly
     }
 
+    const showErrors = () => {
+        if (loginFailed)
+        {
+            return(<Alert variant="filled" severity="error">{loginFailed}</Alert>);
+        }
+        else
+        {
+            return "";
+        }
+    }
+
     return (
         <>
             <div
@@ -68,8 +80,9 @@ function Login() {
                         </form>
                         <br />
                         <Button primary big fontBig onClick={btnClick}>Login</Button>
-                        <div style={{textAlign:"center"}}><span style={{ color: "red"}}>{loginFailed}</span></div>
-                        
+
+                        <br />
+                        { showErrors() }
                     </LoginPaperWrapper>
                 </LoginPaper>
             </div>
