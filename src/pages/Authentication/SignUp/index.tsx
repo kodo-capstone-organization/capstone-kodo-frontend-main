@@ -1,23 +1,27 @@
-import React, { useState, useEffect } from 'react';
 import Alert from '@material-ui/lab/Alert';
-import { makeStyles } from '@material-ui/core/styles';
+import React, { useState, useEffect } from 'react';
+import { Account } from "../../../apis/Entities/Account";
 import { Button } from "../../../values/ButtonElements";
-import {
-    SignUpPaper,
-    SignUpPaperWrapper,
-    SignUpForm
-} from "./SignUpElements";
-import {
-    Typography, TextField, Chip
-} from "@material-ui/core";
-import {
-    ToggleButton, ToggleButtonGroup, Autocomplete
-} from "@material-ui/lab";
+import { Tag } from "../../../apis/Entities/Tag";
 import { createNewAccount } from '../../../apis/Account/AccountApis';
 import { getAllTags } from '../../../apis/Tag/TagApis';
-import { Tag } from "../../../apis/Entities/Tag";
-import { Account } from "../../../apis/Entities/Account";
+import { makeStyles } from '@material-ui/core/styles';
 import { useHistory } from 'react-router';
+import {
+    SignUpForm,
+    SignUpPaper,
+    SignUpPaperWrapper
+} from "./SignUpElements";
+import {
+    Chip,
+    TextField, 
+    Typography
+} from "@material-ui/core";
+import {
+    Autocomplete,
+    ToggleButton, 
+    ToggleButtonGroup
+} from "@material-ui/lab";
 
 interface IErrors<TValue> {
     [id: string]: TValue;
@@ -240,6 +244,7 @@ function SignUp() {
                                 <Button onClick={handleValidation}>Sign Up</Button>
                                 <br />
                                 { showErrors() }
+                                <br />
                             </SignUpForm>
                         </form>
                     </SignUpPaperWrapper>

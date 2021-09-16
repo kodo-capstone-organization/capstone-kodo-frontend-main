@@ -1,23 +1,35 @@
-import React, { useEffect, useState } from 'react';
-import { useHistory } from "react-router";
-import {
-    TextField, Chip, InputAdornment, Input, InputLabel, IconButton,
-    FormControl, Grid, Snackbar
-} from "@material-ui/core";
-import { Autocomplete } from "@material-ui/lab";
+import Alert from '@material-ui/lab/Alert';
 import CloseIcon from '@material-ui/icons/Close';
-import {
-    ProfileCard, ProfileSettingField, ProfileSubText,
-    ProfileAvatar, ProfileInitials, ProfileCardHeader
-} from "../ProfileElements";
+import DeactivateAccountModal from "./DeactivateAccountModal";
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
-import { Button } from "../../../values/ButtonElements";
+import React, { useEffect, useState } from 'react';
 import { Account } from "../../../apis/Entities/Account";
+import { Autocomplete } from "@material-ui/lab";
+import { Button } from "../../../values/ButtonElements";
 import { Tag } from "../../../apis/Entities/Tag";
-import DeactivateAccountModal from "./DeactivateAccountModal";
 import { getAllTags } from '../../../apis/Tag/TagApis';
 import { updateAccount } from '../../../apis/Account/AccountApis';
+import { useHistory } from "react-router";
+import {
+    Chip, 
+    FormControl, 
+    Grid, 
+    IconButton,
+    Input, 
+    InputAdornment, 
+    InputLabel, 
+    Snackbar,
+    TextField
+} from "@material-ui/core";
+import {
+    ProfileAvatar, 
+    ProfileCard, 
+    ProfileCardHeader,
+    ProfileInitials, 
+    ProfileSettingField, 
+    ProfileSubText
+} from "../ProfileElements";
 
 interface IErrors<TValue> {
     [id: string]: TValue;
@@ -47,6 +59,8 @@ function ProfileSettings(props: any) {
     });
     const [openSnackbar, setOpenSnackbar] = React.useState(false);
     const history = useHistory();
+
+    const [updateAccountFailed, setUpdateAccountFailed] = useState<String>("");
 
     useEffect(() => {
         setPassword(window.sessionStorage.getItem("loggedInAccountPassword") || "")
@@ -84,21 +98,27 @@ function ProfileSettings(props: any) {
             stripeAccountId: props.account.stripeAccountId,
         }
 
+        // Without this line, the JSON passed over will fail as the BE side will try to use the
+        // setPassword method and will throw the exception immediately
+        updatedAccountObject.password = null;
+
         const updateAccountReq = {
             account: updatedAccountObject,
             password: password,
             tagTitles: interests,
-            enrolledCourseIds: null,
-            courseIds: null,
-            forumThreadIds: null,
-            forumPostIds: null,
-            studentAttemptIds: null,
+            enrolledCourseIds: [],
+            courseIds: [],
+            forumThreadIds: [],
+            forumPostIds: [],
+            studentAttemptIds: []
         }
         //@ts-ignore
         updateAccount(updateAccountReq, displayPictureFile).then((res) => {
             window.sessionStorage.setItem("loggedInAccountPassword", password); // re-set the password in storage in case it is updated
             history.push("/profile")
-        }).catch(err => { console.log("error", err) })
+        }).catch(err => { 
+            setUpdateAccountFailed(err.response.data.message);
+        })
     }
 
     const displayPictureURL = () => {
@@ -176,14 +196,27 @@ function ProfileSettings(props: any) {
         event.preventDefault();
     };
 
+    const showErrors = () => {
+        if (updateAccountFailed)
+        {
+            return(<Alert variant="filled" severity="error">{updateAccountFailed}</Alert>);
+        }
+        else
+        {
+            return "";
+        }
+    }
+
     return (
         <>
+
             {
                 myAccount !== null &&
                 <ProfileCard id="my-details">
-                    <ProfileCardHeader
-                        title="Account Settings"
-                    />
+                    <ProfileCardHeader title="Account Settings"/>
+                    <div style={{ margin: "10px 4.5em 10px 4.5em"}}>
+                        { showErrors() }
+                    </div>
                     <form noValidate autoComplete="off" style={{ display: "flex", justifyContent: "center" }}>
                         <div style={{ padding: "20px"}}>
                             <ProfileAvatar
