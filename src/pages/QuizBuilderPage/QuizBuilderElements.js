@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { TextField, Avatar, Card, CardHeader, CardContent, CardActions } from "@material-ui/core";
+import { TextField, Avatar, Card, CardHeader, CardContent, CardActions, Select } from "@material-ui/core";
 import { fontSizes } from "../../values/FontSizes";
 import { colours } from "../../values/Colours";
 
@@ -28,7 +28,7 @@ export const QuizQuestionCard = styled(Card)`
     width: 100%;
     border-radius : 10px;
     padding: 16px;
-    width: 900px;
+    width: 70%;
 `;
 
 export const QuizCardHeader = styled(CardHeader)`
@@ -63,6 +63,7 @@ export const QuizCardContent = styled(CardContent)`
     align-items: center;
     padding: 2rem !important;
     padding: ${({ removePadTop }) => (removePadTop ? "0 2rem 2rem 2rem !important" : "2rem !important")};
+    justify-content: center;
 `;
 
 export const QuizCardActions = styled(CardActions)`
@@ -129,4 +130,13 @@ export const BlankStateContainer = styled.div`
         margin: 0 0 1rem 0;
     }
     
+`;
+
+export const QuizSelectMenu = styled(Select)`
+    width: 400px;
+`;
+
+export const QuizBuilderTextInput = styled(TextField)`
+    width: 100%;
+    margin: 16px;
 `;

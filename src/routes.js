@@ -33,7 +33,7 @@ function Routes() {
                             <Route path="/builder/:courseId" component={CourseBuilderPage} exact />
                             : <Redirect to="/" />}
                         {window.sessionStorage.getItem("loggedInAccountId") ?
-                            <Route path="/quizbuilder/:contentId" component={QuizBuidlerPage} exact />
+                            <Route path="/buildquiz/:contentId" component={QuizBuidlerPage} exact />
                             : <Redirect to="/" />}
                         {window.sessionStorage.getItem("loggedInAccountId") ?
                             <Route path="/overview/:courseId" component={CourseOverview} exact />

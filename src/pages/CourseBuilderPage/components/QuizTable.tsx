@@ -379,7 +379,7 @@ export default function QuizTable(props: any) {
                             />
                           </TableCell>
                           <TableCell component="th" id={labelId} scope="row" padding="none">
-                            <Link to={`/quizbuilder/${row.contentId}`}>
+                            <Link to={`/buildquiz/${row.contentId}`}>
                               {row.name}
                             </Link>
                           </TableCell>

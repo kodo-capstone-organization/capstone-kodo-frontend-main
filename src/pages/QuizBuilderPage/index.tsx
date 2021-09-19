@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Quiz } from './../../apis/Entities/Quiz';
+// import { QuizQuestion } from "./../../apis/Entities/QuizQuestion";
 import { getQuizByQuizId } from "../../apis/Quiz/QuizApis";
 import { Button } from "../../values/ButtonElements";
-import  QuizQuestion  from "./components/QuizQuestion"
+import QuizQuestionComponent from "./components/QuizQuestionComponent"
 import {
-    CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle,
-    FormControl, Grid, IconButton, Input, InputAdornment, InputLabel, TextField, Typography, Divider
+    Grid, TextField
 } from "@material-ui/core";
 import { QuizContainer, QuizCard, QuizCardHeader, QuizCardContent, QuizQuestionCard } from "./QuizBuilderElements";
 
@@ -15,15 +15,22 @@ function QuizBuilderPage(props: any) {
     const [contentId, setContentId] = props.match.params.contentId;
     const [name, setName] = useState<string>("");
     const [description, setDescription] = useState<string>("");
+    const [newQ, setNewQ] = useState([]);
 
 
     useEffect(() => {
         getQuizByQuizId(contentId).then((res) => {
             setName(res.name)
             setDescription(res.description)
+            console.log("res", res)
         }).catch((err) => { console.log("error:getQuizByQuizId", err) });
 
     }, [contentId])
+
+    const addNewQ = () => {
+        // const add = newQ.push(new QuizQuestion())
+        // setNewQ(add);
+    }
 
 
     return (
@@ -49,9 +56,16 @@ function QuizBuilderPage(props: any) {
                 <QuizCard>
                     <QuizCardHeader
                         title="Quiz Builder"
+                        action={
+                            <Button onClick={addNewQ}>Add New Question</Button>
+                        }
                     />
                     <QuizCardContent>
-                        <QuizQuestion/>
+                        {
+                            newQ.map(q => {
+                                <QuizQuestionComponent />
+                            })
+                        }
                     </QuizCardContent>
                 </QuizCard>
             </QuizContainer>
