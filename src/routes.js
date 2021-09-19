@@ -11,6 +11,8 @@ import { RouteItemsWithSidebar } from "./routeItems";
 import Login from "./pages/Authentication/Login";
 import SignUp from "./pages/Authentication/SignUp";
 import CourseBuilderPage from "./pages/CourseBuilderPage";
+import QuizBuidlerPage from "./pages/QuizBuilderPage";
+
 
 import CourseOverview from "./pages/CourseViewer";
 import LessonViewerWithRouter from "./pages/CourseViewer/LessonViewer";
@@ -27,15 +29,18 @@ function Routes() {
                         </Route>
                         <Route path="/login" component={Login} exact />
                         <Route path="/signup" component={SignUp} exact />
-                        {window.sessionStorage.getItem("loggedInAccountId") ? 
-                         <Route path="/builder/:courseId" component={CourseBuilderPage} exact />
-                        : <Redirect to="/" />}
-                        {window.sessionStorage.getItem("loggedInAccountId") ? 
+                        {window.sessionStorage.getItem("loggedInAccountId") ?
+                            <Route path="/builder/:courseId" component={CourseBuilderPage} exact />
+                            : <Redirect to="/" />}
+                        {window.sessionStorage.getItem("loggedInAccountId") ?
+                            <Route path="/quizbuilder/:contentId" component={QuizBuidlerPage} exact />
+                            : <Redirect to="/" />}
+                        {window.sessionStorage.getItem("loggedInAccountId") ?
                             <Route path="/overview/:courseId" component={CourseOverview} exact />
-                        : <Redirect to="/" />}
-                        {window.sessionStorage.getItem("loggedInAccountId") ? 
+                            : <Redirect to="/" />}
+                        {window.sessionStorage.getItem("loggedInAccountId") ?
                             <Route path="/overview/lesson/:courseId/:lessonId" component={LessonViewerWithRouter} exact />
-                        : <Redirect to="/" />}
+                            : <Redirect to="/" />}
                         {
                             RouteItemsWithSidebar.map(item => {
                                 return (

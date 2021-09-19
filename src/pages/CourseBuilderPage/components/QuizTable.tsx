@@ -18,10 +18,12 @@ import Tooltip from '@material-ui/core/Tooltip';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import DeleteIcon from '@material-ui/icons/Delete';
+import { Link } from "react-router-dom";
 import { Quiz } from '../../../apis/Entities/Quiz';
 import { Lesson } from '../../../apis/Entities/Lesson';
 interface Data {
-  id: number
+  id: number,
+  contentId: number,
   name: string,
   description: string,
   maxAttemptsPerStudent: number,
@@ -30,12 +32,13 @@ interface Data {
 
 function createData(
   id: number,
+  contentId: number,
   name: string,
   description: string,
   maxAttemptsPerStudent: number,
   timeLimit: string
 ): Data {
-  return { id, name, description, maxAttemptsPerStudent, timeLimit };
+  return { id, contentId, name, description, maxAttemptsPerStudent, timeLimit };
 }
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
@@ -145,13 +148,13 @@ const useToolbarStyles = makeStyles((theme: Theme) =>
     highlight:
       theme.palette.type === 'light'
         ? {
-            color: theme.palette.secondary.main,
-            backgroundColor: lighten(theme.palette.secondary.light, 0.85),
-          }
+          color: theme.palette.secondary.main,
+          backgroundColor: lighten(theme.palette.secondary.light, 0.85),
+        }
         : {
-            color: theme.palette.text.primary,
-            backgroundColor: theme.palette.secondary.dark,
-          },
+          color: theme.palette.text.primary,
+          backgroundColor: theme.palette.secondary.dark,
+        },
     title: {
       flex: '1 1 100%',
     },
@@ -170,7 +173,7 @@ interface EnhancedTableToolbarProps {
 
 const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   const classes = useToolbarStyles();
-  const { numSelected, selectedIds, lessonIndex, handleFormDataChange, setLessons, lessons, setSelectedIds} = props;
+  const { numSelected, selectedIds, lessonIndex, handleFormDataChange, setLessons, lessons, setSelectedIds } = props;
 
   // Update quizzes for a particular lesson from courseFormData
   const handleDeleteQuiz = () => {
@@ -206,10 +209,10 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
           {numSelected} selected
         </Typography>
       ) : (
-        <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
-          Quizzes
-        </Typography>
-      )}
+          <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
+            Quizzes
+          </Typography>
+        )}
       {numSelected > 0 && (
         <Tooltip title="Delete">
           <IconButton aria-label="delete" onClick={handleDeleteQuiz}>
@@ -248,151 +251,153 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 export default function QuizTable(props: any) {
-    const handleFormDataChange = props.handleFormDataChange;
-    const [quizzes, setQuizzes] = useState<Quiz[]>(props.quizzes);
-    const [lessons, setLessons] = useState<Lesson[]>(props.lessons);
-    const rows = quizzes?.length > 0 ? quizzes.map((row: Quiz, index: number) => createData(index, row.name, row.description, row.maxAttemptsPerStudent, row.timeLimit)) : []
+  const handleFormDataChange = props.handleFormDataChange;
+  const [quizzes, setQuizzes] = useState<Quiz[]>(props.quizzes);
+  const [lessons, setLessons] = useState<Lesson[]>(props.lessons);
+  const rows = quizzes?.length > 0 ? quizzes.map((row: Quiz, index: number) => createData(index, row.contentId, row.name, row.description, row.maxAttemptsPerStudent, row.timeLimit)) : []
 
-    // Used to trigger rerendering of QuizTable whenever lessons is updated in Table Header component
-    useEffect(() => {
-      const newQuizzes = lessons.find((lesson, index) => index === props.lessonIndex)?.quizzes
-      if (newQuizzes) {
-        setQuizzes(newQuizzes)
-      }
-    }, [lessons])
+  // Used to trigger rerendering of QuizTable whenever lessons is updated in Table Header component
+  useEffect(() => {
+    const newQuizzes = lessons.find((lesson, index) => index === props.lessonIndex)?.quizzes
+    if (newQuizzes) {
+      setQuizzes(newQuizzes)
+    }
+  }, [lessons])
 
-    const classes = useStyles();
-    const [order, setOrder] = React.useState<Order>('asc');
-    const [orderBy, setOrderBy] = React.useState<keyof Data>('name');
-    const [selectedIds, setSelectedIds] = React.useState<number[]>([]);
-    const [page, setPage] = React.useState(0);
-    const [dense, setDense] = React.useState(false);
-    const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const classes = useStyles();
+  const [order, setOrder] = React.useState<Order>('asc');
+  const [orderBy, setOrderBy] = React.useState<keyof Data>('name');
+  const [selectedIds, setSelectedIds] = React.useState<number[]>([]);
+  const [page, setPage] = React.useState(0);
+  const [dense, setDense] = React.useState(false);
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
-    const handleRequestSort = (event: React.MouseEvent<unknown>, property: keyof Data) => {
-        const isAsc = orderBy === property && order === 'asc';
-        setOrder(isAsc ? 'desc' : 'asc');
-        setOrderBy(property);
-    };
+  const handleRequestSort = (event: React.MouseEvent<unknown>, property: keyof Data) => {
+    const isAsc = orderBy === property && order === 'asc';
+    setOrder(isAsc ? 'desc' : 'asc');
+    setOrderBy(property);
+  };
 
-    const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.checked) {
-          const newSelectedIds = rows.map((n: any) => n.id);
-          setSelectedIds(newSelectedIds);
-          return;
-        }
-        setSelectedIds([]);
-    };
+  const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.checked) {
+      const newSelectedIds = rows.map((n: any) => n.id);
+      setSelectedIds(newSelectedIds);
+      return;
+    }
+    setSelectedIds([]);
+  };
 
-    const handleClick = (event: React.MouseEvent<unknown>, id: number) => {
-        const selectedIndex = selectedIds.indexOf(id);
-        let newSelectedIds: number[] = [];
+  const handleClick = (event: React.MouseEvent<unknown>, id: number) => {
+    const selectedIndex = selectedIds.indexOf(id);
+    let newSelectedIds: number[] = [];
 
-        if (selectedIndex === -1) {
-          newSelectedIds = newSelectedIds.concat(selectedIds, id);
-        } else if (selectedIndex === 0) {
-          newSelectedIds = newSelectedIds.concat(selectedIds.slice(1));
-        } else if (selectedIndex === selectedIds.length - 1) {
-          newSelectedIds = newSelectedIds.concat(selectedIds.slice(0, -1));
-        } else if (selectedIndex > 0) {
-          newSelectedIds = newSelectedIds.concat(
-            selectedIds.slice(0, selectedIndex),
-            selectedIds.slice(selectedIndex + 1),
-          );
-        }
+    if (selectedIndex === -1) {
+      newSelectedIds = newSelectedIds.concat(selectedIds, id);
+    } else if (selectedIndex === 0) {
+      newSelectedIds = newSelectedIds.concat(selectedIds.slice(1));
+    } else if (selectedIndex === selectedIds.length - 1) {
+      newSelectedIds = newSelectedIds.concat(selectedIds.slice(0, -1));
+    } else if (selectedIndex > 0) {
+      newSelectedIds = newSelectedIds.concat(
+        selectedIds.slice(0, selectedIndex),
+        selectedIds.slice(selectedIndex + 1),
+      );
+    }
 
-        setSelectedIds(newSelectedIds);
-    };
+    setSelectedIds(newSelectedIds);
+  };
 
-    const handleChangePage = (event: unknown, newPage: number) => {
-        setPage(newPage);
-    };
+  const handleChangePage = (event: unknown, newPage: number) => {
+    setPage(newPage);
+  };
 
-    const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(0);
-    };
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
 
-    const handleChangeDense = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setDense(event.target.checked);
-    };
+  const handleChangeDense = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setDense(event.target.checked);
+  };
 
-    const isSelected = (index: number) => selectedIds.indexOf(index) !== -1;
+  const isSelected = (index: number) => selectedIds.indexOf(index) !== -1;
 
-    const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
+  const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
 
-    return (
-        <>
-        <div className={classes.root}>
+  return (
+    <>
+      <div className={classes.root}>
         <Paper className={classes.paper}>
-            <EnhancedTableToolbar 
-                numSelected={selectedIds.length} 
-                selectedIds={selectedIds}
-                lessonIndex={props.lessonIndex}
-                lessons={lessons}
-                setLessons={setLessons}
-                handleFormDataChange={handleFormDataChange}
-                setSelectedIds={setSelectedIds}/>
-            {rows.length > 0 &&
+          <EnhancedTableToolbar
+            numSelected={selectedIds.length}
+            selectedIds={selectedIds}
+            lessonIndex={props.lessonIndex}
+            lessons={lessons}
+            setLessons={setLessons}
+            handleFormDataChange={handleFormDataChange}
+            setSelectedIds={setSelectedIds} />
+          {rows.length > 0 &&
             <TableContainer>
-            <Table
+              <Table
                 className={classes.table}
                 aria-labelledby="tableTitle"
                 size={dense ? 'small' : 'medium'}
                 aria-label="enhanced table"
-            >
+              >
                 <EnhancedTableHead
-                classes={classes}
-                numSelected={selectedIds.length}
-                order={order}
-                orderBy={orderBy}
-                onSelectAllClick={handleSelectAllClick}
-                onRequestSort={handleRequestSort}
-                rowCount={rows.length}
+                  classes={classes}
+                  numSelected={selectedIds.length}
+                  order={order}
+                  orderBy={orderBy}
+                  onSelectAllClick={handleSelectAllClick}
+                  onRequestSort={handleRequestSort}
+                  rowCount={rows.length}
                 />
                 <TableBody>
-                {stableSort(rows, getComparator(order, orderBy))
+                  {stableSort(rows, getComparator(order, orderBy))
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row, index) => {
-                    // @ts-ignore
-                    const isItemSelected = isSelected(row.id);
-                    const labelId = `enhanced-table-checkbox-${index}`;
+                      // @ts-ignore
+                      const isItemSelected = isSelected(row.id);
+                      const labelId = `enhanced-table-checkbox-${index}`;
 
-                    return (
+                      return (
                         <TableRow
-                        hover
-                        // @ts-ignore
-                        onClick={(event) => handleClick(event, row.id)}
-                        role="checkbox"
-                        aria-checked={isItemSelected}
-                        tabIndex={-1}
-                        key={row.name}
-                        selected={isItemSelected}
+                          hover
+                          role="checkbox"
+                          aria-checked={isItemSelected}
+                          tabIndex={-1}
+                          key={row.name}
+                          selected={isItemSelected}
                         >
-                        <TableCell padding="checkbox">
+                          <TableCell padding="checkbox">
                             <Checkbox
-                            checked={isItemSelected}
-                            inputProps={{ 'aria-labelledby': labelId }}
+                              // @ts-ignore
+                              onClick={(event) => handleClick(event, row.id)}
+                              checked={isItemSelected}
+                              inputProps={{ 'aria-labelledby': labelId }}
                             />
-                        </TableCell>
-                        <TableCell component="th" id={labelId} scope="row" padding="none">
-                            {row.name}
-                        </TableCell>
-                        <TableCell align="right">{row.description}</TableCell>
-                        <TableCell align="right">{row.maxAttemptsPerStudent}</TableCell>
-                        <TableCell align="right">{row.timeLimit}</TableCell>
+                          </TableCell>
+                          <TableCell component="th" id={labelId} scope="row" padding="none">
+                            <Link to={`/quizbuilder/${row.contentId}`}>
+                              {row.name}
+                            </Link>
+                          </TableCell>
+                          <TableCell align="right">{row.description}</TableCell>
+                          <TableCell align="right">{row.maxAttemptsPerStudent}</TableCell>
+                          <TableCell align="right">{row.timeLimit}</TableCell>
                         </TableRow>
-                    );
+                      );
                     })}
-                {emptyRows > 0 && (
+                  {emptyRows > 0 && (
                     <TableRow style={{ height: (dense ? 33 : 53) * emptyRows }}>
-                    <TableCell colSpan={6} />
+                      <TableCell colSpan={6} />
                     </TableRow>
-                )}
+                  )}
                 </TableBody>
-            </Table>
+              </Table>
             </TableContainer>}
-            <TablePagination
+          <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
             count={rows.length}
@@ -400,13 +405,13 @@ export default function QuizTable(props: any) {
             page={page}
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
-            />
+          />
         </Paper>
         <FormControlLabel
-            control={<Switch checked={dense} onChange={handleChangeDense} />}
-            label="Dense padding"
+          control={<Switch checked={dense} onChange={handleChangeDense} />}
+          label="Dense padding"
         />
-        </div>
-        </>
-    );
+      </div>
+    </>
+  );
 }
