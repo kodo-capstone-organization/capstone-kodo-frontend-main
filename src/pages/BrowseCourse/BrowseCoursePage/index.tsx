@@ -24,8 +24,8 @@ import {
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { TextField, Tabs, Tab, Chip } from "@material-ui/core";
 import { colours } from "../../../values/Colours";
-import BrowseCourseTabPanel from "./components/BrowseCourseTabPanel";
 import { Autocomplete } from "@material-ui/lab";
+import BrowseCourseTabPanel from "./components/BrowseCourseTabPanel";
 
 function BrowseCourse() {
   const [courses, setCourses] = useState<Course[]>();

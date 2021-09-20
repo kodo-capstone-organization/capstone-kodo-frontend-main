@@ -86,8 +86,8 @@ function Profile(props: any) {
         props.history.push('/profile/settings');
     }
 
-    const navigateToFinancialsPage = () => {
-        props.history.push('/profile/financials');
+    const navigateToFinancialsPage = (tabIdx = 0) => {
+        props.history.push({ pathname: '/profile/financials', state: { initialTabIdx: tabIdx }});
     }
 
     const navigateToBrowseCoursePage = () => {
@@ -227,7 +227,7 @@ function Profile(props: any) {
                 <ProfileCardHeader
                     title="My Enrolled Courses"
                     action={
-                        <IconButton aria-label="transaction history" color="primary" onClick={navigateToFinancialsPage}>
+                        <IconButton aria-label="transaction history" color="primary" onClick={() => navigateToFinancialsPage(0)}>
                             <ReceiptIcon /> &nbsp; View Payments
                         </IconButton>
                     }
@@ -281,7 +281,7 @@ function Profile(props: any) {
                                         <IconButton aria-label="create new course" color="primary" onClick={handleClickOpen}>
                                             <AddCircleOutlineIcon /> &nbsp; New Course
                                         </IconButton>
-                                        <IconButton aria-label="earnings" color="primary" onClick={navigateToFinancialsPage}>
+                                        <IconButton aria-label="earnings" color="primary" onClick={() => navigateToFinancialsPage(1)}>
                                             <LocalAtmIcon /> &nbsp; View Earnings
                                         </IconButton>
                                     </>
