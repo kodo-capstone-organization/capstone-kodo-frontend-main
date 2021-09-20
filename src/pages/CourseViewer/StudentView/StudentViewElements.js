@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { colours } from "../../../values/Colours";
 import { fontSizes } from "../../../values/FontSizes";
-import { Avatar, Card, CardHeader, CardContent } from "@material-ui/core";
+import { Card, CardHeader, CardContent } from "@material-ui/core";
 import Chip from '@material-ui/core/Chip';
 
 
@@ -46,9 +46,6 @@ export const TutorDetails = styled.div`
   margin-bottom: 120px;
   margin-left: 10px;
 `
-
-export const ProfileAvatar = styled(Avatar)`
-`;
 
 export const TutorText = styled.div`
     display: flex;

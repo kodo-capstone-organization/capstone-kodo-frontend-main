@@ -23,13 +23,12 @@ import {
     TextField
 } from "@material-ui/core";
 import {
-    ProfileAvatar, 
     ProfileCard, 
     ProfileCardHeader,
-    ProfileInitials, 
     ProfileSettingField, 
     ProfileSubText
 } from "../ProfileElements";
+import KodoAvatar from '../../../components/KodoAvatar/KodoAvatar';
 
 interface IErrors<TValue> {
     [id: string]: TValue;
@@ -122,7 +121,6 @@ function ProfileSettings(props: any) {
     }
 
     const displayPictureURL = () => {
-
         if (displayPictureFile.size !== 0)
         {
             // Check for new display picture
@@ -135,13 +133,7 @@ function ProfileSettings(props: any) {
             return myAccount?.displayPictureUrl ? myAccount?.displayPictureUrl : "";
         }
     }
-    const avatarInitials = () => {
-        if (myAccount?.name) {
-            return myAccount?.name.split(" ").map(x => x[0].toUpperCase()).join("")
-        } else {
-            return "";
-        }
-    }
+
     const handleClickShowPassword = () => {
         setShowPassword(!showPassword)
     };
@@ -219,15 +211,7 @@ function ProfileSettings(props: any) {
                     </div>
                     <form noValidate autoComplete="off" style={{ display: "flex", justifyContent: "center" }}>
                         <div style={{ padding: "20px"}}>
-                            <ProfileAvatar
-                                alt={myAccount?.username}
-                                src={displayPictureURL()}
-                                style={{ height: "128px", width: "128px", margin: "auto" }}
-                            >
-                                <ProfileInitials>
-                                    {avatarInitials()}
-                                </ProfileInitials>
-                            </ProfileAvatar>
+                            <KodoAvatar name={myAccount?.name} displayPictureURL={displayPictureURL()}/>
                             <br/>
                             <ProfileSubText style={{ textAlign: "center" }}>
                                 Status: <Chip variant="outlined" label={isActive ? "Activated" : "Deactivated"} style={{ color: isActive ? "green" : "red", border: isActive ? "1px solid green" : "1px solid red" }} />

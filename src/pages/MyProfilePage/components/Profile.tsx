@@ -1,6 +1,5 @@
 import React, { useEffect, useReducer, useState } from 'react'
-import { ProfileCard, ProfileCardHeader, ProfileCardContent, ProfileCardActions,
-    ProfileAvatar, ProfileInitials, ProfileDetails, ProfileName, ProfileContentText, ProfileSubText, ProfileUsername, BlankStateContainer
+import { ProfileCard, ProfileCardHeader, ProfileCardContent, ProfileCardActions, ProfileDetails, ProfileName, ProfileContentText, ProfileSubText, ProfileUsername, BlankStateContainer
 } from "../ProfileElements";
 import {CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle,
     FormControl, Grid, IconButton, Input, InputAdornment, InputLabel, TextField, Typography } from "@material-ui/core";
@@ -19,16 +18,26 @@ import CourseCard from '../../../components/CourseCard';
 import { Autocomplete } from '@material-ui/lab';
 import { Tag } from '../../../apis/Entities/Tag';
 import { getAllTags } from '../../../apis/Tag/TagApis';
+import KodoAvatar from '../../../components/KodoAvatar/KodoAvatar';
 
 
 const formReducer = (state: any, event: any) => {
     if(event.reset) {
-        return {
-            tutorId: null,
-            name: '',
-            description: '',
-            price: 0,
-            tagTitles: []
+        if (event.isErrorForm) {
+            return {
+                name: '',
+                description: '',
+                price: '',
+                tagTitles: ''
+            }
+        } else {
+            return {
+                tutorId: null,
+                name: '',
+                description: '',
+                price: 0,
+                tagTitles: []
+            }
         }
     }
     
@@ -44,6 +53,7 @@ function Profile(props: any) {
     const [isOpen, setIsOpen] = useState<boolean>(false); // create new course dialog
     const [isStripeDialogOpen, setStripeDialogOpen] = useState<boolean>(false);
     const [courseFormData, setCourseFormData] = useReducer(formReducer, {});
+    const [courseFormErrors, setCourseFormErrors] = useReducer(formReducer, {});
     const [courseBannerImageFile, setCourseBannerImageFile] = useState<File|null>(null);
     const [createCourseLoading, setCreateCourseLoading] = useState<boolean>(false);
     const [tagLibrary, setTagLibrary] = useState<Tag[]>([]);
@@ -53,7 +63,11 @@ function Profile(props: any) {
      ***********************/
 
     useEffect(() => {
-        setCourseFormData({ reset: true })
+        // Reset forms
+        setCourseFormData({ reset: true, isErrorForm: false })
+        setCourseFormErrors({ reset: true, isErrorForm: true })
+
+        // Get tags
         getAllTags()
             .then((res: any) => setTagLibrary(res))
             .catch(() => console.log("error getting tags"))
@@ -66,19 +80,7 @@ function Profile(props: any) {
     /***********************
      * Helper Methods      *
      ***********************/
-
-    const avatarInitials = () => {
-        if (myAccount?.name) {
-            return myAccount?.name.split(" ").map(x => x[0].toUpperCase()).join("")
-        } else {
-            return "";
-        }
-    }
     
-    const displayPictureURL = () => {
-        return myAccount?.displayPictureUrl ? myAccount?.displayPictureUrl : "";
-    }
-
     const navigateToSettingsPage = () => {
         props.history.push('/profile/settings');
     }
@@ -92,7 +94,18 @@ function Profile(props: any) {
     }
 
     const handleFormDataChange = (event: any) => {
+        // Clear any existing errors on field
+        handleFormErrorChange({ target: { name: event.target.name , value: "" }})
+
+        // Set
         setCourseFormData({
+            name: event.target.name,
+            value: event.target.value,
+        });
+    }
+
+    const handleFormErrorChange = (event: any) => {
+        setCourseFormErrors({
             name: event.target.name,
             value: event.target.value,
         });
@@ -116,16 +129,35 @@ function Profile(props: any) {
         setIsOpen(false);
     };
 
-    const handleClickSubmit = () => {
+    const handleCreateNewCourseValidation = () => {
+        let formIsValid = true
+
+        if (courseFormData.name === "") {
+            formIsValid = false
+            handleFormErrorChange({ target: { name: "name", value: "Name of course cannot be empty" }})
+        }
+
+        if (courseFormData.price === "") {
+            formIsValid = false
+            handleFormErrorChange({ target: { name: "price", value: "Price of course cannot be empty" }})
+        }
+
+        // Check if form is still valid
+        if (formIsValid) {
+            handleCreateNewCourseSubmit()
+        }
+    }
+
+    const handleCreateNewCourseSubmit = () => {
         // Set tutorId field
         courseFormData.tutorId = myAccount.accountId;
-
         setCreateCourseLoading(true);
 
         // Call API
         createNewCourse(courseFormData, courseBannerImageFile).then((res: Course) => {
             // Cleanup
-            setCourseFormData({ reset: true })
+            setCourseFormData({ reset: true, isErrorForm: false })
+            setCourseFormErrors({ reset: true, isErrorForm: true })
             setCourseBannerImageFile(null);
             handleClose();
 
@@ -161,15 +193,7 @@ function Profile(props: any) {
                     }
                 />
                 <ProfileCardContent>
-                    <ProfileAvatar
-                        alt={myAccount?.name}
-                        src={displayPictureURL()}
-                        style={{ height: "128px", width: "128px" }}
-                    >
-                        <ProfileInitials>
-                            {avatarInitials()}
-                        </ProfileInitials>
-                    </ProfileAvatar>
+                    <KodoAvatar name={myAccount?.name} displayPictureURL={myAccount?.displayPictureUrl}/>
                     <ProfileDetails>
                         <ProfileName>
                             { myAccount?.name }
@@ -319,6 +343,8 @@ function Profile(props: any) {
                             value={courseFormData.name || '' }
                             onChange={handleFormDataChange}
                             type="text"
+                            error={courseFormErrors.name}
+                            placeholder={courseFormErrors.name}
                             autoFocus
                         />
                     </FormControl>
@@ -347,6 +373,8 @@ function Profile(props: any) {
                                 step: "0.1"
                             }}
                             startAdornment={<InputAdornment position="start">$</InputAdornment>}
+                            error={courseFormErrors.price}
+                            placeholder={courseFormErrors.price}
                         />
                     </FormControl>
                     <FormControl fullWidth margin="normal" style={{ display: "flex", flexDirection: "row", width: "100%"}}>
@@ -396,7 +424,7 @@ function Profile(props: any) {
                     <Button onClick={handleClose}>
                         Cancel
                     </Button>
-                    <Button onClick={handleClickSubmit} disabled={createCourseLoading} primary>
+                    <Button onClick={handleCreateNewCourseValidation} disabled={createCourseLoading} primary>
                         Create Course
                     </Button>
                 </DialogActions>
