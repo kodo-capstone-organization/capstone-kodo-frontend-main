@@ -31,7 +31,7 @@ export const RouteItemsWithSidebar = [
         component: MyProfilePage // nested page
     },
     {
-        path: "/profile/earnings",
+        path: "/profile/financials",
         isDynamic: false,
         component: MyProfilePage // nested page
     },

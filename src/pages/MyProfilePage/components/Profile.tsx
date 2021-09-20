@@ -6,6 +6,7 @@ import {CircularProgress, Dialog, DialogActions, DialogContent, DialogContentTex
 import SettingsIcon from '@material-ui/icons/Settings';
 import LocalAtmIcon from '@material-ui/icons/LocalAtm';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
+import ReceiptIcon from '@material-ui/icons/Receipt';
 import { Account } from "../../../apis/Entities/Account";
 import { Button } from '../../../values/ButtonElements';
 import { createNewCourse } from '../../../apis/Course/CourseApis';
@@ -85,8 +86,8 @@ function Profile(props: any) {
         props.history.push('/profile/settings');
     }
 
-    const navigateToEarningsPage = () => {
-        props.history.push('/profile/earnings');
+    const navigateToFinancialsPage = () => {
+        props.history.push('/profile/financials');
     }
 
     const navigateToBrowseCoursePage = () => {
@@ -225,6 +226,11 @@ function Profile(props: any) {
             <ProfileCard id="my-enrolled-courses">
                 <ProfileCardHeader
                     title="My Enrolled Courses"
+                    action={
+                        <IconButton aria-label="transaction history" color="primary" onClick={navigateToFinancialsPage}>
+                            <ReceiptIcon /> &nbsp; View Payments
+                        </IconButton>
+                    }
                 />
                 <ProfileCardContent>
                     { myAccount?.enrolledCourses.length === 0 &&
@@ -275,7 +281,7 @@ function Profile(props: any) {
                                         <IconButton aria-label="create new course" color="primary" onClick={handleClickOpen}>
                                             <AddCircleOutlineIcon /> &nbsp; New Course
                                         </IconButton>
-                                        <IconButton aria-label="earnings" color="primary" onClick={navigateToEarningsPage}>
+                                        <IconButton aria-label="earnings" color="primary" onClick={navigateToFinancialsPage}>
                                             <LocalAtmIcon /> &nbsp; View Earnings
                                         </IconButton>
                                     </>

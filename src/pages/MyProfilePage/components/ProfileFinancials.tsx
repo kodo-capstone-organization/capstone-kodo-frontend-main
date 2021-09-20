@@ -1,5 +1,5 @@
 
-function CourseEarnings(props: any) {
+function ProfileFinancials(props: any) {
     return (
         <>
             Course Earnings Page
@@ -7,4 +7,4 @@ function CourseEarnings(props: any) {
     )
 }
 
-export default CourseEarnings;
+export default ProfileFinancials;
