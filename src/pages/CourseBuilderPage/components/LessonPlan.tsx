@@ -24,8 +24,8 @@ function LessonPlan(props: any) {
         setTabValue(newValue);
     }
 
-    const handleDeleteLesson = (lessonIdToDelete: number) => {
-        const updatedLessons = lessons.filter((lesson: Lesson) => lesson.lessonId !== lessonIdToDelete)
+    const handleDeleteLesson = (lessonIdxToDelete: number) => {
+        const updatedLessons = lessons.filter((lesson: Lesson, index: number) => index !== lessonIdxToDelete)
         let wrapperEvent = {
             target: {
                 name: "lessons",
@@ -130,7 +130,7 @@ function LessonPlan(props: any) {
                                             />
                                         </Grid>
                                         <Grid container xs={12} justify="flex-end">
-                                            <Button onClick={() => handleDeleteLesson(lesson.lessonId)}>
+                                            <Button onClick={() => handleDeleteLesson(index)}>
                                                 Delete Lesson
                                             </Button>
                                         </Grid>
