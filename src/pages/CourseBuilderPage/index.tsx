@@ -10,8 +10,8 @@ import { Multimedia } from "../../apis/Entities/Multimedia"
 import { UpdateCourseReq, Course } from "../../apis/Entities/Course";
 import { Autocomplete } from "@material-ui/lab";
 import { getAllTags } from '../../apis/Tag/TagApis';
-import BlockIcon from '@material-ui/icons/Block';
-import PlayCircleOutlineIcon from '@material-ui/icons/PlayCircleOutline';
+import DoneIcon from '@material-ui/icons/Done';
+import PublishIcon from '@material-ui/icons/Publish';
 import { Button } from "../../values/ButtonElements";
 
 interface IErrors<TValue> {
@@ -199,7 +199,7 @@ function CourseBuilderPage(props: any) {
     }
 
     const  getToggleKeyword = () => {
-        return courseFormData.isEnrollmentActive ? "Pause" : "Resume"
+        return courseFormData.isEnrollmentActive ? "Unpublish" : "Publish"
     }
 
     const navigateToPreviousPage = () => {
@@ -213,10 +213,10 @@ function CourseBuilderPage(props: any) {
                 <CourseBuilderCardHeader
                     title="Course Information"
                     action={
-                        <IconButton color={courseFormData.isEnrollmentActive ? "secondary" : "primary"} onClick={handleOpenToggleEnrollmentDialog}>
-                            {courseFormData.isEnrollmentActive && <><BlockIcon/> &nbsp; Pause Enrollment</>}
-                            {!courseFormData.isEnrollmentActive && <><PlayCircleOutlineIcon /> &nbsp; Resume Enrollment</>}
-                        </IconButton>
+                        <>
+                            {courseFormData.isEnrollmentActive && <Chip variant="outlined" size="small" label="Published" style={{ color: "green", border: "1px solid green" }} disabled deleteIcon={<DoneIcon style={{ color: "green" }} />} onDelete={() => ("")}/>}
+                            {!courseFormData.isEnrollmentActive && <Chip variant="outlined"  size="small" label="Publish This Course" color="secondary" onClick={handleOpenToggleEnrollmentDialog} deleteIcon={<PublishIcon color="secondary" />} onDelete={() => ("")} />}
+                        </>
                     }
                 />
                 <CourseBuilderContent>
@@ -300,18 +300,18 @@ function CourseBuilderPage(props: any) {
             <Dialog fullWidth open={isToggleActiveEnrollmentDialogOpen} onClose={handleCloseToggleEnrollmentDialog} aria-labelledby="toggle-dialog">
 
                 <DialogTitle id="toggle-dialog-title">
-                    { getToggleKeyword() } Enrollment for {courseFormData.name}?
+                    { getToggleKeyword() } {courseFormData.name}?
                 </DialogTitle>
                 <DialogContent>
-                    { courseFormData.isEnrollmentActive &&  <>Users will not be able to enroll in your course. Existing enrolled users will still be able to read your course materials.</> }
-                    { !courseFormData.isEnrollmentActive &&  <>Users will be able to enroll in your course again.</> }
+                    { courseFormData.isEnrollmentActive &&  <>You should not be able to see this.</> }
+                    { !courseFormData.isEnrollmentActive &&  <>Users will be able to browse and enroll into your course. However, once this course is published, you <i>can no longer edit its content nor unpublish it.</i></> }
                 </DialogContent>
                 <br/>
                 <DialogActions>
                     <Button onClick={handleCloseToggleEnrollmentDialog}>
                         Cancel
                     </Button>
-                    <Button onClick={handleToggleConfirmation} primary>
+                    <Button onClick={handleToggleConfirmation} disabled={courseFormData.isEnrollmentActive} primary>
                         Confirm
                     </Button>
                 </DialogActions>
