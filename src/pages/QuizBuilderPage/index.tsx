@@ -1,21 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { Quiz } from './../../apis/Entities/Quiz';
-// import { QuizQuestion } from "./../../apis/Entities/QuizQuestion";
+import { QuizQuestion } from "../../apis/Entities/QuizQuestion";
 import { getQuizByQuizId } from "../../apis/Quiz/QuizApis";
 import { Button } from "../../values/ButtonElements";
 import QuizQuestionComponent from "./components/QuizQuestionComponent"
+import { DragDropContext, Droppable } from "react-beautiful-dnd";
+import DeleteIcon from '@material-ui/icons/Delete';
 import {
-    Grid, TextField
+    Grid, TextField, IconButton
 } from "@material-ui/core";
 import { QuizContainer, QuizCard, QuizCardHeader, QuizCardContent, QuizQuestionCard } from "./QuizBuilderElements";
 
 function QuizBuilderPage(props: any) {
 
-    const [quiz, setQuiz] = useState<Quiz>();
     const [contentId, setContentId] = props.match.params.contentId;
     const [name, setName] = useState<string>("");
     const [description, setDescription] = useState<string>("");
-    const [newQ, setNewQ] = useState([]);
+    const [newQ, setNewQ] = useState<number[]>([1]);
 
 
     useEffect(() => {
@@ -27,9 +28,41 @@ function QuizBuilderPage(props: any) {
 
     }, [contentId])
 
+
     const addNewQ = () => {
-        // const add = newQ.push(new QuizQuestion())
-        // setNewQ(add);
+        const add = newQ.concat([1])
+        setNewQ(add);
+        console.log("addNewQ")
+    }
+
+    const deleteQuestion = (event: React.MouseEvent<unknown>, qId: number) => {
+        console.log("delet qn", qId)
+        const newQs = newQ.splice(qId,1)
+        setNewQ(newQs)
+    }
+
+    const mapNewQ = (newQ: number[]) => {
+        console.log("mapNewQ", newQ)
+        return (
+            <div>
+                {newQ.map(function (q, qId) {
+                    return (
+                        <>
+                            <QuizQuestionCard key={qId}>
+                                <QuizQuestionComponent type="mcq"/>
+                                <IconButton style={{alignItems:"baseline"}}>
+                                    <DeleteIcon onClick={(event)=>deleteQuestion(event, qId)}/>
+                                </IconButton>
+                            </QuizQuestionCard>
+                        </>
+                    );
+                })}
+            </div>
+        );
+    };
+
+    const onDragEnd = () => {
+        //update state
     }
 
 
@@ -61,11 +94,13 @@ function QuizBuilderPage(props: any) {
                         }
                     />
                     <QuizCardContent>
-                        {
-                            newQ.map(q => {
-                                <QuizQuestionComponent />
-                            })
-                        }
+                        {mapNewQ(newQ)}
+                        {/* <DragDropContext onDragEnd={onDragEnd}>
+                            {columns.map(columnId => {
+                                const column = columns[columnId];
+                                return mapNewQ
+                            })}
+                        </DragDropContext> */}
                     </QuizCardContent>
                 </QuizCard>
             </QuizContainer>

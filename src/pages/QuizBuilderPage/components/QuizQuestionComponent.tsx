@@ -39,7 +39,7 @@ function QuizQuestionComponent(props: any) {
     return (
         <>
 
-            <QuizQuestionCard>
+            <div id="questioncomponent" style={{width:"inherit"}}>
                 <div id="typeAndMark" style={{ display: "flex", justifyContent: "center" }}>
                     <Box sx={{ minWidth: 120 }} style={{ margin: "16px" }}>
                         <FormControl fullWidth>
@@ -87,7 +87,7 @@ function QuizQuestionComponent(props: any) {
                 <QuizQuestionOptions type={"match"} /> */}
 
                 <Divider />
-            </QuizQuestionCard>
+            </div>
 
         </>
     )

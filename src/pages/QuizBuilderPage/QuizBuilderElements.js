@@ -3,14 +3,6 @@ import { TextField, Avatar, Card, CardHeader, CardContent, CardActions, Select }
 import { fontSizes } from "../../values/FontSizes";
 import { colours } from "../../values/Colours";
 
-export const QuizBreadcrumbItems = [
-    {
-        name: "Quiz",
-        subpath: "/Quiz",
-        fullpath: "/Quiz"
-    }
-]
-
 export const QuizContainer = styled.div`
     padding: 2rem;
     font-family: "Roboto", sans-serif;
@@ -25,10 +17,10 @@ export const QuizCard = styled(Card)`
 `;
 
 export const QuizQuestionCard = styled(Card)`
-    width: 100%;
+    width: 800px;
     border-radius : 10px;
     padding: 16px;
-    width: 70%;
+    display: flex;
 `;
 
 export const QuizCardHeader = styled(CardHeader)`
@@ -66,74 +58,8 @@ export const QuizCardContent = styled(CardContent)`
     justify-content: center;
 `;
 
-export const QuizCardActions = styled(CardActions)`
-    padding: 1rem 2rem !important;
-    flex-wrap: wrap;
-`;
-
-export const QuizAvatar = styled(Avatar)`
-`;
-
-export const QuizInitials = styled.div`
-    font-size: ${fontSizes.HEADER};
-`;
-
-export const QuizDetails = styled.div`
-    margin-left: 1.5rem;
-    flex-direction: column;
-`;
-
-export const QuizName = styled.div`
-    font-size: ${fontSizes.HEADER};
-    font-weight: bold;
-`
-
-export const QuizContentText = styled.div`
-    font-size: ${fontSizes.CONTENT};
-    color: ${colours.GRAY3};
-    white-space: pre-line;
-`;
-
-
-export const QuizSubText = styled.div`
-    font-size: ${fontSizes.SUBTEXT};
-    color: ${colours.GRAY3};
-`;
-
-export const QuizUsername = styled.div`
-    margin-top: 0.2rem;
-    font-size: ${fontSizes.SUBTEXT};
-    font-style: italic;
-    color: ${colours.GRAY3};
-`;
-
-export const QuizSettingField = styled(TextField)`
-    width: -webkit-fill-available;
-    margin: 20px;
-    
-`;
-
-export const TextSpan = styled.span`
-    color: ${props => props.isActive ? colours.GREEN : colours.RED};
-`;
-
-export const BlankStateContainer = styled.div`
-    display: flex;
-    flex-direction: column;
-    justify-content: center; 
-    text-align: center; 
-    align-items: center;
-    width: 100%;
-    color: ${colours.GRAY4};
-    
-    > * {
-        margin: 0 0 1rem 0;
-    }
-    
-`;
-
 export const QuizSelectMenu = styled(Select)`
-    width: 400px;
+    width: 100%;
 `;
 
 export const QuizBuilderTextInput = styled(TextField)`
