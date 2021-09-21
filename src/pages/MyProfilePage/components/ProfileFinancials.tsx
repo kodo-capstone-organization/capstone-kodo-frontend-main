@@ -23,7 +23,7 @@ function ProfileFinancials(props: any) {
         return [
             {
                 myTabIdx: 0,
-                myTabName: "Payment History"
+                myTabName: "Payments History"
             },
             {
                 myTabIdx: 1,
