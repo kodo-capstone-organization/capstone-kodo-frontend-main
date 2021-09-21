@@ -110,11 +110,6 @@ function CourseBuilderPage(props: any) {
             errors['name'] = true;
         }
 
-        if (courseFormData.description === "") {
-            formIsValid = false;
-            errors['description'] = true;
-        }
-
         if (courseFormData.price === "") {
             formIsValid = false;
             errors['price'] = true;
@@ -225,7 +220,7 @@ function CourseBuilderPage(props: any) {
                             <TextField required error={errors['name']} id="standard-basic" fullWidth label="Name" name="name" value={courseFormData.name} onChange={handleFormDataChange}/>
                         </Grid>
                         <Grid item xs={12}>
-                            <TextField required error={errors['description']} id="standard-basic" fullWidth multiline maxRows={3} name="description" label="Description" value={courseFormData.description} onChange={handleFormDataChange}/>
+                            <TextField id="standard-basic" fullWidth multiline maxRows={3} name="description" label="Description" value={courseFormData.description} onChange={handleFormDataChange}/>
                         </Grid>
                         <Grid item xs={12}>
                             <TextField
