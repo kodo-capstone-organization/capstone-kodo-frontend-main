@@ -12,6 +12,7 @@ export interface Course {
   bannerUrl: string;
   tutor: Account;
   enrollment: EnrolledCourse[];
+  dateTimeOfCreation: Date;
   lessons: Lesson[];
   courseTags: Tag[];
   bannerPictureFileName: string;

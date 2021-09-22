@@ -77,6 +77,12 @@ function BrowseCourse() {
   const handleTabChange = (event: any, newTabIndex: number) => {
     setTab(newTabIndex);
   };
+  
+  const getNewReleases = () => { // courses created in the last 14 days
+    const nowDate = new Date()
+    // @ts-ignore
+    return courses?.filter(course => nowDate - new Date(course.dateTimeOfCreation).getDate() >= 14 )
+  }
 
   // Build Tab and their props here
   const getTabItems = () => {
@@ -107,7 +113,7 @@ function BrowseCourse() {
         // TODO: Browsing via newest creation e.g. last 10 days?
         myTabIdx: 2,
         myTabName: "New Releases",
-        courseList: null,
+        courseList: () => getNewReleases(),
         titleComponent: () => <></>
       },
       {
