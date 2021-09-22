@@ -18,7 +18,6 @@ function QuizBuilderPage(props: any) {
     const contentId = props.match.params.contentId;
     const [name, setName] = useState<string>("");
     const [description, setDescription] = useState<string>("");
-    const [newQ, setNewQ] = useState<number[]>([]);
     const [quizQuestionArray, setQuizQuestionArray] = useState<QuizQuestion[]>([]);
     const [quiz, setQuiz] = useState<Quiz>();
     const [updatedQuiz, setUpdatedQuiz] = useState<Quiz>();
@@ -31,10 +30,13 @@ function QuizBuilderPage(props: any) {
             setDescription(res.description)
         }).catch((err) => { console.log("error:getQuizByQuizId", err) });
         getAllQuizQuestionsByQuizId(contentId).then((res) => {
-            console.log("quiz qn", res)
             setQuizQuestionArray(res)
         }).catch((err) => { console.log("error:getAllQuizQuestionsByQuizId", err) });
     }, [contentId])
+
+    useEffect(() => {
+        console.log(quizQuestionArray)
+    }, [quizQuestionArray])
 
     const addNewQuestion = () => {
         if (quiz != undefined) {
@@ -47,15 +49,12 @@ function QuizBuilderPage(props: any) {
                 quizQuestionOptions: []
             }
             const newQuestionArray = quizQuestionArray.push(newQuizQuestion)
-            console.log("newQuestionArray", newQuestionArray)
-            // setQuizQuestionArray(newQuestionArray)
         }
     }
 
-    const deleteQuestion = (event: React.MouseEvent<unknown>, qId: number) => {
-        console.log("delet qn", qId)
-        const newQs = newQ.splice(qId, 1)
-        setNewQ(newQs)
+    const deleteQuestion = (event: React.MouseEvent<unknown>, index: number) => {
+        const updatedQuizQuestionArray = quizQuestionArray.filter((q, qId) => { return (qId != index); })
+        setQuizQuestionArray(updatedQuizQuestionArray)
     }
 
     const mapQuestionArray = (questionArray: QuizQuestion[]) => {
@@ -65,7 +64,7 @@ function QuizBuilderPage(props: any) {
                     return (
                         <>
                             <QuizQuestionCard key={qId}>
-                                <QuizQuestionComponent type="mcq" question={q} updatedQuestion={handleUpdateQuestion}/>
+                                <QuizQuestionComponent type="mcq" question={q} index={qId} onUpdateQuestion={handleUpdateQuestion} />
                                 <IconButton style={{ alignItems: "baseline" }} onClick={(event) => deleteQuestion(event, qId)}>
                                     <DeleteIcon />
                                 </IconButton>
@@ -83,14 +82,14 @@ function QuizBuilderPage(props: any) {
 
     const handleNameChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setName(e.target.value)
-        const newQuiz = Object.assign(updatedQuiz, {name: e.target.value})
+        const newQuiz = Object.assign(updatedQuiz, { name: e.target.value })
         console.log("handleNameChange", newQuiz)
         setUpdatedQuiz(newQuiz)
     }
 
     const handleDescriptionChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setDescription(e.target.value)
-        const newQuiz = Object.assign(updatedQuiz, {description: e.target.value})
+        const newQuiz = Object.assign(updatedQuiz, { description: e.target.value })
         console.log("handleDescriptionChange", newQuiz)
         setUpdatedQuiz(newQuiz)
     }
@@ -105,13 +104,19 @@ function QuizBuilderPage(props: any) {
             }
             console.log("handleSubmit", updateQuizReq)
             updateQuizWithQuizQuestionsAndQuizQuestionOptions(updateQuizReq)
-            .then((res) => { console.log("Success updating quiz", res) })
-            .catch((err) => { console.log("error updating quiz", err) });
+                .then((res) => { console.log("Success updating quiz", res) })
+                .catch((err) => { console.log("error updating quiz", err) });
         }
     }
 
-    const handleUpdateQuestion = () => {
-        // handle update here (need seq, ques, options)
+    const handleUpdateQuestion = (updatedQuizQuestion: QuizQuestion, index: number) => {
+        const updatedQuizQuestionArray = quizQuestionArray.map((q, qId) => {
+            return (
+                qId === index ? updatedQuizQuestion : q
+            );
+        })
+        setQuizQuestionArray(updatedQuizQuestionArray)
+
     }
 
 
