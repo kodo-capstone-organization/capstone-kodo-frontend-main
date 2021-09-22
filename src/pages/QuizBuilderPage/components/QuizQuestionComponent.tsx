@@ -22,13 +22,15 @@ function QuizQuestionComponent(props: any) {
     const [questionType, setQuestionType] = useState<string>();
     const [marks, setMarks] = useState<number>();
     const [question, setQuestion] = useState<QuizQuestion>();
+    const [updatedQuestion, setUpdatedQuestion] = useState<QuizQuestion>();
     const [content, setContent] = useState<string>();
-
+    const [index, setIndex] = useState<number>();
     const [description, setDescription] = useState<string>("");
-
 
     useEffect(() => {
         setQuestion(props.question)
+        setUpdatedQuestion(props.question)
+        setIndex(props.index)
         setContent(props.question.content)
         setMarks(props.question.marks)
         setQuestionType(props.question.questionType)
@@ -36,14 +38,20 @@ function QuizQuestionComponent(props: any) {
 
     const handleTypeChange = (event: React.ChangeEvent<{ value: unknown }>) => {
         setQuestionType(event.target.value as string);
+        const newlyUpdatedQuestion = Object.assign(updatedQuestion, { questionType: event.target.value })
+        props.onUpdateQuestion(newlyUpdatedQuestion, index)
     };
 
     const handleMarkChange = (event: React.ChangeEvent<{ value: unknown }>) => {
         setMarks(event.target.value as number);
+        const newlyUpdatedQuestion = Object.assign(updatedQuestion, { marks: event.target.value })
+        props.onUpdateQuestion(newlyUpdatedQuestion, index)    
     };
 
     const handleContentChange = (event: React.ChangeEvent<{ value: unknown }>) => {
         setContent(event.target.value as string);
+        const newlyUpdatedQuestion = Object.assign(updatedQuestion, { content: event.target.value })
+        props.onUpdateQuestion(newlyUpdatedQuestion, index)
     };
 
     return (
@@ -85,8 +93,8 @@ function QuizQuestionComponent(props: any) {
                                     <option value={1}>1</option>
                                     <option value={2}>2</option>
                                     <option value={3}>3</option>
-                                    <option value={3}>4</option>
-                                    <option value={3}>5</option>
+                                    <option value={4}>4</option>
+                                    <option value={5}>5</option>
                                 </QuizSelectMenu>
                             </FormControl>
                         </Box>
@@ -98,7 +106,7 @@ function QuizQuestionComponent(props: any) {
 
                 {
                     content != undefined &&
-                    <QuizBuilderTextInput id="standard-basic" label="Question" variant="standard" value={content} onChange={handleContentChange}/>
+                    <QuizBuilderTextInput id="standard-basic" label="Question" variant="standard" value={content} onChange={handleContentChange} />
 
                 }
 
