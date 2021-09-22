@@ -131,7 +131,9 @@ function CourseBuilderPage(props: any) {
 
         const updatedCourseTagTitles = courseFormData.courseTags.map((tag: Tag) => tag.title)
 
-        const updatedLessonReqs = courseFormData.lessons.map((lesson: Lesson) => {
+        const updatedLessonReqs = courseFormData.lessons.map((lesson: Lesson, index: number) => {
+            lesson.sequence = index + 1;
+
             return {
                 lesson: lesson,
                 quizzes: lesson.quizzes,
