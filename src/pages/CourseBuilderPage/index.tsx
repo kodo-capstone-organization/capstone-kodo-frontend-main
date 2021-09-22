@@ -138,7 +138,7 @@ function CourseBuilderPage(props: any) {
                 multimediaReqs: lesson.multimedias.map((multimedia: Multimedia) => {
                     return {
                         multimedia: multimedia,
-                        multipartFile: multimedia.file
+                        //multipartFile: multimedia.file
                     }
                 })
             }
@@ -149,14 +149,29 @@ function CourseBuilderPage(props: any) {
         return updateCourseReq
     }
 
+    const buildLessonMultimedias = (courseFormData: any) => {
+        let lessonMultimedias: File[] = []
+
+        courseFormData.lessons.forEach((lesson: Lesson) => {
+            lesson.multimedias.forEach((multimedia: Multimedia) => {
+                if (multimedia.file !== undefined) {
+                    lessonMultimedias = lessonMultimedias.concat(multimedia.file)
+                }
+            })
+        })
+
+        return lessonMultimedias;
+    }
+
     const handleUpdateCourse = () => {
         if (!handleValidation()) {
             return
         }
 
         const updateCourseReq = buildUpdateCourseReq(courseFormData)
+        const lessonMultimedias = buildLessonMultimedias(courseFormData)
 
-        updateCourse(updateCourseReq, bannerImageFile).then((updatedCourse) => {
+        updateCourse(updateCourseReq, bannerImageFile, lessonMultimedias).then((updatedCourse) => {
             console.log(updatedCourse);
 
             setCourseFormData(updatedCourse)

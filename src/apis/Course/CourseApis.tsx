@@ -62,13 +62,17 @@ export async function getCoursesToRecommend(accountId: number, limit: number): P
     return httpClient.get<undefined, RecommendedCoursesWithTags>(getParameters)
 }
 
-export async function updateCourse(updateCourseReq: UpdateCourseReq, updatedBannerPicture: File): Promise<Course> {
+export async function updateCourse(updateCourseReq: UpdateCourseReq, updatedBannerPicture: File, lessonMultimedias: File[]): Promise<Course> {
     const formData = new FormData();
     formData.append('updateCourseReq', transformToBlob(updateCourseReq));
     
     // Check whether it's an empty file
     if (updatedBannerPicture.size !== 0) {
         formData.append('bannerPicture', updatedBannerPicture);
+    }
+
+    for (let i = 0 ; i < lessonMultimedias.length ; i++) {
+        formData.append('lessonMultimedias', lessonMultimedias[i]);
     }
 
     const putParameters: IHttpClientRequestParameters<FormData> = {
