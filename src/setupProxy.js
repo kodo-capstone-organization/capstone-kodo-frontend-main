@@ -66,4 +66,10 @@ module.exports = function(app) {
         changeOrigin: true
     })
   );
+  app.use(
+    createProxyMiddleware("/quizQuestion", {
+      target: url,
+      changeOrigin: true
+    })
+  );
 };

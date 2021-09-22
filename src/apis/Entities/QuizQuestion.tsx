@@ -2,9 +2,9 @@ import { Quiz } from "./Quiz";
 import { QuizQuestionOption } from "./QuizQuestionOption";
 
 export interface QuizQuestion {
-    quizQuestionId: number,
+    quizQuestionId: (number | null),
     content: string,
-    questionType: QuestionType,
+    questionType: (QuestionType | string),
     marks: number,
     quiz: Quiz,
     quizQuestionOptions: QuizQuestionOption[]
