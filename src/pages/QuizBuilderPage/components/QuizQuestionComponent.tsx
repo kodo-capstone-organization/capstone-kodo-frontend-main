@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Quiz } from '../../../apis/Entities/Quiz';
+import { QuizQuestion } from "../../../apis/Entities/QuizQuestion";
 import QuizQuestionOptions from "./QuizQuestionOptions"
 import {
     Box, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle,
@@ -18,70 +19,91 @@ const questionTypes = [
 function QuizQuestionComponent(props: any) {
 
     const [quiz, setQuiz] = useState<Quiz>();
-    const [type, setType] = useState<string>("mcq");
-    const [mark, setMark] = useState<number>();
-    // const [type, setType] = useState<string>("");
+    const [questionType, setQuestionType] = useState<string>();
+    const [marks, setMarks] = useState<number>();
+    const [question, setQuestion] = useState<QuizQuestion>();
+    const [content, setContent] = useState<string>();
 
     const [description, setDescription] = useState<string>("");
 
 
     useEffect(() => {
-    }, [])
+        setQuestion(props.question)
+        setContent(props.question.content)
+        setMarks(props.question.marks)
+        setQuestionType(props.question.questionType)
+    }, [props.question])
 
     const handleTypeChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-        setType(event.target.value as string);
+        setQuestionType(event.target.value as string);
     };
 
     const handleMarkChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-        setMark(event.target.value as number);
+        setMarks(event.target.value as number);
+    };
+
+    const handleContentChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+        setContent(event.target.value as string);
     };
 
     return (
         <>
 
-            <div id="questioncomponent" style={{width:"inherit"}}>
+            <div id="questioncomponent" style={{ width: "inherit" }}>
                 <div id="typeAndMark" style={{ display: "flex", justifyContent: "center" }}>
-                    <Box sx={{ minWidth: 120 }} style={{ margin: "16px" }}>
-                        <FormControl fullWidth>
-                            <InputLabel variant="standard" htmlFor="uncontrolled-native">
-                                Question Type
-                        </InputLabel>
-                            <QuizSelectMenu
-                                value={type}
-                                onChange={handleTypeChange}
-                            >
-                                <option value={"mcq"}>MCQ</option>
-                                <option value={"truefalse"}>True/False</option>
-                                <option value={"matching"}>Matching</option>
-                            </QuizSelectMenu>
-                        </FormControl>
-                    </Box>
-                    <Box sx={{ minWidth: 120 }} style={{ margin: "16px" }}>
-                        <FormControl fullWidth>
-                            <InputLabel variant="standard" htmlFor="uncontrolled-native">
-                                Marks
-                        </InputLabel>
-                            <QuizSelectMenu
-                                value={mark}
-                                onChange={handleMarkChange}
-                            >
-                                <option value={1}>1</option>
-                                <option value={2}>2</option>
-                                <option value={3}>3</option>
-                                <option value={3}>4</option>
-                                <option value={3}>5</option>
-                            </QuizSelectMenu>
-                        </FormControl>
-                    </Box>
+
+                    {
+                        questionType != undefined &&
+                        <Box sx={{ minWidth: 120 }} style={{ margin: "16px" }}>
+                            <FormControl fullWidth>
+                                <InputLabel variant="standard" htmlFor="uncontrolled-native">
+                                    Question Type
+                                </InputLabel>
+                                <QuizSelectMenu
+                                    value={questionType}
+                                    onChange={handleTypeChange}
+                                >
+                                    <option value={"MCQ"}>MCQ</option>
+                                    <option value={"True/False"}>True/False</option>
+                                    <option value={"Matching"}>Matching</option>
+                                </QuizSelectMenu>
+                            </FormControl>
+                        </Box>
+                    }
+
+                    {
+                        marks != undefined &&
+                        <Box sx={{ minWidth: 120 }} style={{ margin: "16px" }}>
+                            <FormControl fullWidth>
+                                <InputLabel variant="standard" htmlFor="uncontrolled-native">
+                                    Marks
+                    </InputLabel>
+                                <QuizSelectMenu
+                                    value={marks}
+                                    onChange={handleMarkChange}
+                                >
+                                    <option value={1}>1</option>
+                                    <option value={2}>2</option>
+                                    <option value={3}>3</option>
+                                    <option value={3}>4</option>
+                                    <option value={3}>5</option>
+                                </QuizSelectMenu>
+                            </FormControl>
+                        </Box>
+                    }
+
                 </div>
 
                 <Divider />
 
+                {
+                    content != undefined &&
+                    <QuizBuilderTextInput id="standard-basic" label="Question" variant="standard" value={content} onChange={handleContentChange}/>
 
-                <QuizBuilderTextInput id="standard-basic" label="Question" variant="standard" />
+                }
 
                 <Divider />
-                <QuizQuestionOptions type={type} />
+                <QuizQuestionOptions question={question} />
                 {/* <QuizQuestionOptions type={"mcq"} />
                 <QuizQuestionOptions type={"truefalse"} />
                 <QuizQuestionOptions type={"match"} /> */}

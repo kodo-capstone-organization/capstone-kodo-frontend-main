@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Quiz } from '../../../apis/Entities/Quiz';
+import { QuizQuestion } from '../../../apis/Entities/QuizQuestion';
+import { QuizQuestionOption } from '../../../apis/Entities/QuizQuestionOption';
 import DeleteIcon from '@material-ui/icons/Delete';
 import {
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Checkbox, Paper, IconButton, TextField,
@@ -16,17 +18,33 @@ function createMCQ(
     return { option, answer };
 }
 
-const MCQRows = [
-    createMCQ('new array = [1,2,3]', true),
-    createMCQ('new array = {1,2,3}', false)
-];
-
 function createTrueFalse(
     option: string,
     answer: boolean,
 ) {
     return { option, answer };
 }
+
+function createOption(
+    leftContent: string,
+    rightContent: (string | null),
+    correct: boolean,
+    quizQuestionOptionId: number,
+) {
+    return { leftContent, rightContent, correct, quizQuestionOptionId };
+}
+
+interface IQuestionOption {
+    leftContent: string,
+    rightContent: (string | null),
+    correct: boolean,
+    quizQuestionOptionId: number,
+}
+
+const MCQRows = [
+    createMCQ('new array = [1,2,3]', true),
+    createMCQ('new array = {1,2,3}', false)
+];
 
 const trueFalseRows = [
     createTrueFalse('True', true),
@@ -48,8 +66,11 @@ const trueFalseRows = [
 
 function QuizQuestionOptions(props: any) {
 
-    const [type, setType] = useState<string>("");
+    const [questionType, setQuestionType] = useState<string>();
+    const [question, setQuestion] = useState<QuizQuestion>();
+    const [quizQuestionOptions, setQuizQuestionOptions] = useState<QuizQuestionOption[]>();
     const [selectedTrueFalse, setSelectedTrueFalse] = React.useState(true);
+    const [rows, setRows] = useState<IQuestionOption[]>();
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.value === "false") {
@@ -60,8 +81,15 @@ function QuizQuestionOptions(props: any) {
     };
 
     useEffect(() => {
-        setType(props.type)
-    }, [props.type])
+        if (props.question != undefined) {
+            setQuestion(props.question)
+            setQuestionType(props.question.questionType)
+            setQuizQuestionOptions(props.question.quizQuestionOptions)
+            // props.question.quizQuestionOptions.map((option : QuizQuestionOption) => {
+            //     const new 
+            // })
+        }
+    }, [props.question])
 
 
     return (
@@ -71,7 +99,7 @@ function QuizQuestionOptions(props: any) {
                     <TableHead>
                         <TableRow>
                             {
-                                type === "mcq" &&
+                                questionType === "MCQ" &&
                                 <>
                                     <TableCell>Options</TableCell>
                                     <TableCell align="right">Answer</TableCell>
@@ -80,7 +108,7 @@ function QuizQuestionOptions(props: any) {
 
                             }
                             {
-                                type === "truefalse" &&
+                                questionType === "True/False" &&
                                 <>
                                     <TableCell>Options</TableCell>
                                     <TableCell align="right">Answer</TableCell>
@@ -90,34 +118,34 @@ function QuizQuestionOptions(props: any) {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {
-                            type === "mcq" &&
-                            MCQRows.map((row) => (
+                    {
+                            questionType === "MCQ" && 
+                            quizQuestionOptions?.map((row) => (
                                 <TableRow
-                                    key={row.option}
+                                    key={row.quizQuestionOptionId}
                                 >
                                     <TableCell component="th" scope="row">
-                                        <TextField value={row.option} />
+                                        <TextField value={row.leftContent} />
                                     </TableCell>
-                                    <TableCell align="right">{row.answer ? <Checkbox defaultChecked /> : <Checkbox />}</TableCell>
+                                    <TableCell align="right">{row.correct ? <Checkbox defaultChecked /> : <Checkbox />}</TableCell>
                                     <TableCell align="right"><IconButton><DeleteIcon /></IconButton></TableCell>
                                 </TableRow>
                             ))}
 
                         {
-                            type === "truefalse" &&
-                            trueFalseRows.map((row) => (
+                            questionType === "True/False" &&
+                            quizQuestionOptions?.map((row) => (
                                 <TableRow
-                                    key={row.option}
+                                    key={row.quizQuestionOptionId}
                                 >
                                     <TableCell component="th" scope="row">
-                                        {row.option}
+                                        {row.leftContent}
                                     </TableCell>
                                     <TableCell align="right">
                                         <Radio
-                                            checked={selectedTrueFalse === row.answer}
+                                            checked={row.correct}
                                             onChange={handleChange}
-                                            value={row.answer}
+                                            value={row.leftContent}
                                         />
                                     </TableCell>
                                 </TableRow>
