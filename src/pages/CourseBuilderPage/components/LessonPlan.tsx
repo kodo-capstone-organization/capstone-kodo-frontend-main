@@ -113,6 +113,13 @@ function LessonPlan(props: any) {
                                                        value={lesson.name}
                                                        onChange={handleLessonNameChange}/>
                                         </Grid>
+                                        <Grid style={{ padding: "0!important"}} item xs={12}>
+                                            <TextField fullWidth required
+                                                       id={index.toString()}
+                                                       label="Description"
+                                                       value={lesson.description}
+                                                       onChange={handleLessonDescriptionChange}/>
+                                        </Grid>
                                         <Grid item xs={12}>
                                             <QuizTable
                                                 handleFormDataChange={handleFormDataChange}
