@@ -60,4 +60,10 @@ module.exports = function(app) {
       changeOrigin: true
     })
   );
+  app.use(
+    createProxyMiddleware("/transaction", {
+        target: url,
+        changeOrigin: true
+    })
+  );
 };
