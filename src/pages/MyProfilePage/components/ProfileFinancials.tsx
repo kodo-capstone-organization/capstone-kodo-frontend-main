@@ -3,6 +3,8 @@ import Tab from "@material-ui/core/Tab";
 import {useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { colours } from "../../../values/Colours";
+import CourseEarningsTabPanel from "./financials/CourseEarningsTabPanel";
+import PaymentsHistoryTabPanel from "./financials/PaymentsHistoryTabPanel";
 
 function ProfileFinancials(props: any) {
 
@@ -23,11 +25,13 @@ function ProfileFinancials(props: any) {
         return [
             {
                 myTabIdx: 0,
-                myTabName: "Payments History"
+                myTabName: "Payments History",
+                tabPanelComponent: <PaymentsHistoryTabPanel accountId={accountId}/>
             },
             {
                 myTabIdx: 1,
-                myTabName: "Course Earnings"
+                myTabName: "Course Earnings",
+                tabPanelComponent: <CourseEarningsTabPanel />
             }
         ]
     }
@@ -49,6 +53,12 @@ function ProfileFinancials(props: any) {
                     />
                 ))}
             </Tabs>
+            <div id="financials-tab-panel-group">
+                { getTabItems()
+                    .filter((tabItem) => tabItem?.myTabIdx === curTabIdx)
+                    .map(tabItem => (tabItem.tabPanelComponent))
+                }
+            </div>
         </>
     )
 }
