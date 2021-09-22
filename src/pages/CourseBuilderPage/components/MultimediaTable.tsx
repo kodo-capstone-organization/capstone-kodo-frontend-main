@@ -84,8 +84,7 @@ interface HeadCell {
 const headCells: HeadCell[] = [
   { id: 'name', numeric: false, disablePadding: true, label: 'Name' },
   { id: 'description', numeric: true, disablePadding: false, label: 'Description' },
-  { id: 'type', numeric: true, disablePadding: false, label: 'File Type' },
-  { id: 'urlFilename', numeric: true, disablePadding: false, label: 'File Name' },
+  { id: 'type', numeric: true, disablePadding: false, label: 'File Type' }
 ];
 
 interface EnhancedTableProps {
@@ -227,9 +226,13 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
         updatedFile.description = event.target.value
         break;
       case "file":
-        updatedFile.urlFilename = event.target.files[0].name
+        updatedFile.newFilename = event.target.files[0].name
         updatedFile.file = event.target.files[0]
-        updatedFile.multimediaType = getFileType(updatedFile.urlFilename)
+
+        if (updatedFile.newFilename !== undefined) {
+          updatedFile.multimediaType = getFileType(updatedFile.newFilename)
+        }
+    
         break;
     }
     setNewFile({...updatedFile})
@@ -516,7 +519,6 @@ export default function MultimediaTable(props: any) {
                         </TableCell>
                         <TableCell align="right">{row.description}</TableCell>
                         <TableCell align="right">{row.type}</TableCell>
-                        <TableCell align="right">{row.urlFilename}</TableCell>
                         </TableRow>
                     );
                     })}

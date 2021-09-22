@@ -136,9 +136,14 @@ function CourseBuilderPage(props: any) {
                 lesson: lesson,
                 quizzes: lesson.quizzes,
                 multimediaReqs: lesson.multimedias.map((multimedia: Multimedia) => {
+
+                    // Set new multimedia object id to undefined
+                    if (multimedia.contentId === -1) {
+                        // @ts-ignore
+                        multimedia.contentId = undefined
+                    }
                     return {
                         multimedia: multimedia,
-                        //multipartFile: multimedia.file
                     }
                 })
             }
