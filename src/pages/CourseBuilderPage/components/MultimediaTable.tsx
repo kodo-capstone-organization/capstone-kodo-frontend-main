@@ -398,7 +398,7 @@ export default function MultimediaTable(props: any) {
       if (newMultimedias) {
         setMultimedias(newMultimedias)
       }
-    }, [lessons])
+    }, [lessons, props.lessonIndex])
 
     const classes = useStyles();
     const [order, setOrder] = React.useState<Order>('asc');

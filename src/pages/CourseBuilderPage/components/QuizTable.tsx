@@ -381,11 +381,11 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
       })}
     >
       {numSelected > 0 ? (
-        <Typography className={classes.title} color="inherit" variant="subtitle1" component="div">
+        <Typography className={classes.title} color="inherit" variant="subtitle1" component="span">
           {numSelected} selected
         </Typography>
       ) : (
-        <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
+        <Typography className={classes.title} variant="h6" id="tableTitle" component="span">
           Quizzes
         </Typography>
       )}
@@ -447,7 +447,7 @@ export default function QuizTable(props: any) {
       if (newQuizzes) {
         setQuizzes(newQuizzes)
       }
-    }, [lessons])
+    }, [lessons, props.lessonIndex])
 
     const classes = useStyles();
     const [order, setOrder] = React.useState<Order>('asc');

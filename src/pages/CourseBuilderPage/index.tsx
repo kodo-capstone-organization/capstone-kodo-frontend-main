@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useReducer } from "react";
 import { useHistory } from "react-router-dom";
-import { Box, Grid, TextField, Chip, InputAdornment, IconButton, Dialog, DialogTitle, DialogActions, DialogContent} from "@material-ui/core";
+import { Box, Grid, TextField, Chip, InputAdornment, Dialog, DialogTitle, DialogActions, DialogContent} from "@material-ui/core";
 import { CourseBuilderCard, CourseBuilderCardHeader, CourseBuilderContainer, CourseBuilderContent } from "./CourseBuilderElements";
 import LessonPlan from "./components/LessonPlan";
 import { getCourseByCourseId, updateCourse, toggleEnrollmentActiveStatus } from './../../apis/Course/CourseApis';
@@ -44,7 +44,7 @@ function CourseBuilderPage(props: any) {
     
     useEffect(() => {
         getCourseByCourseId(courseId).then((receivedCourse: Course) => {
-            Object.keys(receivedCourse).map((key, index) => {
+            Object.keys(receivedCourse).forEach((key, index) => {
                 let wrapperEvent = {
                     target: {
                         name: key,
@@ -54,7 +54,7 @@ function CourseBuilderPage(props: any) {
                 handleFormDataChange(wrapperEvent)
             }) 
         });
-      }, []);
+      }, [courseId]);
 
     useEffect(() => {
         getAllTags().then((res: any)=> setTagLibrary(res)).catch(() => console.log("error getting tags."))
@@ -296,7 +296,7 @@ function CourseBuilderPage(props: any) {
             <CourseBuilderCard id="lesson-plan">
                 <LessonPlan courseFormData={courseFormData} lessons={courseFormData.lessons} handleFormDataChange={handleFormDataChange}/>
             </CourseBuilderCard>
-            <Grid container spacing={3} justify="flex-end">
+            <Grid container spacing={3} justifyContent="flex-end">
                 <Box m={1} pt={2}>
                     <Button
                         primary
