@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Lesson } from './../../../apis/Entities/Lesson';
-import { AppBar, Tabs, Tab, Grid, IconButton, TextField, Typography } from "@material-ui/core";
+import { Dialog, DialogContent, DialogContentText, DialogTitle, InputLabel, Input, FormControl, DialogActions, AppBar, Tabs, Tab, Grid, IconButton, TextField, Typography } from "@material-ui/core";
 import AddIcon from '@material-ui/icons/Add';
 import { CourseBuilderCardHeader, CourseBuilderContent } from "./../CourseBuilderElements";
 import { tabProps, TabPanel }from './TabPanel';
@@ -8,11 +8,33 @@ import QuizTable from './QuizTable';
 import MultimediaTable from './MultimediaTable';
 import { Button } from "../../../values/ButtonElements";
 import { BlankStateContainer } from '../../MyProfilePage/ProfileElements';
+import { createNewLesson } from '../../../apis/Lesson/LessonApis';
+
+interface IErrors<TValue> {
+    [id: string]: TValue;
+  }
 
 function LessonPlan(props: any) {
     const handleFormDataChange = props.handleFormDataChange;
     const [lessons, setLessons] = useState<Lesson[]>(props.lessons);
     const [tabValue, setTabValue] = useState<number>(0);
+    const [newLessonName, setNewLessonName] = useState<string>("");
+    const [newLessonDescription, setNewLessonDescription] = useState<string>("");
+
+    const [showAddLessonDialog, setShowAddLessonDialog] = useState<boolean>(false); 
+
+    var [errors, setErrors] = useState<IErrors<boolean>>({
+        name: false,
+        description: false,
+    });
+
+    const openDialog = () => {
+        setShowAddLessonDialog(true);
+    }
+  
+    const handleClose = () => {
+        setShowAddLessonDialog(false);
+    }
 
     const addToLessons = () => {
         // @ts-ignore
@@ -70,12 +92,102 @@ function LessonPlan(props: any) {
         handleFormDataChange(wrapperEvent)
     }
 
+    const handleValidation = () => {
+        let formIsValid = true;
+        errors = {};
+    
+        if (newLessonName === "") {
+          formIsValid = false ;
+          errors['name'] = true;
+        }
+    
+        if (newLessonDescription === "") {
+          formIsValid = false;
+          errors['description'] = true;      
+        }
+    
+        setErrors(errors);
+    
+        return formIsValid;
+      }
+    
+    const handleClickCreateLesson = () => {
+        if (!handleValidation()) return
+
+        createNewLesson(props.courseId, newLessonName, newLessonDescription, lessons.length + 1).then((newLesson) => {
+            console.log(newLesson)
+
+            const updatedLessons = lessons.concat(newLesson)
+            let wrapperEvent = {
+                target: {
+                    name: "lessons",
+                    value: updatedLessons
+                }
+            }
+            handleFormDataChange(wrapperEvent)
+            setLessons(updatedLessons)
+
+            // Clean up modal
+            handleClose()
+            setNewLessonName("")
+            setNewLessonDescription("")
+        })
+    }
+
     return (
         <>
+        <Dialog 
+        fullWidth
+        open={showAddLessonDialog}
+        onClose={handleClose}
+        aria-labelledby="simple-modal-title"
+        aria-describedby="simple-modal-description">
+            <DialogTitle>Add a new Lesson</DialogTitle>
+            <DialogContent
+              style={{height: '300px'}}>
+              <DialogContentText>
+                First, enter some basic details about the new lesson below.
+              </DialogContentText>
+              <FormControl fullWidth margin="normal">
+                <InputLabel htmlFor="lesson-name">Lesson Name</InputLabel>
+                <Input
+                  error={errors['name']}
+                  id="lesson-name"
+                  name="name"
+                  type="text"
+                  autoFocus
+                  fullWidth
+                  value={newLessonName}
+                  onChange={(e) => setNewLessonName(e.target.value)}
+                />
+                </FormControl>
+                <FormControl fullWidth margin="normal">
+                  <InputLabel htmlFor="lesson-description">Description</InputLabel>
+                  <Input
+                    error={errors['description']}
+                    id="lesson-description"
+                    name="description"
+                    type="text"
+                    autoFocus
+                    fullWidth
+                    value={newLessonDescription}
+                    onChange={(e) => setNewLessonDescription(e.target.value)}
+                  />
+                </FormControl>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClose}>
+                Cancel
+              </Button>
+              <Button onClick={handleClickCreateLesson}>
+                Create Lesson
+              </Button>
+            </DialogActions>
+    </Dialog>
         <CourseBuilderCardHeader
             title="Lesson Plan"
             action={
-                <IconButton color="primary" onClick={addToLessons}>
+                <IconButton color="primary" onClick={openDialog}>
                     <AddIcon/>&nbsp; Add Lesson
                 </IconButton>
             }/>
@@ -83,7 +195,7 @@ function LessonPlan(props: any) {
                 <BlankStateContainer style={{ padding: "2rem"}}>
                     <Typography variant="h5">Begin building your course by adding one or more lessons! 🤓</Typography>
                     <br/>
-                    <Button style={{width: "10%" }} onClick={addToLessons} big>Add Lesson</Button>
+                    <Button style={{width: "10%" }} onClick={openDialog} big>Add Lesson</Button>
                 </BlankStateContainer>
             }
             {lessons.length > 0 &&

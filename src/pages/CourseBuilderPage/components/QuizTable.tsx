@@ -206,12 +206,6 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
     setShowAddQuizDialog(false);
   }
 
-  const isNewLesson = () => {
-    const currentLesson = lessons.filter((lesson: Lesson, index: number) => index === lessonIndex).pop()
-    
-    return currentLesson !== undefined && currentLesson.lessonId === undefined
-  }
-
   // Update quizzes for a particular lesson from courseFormData
   const handleDeleteQuiz = () => {
     const updatedLessons = lessons.map((lesson: Lesson, index: number) => {
@@ -255,10 +249,8 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   }
 
   const handleClickBuildQuiz = () => {
-    if (!handleValidation()) {
-      return
-    } 
-
+    if (!handleValidation()) return
+    
     const lessonId = lessons.filter((lesson: Lesson, index: number) => index === lessonIndex).pop()?.lessonId
 
     if (lessonId !== undefined) {
@@ -400,13 +392,13 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
           Quizzes
         </Typography>
       )}
-      {isNewLesson() ? <Chip variant="outlined"  size="small" label="Quiz Creation Disabled for New Lesson" color="secondary" deleteIcon={<BlockIcon color="secondary" />} onDelete={() => ("")}/> : <Tooltip title="Add Quiz">
+      <Tooltip title="Add Quiz">
         <IconButton 
           aria-label="add" 
           onClick={openDialog}>
             <AddIcon />
         </IconButton>
-        </Tooltip>}
+        </Tooltip>
       {numSelected > 0 && (
         <Tooltip title="Delete">
           <IconButton aria-label="delete" onClick={handleDeleteQuiz}>
