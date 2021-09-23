@@ -25,6 +25,7 @@ function QuizQuestionComponent(props: any) {
     const [updatedQuestion, setUpdatedQuestion] = useState<QuizQuestion>();
     const [content, setContent] = useState<string>();
     const [index, setIndex] = useState<number>();
+    const [description, setDescription] = useState<string>("");
 
     useEffect(() => {
         setQuestion(props.question)

@@ -36,6 +36,10 @@ function QuizBuilderPage(props: any) {
         }).catch((err) => { console.log("error:getAllQuizQuestionsByQuizId", err) });
     }, [contentId])
 
+    useEffect(() => {
+        console.log(quizQuestionArray)
+    }, [quizQuestionArray])
+
     const addNewQuestion = () => {
         if (quiz !== undefined) {
             const newQuizQuestion: QuizQuestion = {
