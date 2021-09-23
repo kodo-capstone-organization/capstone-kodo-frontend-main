@@ -205,6 +205,12 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
     setShowAddMultimediaDialog(false);
   }
 
+  const isNewLesson = () => {
+    const currentLesson = lessons.filter((lesson: Lesson, index: number) => index === lessonIndex).pop()
+    
+    return currentLesson !== undefined && currentLesson.lessonId === undefined
+  }
+
   // Update quizzes for a particular lesson from courseFormData
   const handleDeleteQuiz = () => {
     const updatedLessons = lessons.map((lesson: Lesson, index: number) => {
@@ -252,11 +258,15 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
       return
     } 
 
-    createNewBasicQuiz(newQuizName, newQuizDescription, newQuizTimeLimitHours, newQuizTimeLimitMinutes, newQuizMaxAttempts).then((newQuiz) => {
-      console.log(newQuiz);
+    const lessonId = lessons.filter((lesson: Lesson, index: number) => index === lessonIndex).pop()?.lessonId
 
-      props.history.push({ pathname: `/buildquiz/${newQuiz.contentId}`, state: { mode: 'UPDATE' } })
-    })
+    if (lessonId !== undefined) {
+      createNewBasicQuiz(lessonId, newQuizName, newQuizDescription, newQuizTimeLimitHours, newQuizTimeLimitMinutes, newQuizMaxAttempts).then((newQuiz) => {
+        console.log(newQuiz);
+  
+        props.history.push({ pathname: `/buildquiz/${newQuiz.contentId}`, state: { mode: 'UPDATE' } })
+      })
+    }
   }
 
   return (
@@ -389,13 +399,13 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
           Quizzes
         </Typography>
       )}
-      <Tooltip title="Add Quiz">
+      {isNewLesson() ? <></> : <Tooltip title="Add Quiz">
         <IconButton 
           aria-label="add" 
           onClick={openDialog}>
             <AddIcon />
         </IconButton>
-        </Tooltip>
+        </Tooltip>}
       {numSelected > 0 && (
         <Tooltip title="Delete">
           <IconButton aria-label="delete" onClick={handleDeleteQuiz}>

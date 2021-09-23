@@ -32,7 +32,7 @@ export async function updateQuizWithQuizQuestionsAndQuizQuestionOptions(updateQu
     return httpClient.post<FormData, Quiz>(postParameters)
 }
 
-export async function createNewBasicQuiz(name: string, description: string, hours: number, minutes: number, maxAttemptsPerStudent: number): Promise<Quiz> {
+export async function createNewBasicQuiz(lessonId: number, name: string, description: string, hours: number, minutes: number, maxAttemptsPerStudent: number): Promise<Quiz> {
     const formData = new FormData();
 
     formData.append('name', name);
@@ -40,6 +40,7 @@ export async function createNewBasicQuiz(name: string, description: string, hour
     formData.append('hours', transformToBlob(hours));
     formData.append('minutes', transformToBlob(minutes));
     formData.append('maxAttemptsPerStudent', transformToBlob(maxAttemptsPerStudent));
+    formData.append('lessonId', transformToBlob(lessonId));
 
     const postParameters: IHttpClientRequestParameters<FormData> = {
         url: '/quiz/createNewBasicQuiz',
