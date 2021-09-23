@@ -24,6 +24,7 @@ import { Lesson } from '../../../apis/Entities/Lesson';
 import { Dialog, DialogContent, DialogContentText, DialogTitle, InputLabel, Input, FormControl, DialogActions} from '@material-ui/core';
 import { ACCEPTABLE_FILE_TYPE, getFileType } from '../../../utils/GetFileType';
 import { Button } from "../../../values/ButtonElements";
+import { addNewMultimediaToLesson } from '../../../apis/Multimedia/MultimediaApis';
 
 interface Data {
   id: number,
@@ -192,27 +193,37 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
     setShowAddMultimediaDialog(false);
   }
 
-  const handleClickSubmit = () => {
-    const updatedLessons = lessons.map((lesson: Lesson, index: number) => {
-      if (index === lessonIndex) {
-        const updatedMultimedias = lesson.multimedias.concat(newFile)
-        lesson.multimedias = updatedMultimedias
-      }
-      return lesson
-    })
+  const handleClickAddMultimedia = () => {
+    const currentLessonId = lessons.filter((lesson: Lesson, index: number) => index === lessonIndex).pop()?.lessonId
 
-    setLessons(updatedLessons)
+    if (currentLessonId !== undefined && newFile.file !== undefined) {
+      addNewMultimediaToLesson(currentLessonId, newFile.name, newFile.description, newFile.file).then((newMultimedia) => {
+        console.log(newMultimedia)
 
-    let wrapperEvent = {
-      target: {
-        name: "lessons",
-        value: updatedLessons
-      }
+        const updatedLessons = lessons.map((lesson: Lesson, index: number) => {
+          if (index === lessonIndex) {
+            const updatedMultimedias = lesson.multimedias.concat(newFile)
+            lesson.multimedias = updatedMultimedias
+          }
+          return lesson
+        })
+
+        let wrapperEvent = {
+          target: {
+            name: "lessons",
+            value: updatedLessons
+          }
+        }
+    
+        handleFormDataChange(wrapperEvent)
+    
+        setLessons(updatedLessons)
+
+        handleClose()
+        setNewFile({ contentId: -1, name: "", description: "", url: "", multimediaType: MultimediaType.EMPTY, urlFilename: "", file: new File([""], ""), type: "multimedia"})
+        
+      })
     }
-
-    handleFormDataChange(wrapperEvent)
-    setShowAddMultimediaDialog(false)
-    setNewFile({ contentId: -1, name: "", description: "", url: "", multimediaType: MultimediaType.EMPTY, urlFilename: "", file: new File([""], ""), type: "multimedia"})
   }
 
   const handleFileChange = (event: any) => {
@@ -300,6 +311,18 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
                   />
                 </FormControl>
                 <FormControl fullWidth margin="normal">
+                  <InputLabel htmlFor="multimedia-filename">File Name</InputLabel>
+                  <Input
+                    id="multimedia-filename"
+                    name="filename"
+                    type="text"
+                    autoFocus
+                    fullWidth
+                    value={newFile.file?.name}
+                    disabled
+                  />
+                </FormControl>
+                <FormControl fullWidth margin="normal">
                   <input 
                     accept={ACCEPTABLE_FILE_TYPE}
                     className={classes.input} 
@@ -322,7 +345,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
               <Button onClick={handleClose}>
                 Cancel
               </Button>
-              <Button onClick={handleClickSubmit}>
+              <Button onClick={handleClickAddMultimedia}>
                 Add Multimedia
               </Button>
             </DialogActions>
