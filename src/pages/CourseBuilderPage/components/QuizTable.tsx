@@ -196,14 +196,14 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
     description: false,
 });
 
-  const [showAddMultimediaDialog, setShowAddMultimediaDialog] = useState<boolean>(false); 
+  const [showAddQuizDialog, setShowAddQuizDialog] = useState<boolean>(false); 
 
   const openDialog = () => {
-    setShowAddMultimediaDialog(true);
+    setShowAddQuizDialog(true);
   }
 
   const handleClose = () => {
-    setShowAddMultimediaDialog(false);
+    setShowAddQuizDialog(false);
   }
 
   const isNewLesson = () => {
@@ -274,7 +274,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
     <>
         <Dialog 
         fullWidth
-        open={showAddMultimediaDialog}
+        open={showAddQuizDialog}
         onClose={handleClose}
         aria-labelledby="simple-modal-title"
         aria-describedby="simple-modal-description">
