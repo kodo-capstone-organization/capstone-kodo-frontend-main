@@ -26,12 +26,12 @@ function ProfileFinancials(props: any) {
             {
                 myTabIdx: 0,
                 myTabName: "Payments History",
-                tabPanelComponent: <PaymentsHistoryTabPanel accountId={accountId}/>
+                tabPanelComponent: <PaymentsHistoryTabPanel key={0} accountId={accountId} />
             },
             {
                 myTabIdx: 1,
                 myTabName: "Course Earnings",
-                tabPanelComponent: <CourseEarningsTabPanel />
+                tabPanelComponent: <CourseEarningsTabPanel key={1} />
             }
         ]
     }

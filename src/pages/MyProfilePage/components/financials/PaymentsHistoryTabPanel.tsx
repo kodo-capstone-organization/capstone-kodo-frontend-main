@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { GroupedByMonthsTransaction, Transaction } from "../../../../apis/Entities/Transaction";
 import { getAllPaymentsByAccountId } from "../../../../apis/Transaction/TransactionApis";
 import { colours } from "../../../../values/Colours";
+import { BlankStateContainer } from "../../ProfileElements";
 
 function PaymentsHistoryTabPanel(props: any) {
     
@@ -15,10 +16,12 @@ function PaymentsHistoryTabPanel(props: any) {
     }, [props.accountId])
 
     useEffect(() => {
-        getAllPaymentsByAccountId(parseInt(accountId))
-            .then(myPayments => setMyPayments(myPayments))
-            .catch(error => console.log("Error retrieving my payments"))
-    }, [accountId, myPayments])
+        if (accountId) {
+            getAllPaymentsByAccountId(parseInt(accountId))
+                .then(myPayments => setMyPayments([...myPayments]))
+                .catch(error => console.log("Error retrieving my payments"))
+        } 
+    }, [accountId])
 
 
     const getRegroupedPayments = () => {
@@ -46,6 +49,7 @@ function PaymentsHistoryTabPanel(props: any) {
     
     return (
         <>
+            { myPayments.length === 0 && <BlankStateContainer><br/>Wow! No payments to be found. <br/> Time to start enrolling in some of our courses? 😉</BlankStateContainer>}
             { myPayments && Object.keys(getRegroupedPayments()).map((monthyear: string) => (
                 <Paper key={monthyear} style={{ margin: "1.5rem 0"}}>
                     <Toolbar variant="dense" disableGutters style={{ padding: "0 1rem", background: colours.GRAYHALF6, color: colours.GRAY3 }}>
