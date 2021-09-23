@@ -290,29 +290,29 @@ function CourseBuilderPage(props: any) {
                                 />
                             </Button>
                         </Grid>
+                        <Grid container spacing={3} justifyContent="flex-end">
+                            <Box m={1} pt={2}>
+                                <Button
+                                    primary
+                                    big
+                                    onClick={handleUpdateCourse}>
+                                    Update Course
+                                </Button>
+                            </Box>
+                            <Box m={1} pt={2}>
+                                <Button
+                                    big
+                                    onClick={navigateToPreviousPage}>
+                                    Cancel
+                                </Button>
+                            </Box>
+                        </Grid>
                     </Grid>
                 </CourseBuilderContent>
             </CourseBuilderCard>
             <CourseBuilderCard id="lesson-plan">
                 <LessonPlan courseFormData={courseFormData} lessons={courseFormData.lessons} handleFormDataChange={handleFormDataChange}/>
             </CourseBuilderCard>
-            <Grid container spacing={3} justifyContent="flex-end">
-                <Box m={1} pt={2}>
-                    <Button
-                        primary
-                        big
-                        onClick={handleUpdateCourse}>
-                        Update Course
-                    </Button>
-                </Box>
-                <Box m={1} pt={2}>
-                    <Button
-                        big
-                        onClick={navigateToPreviousPage}>
-                        Cancel
-                    </Button>
-                </Box>
-            </Grid>
             {/* Toggle Enrollment Course Dialog */}
             <Dialog fullWidth open={isToggleActiveEnrollmentDialogOpen} onClose={handleCloseToggleEnrollmentDialog} aria-labelledby="toggle-dialog">
 
