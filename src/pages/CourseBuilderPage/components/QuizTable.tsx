@@ -23,9 +23,10 @@ import { Lesson } from '../../../apis/Entities/Lesson';
 import { useHistory } from "react-router-dom";
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import AddIcon from '@material-ui/icons/Add';
-import { Dialog, DialogContent, DialogContentText, DialogTitle, InputLabel, Input, FormControl, DialogActions, Grid} from '@material-ui/core';
+import { Dialog, DialogContent, DialogContentText, DialogTitle, InputLabel, Input, FormControl, DialogActions, Grid, Chip} from '@material-ui/core';
 import { Button } from "../../../values/ButtonElements";
 import { createNewBasicQuiz } from '../../../apis/Quiz/QuizApis';
+import BlockIcon from '@material-ui/icons/Block';
 
 interface IErrors<TValue> {
   [id: string]: TValue;
@@ -399,7 +400,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
           Quizzes
         </Typography>
       )}
-      {isNewLesson() ? <></> : <Tooltip title="Add Quiz">
+      {isNewLesson() ? <Chip variant="outlined"  size="small" label="Quiz Creation Disabled for New Lesson" color="secondary" deleteIcon={<BlockIcon color="secondary" />} onDelete={() => ("")}/> : <Tooltip title="Add Quiz">
         <IconButton 
           aria-label="add" 
           onClick={openDialog}>
