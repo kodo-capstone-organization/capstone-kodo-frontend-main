@@ -7,8 +7,11 @@ import {
     Radio
 } from "@material-ui/core";
 import { } from "../QuizBuilderElements";
+<<<<<<< HEAD
 import { Button } from "../../../values/ButtonElements";
 
+=======
+>>>>>>> yay
 
 interface IQuestionOption {
     leftContent: string,
