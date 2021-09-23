@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { Quiz } from '../../../apis/Entities/Quiz';
 import { QuizQuestion } from "../../../apis/Entities/QuizQuestion";
-import QuizQuestionOptions from "./QuizQuestionOptions"
+import { QuizQuestionOption } from '../../../apis/Entities/QuizQuestionOption';
+import QuizQuestionOptionsList from "./QuizQuestionOptionsList"
 import {
-    Box, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle,
-    FormControl, Grid, IconButton, Input, InputAdornment, InputLabel, TextField, Typography, Divider
+    Box, FormControl, InputLabel, Divider
 } from "@material-ui/core";
-import { QuizContainer, QuizCard, QuizBuilderTextInput, QuizSelectMenu, QuizQuestionCard } from "../QuizBuilderElements";
+import { QuizBuilderTextInput, QuizSelectMenu } from "../QuizBuilderElements";
 
 
 const questionTypes = [
     'MCQ',
-    'True/False',
-    'Matching'
+    'TF',
+    'MATCHING'
 ];
 
 
@@ -25,7 +25,6 @@ function QuizQuestionComponent(props: any) {
     const [updatedQuestion, setUpdatedQuestion] = useState<QuizQuestion>();
     const [content, setContent] = useState<string>();
     const [index, setIndex] = useState<number>();
-    const [description, setDescription] = useState<string>("");
 
     useEffect(() => {
         setQuestion(props.question)
@@ -34,25 +33,40 @@ function QuizQuestionComponent(props: any) {
         setContent(props.question.content)
         setMarks(props.question.marks)
         setQuestionType(props.question.questionType)
+        console.log(props.question.questionType)
     }, [props.question])
+
+    // useEffect(() => {
+    //     console.log("handleTYpechange", updatedQuestion)
+
+    // }, [updatedQuestion])
 
     const handleTypeChange = (event: React.ChangeEvent<{ value: unknown }>) => {
         setQuestionType(event.target.value as string);
         const newlyUpdatedQuestion = Object.assign(updatedQuestion, { questionType: event.target.value })
+        setUpdatedQuestion(newlyUpdatedQuestion)
         props.onUpdateQuestion(newlyUpdatedQuestion, index)
     };
 
     const handleMarkChange = (event: React.ChangeEvent<{ value: unknown }>) => {
         setMarks(event.target.value as number);
         const newlyUpdatedQuestion = Object.assign(updatedQuestion, { marks: event.target.value })
-        props.onUpdateQuestion(newlyUpdatedQuestion, index)    
+        setUpdatedQuestion(newlyUpdatedQuestion)
+        props.onUpdateQuestion(newlyUpdatedQuestion, index)
     };
 
     const handleContentChange = (event: React.ChangeEvent<{ value: unknown }>) => {
         setContent(event.target.value as string);
         const newlyUpdatedQuestion = Object.assign(updatedQuestion, { content: event.target.value })
+        setUpdatedQuestion(newlyUpdatedQuestion)
         props.onUpdateQuestion(newlyUpdatedQuestion, index)
     };
+
+    const handleQuizQuestionOptionUpdate = (quizQuestionOptions: QuizQuestionOption[]) => {
+        //recv data from child component
+        // const newlyUpdatedQuestionOptions = Object.assign(updatedQuestion, { quizQuestionOptions })
+        // props.onUpdateQuizQuestionOptions(newlyUpdatedQuestionOptions, index)
+    }
 
     return (
         <>
@@ -72,8 +86,8 @@ function QuizQuestionComponent(props: any) {
                                     onChange={handleTypeChange}
                                 >
                                     <option value={"MCQ"}>MCQ</option>
-                                    <option value={"True/False"}>True/False</option>
-                                    <option value={"Matching"}>Matching</option>
+                                    <option value={"TF"}>True/False</option>
+                                    <option value={"MATCHING"}>Matching</option>
                                 </QuizSelectMenu>
                             </FormControl>
                         </Box>
@@ -111,11 +125,7 @@ function QuizQuestionComponent(props: any) {
                 }
 
                 <Divider />
-                <QuizQuestionOptions question={question} />
-                {/* <QuizQuestionOptions type={"mcq"} />
-                <QuizQuestionOptions type={"truefalse"} />
-                <QuizQuestionOptions type={"match"} /> */}
-
+                <QuizQuestionOptionsList question={question} questionType={questionType} options={handleQuizQuestionOptionUpdate} />
                 <Divider />
             </div>
 
