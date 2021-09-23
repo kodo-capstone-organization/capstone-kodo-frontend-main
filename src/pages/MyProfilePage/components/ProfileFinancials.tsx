@@ -31,7 +31,7 @@ function ProfileFinancials(props: any) {
             {
                 myTabIdx: 1,
                 myTabName: "Course Earnings",
-                tabPanelComponent: <CourseEarningsTabPanel key={1} />
+                tabPanelComponent: <CourseEarningsTabPanel key={1} accountId={accountId} />
             }
         ]
     }
