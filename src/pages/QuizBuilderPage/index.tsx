@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Quiz } from './../../apis/Entities/Quiz';
-import { QuizQuestion, QuestionType } from "../../apis/Entities/QuizQuestion";
+import { QuizQuestion } from "../../apis/Entities/QuizQuestion";
 import { getQuizByQuizId, updateQuizWithQuizQuestionsAndQuizQuestionOptions } from "../../apis/Quiz/QuizApis";
 import { getAllQuizQuestionsByQuizId } from "../../apis/QuizQuestion/QuizQuestionApis";
 import { Button } from "../../values/ButtonElements";
@@ -12,6 +12,8 @@ import {
 } from "@material-ui/core";
 import { QuizContainer, QuizCard, QuizCardHeader, QuizCardContent, QuizQuestionCard } from "./QuizBuilderElements";
 import { UpdateQuizReq } from '../../apis/Entities/Quiz';
+import { QuizQuestionOption } from '../../apis/Entities/QuizQuestionOption';
+
 
 function QuizBuilderPage(props: any) {
 
@@ -34,12 +36,8 @@ function QuizBuilderPage(props: any) {
         }).catch((err) => { console.log("error:getAllQuizQuestionsByQuizId", err) });
     }, [contentId])
 
-    useEffect(() => {
-        console.log(quizQuestionArray)
-    }, [quizQuestionArray])
-
     const addNewQuestion = () => {
-        if (quiz != undefined) {
+        if (quiz !== undefined) {
             const newQuizQuestion: QuizQuestion = {
                 quizQuestionId: null,
                 content: "",
@@ -48,54 +46,33 @@ function QuizBuilderPage(props: any) {
                 quiz: quiz,
                 quizQuestionOptions: []
             }
-            const newQuestionArray = quizQuestionArray.push(newQuizQuestion)
+            quizQuestionArray.push(newQuizQuestion);
         }
     }
 
     const deleteQuestion = (event: React.MouseEvent<unknown>, index: number) => {
-        const updatedQuizQuestionArray = quizQuestionArray.filter((q, qId) => { return (qId != index); })
-        setQuizQuestionArray(updatedQuizQuestionArray)
+        const updatedQuizQuestionArray = quizQuestionArray.filter((q, qId) => { return (qId !== index); })
+        setQuizQuestionArray(updatedQuizQuestionArray);
     }
-
-    const mapQuestionArray = (questionArray: QuizQuestion[]) => {
-        return (
-            <div>
-                {questionArray.map(function (q, qId) {
-                    return (
-                        <>
-                            <QuizQuestionCard key={qId}>
-                                <QuizQuestionComponent type="mcq" question={q} index={qId} onUpdateQuestion={handleUpdateQuestion} />
-                                <IconButton style={{ alignItems: "baseline" }} onClick={(event) => deleteQuestion(event, qId)}>
-                                    <DeleteIcon />
-                                </IconButton>
-                            </QuizQuestionCard>
-                        </>
-                    );
-                })}
-            </div>
-        );
-    };
 
     const onDragEnd = () => {
         //update state
     }
 
     const handleNameChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setName(e.target.value)
-        const newQuiz = Object.assign(updatedQuiz, { name: e.target.value })
-        console.log("handleNameChange", newQuiz)
-        setUpdatedQuiz(newQuiz)
+        setName(e.target.value);
+        const newQuiz = Object.assign(updatedQuiz, { name: e.target.value });
+        setUpdatedQuiz(newQuiz);
     }
 
     const handleDescriptionChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setDescription(e.target.value)
-        const newQuiz = Object.assign(updatedQuiz, { description: e.target.value })
-        console.log("handleDescriptionChange", newQuiz)
-        setUpdatedQuiz(newQuiz)
+        setDescription(e.target.value);
+        const newQuiz = Object.assign(updatedQuiz, { description: e.target.value });
+        setUpdatedQuiz(newQuiz);
     }
 
     const handleSubmit = () => {
-        if (updatedQuiz != undefined) {
+        if (updatedQuiz !== undefined) {
             const quizQuestionOptionLists = quizQuestionArray.map((question) => question.quizQuestionOptions)
             const updateQuizReq: UpdateQuizReq = {
                 quiz: updatedQuiz,
@@ -115,9 +92,35 @@ function QuizBuilderPage(props: any) {
                 qId === index ? updatedQuizQuestion : q
             );
         })
-        setQuizQuestionArray(updatedQuizQuestionArray)
+        setQuizQuestionArray(updatedQuizQuestionArray);
 
     }
+
+    const handleQuizQuestionOptionUpdate = (quizQuestionOptions: QuizQuestionOption[], index: number)  => {
+        console.log("update options", quizQuestionOptions);
+        console.log("update options", index);
+
+    }
+
+    const mapQuestionArray = (questionArray: QuizQuestion[]) => {
+        return (
+            <div>
+                {questionArray.map(function (q, qId) {
+                    return (
+                        <>
+                            <QuizQuestionCard key={qId}>
+                                <QuizQuestionComponent type="mcq" question={q} index={qId} 
+                                onUpdateQuestion={handleUpdateQuestion} onUpdateQuizQuestionOptions={handleQuizQuestionOptionUpdate}/>
+                                <IconButton style={{ alignItems: "baseline" }} onClick={(event) => deleteQuestion(event, qId)}>
+                                    <DeleteIcon />
+                                </IconButton>
+                            </QuizQuestionCard>
+                        </>
+                    );
+                })}
+            </div>
+        );
+    };
 
 
     return (
