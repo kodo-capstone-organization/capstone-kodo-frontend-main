@@ -22,6 +22,14 @@ import { Quiz } from '../../../apis/Entities/Quiz';
 import { Lesson } from '../../../apis/Entities/Lesson';
 import { useHistory } from "react-router-dom";
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
+import AddIcon from '@material-ui/icons/Add';
+import { Dialog, DialogContent, DialogContentText, DialogTitle, InputLabel, Input, FormControl, DialogActions, Grid} from '@material-ui/core';
+import { Button } from "../../../values/ButtonElements";
+import { createNewBasicQuiz } from '../../../apis/Quiz/QuizApis';
+
+interface IErrors<TValue> {
+  [id: string]: TValue;
+}
 interface Data {
   id: number
   name: string,
@@ -177,6 +185,25 @@ interface EnhancedTableToolbarProps {
 const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   const classes = useToolbarStyles();
   const { numSelected, selectedIds, lessonIndex, handleFormDataChange, setLessons, lessons, setSelectedIds} = props;
+  const [newQuizName, setNewQuizName] = useState<string>("");
+  const [newQuizDescription, setNewQuizDescription] = useState<string>("");
+  const [newQuizTimeLimitHours, setNewQuizTimeLimitHours] = useState<number>(0);
+  const [newQuizTimeLimitMinutes, setNewQuizTimeLimitMinutes] = useState<number>(0);
+  const [newQuizMaxAttempts, setNewQuizMaxAttempts] = useState<number>(0);
+  var [errors, setErrors] = useState<IErrors<boolean>>({
+    name: false,
+    description: false,
+});
+
+  const [showAddMultimediaDialog, setShowAddMultimediaDialog] = useState<boolean>(false); 
+
+  const openDialog = () => {
+    setShowAddMultimediaDialog(true);
+  }
+
+  const handleClose = () => {
+    setShowAddMultimediaDialog(false);
+  }
 
   // Update quizzes for a particular lesson from courseFormData
   const handleDeleteQuiz = () => {
@@ -201,7 +228,153 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
     setSelectedIds([])
   }
 
+  const handleValidation = () => {
+    let formIsValid = true;
+    errors = {};
+
+    if (newQuizName === "") {
+      formIsValid = false ;
+      errors['name'] = true;
+    }
+
+    if (newQuizDescription === "") {
+      formIsValid = false;
+      errors['description'] = true;      
+    }
+
+    setErrors(errors);
+
+    return formIsValid;
+  }
+
+  const handleClickBuildQuiz = () => {
+    if (!handleValidation()) {
+      return
+    } 
+
+    createNewBasicQuiz(newQuizName, newQuizDescription, newQuizTimeLimitHours, newQuizTimeLimitMinutes, newQuizMaxAttempts).then((newQuiz) => {
+      console.log(newQuiz);
+
+      props.history.push({ pathname: `/buildquiz/${newQuiz.contentId}`, state: { mode: 'UPDATE' } })
+    })
+  }
+
   return (
+    <>
+        <Dialog 
+        fullWidth
+        open={showAddMultimediaDialog}
+        onClose={handleClose}
+        aria-labelledby="simple-modal-title"
+        aria-describedby="simple-modal-description">
+            <DialogTitle>Add a new Quiz</DialogTitle>
+            <DialogContent
+              style={{height: '300px'}}>
+              <DialogContentText>
+                First, enter some basic details about the new quiz below.
+              </DialogContentText>
+              <FormControl fullWidth margin="normal">
+                <InputLabel htmlFor="quiz-name">Quiz Name</InputLabel>
+                <Input
+                  error={errors['name']}
+                  id="quiz-name"
+                  name="name"
+                  type="text"
+                  autoFocus
+                  fullWidth
+                  value={newQuizName}
+                  onChange={(e) => setNewQuizName(e.target.value)}
+                />
+                </FormControl>
+                <FormControl fullWidth margin="normal">
+                  <InputLabel htmlFor="quiz-description">Description</InputLabel>
+                  <Input
+                    error={errors['description']}
+                    id="quiz-description"
+                    name="description"
+                    type="text"
+                    autoFocus
+                    fullWidth
+                    value={newQuizDescription}
+                    onChange={(e) => setNewQuizDescription(e.target.value)}
+                  />
+                </FormControl>
+                <FormControl fullWidth margin="normal">
+                  <Grid container spacing={3}>
+                    <Grid item xs={6}>
+                      <InputLabel htmlFor="quiz-timelimit">Time Limit</InputLabel>
+                      <Input
+                      fullWidth
+                      id="quiz-timelimit"
+                      placeholder="Hours"
+                      name="timelimit"
+                      type="number"
+                      autoFocus
+                      value={newQuizTimeLimitHours}
+                      onChange={(e) => {
+                        let value = parseInt(e.target.value)
+
+                        if (value > 24) value = 24
+                        if (value < 0) value = 0
+
+                        setNewQuizTimeLimitHours(value)
+                      }}
+                      inputProps={{ min: 0, max: 24 }}
+                    />
+                    </Grid>
+                    <Grid item xs={6}>
+                      <InputLabel htmlFor="quiz-timelimit">Time Limit</InputLabel>
+                      <Input
+                      fullWidth
+                      id="quiz-timelimit"
+                      placeholder="Minutes"
+                      name="timelimit"
+                      type="number"
+                      autoFocus
+                      value={newQuizTimeLimitMinutes}
+                      onChange={(e) => {
+                        let value = parseInt(e.target.value)
+
+                        if (value > 59) value = 59
+                        if (value < 0) value = 0
+
+                        setNewQuizTimeLimitMinutes(value)
+                      }}
+                      inputProps={{ min: 0, max: 59 }}
+                    />
+                    </Grid>
+                  </Grid>
+                </FormControl>
+                <FormControl fullWidth margin="normal">
+                  <InputLabel htmlFor="quiz-maxattempts">Max Attempts</InputLabel>
+                  <Input
+                    id="quiz-maxattempts"
+                    name="description"
+                    type="number"
+                    autoFocus
+                    fullWidth
+                    value={newQuizMaxAttempts}
+                    onChange={(e) => {
+                        let value = parseInt(e.target.value)
+
+                        if (value > 100) value = 100
+                        if (value < 0) value = 0
+
+                        setNewQuizMaxAttempts(value)
+                    }}
+                    inputProps={{ min: 0, max: 100 }}
+                  />
+                </FormControl>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClose}>
+                Cancel
+              </Button>
+              <Button onClick={handleClickBuildQuiz}>
+                Build Quiz
+              </Button>
+            </DialogActions>
+    </Dialog>
     <Toolbar
       className={clsx(classes.root, {
         [classes.highlight]: numSelected > 0,
@@ -216,6 +389,13 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
           Quizzes
         </Typography>
       )}
+      <Tooltip title="Add Quiz">
+        <IconButton 
+          aria-label="add" 
+          onClick={openDialog}>
+            <AddIcon />
+        </IconButton>
+        </Tooltip>
       {numSelected > 0 && (
         <Tooltip title="Delete">
           <IconButton aria-label="delete" onClick={handleDeleteQuiz}>
@@ -224,6 +404,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
         </Tooltip>
       )}
     </Toolbar>
+    </>
   );
 };
 

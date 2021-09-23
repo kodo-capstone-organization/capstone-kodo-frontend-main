@@ -3,7 +3,6 @@ import { QuizWithStudentAttemptCountResp, Quiz, UpdateQuizReq } from "../Entitie
 import { httpClient } from "../HttpClient/HttpClient";
 import { transformToBlob } from "./../../utils/BlobCreator";
 
-
 export async function getAllQuizzesWithStudentAttemptCountByEnrolledLessonId(enrolledLessonId: number): Promise<QuizWithStudentAttemptCountResp[]> {
     const getParameters: IHttpClientRequestParameters<undefined> = {
         url: `/quiz/getAllQuizzesWithStudentAttemptCountByEnrolledLessonId/${enrolledLessonId}`
@@ -27,6 +26,23 @@ export async function updateQuizWithQuizQuestionsAndQuizQuestionOptions(updateQu
 
     const postParameters: IHttpClientRequestParameters<FormData> = {
         url: '/quiz/updateQuizWithQuizQuestionsAndQuizQuestionOptions',
+        payload: formData
+    }
+
+    return httpClient.post<FormData, Quiz>(postParameters)
+}
+
+export async function createNewBasicQuiz(name: string, description: string, hours: number, minutes: number, maxAttemptsPerStudent: number): Promise<Quiz> {
+    const formData = new FormData();
+
+    formData.append('name', name);
+    formData.append('description', description);
+    formData.append('hours', transformToBlob(hours));
+    formData.append('minutes', transformToBlob(minutes));
+    formData.append('maxAttemptsPerStudent', transformToBlob(maxAttemptsPerStudent));
+
+    const postParameters: IHttpClientRequestParameters<FormData> = {
+        url: '/quiz/createNewBasicQuiz',
         payload: formData
     }
 
