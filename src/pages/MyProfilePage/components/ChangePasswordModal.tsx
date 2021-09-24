@@ -1,15 +1,23 @@
-import React, { useEffect, useState } from 'react';
-import { useHistory } from "react-router-dom";
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
-import { Button } from "../../../values/ButtonElements";
 import { Account } from "../../../apis/Entities/Account";
+import { Button } from "../../../values/ButtonElements";
+import { ProfileSettingField } from "../ProfileElements";
+import { updateAccountPassword } from '../../../apis/Account/AccountApis';
+import { useHistory } from "react-router-dom";
+import {
+    IconButton,
+    Input, 
+    InputLabel,
+    InputAdornment, 
+} from "@material-ui/core";
+import Alert from '@material-ui/lab/Alert';
+import CloseIcon from '@material-ui/icons/Close';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import { ProfileSettingField } from "../ProfileElements";
+import React, { useEffect, useState } from 'react';
+import Visibility from '@material-ui/icons/Visibility';
+import VisibilityOff from '@material-ui/icons/VisibilityOff';
 
 interface IErrors<TValue> {
     [id: string]: TValue;
@@ -19,11 +27,22 @@ function ChangePasswordModal(props: any) {
     const [open, setOpen] = React.useState(false);
     const [myAccount, setMyAccount] = useState<Account>()
     const [oldPassword, setOldPassword] = useState<string>("");
+    const [newPassword, setNewPassword] = useState<string>("");
+    const [confirmPassword, setConfirmPassword] = useState<string>("");
+
+    const [showOldPassword, setShowOldPassword] = useState<Boolean>(false);
+    const [showNewPassword, setShowNewPassword] = useState<Boolean>(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState<Boolean>(false);
+
+    const [updateAccountPasswordFailed, setUpdateAccountPasswordFailed] = useState<String>("");
+    const [updateAccountPasswordSuccess, setUpdateAccountPasswordSuccess] = useState<String>("");
+
     var [errors, setErrors] = useState<IErrors<any>>({
         oldPassword: "",
         newPassword: "",
-        confirmPassword: "",
+        confirmPassword: ""
     });
+
     const history = useHistory();
 
     useEffect(() => {
@@ -35,29 +54,119 @@ function ChangePasswordModal(props: any) {
     };
 
     const handleClose = () => {
+        setErrors({});
+        setOldPassword("");
+        setNewPassword("");
+        setConfirmPassword("");
+        setUpdateAccountPasswordFailed("");
+        setUpdateAccountPasswordSuccess("");
         setOpen(false);
     };
 
+    const handleClickShowOldPassword = () => {
+        setShowOldPassword(!showOldPassword)
+    };
+
+    const handleMouseDownOldPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault();
+    };
+
+    const handleClickShowNewPassword = () => {
+        setShowNewPassword(!showNewPassword)
+    };
+
+    const handleMouseDownNewPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault();
+    };
+
+    const handleClickShowConfirmPassword = () => {
+        setShowConfirmPassword(!showConfirmPassword)
+    };
+
+    const handleMouseDownConfirmPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault();
+    };
+
+    const handleValidation = () => {
+        let formIsValid = true;
+        errors = {};
+
+        // Old Password
+        if (oldPassword === "") {
+            formIsValid = false;
+            errors["oldPassword"] = true;
+        }
+
+        // New Password
+        if (newPassword === "") {
+            formIsValid = false;
+            errors["newPassword"] = true;
+        }
+
+        // Confirm Password
+        if (confirmPassword === "") {
+            formIsValid = false;
+            errors["confirmPassword"] = true;
+        }
+
+        setErrors(errors);
+        return formIsValid;
+    }
+
     const handleAction = () => {
-        if (myAccount !== undefined) {
-            // deactivateAccount(myAccount.accountId, myAccount.accountId)
-            //     .then((res) => {
-            //          console.log(res);
-            //          window.sessionStorage.removeItem("loggedInAccountId");
-            //          window.sessionStorage.removeItem("loggedInAccountUsername");
-            //          window.sessionStorage.removeItem("loggedInAccountPassword");
-            //          history.push("/")
-            //      })
-            //     .catch(error => console.log("error in deactivating", error));
+        if (myAccount !== undefined && handleValidation()) {
+            if (newPassword === confirmPassword)
+            {
+                const updateAccountPasswordReq = {
+                    accountId: myAccount.accountId,
+                    username: myAccount.username,
+                    oldPassword: oldPassword,
+                    newPassword: newPassword
+                }
+
+                updateAccountPassword(updateAccountPasswordReq)
+                    .then((res) => {
+                        setUpdateAccountPasswordSuccess("Password Successfully Changed");
+                    })
+                    .catch((err) => {
+                        setUpdateAccountPasswordFailed(err.response.data.message);
+                    });
+            }   
+            else
+            {
+                setUpdateAccountPasswordFailed("New Password and confirmation does not match");
+            }         
         }
     };
+
+    const showSuccess = () => {
+        if (updateAccountPasswordSuccess)
+        {
+            return(<Alert variant="filled" severity="success">{updateAccountPasswordSuccess}</Alert>);
+        }
+        else
+        {
+            return "";
+        }
+    }
+
+    const showErrors = () => {
+        if (updateAccountPasswordFailed)
+        {
+            return(<Alert variant="filled" severity="error">{updateAccountPasswordFailed}</Alert>);
+        }
+        else
+        {
+            return "";
+        }
+    }
 
     return (
         <>
             <div>
                 <Button style={{ width: "fit-content", margin: "20px auto 10px auto" }} onClick={handleOpen}>Change Password</Button>
                 <Dialog open={open} onClose={handleClose}>
-                    <div style={{ display: "flex" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between" }}>
                         <DialogTitle id="form-dialog-title">Change Your Password</DialogTitle>
                         <IconButton onClick={handleClose}>
                             <CloseIcon />
@@ -66,17 +175,86 @@ function ChangePasswordModal(props: any) {
                     <DialogContent>
                         <ProfileSettingField 
                             error={errors["oldPassword"]} 
-                            style={{ margin: "0 0 10px 0" }} 
-                            label="oldPassword" 
+                            style={{ margin: "0 0 10px 0", width: "30em" }} 
+                            label="Old Password" 
                             value={oldPassword} 
-                            // onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setName(e.target.value)} 
+                            onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setOldPassword(e.target.value)} 
                         />
-                        <DialogContentText>
-                            New Password: 
-                        </DialogContentText>
-                        <DialogContentText>
-                            Confirm Password: 
-                        </DialogContentText>
+                        <br/>
+                        <InputLabel
+                                style={{
+                                    color: "rgba(0, 0, 0, 0.54)",
+                                    padding: "0",
+                                    fontSize: "0.75rem",
+                                    lineHeight: "1",
+                                    letterSpacing: "0.00938em"
+                                }}
+                                htmlFor="standard-adornment-new-password">New Password</InputLabel>
+                        <Input
+                                error={errors["newPassword"]} 
+                                id="standard-adornment-new-password"
+                                type={showNewPassword ? 'text' : 'password'}
+                                value={newPassword}
+                                style={{ margin: "0 0 10px 0", width: "100%" }}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setNewPassword(e.target.value)}
+                                endAdornment={
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                            aria-label="toggle password visibility"
+                                            onClick={handleClickShowNewPassword}
+                                            onMouseDown={handleMouseDownNewPassword}
+                                        >
+                                            {showNewPassword ? <Visibility /> : <VisibilityOff />}
+                                        </IconButton>
+                                    </InputAdornment>
+                                }
+                            />
+                        {/* <br/>
+                        <ProfileSettingField 
+                            error={errors["newPassword"]} 
+                            style={{ margin: "0 0 10px 0" }} 
+                            label="New Password" 
+                            value={newPassword} 
+                            onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setNewPassword(e.target.value)} 
+                        /> */}
+                        <br/>
+                        <InputLabel
+                                style={{
+                                    color: "rgba(0, 0, 0, 0.54)",
+                                    padding: "0",
+                                    fontSize: "0.75rem",
+                                    lineHeight: "1",
+                                    letterSpacing: "0.00938em"
+                                }}
+                                htmlFor="standard-adornment-confirm-password">Confirm Password</InputLabel>
+                        <Input
+                                error={errors["confirmPassword"]} 
+                                id="standard-adornment-confirm-password"
+                                type={showConfirmPassword ? 'text' : 'password'}
+                                value={confirmPassword}
+                                style={{ margin: "0 0 10px 0", width: "100%" }}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setConfirmPassword(e.target.value)}
+                                endAdornment={
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                            aria-label="toggle password visibility"
+                                            onClick={handleClickShowConfirmPassword}
+                                            onMouseDown={handleMouseDownConfirmPassword}
+                                        >
+                                            {showConfirmPassword ? <Visibility /> : <VisibilityOff />}
+                                        </IconButton>
+                                    </InputAdornment>
+                                }
+                            />
+                        {/* <ProfileSettingField 
+                            error={errors["confirmPassword"]} 
+                            style={{ margin: "0 0 10px 0" }} 
+                            label="Confirm Password" 
+                            value={confirmPassword} 
+                            onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setConfirmPassword(e.target.value)} 
+                        /> */}
+                        { showErrors() }
+                        { showSuccess() }
                     </DialogContent>
                     <DialogActions>
                         <Button onClick={handleAction} primary>
