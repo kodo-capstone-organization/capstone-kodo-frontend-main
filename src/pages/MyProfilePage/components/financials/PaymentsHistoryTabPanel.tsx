@@ -49,7 +49,6 @@ function PaymentsHistoryTabPanel(props: any) {
     
     return (
         <>
-            { myPayments.length === 0 && <BlankStateContainer><br/>Wow! No payments to be found. <br/> Time to start enrolling in some of our courses? 😉</BlankStateContainer>}
             { myPayments && Object.keys(getRegroupedPayments()).map((monthyear: string) => (
                 <Paper key={monthyear} style={{ margin: "1.5rem 0"}}>
                     <Toolbar variant="dense" disableGutters style={{ padding: "0 1rem", background: colours.GRAYHALF6, color: colours.GRAY3 }}>
@@ -82,6 +81,7 @@ function PaymentsHistoryTabPanel(props: any) {
                     </TableContainer>
                 </Paper>
             ))}
+            { myPayments.length === 0 && <BlankStateContainer><br/>Wow! No payments to be found. <br/> Time to start enrolling in some of our courses? 😉</BlankStateContainer>}
         </>
     )
 }
