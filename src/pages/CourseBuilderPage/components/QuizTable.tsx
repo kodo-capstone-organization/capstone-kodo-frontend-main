@@ -25,7 +25,7 @@ import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import AddIcon from '@material-ui/icons/Add';
 import { Dialog, DialogContent, DialogContentText, DialogTitle, InputLabel, Input, FormControl, DialogActions, Grid, Chip} from '@material-ui/core';
 import { Button } from "../../../values/ButtonElements";
-import { createNewBasicQuiz, deleteQuiz } from '../../../apis/Quiz/QuizApis';
+import { createNewBasicQuiz, deleteQuizzes } from '../../../apis/Quiz/QuizApis';
 
 interface IErrors<TValue> {
   [id: string]: TValue;
@@ -222,21 +222,19 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
     })
 
     // Delete all the selected quizzes
-    quizIdsToDelete.forEach((quizId: number) => {
-      deleteQuiz(quizId)
-    })
+    deleteQuizzes(quizIdsToDelete).then((result) => {
+      setLessons(updatedLessons)
 
-    setLessons(updatedLessons)
-
-    let wrapperEvent = {
-      target: {
-        name: "lessons",
-        value: updatedLessons
+      let wrapperEvent = {
+        target: {
+          name: "lessons",
+          value: updatedLessons
+        }
       }
-    }
 
-    handleFormDataChange(wrapperEvent)
-    setSelectedIds([])
+      handleFormDataChange(wrapperEvent)
+      setSelectedIds([])
+      })
   }
 
   const handleValidation = () => {

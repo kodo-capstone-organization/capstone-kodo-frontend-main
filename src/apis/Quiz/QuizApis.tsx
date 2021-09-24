@@ -50,10 +50,15 @@ export async function createNewBasicQuiz(lessonId: number, name: string, descrip
     return httpClient.post<FormData, Quiz>(postParameters)
 }
 
-export async function deleteQuiz(quizId: number): Promise<boolean> {
-    const deleteParameters: IHttpClientRequestParameters<undefined> = {
-        url: `/quiz/deleteQuizWithQuizQuestionsAndQuizQuestionOptionsByQuizId/${quizId}`
+export async function deleteQuizzes(quizIds: number[]): Promise<boolean> {
+    const formData = new FormData();
+
+    formData.append('quizIds', transformToBlob(quizIds))
+    
+    const deleteParameters: IHttpClientRequestParameters<FormData> = {
+        url: `/quiz/deleteQuizWithQuizQuestionsAndQuizQuestionOptionsByQuizId`,
+        payload: formData
     }
 
-    return httpClient.delete<undefined, boolean>(deleteParameters)
+    return httpClient.delete<FormData, boolean>(deleteParameters)
 }
