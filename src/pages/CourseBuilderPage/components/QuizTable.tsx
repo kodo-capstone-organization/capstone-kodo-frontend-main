@@ -25,8 +25,7 @@ import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import AddIcon from '@material-ui/icons/Add';
 import { Dialog, DialogContent, DialogContentText, DialogTitle, InputLabel, Input, FormControl, DialogActions, Grid, Chip} from '@material-ui/core';
 import { Button } from "../../../values/ButtonElements";
-import { createNewBasicQuiz } from '../../../apis/Quiz/QuizApis';
-import BlockIcon from '@material-ui/icons/Block';
+import { createNewBasicQuiz, deleteQuiz } from '../../../apis/Quiz/QuizApis';
 
 interface IErrors<TValue> {
   [id: string]: TValue;
@@ -208,12 +207,23 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
 
   // Update quizzes for a particular lesson from courseFormData
   const handleDeleteQuiz = () => {
+    let quizIdsToDelete: number[] = []
     const updatedLessons = lessons.map((lesson: Lesson, index: number) => {
       if (index === lessonIndex) {
-        const updatedQuizzes = lesson.quizzes.filter((quiz: Quiz, index: number) => !selectedIds.includes(index))
+        const updatedQuizzes = lesson.quizzes.filter((quiz: Quiz, index: number) => {
+          quizIdsToDelete.push(quiz.contentId)
+
+          return !selectedIds.includes(index)
+        })
+
         lesson.quizzes = updatedQuizzes
       }
       return lesson
+    })
+
+    // Delete all the selected quizzes
+    quizIdsToDelete.forEach((quizId: number) => {
+      deleteQuiz(quizId)
     })
 
     setLessons(updatedLessons)

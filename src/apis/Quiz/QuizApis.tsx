@@ -49,3 +49,11 @@ export async function createNewBasicQuiz(lessonId: number, name: string, descrip
 
     return httpClient.post<FormData, Quiz>(postParameters)
 }
+
+export async function deleteQuiz(quizId: number): Promise<boolean> {
+    const deleteParameters: IHttpClientRequestParameters<undefined> = {
+        url: `/quiz/deleteQuizWithQuizQuestionsAndQuizQuestionOptionsByQuizId/${quizId}`
+    }
+
+    return httpClient.delete<undefined, boolean>(deleteParameters)
+}
