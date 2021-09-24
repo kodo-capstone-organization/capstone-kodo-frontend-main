@@ -1,6 +1,6 @@
 export interface QuizQuestionOption {
-    quizQuestionOptionId: number,
+    quizQuestionOptionId: (number | null),
     leftContent: string,
-    rightContent: string,
+    rightContent: (string | null),
     correct: boolean
 }
