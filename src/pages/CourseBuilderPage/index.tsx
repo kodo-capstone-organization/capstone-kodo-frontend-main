@@ -131,43 +131,9 @@ function CourseBuilderPage(props: any) {
 
         const updatedCourseTagTitles = courseFormData.courseTags.map((tag: Tag) => tag.title)
 
-        const updatedLessonReqs = courseFormData.lessons.map((lesson: Lesson, index: number) => {
-            lesson.sequence = index + 1;
-
-            return {
-                lesson: lesson,
-                quizzes: lesson.quizzes,
-                multimediaReqs: lesson.multimedias.map((multimedia: Multimedia) => {
-
-                    // Set new multimedia object id to undefined
-                    if (multimedia.contentId === -1) {
-                        // @ts-ignore
-                        multimedia.contentId = undefined
-                    }
-                    return {
-                        multimedia: multimedia,
-                    }
-                })
-            }
-        })
-
         // @ts-ignore
-        const updateCourseReq: UpdateCourseReq = { course: updatedCourse, courseTagTitles: updatedCourseTagTitles, updateLessonReqs: updatedLessonReqs }
+        const updateCourseReq: UpdateCourseReq = { course: updatedCourse, courseTagTitles: updatedCourseTagTitles }
         return updateCourseReq
-    }
-
-    const buildLessonMultimedias = (courseFormData: any) => {
-        let lessonMultimedias: File[] = []
-
-        courseFormData.lessons.forEach((lesson: Lesson) => {
-            lesson.multimedias.forEach((multimedia: Multimedia) => {
-                if (multimedia.file !== undefined) {
-                    lessonMultimedias = lessonMultimedias.concat(multimedia.file)
-                }
-            })
-        })
-
-        return lessonMultimedias;
     }
 
     const handleUpdateCourse = () => {
@@ -176,9 +142,8 @@ function CourseBuilderPage(props: any) {
         }
 
         const updateCourseReq = buildUpdateCourseReq(courseFormData)
-        const lessonMultimedias = buildLessonMultimedias(courseFormData)
 
-        updateCourse(updateCourseReq, bannerImageFile, lessonMultimedias).then((updatedCourse) => {
+        updateCourse(updateCourseReq, bannerImageFile).then((updatedCourse) => {
             console.log(updatedCourse);
 
             setCourseFormData(updatedCourse)

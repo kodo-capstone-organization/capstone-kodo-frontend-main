@@ -2,7 +2,6 @@ import { Account } from "./Account";
 import { EnrolledCourse } from "./EnrolledCourse";
 import { Tag } from "./Tag";
 import { Lesson } from "./Lesson";
-import { UpdateLessonReq } from "./Lesson";
 
 export interface Course {
   courseId: number;
@@ -32,8 +31,6 @@ export interface CreateNewCourseReq {
 export interface UpdateCourseReq {
   course: Course;
   courseTagTitles: string[];
-  updateLessonReqs: UpdateLessonReq[];
-  enrolledCourseIds: number[];
 }
 
 export interface ToggleCourseResp {
