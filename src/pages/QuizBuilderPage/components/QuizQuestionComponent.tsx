@@ -24,16 +24,15 @@ function QuizQuestionComponent(props: any) {
     const [question, setQuestion] = useState<QuizQuestion>();
     const [updatedQuestion, setUpdatedQuestion] = useState<QuizQuestion>();
     const [content, setContent] = useState<string>();
-    const [index, setIndex] = useState<number>();
+    const [questionIndex, setQuestionIndex] = useState<number>();
 
     useEffect(() => {
         setQuestion(props.question)
         setUpdatedQuestion(props.question)
-        setIndex(props.index)
+        setQuestionIndex(props.questionIndex)
         setContent(props.question.content)
         setMarks(props.question.marks)
         setQuestionType(props.question.questionType)
-        console.log(props.question.questionType)
     }, [props.question])
 
     // useEffect(() => {
@@ -45,27 +44,27 @@ function QuizQuestionComponent(props: any) {
         setQuestionType(event.target.value as string);
         const newlyUpdatedQuestion = Object.assign(updatedQuestion, { questionType: event.target.value })
         setUpdatedQuestion(newlyUpdatedQuestion)
-        props.onUpdateQuestion(newlyUpdatedQuestion, index)
+        props.onUpdateQuestion(newlyUpdatedQuestion, questionIndex)
     };
 
     const handleMarkChange = (event: React.ChangeEvent<{ value: unknown }>) => {
         setMarks(event.target.value as number);
         const newlyUpdatedQuestion = Object.assign(updatedQuestion, { marks: event.target.value })
         setUpdatedQuestion(newlyUpdatedQuestion)
-        props.onUpdateQuestion(newlyUpdatedQuestion, index)
+        props.onUpdateQuestion(newlyUpdatedQuestion, questionIndex)
     };
 
     const handleContentChange = (event: React.ChangeEvent<{ value: unknown }>) => {
         setContent(event.target.value as string);
         const newlyUpdatedQuestion = Object.assign(updatedQuestion, { content: event.target.value })
         setUpdatedQuestion(newlyUpdatedQuestion)
-        props.onUpdateQuestion(newlyUpdatedQuestion, index)
+        props.onUpdateQuestion(newlyUpdatedQuestion, questionIndex)
     };
 
-    const handleQuizQuestionOptionUpdate = (quizQuestionOptions: QuizQuestionOption[]) => {
+    const handleQuizQuestionOptionUpdate = (quizQuestionOptions: QuizQuestionOption[], questionIndex: number) => {
         //recv data from child component
-        // const newlyUpdatedQuestionOptions = Object.assign(updatedQuestion, { quizQuestionOptions })
-        // props.onUpdateQuizQuestionOptions(newlyUpdatedQuestionOptions, index)
+        const newlyUpdatedQuestion = Object.assign(updatedQuestion, { quizQuestionOptions })
+        props.onUpdateQuizQuestionOptions(newlyUpdatedQuestion, questionIndex)
     }
 
     return (
@@ -125,7 +124,7 @@ function QuizQuestionComponent(props: any) {
                 }
 
                 <Divider />
-                <QuizQuestionOptionsList question={question} questionType={questionType} options={handleQuizQuestionOptionUpdate} />
+                <QuizQuestionOptionsList questionIndex={questionIndex} question={question} questionType={questionType} onHandleQuizQuestionOptionUpdate={handleQuizQuestionOptionUpdate} />
                 <Divider />
             </div>
 

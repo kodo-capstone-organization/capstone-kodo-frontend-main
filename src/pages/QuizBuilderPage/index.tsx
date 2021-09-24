@@ -36,6 +36,10 @@ function QuizBuilderPage(props: any) {
         }).catch((err) => { console.log("error:getAllQuizQuestionsByQuizId", err) });
     }, [contentId])
 
+    useEffect(() => {
+        console.log("qn array updted", quizQuestionArray)
+    }, [quizQuestionArray])
+
     const addNewQuestion = () => {
         if (quiz !== undefined) {
             const newQuizQuestion: QuizQuestion = {
@@ -74,14 +78,14 @@ function QuizBuilderPage(props: any) {
     const handleSubmit = () => {
         if (updatedQuiz !== undefined) {
             const quizQuestionOptionLists = quizQuestionArray.map((question) => question.quizQuestionOptions)
+            console.log("handle submit", quizQuestionArray)
             const updateQuizReq: UpdateQuizReq = {
                 quiz: updatedQuiz,
                 quizQuestions: quizQuestionArray,
                 quizQuestionOptionLists
             }
-            console.log("handleSubmit", updateQuizReq)
             updateQuizWithQuizQuestionsAndQuizQuestionOptions(updateQuizReq)
-                .then((res) => { console.log("Success updating quiz", res) })
+                .then((res) => { console.log("Success updating quiz", res); window.location.reload(false); })
                 .catch((err) => { console.log("error updating quiz", err) });
         }
     }
@@ -96,9 +100,13 @@ function QuizBuilderPage(props: any) {
 
     }
 
-    const handleQuizQuestionOptionUpdate = (quizQuestionOptions: QuizQuestionOption[], index: number)  => {
-        console.log("update options", quizQuestionOptions);
-        console.log("update options", index);
+    const handleQuizQuestionOptionUpdate = (updatedQuizQuestion: QuizQuestion, index: number) => {
+        const updatedQuizQuestionArray = quizQuestionArray.map((q, qId) => {
+            return (
+                qId === index ? updatedQuizQuestion : q
+            );
+        });
+        setQuizQuestionArray(updatedQuizQuestionArray);
 
     }
 
@@ -109,8 +117,8 @@ function QuizBuilderPage(props: any) {
                     return (
                         <>
                             <QuizQuestionCard key={qId}>
-                                <QuizQuestionComponent type="mcq" question={q} index={qId} 
-                                onUpdateQuestion={handleUpdateQuestion} onUpdateQuizQuestionOptions={handleQuizQuestionOptionUpdate}/>
+                                <QuizQuestionComponent type="mcq" question={q} questionIndex={qId}
+                                    onUpdateQuestion={handleUpdateQuestion} onUpdateQuizQuestionOptions={handleQuizQuestionOptionUpdate} />
                                 <IconButton style={{ alignItems: "baseline" }} onClick={(event) => deleteQuestion(event, qId)}>
                                     <DeleteIcon />
                                 </IconButton>
