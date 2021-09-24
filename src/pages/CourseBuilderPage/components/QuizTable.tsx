@@ -211,7 +211,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
     const updatedLessons = lessons.map((lesson: Lesson, index: number) => {
       if (index === lessonIndex) {
         const updatedQuizzes = lesson.quizzes.filter((quiz: Quiz, index: number) => {
-          quizIdsToDelete.push(quiz.contentId)
+          if (selectedIds.includes(index)) quizIdsToDelete.push(quiz.contentId)
 
           return !selectedIds.includes(index)
         })

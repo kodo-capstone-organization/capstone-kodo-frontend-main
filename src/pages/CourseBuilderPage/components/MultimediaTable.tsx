@@ -24,7 +24,7 @@ import { Lesson } from '../../../apis/Entities/Lesson';
 import { Dialog, DialogContent, DialogContentText, DialogTitle, InputLabel, Input, FormControl, DialogActions} from '@material-ui/core';
 import { ACCEPTABLE_FILE_TYPE, getFileType } from '../../../utils/GetFileType';
 import { Button } from "../../../values/ButtonElements";
-import { addNewMultimediaToLesson } from '../../../apis/Multimedia/MultimediaApis';
+import { addNewMultimediaToLesson, deleteMultimediasFromLesson } from '../../../apis/Multimedia/MultimediaApis';
 
 interface Data {
   id: number,
@@ -251,25 +251,41 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
 
   // Update multimedias for a particular lesson from courseFormData
   const handleDeleteMultimedia = () => {
+    let multimediaIdsToDelete: number[] = []
+
+    const currentLessonId = lessons.filter((lesson: Lesson, index: number) => index === lessonIndex).pop()?.lessonId
+    
     const updatedLessons = lessons.map((lesson: Lesson, lessonIdx: number) => {
       if (lessonIdx === lessonIndex) {
-        const updatedMultimedias = lesson.multimedias.filter((multimedia: Multimedia, multimediaIdx: number) => !selectedIds.includes(multimediaIdx))
+        const updatedMultimedias = lesson.multimedias.filter((multimedia: Multimedia, multimediaIdx: number) => {
+          if (selectedIds.includes(multimediaIdx)) multimediaIdsToDelete.push(multimedia.contentId)
+          
+          return !selectedIds.includes(multimediaIdx)
+        })
+        
         lesson.multimedias = updatedMultimedias
       }
       return lesson
     })
 
-    setLessons(updatedLessons)
 
-    let wrapperEvent = {
-      target: {
-        name: "lessons",
-        value: updatedLessons
-      }
+    if (currentLessonId !== undefined) {
+      deleteMultimediasFromLesson(currentLessonId, multimediaIdsToDelete).then((result) => {
+        if (result) {
+          setLessons(updatedLessons)
+
+          let wrapperEvent = {
+            target: {
+              name: "lessons",
+              value: updatedLessons
+            }
+          }
+
+          setSelectedIds([])
+          handleFormDataChange(wrapperEvent)
+        }
+      })
     }
-
-    setSelectedIds([])
-    handleFormDataChange(wrapperEvent)
   }
 
   return (

@@ -18,3 +18,17 @@ export async function addNewMultimediaToLesson(lessonId: number, name: string, d
 
     return httpClient.post<FormData, Multimedia>(postParameters)
 }
+
+export async function deleteMultimediasFromLesson(lessonId: number, contentIds: number[]): Promise<boolean> {
+    const formData = new FormData();
+
+    formData.append('lessonId', transformToBlob(lessonId));
+    formData.append('contentIds', transformToBlob(contentIds));
+
+    const deleteParamaters: IHttpClientRequestParameters<FormData> = {
+        url: `/multimedia/deleteMultimediasFromLesson`,
+        payload: formData
+    }
+
+    return httpClient.delete<FormData, boolean>(deleteParamaters);
+}
