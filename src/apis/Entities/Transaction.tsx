@@ -22,5 +22,12 @@ export interface TutorCourseEarningsResp {
     lifetimeTotalEarnings: number,
     lifetimeEarningsByCourse: any[],
     currentMonthTotalEarnings: number,
-    currentMonthEarningsByCourse: any[]
+    currentMonthEarningsByCourse: any[],
+    courseStatsByMonthForLastYear: NestedCourseStats[]
+}
+
+export interface NestedCourseStats {
+    courseId: string,
+    courseName: string,
+    data: any // stringified
 }

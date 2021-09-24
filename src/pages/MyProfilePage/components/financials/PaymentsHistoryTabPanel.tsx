@@ -1,4 +1,4 @@
-import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Toolbar } from "@material-ui/core";
+import { Paper, Table, TableBody, TableCell, TableContainer, TableRow, Toolbar } from "@material-ui/core";
 import { useState } from "react";
 import { useEffect } from "react";
 import { GroupedByMonthsTransaction, Transaction } from "../../../../apis/Entities/Transaction";
