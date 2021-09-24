@@ -40,3 +40,10 @@ export interface UpdateAccountReq {
   forumPostIds: number[];
   studentAttemptIds: number[];
 }
+
+export interface UpdateAccountPasswordReq {
+  accountId: number;
+  username: string;
+  oldPassword: string;
+  newPassword: string;
+}

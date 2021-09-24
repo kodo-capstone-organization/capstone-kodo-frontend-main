@@ -1,6 +1,7 @@
 import Alert from '@material-ui/lab/Alert';
 import CloseIcon from '@material-ui/icons/Close';
 import DeactivateAccountModal from "./DeactivateAccountModal";
+import ChangePasswordModal from "./ChangePasswordModal";
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import React, { useEffect, useState } from 'react';
@@ -38,7 +39,6 @@ function ProfileSettings(props: any) {
 
     const [myAccount, setMyAccount] = useState<Account>();
     const [showPassword, setShowPassword] = useState<Boolean>(false);
-    const [password, setPassword] = useState<string>("");
     const [interests, setInterests] = useState<string[]>([]);
     const [name, setName] = useState<string>("");
     const [email, setEmail] = useState<string>("");
@@ -52,7 +52,6 @@ function ProfileSettings(props: any) {
         name: "",
         username: "",
         email: "",
-        password: "",
         btnTags: "",
         signUp: ""
     });
@@ -60,10 +59,6 @@ function ProfileSettings(props: any) {
     const history = useHistory();
 
     const [updateAccountFailed, setUpdateAccountFailed] = useState<String>("");
-
-    useEffect(() => {
-        setPassword(window.sessionStorage.getItem("loggedInAccountPassword") || "")
-    }, [])
 
     useEffect(() => {
         if (props.account !== undefined) {
@@ -83,9 +78,9 @@ function ProfileSettings(props: any) {
             accountId: props.account.accountId,
             username: props.account.username,
             name,
+            password: "",
             bio,
-            email,
-            password,
+            email,            
             displayPictureUrl: props.account.displayPictureUrl,
             displayPictureFilename: "", // Computed value on the backend. Cannot be updated.
             isAdmin: props.account.isAdmin,
@@ -103,7 +98,6 @@ function ProfileSettings(props: any) {
 
         const updateAccountReq = {
             account: updatedAccountObject,
-            password: password,
             tagTitles: interests,
             enrolledCourseIds: [],
             courseIds: [],
@@ -113,7 +107,6 @@ function ProfileSettings(props: any) {
         }
         //@ts-ignore
         updateAccount(updateAccountReq, displayPictureFile).then((res) => {
-            window.sessionStorage.setItem("loggedInAccountPassword", password); // re-set the password in storage in case it is updated
             history.push("/profile")
         }).catch(err => { 
             setUpdateAccountFailed(err.response.data.message);
@@ -133,10 +126,6 @@ function ProfileSettings(props: any) {
             return myAccount?.displayPictureUrl ? myAccount?.displayPictureUrl : "";
         }
     }
-
-    const handleClickShowPassword = () => {
-        setShowPassword(!showPassword)
-    };
 
     const handleValidation = () => {
         let formIsValid = true;
@@ -161,12 +150,6 @@ function ProfileSettings(props: any) {
             }
         }
 
-        //Password
-        if (password === "") {
-            formIsValid = false;
-            errors["password"] = true;
-        }
-
         setErrors(errors);
         if (formIsValid) {
             handleSave();
@@ -184,9 +167,9 @@ function ProfileSettings(props: any) {
         setInterests(value)
     }
 
-    const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
-        event.preventDefault();
-    };
+    // const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+    //     event.preventDefault();
+    // };
 
     const showErrors = () => {
         if (updateAccountFailed)
@@ -217,39 +200,12 @@ function ProfileSettings(props: any) {
                                 Status: <Chip variant="outlined" label={isActive ? "Activated" : "Deactivated"} style={{ color: isActive ? "green" : "red", border: isActive ? "1px solid green" : "1px solid red" }} />
                             </ProfileSubText>
                             <DeactivateAccountModal account={myAccount} style={{ margin: "auto" }} />
+                            <ChangePasswordModal account={myAccount} style={{ margin: "auto" }} />
                         </div>
                         <div id="profile-details" style={{ margin: "20px", width: "70%" }}>
                             <ProfileSettingField error={errors["name"]} style={{ margin: "0 0 10px 0" }} label="Name" value={name} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setName(e.target.value)} />
                             <ProfileSettingField error={errors["email"]} style={{ margin: "0 0 10px 0" }} label="Email" value={email} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setEmail(e.target.value)} />
                             <ProfileSettingField style={{ margin: "0 0 10px 0" }} multiline label="Bio" value={bio} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setBio(e.target.value)} />
-                            <InputLabel
-                                style={{
-                                    color: "rgba(0, 0, 0, 0.54)",
-                                    padding: "0",
-                                    fontSize: "0.75rem",
-                                    lineHeight: "1",
-                                    letterSpacing: "0.00938em"
-                                }}
-                                htmlFor="standard-adornment-password">Password</InputLabel>
-                            <Input
-                                error={errors["password"]}
-                                id="standard-adornment-password"
-                                type={showPassword ? 'text' : 'password'}
-                                value={password}
-                                style={{ margin: "0 0 10px 0", width: "100%" }}
-                                onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setPassword(e.target.value)}
-                                endAdornment={
-                                    <InputAdornment position="end">
-                                        <IconButton
-                                            aria-label="toggle password visibility"
-                                            onClick={handleClickShowPassword}
-                                            onMouseDown={handleMouseDownPassword}
-                                        >
-                                            {showPassword ? <Visibility /> : <VisibilityOff />}
-                                        </IconButton>
-                                    </InputAdornment>
-                                }
-                            />
                             <Autocomplete
                                 multiple
                                 options={tagLibrary.map((option) => option.title)}
