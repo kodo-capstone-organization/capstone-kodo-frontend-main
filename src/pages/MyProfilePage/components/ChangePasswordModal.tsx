@@ -9,21 +9,25 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import { Chip } from '@material-ui/core';
-import { deactivateAccount } from '../../../apis/Account/AccountApis';
+import { ProfileSettingField } from "../ProfileElements";
 
-function DeactivateAccountModal(props: any) {
+interface IErrors<TValue> {
+    [id: string]: TValue;
+}
+
+function ChangePasswordModal(props: any) {
     const [open, setOpen] = React.useState(false);
     const [myAccount, setMyAccount] = useState<Account>()
-    const [isActive, setIsActive] = useState<Boolean>()
+    const [oldPassword, setOldPassword] = useState<string>("");
+    var [errors, setErrors] = useState<IErrors<any>>({
+        oldPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+    });
     const history = useHistory();
 
     useEffect(() => {
         setMyAccount(props.account)
-        if (props.account !== undefined) {
-            setIsActive(props.account.isActive)
-
-        }
     }, [props.account])
 
     const handleOpen = () => {
@@ -36,32 +40,42 @@ function DeactivateAccountModal(props: any) {
 
     const handleAction = () => {
         if (myAccount !== undefined) {
-            deactivateAccount(myAccount.accountId, myAccount.accountId)
-                .then((res) => {
-                     console.log(res);
-                     window.sessionStorage.removeItem("loggedInAccountId");
-                     window.sessionStorage.removeItem("loggedInAccountUsername");
-                     window.sessionStorage.removeItem("loggedInAccountPassword");
-                     history.push("/")
-                 })
-                .catch(error => console.log("error in deactivating", error));
+            // deactivateAccount(myAccount.accountId, myAccount.accountId)
+            //     .then((res) => {
+            //          console.log(res);
+            //          window.sessionStorage.removeItem("loggedInAccountId");
+            //          window.sessionStorage.removeItem("loggedInAccountUsername");
+            //          window.sessionStorage.removeItem("loggedInAccountPassword");
+            //          history.push("/")
+            //      })
+            //     .catch(error => console.log("error in deactivating", error));
         }
     };
 
     return (
         <>
             <div>
-                <Button style={{ width: "fit-content", margin: "20px auto 10px auto" }} onClick={handleOpen}>{isActive ? "Deactivate" : "Activate"} Account</Button>
+                <Button style={{ width: "fit-content", margin: "20px auto 10px auto" }} onClick={handleOpen}>Change Password</Button>
                 <Dialog open={open} onClose={handleClose}>
                     <div style={{ display: "flex" }}>
-                        <DialogTitle id="form-dialog-title">{ isActive ? "Deactivate" : "Reactivate" } Your Kodo Account</DialogTitle>
+                        <DialogTitle id="form-dialog-title">Change Your Password</DialogTitle>
                         <IconButton onClick={handleClose}>
                             <CloseIcon />
                         </IconButton>
                     </div>
                     <DialogContent>
+                        <ProfileSettingField 
+                            error={errors["oldPassword"]} 
+                            style={{ margin: "0 0 10px 0" }} 
+                            label="oldPassword" 
+                            value={oldPassword} 
+                            // onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setName(e.target.value)} 
+                        />
                         <DialogContentText>
-                            Account Status: <Chip variant="outlined" label={isActive ? "Activated" : "Deactivated"} style={{ color: isActive ? "green" : "red", border: isActive ? "1px solid green" : "1px solid red" }} />
+                            New Password: 
+                        </DialogContentText>
+                        <DialogContentText>
+                            Confirm Password: 
                         </DialogContentText>
                     </DialogContent>
                     <DialogActions>
@@ -75,4 +89,4 @@ function DeactivateAccountModal(props: any) {
     )
 }
 
-export default DeactivateAccountModal;
+export default ChangePasswordModal;

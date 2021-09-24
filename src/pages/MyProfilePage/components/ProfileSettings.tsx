@@ -1,6 +1,7 @@
 import Alert from '@material-ui/lab/Alert';
 import CloseIcon from '@material-ui/icons/Close';
 import DeactivateAccountModal from "./DeactivateAccountModal";
+import ChangePasswordModal from "./ChangePasswordModal";
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import React, { useEffect, useState } from 'react';
@@ -217,6 +218,7 @@ function ProfileSettings(props: any) {
                                 Status: <Chip variant="outlined" label={isActive ? "Activated" : "Deactivated"} style={{ color: isActive ? "green" : "red", border: isActive ? "1px solid green" : "1px solid red" }} />
                             </ProfileSubText>
                             <DeactivateAccountModal account={myAccount} style={{ margin: "auto" }} />
+                            <ChangePasswordModal account={myAccount} style={{ margin: "auto" }} />
                         </div>
                         <div id="profile-details" style={{ margin: "20px", width: "70%" }}>
                             <ProfileSettingField error={errors["name"]} style={{ margin: "0 0 10px 0" }} label="Name" value={name} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setName(e.target.value)} />
