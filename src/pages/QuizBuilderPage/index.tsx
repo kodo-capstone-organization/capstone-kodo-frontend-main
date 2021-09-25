@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Quiz } from './../../apis/Entities/Quiz';
 import { QuizQuestion } from "../../apis/Entities/QuizQuestion";
 import { getQuizByQuizId, updateQuizWithQuizQuestionsAndQuizQuestionOptions } from "../../apis/Quiz/QuizApis";
-import { getAllQuizQuestionsByQuizId } from "../../apis/QuizQuestion/QuizQuestionApis";
+import { getAllQuizQuestionsByQuizId, getQuizQuestionByQuizQuestionId } from "../../apis/QuizQuestion/QuizQuestionApis";
 import { Button } from "../../values/ButtonElements";
 import QuizQuestionComponent from "./components/QuizQuestionComponent"
+import QuestionBankModal from "./components/QuestionBankModal"
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import DeleteIcon from '@material-ui/icons/Delete';
 import {
@@ -23,6 +24,8 @@ function QuizBuilderPage(props: any) {
     const [quizQuestionArray, setQuizQuestionArray] = useState<QuizQuestion[]>([]);
     const [quiz, setQuiz] = useState<Quiz>();
     const [updatedQuiz, setUpdatedQuiz] = useState<Quiz>();
+    const loggedInAccountId = window.sessionStorage.getItem("loggedInAccountId")
+
 
     useEffect(() => {
         getQuizByQuizId(contentId).then((res) => {
@@ -76,18 +79,19 @@ function QuizBuilderPage(props: any) {
     }
 
     const handleSubmit = () => {
-        if (updatedQuiz !== undefined) {
+        if (quiz !== undefined) {
             const quizQuestionOptionLists = quizQuestionArray.map((question) => question.quizQuestionOptions)
-            console.log("handle submit", quizQuestionArray)
             const updateQuizReq: UpdateQuizReq = {
-                quiz: updatedQuiz,
+                quiz: quiz,
                 quizQuestions: quizQuestionArray,
                 quizQuestionOptionLists
             }
+            console.log("handle submit", updateQuizReq)
             updateQuizWithQuizQuestionsAndQuizQuestionOptions(updateQuizReq)
-                .then((res) => { console.log("Success updating quiz", res); window.location.reload(false); })
+                .then((res) => { console.log("Success updating quiz", res); setQuiz(res);})
                 .catch((err) => { console.log("error updating quiz", err) });
         }
+        // window.location.reload(false); 
     }
 
     const handleUpdateQuestion = (updatedQuizQuestion: QuizQuestion, index: number) => {
@@ -108,6 +112,18 @@ function QuizBuilderPage(props: any) {
         });
         setQuizQuestionArray(updatedQuizQuestionArray);
 
+    }
+
+    const handleChangeFromQuestionBank = (questionBankQuestionIds: number[]) => {
+        var listOfQuestionsFromQuestionBank: QuizQuestion[] = [];
+        var i;
+        for (i = 0; i < questionBankQuestionIds.length; i++) {
+            getQuizQuestionByQuizQuestionId(questionBankQuestionIds[i]).then((res) => {
+                console.log("Success in handleChangeFromQuestionBank", res);
+                const newQuestionArray = quizQuestionArray.concat([res]);
+                setQuizQuestionArray(newQuestionArray);
+            }).catch((err) => { console.log("Error in handleChangeFromQuestionBank", err); })
+        }
     }
 
     const mapQuestionArray = (questionArray: QuizQuestion[]) => {
@@ -144,7 +160,8 @@ function QuizBuilderPage(props: any) {
                                 <TextField required id="standard-basic" fullWidth value={name} label="Name" name="name" onChange={handleNameChange} />
                             </Grid>
                             <Grid item xs={12}>
-                                <TextField required id="standard-basic" fullWidth value={description} multiline maxRows={3} name="description" label="Description" onChange={handleDescriptionChange} />
+                                <TextField required id="standard-basic" fullWidth value={description} multiline maxRows={3} name="description"
+                                    label="Description" onChange={handleDescriptionChange} />
                             </Grid>
                         </Grid>
                         <Button primary onClick={handleSubmit}>Save</Button>
@@ -155,7 +172,10 @@ function QuizBuilderPage(props: any) {
                     <QuizCardHeader
                         title="Quiz Builder"
                         action={
-                            <Button onClick={addNewQuestion}>Add New Question</Button>
+                            <div style={{ display: "flex" }}>
+                                <Button onClick={addNewQuestion}>Add New Question</Button>
+                                <QuestionBankModal onChangeFromQuestionBank={handleChangeFromQuestionBank} />
+                            </div>
                         }
                     />
                     <QuizCardContent>

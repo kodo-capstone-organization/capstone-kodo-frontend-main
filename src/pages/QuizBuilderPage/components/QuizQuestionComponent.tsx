@@ -33,7 +33,6 @@ function QuizQuestionComponent(props: any) {
         setContent(props.question.content)
         setMarks(props.question.marks)
         setQuestionType(props.question.questionType)
-        console.log(props.question.questionType)
     }, [props.question])
 
     // useEffect(() => {
