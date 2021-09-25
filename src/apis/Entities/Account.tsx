@@ -1,6 +1,5 @@
 import { Course } from "./Course";
 import { EnrolledCourse } from "./EnrolledCourse";
-import { StudentAttempt } from "./StudentAttempt";
 import { Tag } from "./Tag";
 
 export interface Account {
@@ -17,7 +16,6 @@ export interface Account {
   interests: Tag[];
   enrolledCourses: EnrolledCourse[];
   courses: Course[];
-  studentAttempts: StudentAttempt[];
   stripeAccountId: string;
 }
 
@@ -38,7 +36,6 @@ export interface UpdateAccountReq {
   courseIds: number[];
   forumThreadIds: number[];
   forumPostIds: number[];
-  studentAttemptIds: number[];
 }
 
 export interface UpdateAccountPasswordReq {
