@@ -208,17 +208,17 @@ function CourseBuilderPage(props: any) {
 
     return !loading && ( !isTutorOfCourse ? 
         <h1>You are not a tutor of this course 😡</h1> :       
-        <CourseBuilderContainer>
+        <CourseBuilderContainer> 
             <CourseBuilderCard id="course-information">
                 <CourseBuilderCardHeader
                     title="Course Information"
                     action={
                         <IconButton color={courseFormData.isEnrollmentActive ? "secondary" : "primary"} onClick={handleOpenToggleEnrollmentDialog}>
-                            {courseFormData.isEnrollmentActive && <><BlockIcon/> &nbsp; Pause Enrollment</>}
+                            {courseFormData.isEnrollmentActive && <><BlockIcon/> &nbsp; Pause Enrollment</>}  
                             {!courseFormData.isEnrollmentActive && <><PlayCircleOutlineIcon /> &nbsp; Resume Enrollment</>}
                         </IconButton>
                     }
-                />
+                />        
                 <CourseBuilderContent>
                     <Grid container spacing={3}>
                         <Grid item xs={12}>
@@ -235,7 +235,7 @@ function CourseBuilderPage(props: any) {
                                 id="start-adornment"
                                 type="number"
                                 InputProps={{
-                                    startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                                    startAdornment: <InputAdornment position="start">$</InputAdornment>, 
                                 }}
                                 value={courseFormData.price}
                                 onChange={handleFormDataChange}

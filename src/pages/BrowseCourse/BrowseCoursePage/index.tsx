@@ -37,7 +37,7 @@ function BrowseCourse() {
   const [myAccount, setAccount] = useState<Account>();
   const [tab, setTab] = useState<number>(0); // track tab index
   const [tagLibrary, setTagLibrary] = useState<Tag[]>([]);
-  const [loading, setLoading] = useState<Boolean>(true);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const accountId = JSON.parse(
     window.sessionStorage.getItem("loggedInAccountId") || "{}"
