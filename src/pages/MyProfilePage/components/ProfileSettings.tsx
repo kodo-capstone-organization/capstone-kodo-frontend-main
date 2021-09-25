@@ -1,23 +1,35 @@
-import React, { useEffect, useState } from 'react';
-import { useHistory } from "react-router";
-import {
-    TextField, Chip, InputAdornment, Input, InputLabel, IconButton,
-    FormControl, Grid, Snackbar
-} from "@material-ui/core";
-import { Autocomplete } from "@material-ui/lab";
+import Alert from '@material-ui/lab/Alert';
 import CloseIcon from '@material-ui/icons/Close';
-import {
-    ProfileCard, ProfileSettingField, ProfileSubText,
-    ProfileAvatar, ProfileInitials, ProfileCardHeader
-} from "../ProfileElements";
+import DeactivateAccountModal from "./DeactivateAccountModal";
+import ChangePasswordModal from "./ChangePasswordModal";
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
-import { Button } from "../../../values/ButtonElements";
+import React, { useEffect, useState } from 'react';
 import { Account } from "../../../apis/Entities/Account";
+import { Autocomplete } from "@material-ui/lab";
+import { Button } from "../../../values/ButtonElements";
 import { Tag } from "../../../apis/Entities/Tag";
-import DeactivateAccountModal from "./DeactivateAccountModal";
 import { getAllTags } from '../../../apis/Tag/TagApis';
 import { updateAccount } from '../../../apis/Account/AccountApis';
+import { useHistory } from "react-router";
+import {
+    Chip, 
+    FormControl, 
+    Grid, 
+    IconButton,
+    Input, 
+    InputAdornment, 
+    InputLabel, 
+    Snackbar,
+    TextField
+} from "@material-ui/core";
+import {
+    ProfileCard, 
+    ProfileCardHeader,
+    ProfileSettingField, 
+    ProfileSubText
+} from "../ProfileElements";
+import KodoAvatar from '../../../components/KodoAvatar/KodoAvatar';
 
 interface IErrors<TValue> {
     [id: string]: TValue;
@@ -27,7 +39,6 @@ function ProfileSettings(props: any) {
 
     const [myAccount, setMyAccount] = useState<Account>();
     const [showPassword, setShowPassword] = useState<Boolean>(false);
-    const [password, setPassword] = useState<string>("");
     const [interests, setInterests] = useState<string[]>([]);
     const [name, setName] = useState<string>("");
     const [email, setEmail] = useState<string>("");
@@ -41,16 +52,13 @@ function ProfileSettings(props: any) {
         name: "",
         username: "",
         email: "",
-        password: "",
         btnTags: "",
         signUp: ""
     });
     const [openSnackbar, setOpenSnackbar] = React.useState(false);
     const history = useHistory();
 
-    useEffect(() => {
-        setPassword(window.sessionStorage.getItem("loggedInAccountPassword") || "")
-    }, [])
+    const [updateAccountFailed, setUpdateAccountFailed] = useState<String>("");
 
     useEffect(() => {
         if (props.account !== undefined) {
@@ -70,9 +78,9 @@ function ProfileSettings(props: any) {
             accountId: props.account.accountId,
             username: props.account.username,
             name,
+            password: "",
             bio,
-            email,
-            password,
+            email,            
             displayPictureUrl: props.account.displayPictureUrl,
             displayPictureFilename: "", // Computed value on the backend. Cannot be updated.
             isAdmin: props.account.isAdmin,
@@ -84,25 +92,28 @@ function ProfileSettings(props: any) {
             stripeAccountId: props.account.stripeAccountId,
         }
 
+        // Without this line, the JSON passed over will fail as the BE side will try to use the
+        // setPassword method and will throw the exception immediately
+        updatedAccountObject.password = null;
+
         const updateAccountReq = {
             account: updatedAccountObject,
-            password: password,
             tagTitles: interests,
-            enrolledCourseIds: null,
-            courseIds: null,
-            forumThreadIds: null,
-            forumPostIds: null,
-            studentAttemptIds: null,
+            enrolledCourseIds: [],
+            courseIds: [],
+            forumThreadIds: [],
+            forumPostIds: [],
+            studentAttemptIds: []
         }
         //@ts-ignore
         updateAccount(updateAccountReq, displayPictureFile).then((res) => {
-            window.sessionStorage.setItem("loggedInAccountPassword", password); // re-set the password in storage in case it is updated
             history.push("/profile")
-        }).catch(err => { console.log("error", err) })
+        }).catch(err => { 
+            setUpdateAccountFailed(err.response.data.message);
+        })
     }
 
     const displayPictureURL = () => {
-
         if (displayPictureFile.size !== 0)
         {
             // Check for new display picture
@@ -115,16 +126,6 @@ function ProfileSettings(props: any) {
             return myAccount?.displayPictureUrl ? myAccount?.displayPictureUrl : "";
         }
     }
-    const avatarInitials = () => {
-        if (myAccount?.name) {
-            return myAccount?.name.split(" ").map(x => x[0].toUpperCase()).join("")
-        } else {
-            return "";
-        }
-    }
-    const handleClickShowPassword = () => {
-        setShowPassword(!showPassword)
-    };
 
     const handleValidation = () => {
         let formIsValid = true;
@@ -149,12 +150,6 @@ function ProfileSettings(props: any) {
             }
         }
 
-        //Password
-        if (password === "") {
-            formIsValid = false;
-            errors["password"] = true;
-        }
-
         setErrors(errors);
         if (formIsValid) {
             handleSave();
@@ -172,67 +167,45 @@ function ProfileSettings(props: any) {
         setInterests(value)
     }
 
-    const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
-        event.preventDefault();
-    };
+    // const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+    //     event.preventDefault();
+    // };
+
+    const showErrors = () => {
+        if (updateAccountFailed)
+        {
+            return(<Alert variant="filled" severity="error">{updateAccountFailed}</Alert>);
+        }
+        else
+        {
+            return "";
+        }
+    }
 
     return (
         <>
+
             {
                 myAccount !== null &&
                 <ProfileCard id="my-details">
-                    <ProfileCardHeader
-                        title="Account Settings"
-                    />
+                    <ProfileCardHeader title="Account Settings"/>
+                    <div style={{ margin: "10px 4.5em 10px 4.5em"}}>
+                        { showErrors() }
+                    </div>
                     <form noValidate autoComplete="off" style={{ display: "flex", justifyContent: "center" }}>
                         <div style={{ padding: "20px"}}>
-                            <ProfileAvatar
-                                alt={myAccount?.username}
-                                src={displayPictureURL()}
-                                style={{ height: "128px", width: "128px", margin: "auto" }}
-                            >
-                                <ProfileInitials>
-                                    {avatarInitials()}
-                                </ProfileInitials>
-                            </ProfileAvatar>
+                            <KodoAvatar name={myAccount?.name} displayPictureURL={displayPictureURL()}/>
                             <br/>
                             <ProfileSubText style={{ textAlign: "center" }}>
                                 Status: <Chip variant="outlined" label={isActive ? "Activated" : "Deactivated"} style={{ color: isActive ? "green" : "red", border: isActive ? "1px solid green" : "1px solid red" }} />
                             </ProfileSubText>
                             <DeactivateAccountModal account={myAccount} style={{ margin: "auto" }} />
+                            <ChangePasswordModal account={myAccount} style={{ margin: "auto" }} />
                         </div>
                         <div id="profile-details" style={{ margin: "20px", width: "70%" }}>
                             <ProfileSettingField error={errors["name"]} style={{ margin: "0 0 10px 0" }} label="Name" value={name} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setName(e.target.value)} />
                             <ProfileSettingField error={errors["email"]} style={{ margin: "0 0 10px 0" }} label="Email" value={email} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setEmail(e.target.value)} />
                             <ProfileSettingField style={{ margin: "0 0 10px 0" }} multiline label="Bio" value={bio} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setBio(e.target.value)} />
-                            <InputLabel
-                                style={{
-                                    color: "rgba(0, 0, 0, 0.54)",
-                                    padding: "0",
-                                    fontSize: "0.75rem",
-                                    lineHeight: "1",
-                                    letterSpacing: "0.00938em"
-                                }}
-                                htmlFor="standard-adornment-password">Password</InputLabel>
-                            <Input
-                                error={errors["password"]}
-                                id="standard-adornment-password"
-                                type={showPassword ? 'text' : 'password'}
-                                value={password}
-                                style={{ margin: "0 0 10px 0", width: "100%" }}
-                                onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setPassword(e.target.value)}
-                                endAdornment={
-                                    <InputAdornment position="end">
-                                        <IconButton
-                                            aria-label="toggle password visibility"
-                                            onClick={handleClickShowPassword}
-                                            onMouseDown={handleMouseDownPassword}
-                                        >
-                                            {showPassword ? <Visibility /> : <VisibilityOff />}
-                                        </IconButton>
-                                    </InputAdornment>
-                                }
-                            />
                             <Autocomplete
                                 multiple
                                 options={tagLibrary.map((option) => option.title)}

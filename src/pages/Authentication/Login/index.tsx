@@ -1,16 +1,15 @@
-import { useState } from 'react';
-import { Typography } from '@material-ui/core';
-import TextField from '@material-ui/core/TextField';
-import Alert from '@material-ui/lab/Alert';
 import { Button } from "../../../values/ButtonElements";
-import { useHistory } from "react-router-dom";
-import {
-    LoginPaper,
-    LoginPaperWrapper,
-    LoginForm
-} from "./LoginElements";
+import { Typography } from '@material-ui/core';
 import { login } from '../../../apis/Account/AccountApis';
-
+import { useHistory } from "react-router-dom";
+import { useState } from 'react';
+import Alert from '@material-ui/lab/Alert';
+import TextField from '@material-ui/core/TextField';
+import {
+    LoginForm,
+    LoginPaper,
+    LoginPaperWrapper
+} from "./LoginElements";
 
 // function Login({ isOpen }) {
 function Login() {
@@ -71,18 +70,20 @@ function Login() {
                             <strong>Login</strong>
                         </Typography>
                         <br/>
-                        <form noValidate autoComplete="off">
+                        <form noValidate autoComplete="off" onSubmit={btnClick}>
                             <LoginForm>
                                 <TextField id="filled-basic" label="Username" variant="filled" type="text" value={username} onChange={e => setUsername(e.target.value)} />
                                 <br/>
                                 <TextField id="filled-basic" label="Password" variant="filled" type="password" value={password} onChange={e => setPassword(e.target.value)} />
                             </LoginForm>
-                        </form>
-                        <br />
-                        <Button primary big fontBig onClick={btnClick}>Login</Button>
-
-                        <br />
-                        { showErrors() }
+                        
+                            <br />
+                            <button style={{ display: "none" }} type="submit"></button>
+                            <Button primary big fontBig onClick={btnClick}>Login</Button>
+                            <br />
+                            { showErrors() }
+                            <br />
+                        </form>                        
                     </LoginPaperWrapper>
                 </LoginPaper>
             </div>

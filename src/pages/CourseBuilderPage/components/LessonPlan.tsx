@@ -24,8 +24,8 @@ function LessonPlan(props: any) {
         setTabValue(newValue);
     }
 
-    const handleDeleteLesson = (lessonIdToDelete: number) => {
-        const updatedLessons = lessons.filter((lesson: Lesson) => lesson.lessonId !== lessonIdToDelete)
+    const handleDeleteLesson = (lessonIdxToDelete: number) => {
+        const updatedLessons = lessons.filter((lesson: Lesson, index: number) => index !== lessonIdxToDelete)
         let wrapperEvent = {
             target: {
                 name: "lessons",
@@ -97,13 +97,13 @@ function LessonPlan(props: any) {
                               scrollButtons="auto"
                               aria-label="scrollable auto tabs example">
                             {lessons?.map((lesson, index) => {
-                                return (<Tab label={"Lesson " + index} {...tabProps(index)}/>)
+                                return (<Tab key={index} label={"Lesson " + index} {...tabProps(index)}/>)
                             })}
                         </Tabs>
                     </AppBar>
                     { lessons?.map((lesson, index) => {
                         return (
-                            <TabPanel value={tabValue} index={index}>
+                            <TabPanel value={tabValue} index={index} key={index}>
                                 <CourseBuilderContent key={index}>
                                     <Grid container spacing={3}>
                                         <Grid style={{ padding: "0!important"}} item xs={12}>
@@ -112,6 +112,13 @@ function LessonPlan(props: any) {
                                                        label="Name"
                                                        value={lesson.name}
                                                        onChange={handleLessonNameChange}/>
+                                        </Grid>
+                                        <Grid style={{ padding: "0!important"}} item xs={12}>
+                                            <TextField fullWidth required
+                                                       id={index.toString()}
+                                                       label="Description"
+                                                       value={lesson.description}
+                                                       onChange={handleLessonDescriptionChange}/>
                                         </Grid>
                                         <Grid item xs={12}>
                                             <QuizTable
@@ -129,8 +136,8 @@ function LessonPlan(props: any) {
                                                 lessons={lessons}
                                             />
                                         </Grid>
-                                        <Grid container xs={12} justify="flex-end">
-                                            <Button onClick={() => handleDeleteLesson(lesson.lessonId)}>
+                                        <Grid container justifyContent="flex-end">
+                                            <Button onClick={() => handleDeleteLesson(index)}>
                                                 Delete Lesson
                                             </Button>
                                         </Grid>

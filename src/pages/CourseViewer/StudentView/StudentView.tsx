@@ -27,7 +27,6 @@ import {
   TutorDetails,
   TutorDepartment,
   TutorName,
-  ProfileAvatar,
   TutorText,
   RatingCard,
   RatingTitle,
@@ -37,6 +36,7 @@ import {
 } from "./StudentViewElements";
 import { useHistory } from "react-router";
 import LockOpenIcon from '@material-ui/icons/LockOpen';
+import KodoAvatar from "../../../components/KodoAvatar/KodoAvatar";
 
 function StudentView(props: any) {
   const [currentCourse, setCourse] = useState<Course>({ ...props.course });
@@ -58,9 +58,7 @@ function StudentView(props: any) {
     setSteps(enrolledCourse.enrolledLessons);
     console.log(enrolledCourse.enrolledLessons)
     // setSteps(test);
-    }, [props.course]);
-
-    console.log(enrolledCourse)
+  }, [props.course]);
 
   const initialiseActiveStep = (receivedEnrolledCourse: EnrolledCourse) => {
     var proxyActiveStep = 0 // to set stepper
@@ -109,10 +107,6 @@ function StudentView(props: any) {
     setRating(newRating);
     setCourseRatingByEnrolledCourseId(enrolledCourse.enrolledCourseId, newRating);
   };
-
-  const displayPictureURL = () => {
-    return myAccount?.displayPictureUrl ? myAccount?.displayPictureUrl : "";
-  }
 
   const StepIconStyles = makeStyles({
     root: {
@@ -192,11 +186,7 @@ function StudentView(props: any) {
 
       <CardTitle>This course is taught by:</CardTitle>
       <TutorDetails>
-        <ProfileAvatar
-          alt={myAccount?.name}
-          src={displayPictureURL()}
-          style={{ height: "128px", width: "128px" }}
-        />
+        <KodoAvatar name={currentCourse?.tutor.name} displayPictureURL={currentCourse?.tutor.displayPictureUrl || ""}/>
         <TutorText>
           <TutorName>{currentCourse?.tutor.name}</TutorName>
           <TutorName><i>@{currentCourse?.tutor.username}</i></TutorName>

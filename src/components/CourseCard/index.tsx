@@ -46,7 +46,7 @@ function CourseCard(props: any) {
                             <Chip
                                 variant="outlined"
                                 size="small"
-                                label="Paused"
+                                label="Unpublished"
                                 style={{ color: "gray", border: "1px solid gray" }}
                             />
                         }

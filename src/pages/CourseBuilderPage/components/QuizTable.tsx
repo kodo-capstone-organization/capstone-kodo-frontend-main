@@ -20,12 +20,24 @@ import Switch from '@material-ui/core/Switch';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { Quiz } from '../../../apis/Entities/Quiz';
 import { Lesson } from '../../../apis/Entities/Lesson';
+import { useHistory } from "react-router-dom";
+import NavigateNextIcon from '@material-ui/icons/NavigateNext';
+import AddIcon from '@material-ui/icons/Add';
+import { Dialog, DialogContent, DialogContentText, DialogTitle, InputLabel, Input, FormControl, DialogActions, Grid, Chip} from '@material-ui/core';
+import { Button } from "../../../values/ButtonElements";
+import { createNewBasicQuiz } from '../../../apis/Quiz/QuizApis';
+import BlockIcon from '@material-ui/icons/Block';
+
+interface IErrors<TValue> {
+  [id: string]: TValue;
+}
 interface Data {
   id: number
   name: string,
   description: string,
   maxAttemptsPerStudent: number,
-  timeLimit: string
+  timeLimit: string,
+  contentId: number
 }
 
 function createData(
@@ -33,9 +45,10 @@ function createData(
   name: string,
   description: string,
   maxAttemptsPerStudent: number,
-  timeLimit: string
+  timeLimit: string,
+  contentId: number
 ): Data {
-  return { id, name, description, maxAttemptsPerStudent, timeLimit };
+  return { id, name, description, maxAttemptsPerStudent, timeLimit, contentId };
 }
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
@@ -80,7 +93,8 @@ const headCells: HeadCell[] = [
   { id: 'name', numeric: false, disablePadding: true, label: 'Name' },
   { id: 'description', numeric: true, disablePadding: false, label: 'Description' },
   { id: 'maxAttemptsPerStudent', numeric: true, disablePadding: false, label: 'Max Attempts per Student' },
-  { id: 'timeLimit', numeric: true, disablePadding: false, label: 'Time Limit (HH:MM:SS)' }
+  { id: 'timeLimit', numeric: true, disablePadding: false, label: 'Time Limit (HH:MM:SS)' },
+  { id: 'contentId', numeric: true, disablePadding: false, label: 'View Quiz' }
 ];
 
 interface EnhancedTableProps {
@@ -166,11 +180,37 @@ interface EnhancedTableToolbarProps {
   lessons: Lesson[];
   setLessons: any;
   setSelectedIds: any;
+  history: any;
 }
 
 const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   const classes = useToolbarStyles();
   const { numSelected, selectedIds, lessonIndex, handleFormDataChange, setLessons, lessons, setSelectedIds} = props;
+  const [newQuizName, setNewQuizName] = useState<string>("");
+  const [newQuizDescription, setNewQuizDescription] = useState<string>("");
+  const [newQuizTimeLimitHours, setNewQuizTimeLimitHours] = useState<number>(0);
+  const [newQuizTimeLimitMinutes, setNewQuizTimeLimitMinutes] = useState<number>(0);
+  const [newQuizMaxAttempts, setNewQuizMaxAttempts] = useState<number>(0);
+  var [errors, setErrors] = useState<IErrors<boolean>>({
+    name: false,
+    description: false,
+});
+
+  const [showAddMultimediaDialog, setShowAddMultimediaDialog] = useState<boolean>(false); 
+
+  const openDialog = () => {
+    setShowAddMultimediaDialog(true);
+  }
+
+  const handleClose = () => {
+    setShowAddMultimediaDialog(false);
+  }
+
+  const isNewLesson = () => {
+    const currentLesson = lessons.filter((lesson: Lesson, index: number) => index === lessonIndex).pop()
+    
+    return currentLesson !== undefined && currentLesson.lessonId === undefined
+  }
 
   // Update quizzes for a particular lesson from courseFormData
   const handleDeleteQuiz = () => {
@@ -195,21 +235,178 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
     setSelectedIds([])
   }
 
+  const handleValidation = () => {
+    let formIsValid = true;
+    errors = {};
+
+    if (newQuizName === "") {
+      formIsValid = false ;
+      errors['name'] = true;
+    }
+
+    if (newQuizDescription === "") {
+      formIsValid = false;
+      errors['description'] = true;      
+    }
+
+    setErrors(errors);
+
+    return formIsValid;
+  }
+
+  const handleClickBuildQuiz = () => {
+    if (!handleValidation()) {
+      return
+    } 
+
+    const lessonId = lessons.filter((lesson: Lesson, index: number) => index === lessonIndex).pop()?.lessonId
+
+    if (lessonId !== undefined) {
+      createNewBasicQuiz(lessonId, newQuizName, newQuizDescription, newQuizTimeLimitHours, newQuizTimeLimitMinutes, newQuizMaxAttempts).then((newQuiz) => {
+        console.log(newQuiz);
+  
+        props.history.push({ pathname: `/buildquiz/${newQuiz.contentId}`, state: { mode: 'UPDATE' } })
+      })
+    }
+  }
+
   return (
+    <>
+        <Dialog 
+        fullWidth
+        open={showAddMultimediaDialog}
+        onClose={handleClose}
+        aria-labelledby="simple-modal-title"
+        aria-describedby="simple-modal-description">
+            <DialogTitle>Add a new Quiz</DialogTitle>
+            <DialogContent
+              style={{height: '300px'}}>
+              <DialogContentText>
+                First, enter some basic details about the new quiz below.
+              </DialogContentText>
+              <FormControl fullWidth margin="normal">
+                <InputLabel htmlFor="quiz-name">Quiz Name</InputLabel>
+                <Input
+                  error={errors['name']}
+                  id="quiz-name"
+                  name="name"
+                  type="text"
+                  autoFocus
+                  fullWidth
+                  value={newQuizName}
+                  onChange={(e) => setNewQuizName(e.target.value)}
+                />
+                </FormControl>
+                <FormControl fullWidth margin="normal">
+                  <InputLabel htmlFor="quiz-description">Description</InputLabel>
+                  <Input
+                    error={errors['description']}
+                    id="quiz-description"
+                    name="description"
+                    type="text"
+                    autoFocus
+                    fullWidth
+                    value={newQuizDescription}
+                    onChange={(e) => setNewQuizDescription(e.target.value)}
+                  />
+                </FormControl>
+                <FormControl fullWidth margin="normal">
+                  <Grid container spacing={3}>
+                    <Grid item xs={6}>
+                      <InputLabel htmlFor="quiz-timelimit">Time Limit</InputLabel>
+                      <Input
+                      fullWidth
+                      id="quiz-timelimit"
+                      placeholder="Hours"
+                      name="timelimit"
+                      type="number"
+                      autoFocus
+                      value={newQuizTimeLimitHours}
+                      onChange={(e) => {
+                        let value = parseInt(e.target.value)
+
+                        if (value > 24) value = 24
+                        if (value < 0) value = 0
+
+                        setNewQuizTimeLimitHours(value)
+                      }}
+                      inputProps={{ min: 0, max: 24 }}
+                    />
+                    </Grid>
+                    <Grid item xs={6}>
+                      <InputLabel htmlFor="quiz-timelimit">Time Limit</InputLabel>
+                      <Input
+                      fullWidth
+                      id="quiz-timelimit"
+                      placeholder="Minutes"
+                      name="timelimit"
+                      type="number"
+                      autoFocus
+                      value={newQuizTimeLimitMinutes}
+                      onChange={(e) => {
+                        let value = parseInt(e.target.value)
+
+                        if (value > 59) value = 59
+                        if (value < 0) value = 0
+
+                        setNewQuizTimeLimitMinutes(value)
+                      }}
+                      inputProps={{ min: 0, max: 59 }}
+                    />
+                    </Grid>
+                  </Grid>
+                </FormControl>
+                <FormControl fullWidth margin="normal">
+                  <InputLabel htmlFor="quiz-maxattempts">Max Attempts</InputLabel>
+                  <Input
+                    id="quiz-maxattempts"
+                    name="description"
+                    type="number"
+                    autoFocus
+                    fullWidth
+                    value={newQuizMaxAttempts}
+                    onChange={(e) => {
+                        let value = parseInt(e.target.value)
+
+                        if (value > 100) value = 100
+                        if (value < 0) value = 0
+
+                        setNewQuizMaxAttempts(value)
+                    }}
+                    inputProps={{ min: 0, max: 100 }}
+                  />
+                </FormControl>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClose}>
+                Cancel
+              </Button>
+              <Button onClick={handleClickBuildQuiz}>
+                Build Quiz
+              </Button>
+            </DialogActions>
+    </Dialog>
     <Toolbar
       className={clsx(classes.root, {
         [classes.highlight]: numSelected > 0,
       })}
     >
       {numSelected > 0 ? (
-        <Typography className={classes.title} color="inherit" variant="subtitle1" component="div">
+        <Typography className={classes.title} color="inherit" variant="subtitle1" component="span">
           {numSelected} selected
         </Typography>
       ) : (
-        <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
+        <Typography className={classes.title} variant="h6" id="tableTitle" component="span">
           Quizzes
         </Typography>
       )}
+      {isNewLesson() ? <Chip variant="outlined"  size="small" label="Quiz Creation Disabled for New Lesson" color="secondary" deleteIcon={<BlockIcon color="secondary" />} onDelete={() => ("")}/> : <Tooltip title="Add Quiz">
+        <IconButton 
+          aria-label="add" 
+          onClick={openDialog}>
+            <AddIcon />
+        </IconButton>
+        </Tooltip>}
       {numSelected > 0 && (
         <Tooltip title="Delete">
           <IconButton aria-label="delete" onClick={handleDeleteQuiz}>
@@ -218,6 +415,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
         </Tooltip>
       )}
     </Toolbar>
+    </>
   );
 };
 
@@ -251,7 +449,8 @@ export default function QuizTable(props: any) {
     const handleFormDataChange = props.handleFormDataChange;
     const [quizzes, setQuizzes] = useState<Quiz[]>(props.quizzes);
     const [lessons, setLessons] = useState<Lesson[]>(props.lessons);
-    const rows = quizzes?.length > 0 ? quizzes.map((row: Quiz, index: number) => createData(index, row.name, row.description, row.maxAttemptsPerStudent, row.timeLimit)) : []
+    const rows = quizzes?.length > 0 ? quizzes.map((row: Quiz, index: number) => createData(index, row.name, row.description, row.maxAttemptsPerStudent, row.timeLimit, row.contentId)) : []
+    const history = useHistory();
 
     // Used to trigger rerendering of QuizTable whenever lessons is updated in Table Header component
     useEffect(() => {
@@ -259,7 +458,7 @@ export default function QuizTable(props: any) {
       if (newQuizzes) {
         setQuizzes(newQuizzes)
       }
-    }, [lessons])
+    }, [lessons, props.lessonIndex])
 
     const classes = useStyles();
     const [order, setOrder] = React.useState<Order>('asc');
@@ -317,6 +516,10 @@ export default function QuizTable(props: any) {
         setDense(event.target.checked);
     };
 
+    const navigateToQuizBuilderViewMode = (quizId: number) => {
+      history.push({ pathname: `/buildquiz/${quizId}`, state: { mode: 'VIEW' } })
+    }
+
     const isSelected = (index: number) => selectedIds.indexOf(index) !== -1;
 
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
@@ -332,7 +535,8 @@ export default function QuizTable(props: any) {
                 lessons={lessons}
                 setLessons={setLessons}
                 handleFormDataChange={handleFormDataChange}
-                setSelectedIds={setSelectedIds}/>
+                setSelectedIds={setSelectedIds}
+                history={history}/>
             {rows.length > 0 &&
             <TableContainer>
             <Table
@@ -381,6 +585,11 @@ export default function QuizTable(props: any) {
                         <TableCell align="right">{row.description}</TableCell>
                         <TableCell align="right">{row.maxAttemptsPerStudent}</TableCell>
                         <TableCell align="right">{row.timeLimit}</TableCell>
+                        <TableCell align="right">
+                          <IconButton color="primary" onClick={() => navigateToQuizBuilderViewMode(row.contentId)}>
+                              <NavigateNextIcon/>&nbsp;
+                          </IconButton>
+                        </TableCell>
                         </TableRow>
                     );
                     })}

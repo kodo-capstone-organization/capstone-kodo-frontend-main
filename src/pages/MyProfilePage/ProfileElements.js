@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { TextField, Avatar, Card, CardHeader, CardContent, CardActions } from "@material-ui/core";
+import { TextField, Card, CardHeader, CardContent, CardActions } from "@material-ui/core";
 import { fontSizes } from "../../values/FontSizes";
 import { colours } from "../../values/Colours";
 
@@ -15,9 +15,9 @@ export const ProfileBreadcrumbItems = [
         fullpath: "/profile/settings"
     },
     {
-        name: "Course Earnings",
-        subpath: "/earnings",
-        fullpath: "/profile/earnings"
+        name: "Financials",
+        subpath: "/financials",
+        fullpath: "/profile/financials"
     }
 ]
 
@@ -71,13 +71,6 @@ export const ProfileCardContent = styled(CardContent)`
 export const ProfileCardActions = styled(CardActions)`
     padding: 1rem 2rem !important;
     flex-wrap: wrap;
-`;
-
-export const ProfileAvatar = styled(Avatar)`
-`;
-
-export const ProfileInitials = styled.div`
-    font-size: ${fontSizes.HEADER};
 `;
 
 export const ProfileDetails = styled.div`

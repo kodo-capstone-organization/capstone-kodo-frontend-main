@@ -46,7 +46,6 @@ function DeactivateAccountModal(props: any) {
                  })
                 .catch(error => console.log("error in deactivating", error));
         }
-
     };
 
     return (

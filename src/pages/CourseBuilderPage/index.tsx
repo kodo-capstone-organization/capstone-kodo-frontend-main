@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useReducer } from "react";
 import { useHistory } from "react-router-dom";
-import { Box, Grid, TextField, Chip, InputAdornment, IconButton, Dialog, DialogTitle, DialogActions, DialogContent} from "@material-ui/core";
+import { Box, Grid, TextField, Chip, InputAdornment, Dialog, DialogTitle, DialogActions, DialogContent} from "@material-ui/core";
 import { CourseBuilderCard, CourseBuilderCardHeader, CourseBuilderContainer, CourseBuilderContent } from "./CourseBuilderElements";
 import LessonPlan from "./components/LessonPlan";
 import { getCourseByCourseId, updateCourse, toggleEnrollmentActiveStatus } from './../../apis/Course/CourseApis';
@@ -10,8 +10,8 @@ import { Multimedia } from "../../apis/Entities/Multimedia"
 import { UpdateCourseReq, Course } from "../../apis/Entities/Course";
 import { Autocomplete } from "@material-ui/lab";
 import { getAllTags } from '../../apis/Tag/TagApis';
-import BlockIcon from '@material-ui/icons/Block';
-import PlayCircleOutlineIcon from '@material-ui/icons/PlayCircleOutline';
+import DoneIcon from '@material-ui/icons/Done';
+import PublishIcon from '@material-ui/icons/Publish';
 import { Button } from "../../values/ButtonElements";
 
 interface IErrors<TValue> {
@@ -44,7 +44,7 @@ function CourseBuilderPage(props: any) {
     
     useEffect(() => {
         getCourseByCourseId(courseId).then((receivedCourse: Course) => {
-            Object.keys(receivedCourse).map((key, index) => {
+            Object.keys(receivedCourse).forEach((key, index) => {
                 let wrapperEvent = {
                     target: {
                         name: key,
@@ -54,7 +54,7 @@ function CourseBuilderPage(props: any) {
                 handleFormDataChange(wrapperEvent)
             }) 
         });
-      }, []);
+      }, [courseId]);
 
     useEffect(() => {
         getAllTags().then((res: any)=> setTagLibrary(res)).catch(() => console.log("error getting tags."))
@@ -110,11 +110,6 @@ function CourseBuilderPage(props: any) {
             errors['name'] = true;
         }
 
-        if (courseFormData.description === "") {
-            formIsValid = false;
-            errors['description'] = true;
-        }
-
         if (courseFormData.price === "") {
             formIsValid = false;
             errors['price'] = true;
@@ -136,14 +131,21 @@ function CourseBuilderPage(props: any) {
 
         const updatedCourseTagTitles = courseFormData.courseTags.map((tag: Tag) => tag.title)
 
-        const updatedLessonReqs = courseFormData.lessons.map((lesson: Lesson) => {
+        const updatedLessonReqs = courseFormData.lessons.map((lesson: Lesson, index: number) => {
+            lesson.sequence = index + 1;
+
             return {
                 lesson: lesson,
                 quizzes: lesson.quizzes,
                 multimediaReqs: lesson.multimedias.map((multimedia: Multimedia) => {
+
+                    // Set new multimedia object id to undefined
+                    if (multimedia.contentId === -1) {
+                        // @ts-ignore
+                        multimedia.contentId = undefined
+                    }
                     return {
                         multimedia: multimedia,
-                        multipartFile: multimedia.file
                     }
                 })
             }
@@ -154,14 +156,29 @@ function CourseBuilderPage(props: any) {
         return updateCourseReq
     }
 
+    const buildLessonMultimedias = (courseFormData: any) => {
+        let lessonMultimedias: File[] = []
+
+        courseFormData.lessons.forEach((lesson: Lesson) => {
+            lesson.multimedias.forEach((multimedia: Multimedia) => {
+                if (multimedia.file !== undefined) {
+                    lessonMultimedias = lessonMultimedias.concat(multimedia.file)
+                }
+            })
+        })
+
+        return lessonMultimedias;
+    }
+
     const handleUpdateCourse = () => {
         if (!handleValidation()) {
             return
         }
 
         const updateCourseReq = buildUpdateCourseReq(courseFormData)
+        const lessonMultimedias = buildLessonMultimedias(courseFormData)
 
-        updateCourse(updateCourseReq, bannerImageFile).then((updatedCourse) => {
+        updateCourse(updateCourseReq, bannerImageFile, lessonMultimedias).then((updatedCourse) => {
             console.log(updatedCourse);
 
             setCourseFormData(updatedCourse)
@@ -199,7 +216,7 @@ function CourseBuilderPage(props: any) {
     }
 
     const  getToggleKeyword = () => {
-        return courseFormData.isEnrollmentActive ? "Pause" : "Resume"
+        return courseFormData.isEnrollmentActive ? "Unpublish" : "Publish"
     }
 
     const navigateToPreviousPage = () => {
@@ -213,10 +230,10 @@ function CourseBuilderPage(props: any) {
                 <CourseBuilderCardHeader
                     title="Course Information"
                     action={
-                        <IconButton color={courseFormData.isEnrollmentActive ? "secondary" : "primary"} onClick={handleOpenToggleEnrollmentDialog}>
-                            {courseFormData.isEnrollmentActive && <><BlockIcon/> &nbsp; Pause Enrollment</>}  
-                            {!courseFormData.isEnrollmentActive && <><PlayCircleOutlineIcon /> &nbsp; Resume Enrollment</>}
-                        </IconButton>
+                        <>
+                            {courseFormData.isEnrollmentActive && <Chip variant="outlined" size="small" label="Published" style={{ color: "green", border: "1px solid green" }} disabled deleteIcon={<DoneIcon style={{ color: "green" }} />} onDelete={() => ("")}/>}
+                            {!courseFormData.isEnrollmentActive && <Chip variant="outlined"  size="small" label="Publish This Course" color="secondary" onClick={handleOpenToggleEnrollmentDialog} deleteIcon={<PublishIcon color="secondary" />} onDelete={() => ("")} />}
+                        </>
                     }
                 />        
                 <CourseBuilderContent>
@@ -225,7 +242,7 @@ function CourseBuilderPage(props: any) {
                             <TextField required error={errors['name']} id="standard-basic" fullWidth label="Name" name="name" value={courseFormData.name} onChange={handleFormDataChange}/>
                         </Grid>
                         <Grid item xs={12}>
-                            <TextField required error={errors['description']} id="standard-basic" fullWidth multiline maxRows={3} name="description" label="Description" value={courseFormData.description} onChange={handleFormDataChange}/>
+                            <TextField id="standard-basic" fullWidth multiline maxRows={3} name="description" label="Description" value={courseFormData.description} onChange={handleFormDataChange}/>
                         </Grid>
                         <Grid item xs={12}>
                             <TextField
@@ -279,7 +296,7 @@ function CourseBuilderPage(props: any) {
             <CourseBuilderCard id="lesson-plan">
                 <LessonPlan courseFormData={courseFormData} lessons={courseFormData.lessons} handleFormDataChange={handleFormDataChange}/>
             </CourseBuilderCard>
-            <Grid container spacing={3} justify="flex-end">
+            <Grid container spacing={3} justifyContent="flex-end">
                 <Box m={1} pt={2}>
                     <Button
                         primary
@@ -300,18 +317,18 @@ function CourseBuilderPage(props: any) {
             <Dialog fullWidth open={isToggleActiveEnrollmentDialogOpen} onClose={handleCloseToggleEnrollmentDialog} aria-labelledby="toggle-dialog">
 
                 <DialogTitle id="toggle-dialog-title">
-                    { getToggleKeyword() } Enrollment for {courseFormData.name}?
+                    { getToggleKeyword() } {courseFormData.name}?
                 </DialogTitle>
                 <DialogContent>
-                    { courseFormData.isEnrollmentActive &&  <>Users will not be able to enroll in your course. Existing enrolled users will still be able to read your course materials.</> }
-                    { !courseFormData.isEnrollmentActive &&  <>Users will be able to enroll in your course again.</> }
+                    { courseFormData.isEnrollmentActive &&  <>You should not be able to see this.</> }
+                    { !courseFormData.isEnrollmentActive &&  <>Users will be able to browse and enroll into your course. However, once this course is published, you <i>can no longer edit its content nor unpublish it.</i></> }
                 </DialogContent>
                 <br/>
                 <DialogActions>
                     <Button onClick={handleCloseToggleEnrollmentDialog}>
                         Cancel
                     </Button>
-                    <Button onClick={handleToggleConfirmation} primary>
+                    <Button onClick={handleToggleConfirmation} disabled={courseFormData.isEnrollmentActive} primary>
                         Confirm
                     </Button>
                 </DialogActions>

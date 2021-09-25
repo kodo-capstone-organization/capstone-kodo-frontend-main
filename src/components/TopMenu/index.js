@@ -30,7 +30,7 @@ function TopMenu(props) {
     window.addEventListener("scroll", changeNav);
   }, []);
   return (
-    <Container scrollNav={scrollNav}>
+    <Container scrollNav={scrollNav} style={{ zIndex: 2 }}>
       <MenuContainer>
         <NavLogo to="/">kodo</NavLogo>
         {
