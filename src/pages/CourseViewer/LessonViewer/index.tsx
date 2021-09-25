@@ -53,7 +53,6 @@ function LessonViewer(props: any) {
   const [currentLesson, setLesson] = useState<Lesson>();
   const [currentUser, setUser] = useState<Account>();
   const [enrolledLesson, setEnrolledLesson] = useState<EnrolledLesson>();
-  const [quizAttempts, setQuizAttempts] = useState<QuizWithStudentAttemptCountResp[]>();
   const [enrolledCourse, setEnrolledCourse] = useState<EnrolledCourse>();
   const accountId = JSON.parse(
     window.sessionStorage.getItem("loggedInAccountId") || "{}"
@@ -72,7 +71,6 @@ function LessonViewer(props: any) {
     getEnrolledLesson(accountId, lessonId).then(receivedEnrolledLesson => {
       setEnrolledLesson(receivedEnrolledLesson);
     });   
-    setQuizAttempts(getQuizAttempts());
   }, []);
 
   useEffect(() => {
@@ -82,6 +80,7 @@ function LessonViewer(props: any) {
       });
     }
   }, []);
+
 
   function getQuizAttempts(): QuizWithStudentAttemptCountResp[] {
     let quizAttemptsTemp: QuizWithStudentAttemptCountResp[] = [];
@@ -112,6 +111,7 @@ function LessonViewer(props: any) {
     });
     return quizAttemptsTemp;
   }
+  
 
   function previousLessonCompleted(): boolean {
    let allEnrolledLessons = enrolledCourse?.enrolledLessons;
@@ -188,7 +188,7 @@ function LessonViewer(props: any) {
           <LessonHeader>Quiz</LessonHeader>
           <QuizHeading>{}</QuizHeading>
           <QuizWrapper>
-            {quizAttempts?.map(q => {
+            {getQuizAttempts()?.map(q => {
               return (
                 <>
                   <QuizRow>
