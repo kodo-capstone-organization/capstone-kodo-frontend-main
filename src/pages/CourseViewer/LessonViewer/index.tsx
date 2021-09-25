@@ -5,12 +5,11 @@ import { getLessonByLessonId } from "../../../apis/Lesson/LessonApis";
 import { getMyAccount } from "../../../apis/Account/AccountApis";
 import { getEnrolledLesson } from "../../../apis/EnrolledLesson/EnrolledLessonApis";
 import { getEnrolledCourseByStudentIdAndCourseId } from "../../../apis/EnrolledCourse/EnrolledCourseApis";
-import { getNumberOfStudentAttemptsLeft } from "../../../apis/StudentAttempt/StudentAttemptApis"
-import { getAllQuizzesWithStudentAttemptCountByEnrolledLessonId } from "../../../apis/Quiz/QuizApis";
 
 import { Course } from "../../../apis/Entities/Course";
 import { Lesson } from "../../../apis/Entities/Lesson";
 import { Account } from "../../../apis/Entities/Account";
+import { Quiz } from "../../../apis/Entities/Quiz";
 import { EnrolledLesson } from "../../../apis/Entities/EnrolledLesson";
 import { EnrolledCourse } from "../../../apis/Entities/EnrolledCourse";
 import { QuizWithStudentAttemptCountResp } from "../../../apis/Entities/Quiz"
@@ -72,14 +71,11 @@ function LessonViewer(props: any) {
     });
     getEnrolledLesson(accountId, lessonId).then(receivedEnrolledLesson => {
       setEnrolledLesson(receivedEnrolledLesson);
-    });
-    getAllQuizzesWithStudentAttemptCountByEnrolledLessonId(lessonId).then(receivedQuizAttempts => {
-      setQuizAttempts(receivedQuizAttempts);
-    });
+    });   
+    setQuizAttempts(getQuizAttempts());
   }, []);
 
   useEffect(() => {
-    console.log(accountId, courseId)
     if (accountId !== null && courseId !== null ) {
       getEnrolledCourseByStudentIdAndCourseId(accountId, courseId).then(receivedEnrolledCourse => {
         setEnrolledCourse(receivedEnrolledCourse);
@@ -87,6 +83,35 @@ function LessonViewer(props: any) {
     }
   }, []);
 
+  function getQuizAttempts(): QuizWithStudentAttemptCountResp[] {
+    let quizAttemptsTemp: QuizWithStudentAttemptCountResp[] = [];
+    enrolledLesson?.enrolledContents.forEach(enrolledContent => {
+      if ("maxAttemptsPerStudent" in enrolledContent.parentContent)
+      {
+        let quiz: Quiz = enrolledContent.parentContent as Quiz; 
+        let studentAttemptCount;
+        
+        if (enrolledContent.studentAttempts)
+        {
+          studentAttemptCount = quiz.maxAttemptsPerStudent - enrolledContent.studentAttempts.length;
+        }
+        else
+        {
+          studentAttemptCount = quiz.maxAttemptsPerStudent;
+        }
+
+        quizAttemptsTemp.push(
+          {
+            contentId: enrolledContent.enrolledContentId,
+            timeLimit: quiz.timeLimit,
+            maxAttemptsPerStudent: quiz.maxAttemptsPerStudent,
+            studentAttemptCount: studentAttemptCount                 
+          }        
+        );
+      }
+    });
+    return quizAttemptsTemp;
+  }
 
   function previousLessonCompleted(): boolean {
    let allEnrolledLessons = enrolledCourse?.enrolledLessons;
@@ -94,19 +119,13 @@ function LessonViewer(props: any) {
      let sequence = enrolledLesson.parentLesson.sequence
      let pLesson = allEnrolledLessons[sequence - 2];
      if (pLesson.dateTimeOfCompletion !== null) {
-       console.log("true 1st")
        return true;
      } else {
-        console.log("false 2nd")
        return false;
      }
     }
-    console.log(enrolledLesson?.parentLesson.sequence)
-    console.log("true last")
     return true;
   }
-   
-  console.log(enrolledCourse)
 
   let isCourseTutor =
     currentCourse?.tutor.accountId === currentUser?.accountId ? true : false;

@@ -88,7 +88,6 @@ function ProfileSettings(props: any) {
             interests: props.account.interests,
             enrolledCourses: props.account.enrolledCourses,
             courses: props.account.courses,
-            studentAttempts: props.account.studentAttempts,
             stripeAccountId: props.account.stripeAccountId,
         }
 
