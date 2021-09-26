@@ -20,3 +20,8 @@ export const colours = {
     RED: "#EC3B3B",
     GREEN: "#628D40"
 }
+
+// For charts
+export const paletteColours = [
+    "#c6ccd8", "#274b69", "#85a1c1", "#3f4d63", "#202022"
+]

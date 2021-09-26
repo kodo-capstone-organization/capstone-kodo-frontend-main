@@ -1,9 +1,10 @@
-import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Toolbar } from "@material-ui/core";
+import { Paper, Table, TableBody, TableCell, TableContainer, TableRow, Toolbar } from "@material-ui/core";
 import { useState } from "react";
 import { useEffect } from "react";
 import { GroupedByMonthsTransaction, Transaction } from "../../../../apis/Entities/Transaction";
 import { getAllPaymentsByAccountId } from "../../../../apis/Transaction/TransactionApis";
 import { colours } from "../../../../values/Colours";
+import { BlankStateContainer } from "../../ProfileElements";
 
 function PaymentsHistoryTabPanel(props: any) {
     
@@ -15,10 +16,12 @@ function PaymentsHistoryTabPanel(props: any) {
     }, [props.accountId])
 
     useEffect(() => {
-        getAllPaymentsByAccountId(parseInt(accountId))
-            .then(myPayments => setMyPayments(myPayments))
-            .catch(error => console.log("Error retrieving my payments"))
-    }, [accountId, myPayments])
+        if (accountId) {
+            getAllPaymentsByAccountId(parseInt(accountId))
+                .then(myPayments => setMyPayments([...myPayments]))
+                .catch(error => console.log("Error retrieving my payments"))
+        } 
+    }, [accountId])
 
 
     const getRegroupedPayments = () => {
@@ -78,6 +81,7 @@ function PaymentsHistoryTabPanel(props: any) {
                     </TableContainer>
                 </Paper>
             ))}
+            { myPayments.length === 0 && <BlankStateContainer><br/>Wow! No payments to be found. <br/> Time to start enrolling in some of our courses? 😉</BlankStateContainer>}
         </>
     )
 }

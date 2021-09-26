@@ -1,5 +1,5 @@
 import { IHttpClientRequestParameters } from "./../HttpClient/IHttpClientRequestParameters";
-import { Account, CreateNewAccountReq, UpdateAccountReq } from "../Entities/Account";
+import { Account, CreateNewAccountReq, UpdateAccountReq, UpdateAccountPasswordReq } from "../Entities/Account";
 import { httpClient } from "../HttpClient/HttpClient";
 import { LoginResponse } from "../Entities/Login";
 import { transformToBlob } from "./../../utils/BlobCreator";
@@ -80,6 +80,19 @@ export async function updateAccount(updateAccountReq: UpdateAccountReq, displayP
 
     const postParameters: IHttpClientRequestParameters<FormData> = {
         url: '/account/updateAccount',
+        payload: formData
+    }
+
+    return httpClient.put<FormData, Account>(postParameters)
+}
+
+export async function updateAccountPassword(updateAccountPasswordReq: UpdateAccountPasswordReq): Promise<Account> {
+    const formData = new FormData();
+
+    formData.append('updateAccountPasswordReq', transformToBlob(updateAccountPasswordReq));
+
+    const postParameters: IHttpClientRequestParameters<FormData> = {
+        url: '/account/updateAccountPassword',
         payload: formData
     }
 

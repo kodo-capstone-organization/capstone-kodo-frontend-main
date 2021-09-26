@@ -42,7 +42,7 @@ function StudentView(props: any) {
   const [currentCourse, setCourse] = useState<Course>({ ...props.course });
   const [enrolledCourse, setEnrolledCourse] = useState<EnrolledCourse>({...props.enrolledCourse});
   const [myAccount, setMyAccount] = useState<Account>({ ...props.account });
-  const [rating, setRating] = useState<number | undefined>(enrolledCourse.courseRating === 0 ? 1 : enrolledCourse.courseRating);
+  const [rating, setRating] = useState<number | undefined>(enrolledCourse.courseRating === 0 ? 1 : Math.round(enrolledCourse.courseRating));
   const [activeStep, setActiveStep] = React.useState<number>();
   const [latestLesson, setLatestLesson] = React.useState<EnrolledLesson>();
   const [steps, setSteps] = React.useState<EnrolledLesson[]>([])
@@ -197,7 +197,7 @@ function StudentView(props: any) {
         <RatingTitle>Passing Requirement</RatingTitle>
         <RatingDescription>You need to pass all graded quizzes to complete this course</RatingDescription>
         <RatingTitle>Course Rating</RatingTitle>
-        <Rating name="read-only" value={currentCourse.courseRating} readOnly />
+        <Rating name="read-only" value={Math.round(currentCourse.courseRating)} readOnly />
         <RatingTitle>Categories</RatingTitle>
         <TagWrapper>
           {currentCourse?.courseTags.map(tag => (

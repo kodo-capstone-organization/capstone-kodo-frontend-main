@@ -41,6 +41,7 @@ function SignUp() {
     const [username, setUsername] = useState<string>("");
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
+    const [confirmPassword, setConfirmPassword] = useState<string>("");
     const [btnTags, setBtnTags] = useState<String[]>([]);
     const [chips, setChips] = useState<String[]>([]);
     const [tagLibrary, setTagLibrary] = useState<Tag[]>([]);
@@ -51,6 +52,7 @@ function SignUp() {
         username: "",
         email: "",
         password: "",
+        confirmPassword: "",
         btnTags: "",
         signUp: ""
     });
@@ -108,6 +110,12 @@ function SignUp() {
             errors["password"] = true;
         }
 
+        //Confirm Password
+        if (confirmPassword === "") {
+            formIsValid = false;
+            errors["confirmPassword"] = true;
+        }
+
         //Btn
         if (btnTags.length === 0) {
             console.log('btn invalid');
@@ -147,15 +155,23 @@ function SignUp() {
             isAdmin: false,
             tagTitles
         }
-        //@ts-ignore
-        createNewAccount(newUserAccount, null).then((res: Account) => {
-            window.sessionStorage.setItem("loggedInAccountId", JSON.stringify(res.accountId));
-            window.sessionStorage.setItem("loggedInAccountUsername", username);
-            window.sessionStorage.setItem("loggedInAccountPassword", password);
-            history.push('/progresspage');
-        }).catch(err => {            
-            setSignUpFailed(err.response.data.message)
-        })
+        
+        if (password === confirmPassword)
+        {
+            //@ts-ignore        
+            createNewAccount(newUserAccount, null).then((res: Account) => {
+                window.sessionStorage.setItem("loggedInAccountId", JSON.stringify(res.accountId));
+                window.sessionStorage.setItem("loggedInAccountUsername", username);
+                window.sessionStorage.setItem("loggedInAccountPassword", password);
+                history.push('/progresspage');
+            }).catch(err => {            
+                setSignUpFailed(err.response.data.message)
+            })
+        }
+        else
+        {
+            setSignUpFailed("Password and confirmation does not match");
+        }
     };
 
     return (
@@ -165,17 +181,19 @@ function SignUp() {
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
-                    height: "700px",
-                    marginTop: "50px",
+                    marginTop: "1.5em",
                     color: "#000000",
                     background: "white",
                 }}
             >
                 <SignUpPaper elevation={3}>
                     <SignUpPaperWrapper>
+                        { showErrors() }
+                        <br />
                         <Typography color="primary" variant="h4">
                             <strong>Sign Up</strong>
                         </Typography>
+                        <br/>
                         <form className={classes.root} autoComplete="off">
                             <SignUpForm>
                                 <TextField error={errors["username"]} required label="Username" variant="filled" value={username} onChange={e => setUsername(e.target.value)} />
@@ -185,6 +203,8 @@ function SignUp() {
                                 <TextField error={errors["email"]} required label="Email" variant="filled" value={email} onChange={e => setEmail(e.target.value)} />
                                 <br />
                                 <TextField error={errors["password"]} required type="password" label="Password" variant="filled" value={password} onChange={e => setPassword(e.target.value)} />
+                                <br />
+                                <TextField error={errors["confirmPassword"]} required type="password" label="Confirm Password" variant="filled" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} />
                                 <br />
                                 <label>Join Kodo as a</label>
                                 <br />
@@ -242,9 +262,6 @@ function SignUp() {
                                 />
                                 <br />
                                 <Button onClick={handleValidation}>Sign Up</Button>
-                                <br />
-                                { showErrors() }
-                                <br />
                             </SignUpForm>
                         </form>
                     </SignUpPaperWrapper>

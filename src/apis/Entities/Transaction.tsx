@@ -17,3 +17,17 @@ export interface Transaction {
 export interface GroupedByMonthsTransaction {
     [key: string]: any
 }
+
+export interface TutorCourseEarningsResp {
+    lifetimeTotalEarnings: number,
+    lifetimeEarningsByCourse: any[],
+    currentMonthTotalEarnings: number,
+    currentMonthEarningsByCourse: any[],
+    courseStatsByMonthForLastYear: NestedCourseStats[]
+}
+
+export interface NestedCourseStats {
+    courseId: string,
+    courseName: string,
+    data: any // stringified
+}
