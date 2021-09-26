@@ -94,7 +94,7 @@ const headCells: HeadCell[] = [
   { id: 'description', numeric: true, disablePadding: false, label: 'Description' },
   { id: 'maxAttemptsPerStudent', numeric: true, disablePadding: false, label: 'Max Attempts per Student' },
   { id: 'timeLimit', numeric: true, disablePadding: false, label: 'Time Limit (HH:MM:SS)' },
-  { id: 'contentId', numeric: true, disablePadding: false, label: 'View Quiz' }
+  { id: 'contentId', numeric: true, disablePadding: false, label: 'View Quiz' },
 ];
 
 interface EnhancedTableProps {
