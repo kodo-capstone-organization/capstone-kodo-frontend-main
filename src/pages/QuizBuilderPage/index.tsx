@@ -120,7 +120,8 @@ function QuizBuilderPage(props: any) {
         for (i = 0; i < questionBankQuestionIds.length; i++) {
             getQuizQuestionByQuizQuestionId(questionBankQuestionIds[i]).then((res) => {
                 console.log("Success in handleChangeFromQuestionBank", res);
-                const newQuestionArray = quizQuestionArray.concat([res]);
+                const newQuestionFromBank = Object.assign(res, {quizQuestionId: null});
+                const newQuestionArray = quizQuestionArray.concat([newQuestionFromBank]);
                 setQuizQuestionArray(newQuestionArray);
             }).catch((err) => { console.log("Error in handleChangeFromQuestionBank", err); })
         }
