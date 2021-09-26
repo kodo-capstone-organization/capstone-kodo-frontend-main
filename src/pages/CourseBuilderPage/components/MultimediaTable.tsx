@@ -444,7 +444,6 @@ export default function MultimediaTable(props: any) {
     const [orderBy, setOrderBy] = React.useState<keyof Data>('name');
     const [selectedIds, setSelectedIds] = React.useState<number[]>([]);
     const [page, setPage] = React.useState(0);
-    const [dense, setDense] = React.useState(false);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
     const handleRequestSort = (event: React.MouseEvent<unknown>, property: keyof Data) => {
@@ -491,10 +490,6 @@ export default function MultimediaTable(props: any) {
         setPage(0);
     };
 
-    const handleChangeDense = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setDense(event.target.checked);
-    };
-
     const isSelected = (index: number) => selectedIds.indexOf(index) !== -1;
 
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
@@ -516,7 +511,7 @@ export default function MultimediaTable(props: any) {
             <Table
                 className={classes.table}
                 aria-labelledby="tableTitle"
-                size={dense ? 'small' : 'medium'}
+                size={'small'}
                 aria-label="enhanced table"
             >
                 <EnhancedTableHead
@@ -562,7 +557,7 @@ export default function MultimediaTable(props: any) {
                     );
                     })}
                 {emptyRows > 0 && (
-                    <TableRow style={{ height: (dense ? 33 : 53) * emptyRows }}>
+                    <TableRow style={{ height: 33 * emptyRows }}>
                     <TableCell colSpan={6} />
                     </TableRow>
                 )}
@@ -579,10 +574,6 @@ export default function MultimediaTable(props: any) {
             onRowsPerPageChange={handleChangeRowsPerPage}
             />
         </Paper>
-        <FormControlLabel
-            control={<Switch checked={dense} onChange={handleChangeDense} />}
-            label="Dense padding"
-        />
         </div>
         </>
     );
