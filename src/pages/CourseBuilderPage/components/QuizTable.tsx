@@ -15,8 +15,6 @@ import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Switch from '@material-ui/core/Switch';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { Quiz } from '../../../apis/Entities/Quiz';
 import { Lesson } from '../../../apis/Entities/Lesson';
@@ -25,8 +23,7 @@ import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import AddIcon from '@material-ui/icons/Add';
 import { Dialog, DialogContent, DialogContentText, DialogTitle, InputLabel, Input, FormControl, DialogActions, Grid, Chip} from '@material-ui/core';
 import { Button } from "../../../values/ButtonElements";
-import { createNewBasicQuiz } from '../../../apis/Quiz/QuizApis';
-import BlockIcon from '@material-ui/icons/Block';
+import { createNewBasicQuiz, deleteQuizzes } from '../../../apis/Quiz/QuizApis';
 
 interface IErrors<TValue> {
   [id: string]: TValue;
@@ -94,7 +91,7 @@ const headCells: HeadCell[] = [
   { id: 'description', numeric: true, disablePadding: false, label: 'Description' },
   { id: 'maxAttemptsPerStudent', numeric: true, disablePadding: false, label: 'Max Attempts per Student' },
   { id: 'timeLimit', numeric: true, disablePadding: false, label: 'Time Limit (HH:MM:SS)' },
-  { id: 'contentId', numeric: true, disablePadding: false, label: 'View Quiz' },
+  { id: 'contentId', numeric: true, disablePadding: false, label: '' }
 ];
 
 interface EnhancedTableProps {
@@ -105,13 +102,20 @@ interface EnhancedTableProps {
   order: Order;
   orderBy: string;
   rowCount: number;
+  isEnrollmentActive: boolean;
 }
 
 function EnhancedTableHead(props: EnhancedTableProps) {
-  const { classes, onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
+  const { classes, onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort, isEnrollmentActive } = props;
   const createSortHandler = (property: keyof Data) => (event: React.MouseEvent<unknown>) => {
     onRequestSort(event, property);
   };
+
+  headCells.map((headCell) => { 
+    if (headCell.id === "contentId") {
+      headCell.label = isEnrollmentActive ? 'View Quiz' : 'Edit Quiz'
+    }
+  })
 
   return (
     <TableHead>
@@ -175,17 +179,18 @@ const useToolbarStyles = makeStyles((theme: Theme) =>
 interface EnhancedTableToolbarProps {
   numSelected: number;
   selectedIds: number[];
-  lessonIndex: number;
+  selectedLessonId: number;
   handleFormDataChange: any;
   lessons: Lesson[];
   setLessons: any;
   setSelectedIds: any;
   history: any;
+  isEnrollmentActive: boolean;
 }
 
 const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   const classes = useToolbarStyles();
-  const { numSelected, selectedIds, lessonIndex, handleFormDataChange, setLessons, lessons, setSelectedIds} = props;
+  const { numSelected, selectedIds, selectedLessonId, handleFormDataChange, setLessons, lessons, setSelectedIds, isEnrollmentActive} = props;
   const [newQuizName, setNewQuizName] = useState<string>("");
   const [newQuizDescription, setNewQuizDescription] = useState<string>("");
   const [newQuizTimeLimitHours, setNewQuizTimeLimitHours] = useState<number>(0);
@@ -194,45 +199,48 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   var [errors, setErrors] = useState<IErrors<boolean>>({
     name: false,
     description: false,
-});
+  });
 
-  const [showAddMultimediaDialog, setShowAddMultimediaDialog] = useState<boolean>(false); 
+  const [showAddQuizDialog, setShowAddQuizDialog] = useState<boolean>(false); 
 
   const openDialog = () => {
-    setShowAddMultimediaDialog(true);
+    setShowAddQuizDialog(true);
   }
 
   const handleClose = () => {
-    setShowAddMultimediaDialog(false);
-  }
-
-  const isNewLesson = () => {
-    const currentLesson = lessons.filter((lesson: Lesson, index: number) => index === lessonIndex).pop()
-    
-    return currentLesson !== undefined && currentLesson.lessonId === undefined
+    setShowAddQuizDialog(false);
   }
 
   // Update quizzes for a particular lesson from courseFormData
   const handleDeleteQuiz = () => {
-    const updatedLessons = lessons.map((lesson: Lesson, index: number) => {
-      if (index === lessonIndex) {
-        const updatedQuizzes = lesson.quizzes.filter((quiz: Quiz, index: number) => !selectedIds.includes(index))
+    let quizIdsToDelete: number[] = []
+    const updatedLessons = lessons.map((lesson: Lesson) => {
+      if (lesson.lessonId === selectedLessonId) {
+        const updatedQuizzes = lesson.quizzes.filter((quiz: Quiz, index: number) => {
+          if (selectedIds.includes(index)) quizIdsToDelete.push(quiz.contentId)
+
+          return !selectedIds.includes(index)
+        })
+
         lesson.quizzes = updatedQuizzes
       }
       return lesson
     })
 
-    setLessons(updatedLessons)
+    // Delete all the selected quizzes
+    deleteQuizzes(quizIdsToDelete).then((result) => {
+      setLessons(updatedLessons)
 
-    let wrapperEvent = {
-      target: {
-        name: "lessons",
-        value: updatedLessons
+      let wrapperEvent = {
+        target: {
+          name: "lessons",
+          value: updatedLessons
+        }
       }
-    }
 
-    handleFormDataChange(wrapperEvent)
-    setSelectedIds([])
+      handleFormDataChange(wrapperEvent)
+      setSelectedIds([])
+      })
   }
 
   const handleValidation = () => {
@@ -255,11 +263,9 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   }
 
   const handleClickBuildQuiz = () => {
-    if (!handleValidation()) {
-      return
-    } 
-
-    const lessonId = lessons.filter((lesson: Lesson, index: number) => index === lessonIndex).pop()?.lessonId
+    if (!handleValidation()) return
+    
+    const lessonId = lessons.filter((lesson: Lesson) => lesson.lessonId === selectedLessonId).pop()?.lessonId
 
     if (lessonId !== undefined) {
       createNewBasicQuiz(lessonId, newQuizName, newQuizDescription, newQuizTimeLimitHours, newQuizTimeLimitMinutes, newQuizMaxAttempts).then((newQuiz) => {
@@ -274,7 +280,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
     <>
         <Dialog 
         fullWidth
-        open={showAddMultimediaDialog}
+        open={showAddQuizDialog}
         onClose={handleClose}
         aria-labelledby="simple-modal-title"
         aria-describedby="simple-modal-description">
@@ -400,16 +406,20 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
           Quizzes
         </Typography>
       )}
-      {isNewLesson() ? <Chip variant="outlined"  size="small" label="Quiz Creation Disabled for New Lesson" color="secondary" deleteIcon={<BlockIcon color="secondary" />} onDelete={() => ("")}/> : <Tooltip title="Add Quiz">
+      <Tooltip title="Add Quiz">
         <IconButton 
+          disabled={isEnrollmentActive}
           aria-label="add" 
           onClick={openDialog}>
             <AddIcon />
         </IconButton>
-        </Tooltip>}
+        </Tooltip>
       {numSelected > 0 && (
         <Tooltip title="Delete">
-          <IconButton aria-label="delete" onClick={handleDeleteQuiz}>
+          <IconButton 
+            disabled={isEnrollmentActive}
+            aria-label="delete" 
+            onClick={handleDeleteQuiz}>
             <DeleteIcon />
           </IconButton>
         </Tooltip>
@@ -454,18 +464,17 @@ export default function QuizTable(props: any) {
 
     // Used to trigger rerendering of QuizTable whenever lessons is updated in Table Header component
     useEffect(() => {
-      const newQuizzes = lessons.find((lesson, index) => index === props.lessonIndex)?.quizzes
+      const newQuizzes = lessons.find((lesson: Lesson) => lesson.lessonId === props.selectedLessonId)?.quizzes
       if (newQuizzes) {
         setQuizzes(newQuizzes)
       }
-    }, [lessons, props.lessonIndex])
+    }, [lessons, props.selectedLessonId])
 
     const classes = useStyles();
     const [order, setOrder] = React.useState<Order>('asc');
     const [orderBy, setOrderBy] = React.useState<keyof Data>('name');
     const [selectedIds, setSelectedIds] = React.useState<number[]>([]);
     const [page, setPage] = React.useState(0);
-    const [dense, setDense] = React.useState(false);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
     const handleRequestSort = (event: React.MouseEvent<unknown>, property: keyof Data) => {
@@ -512,12 +521,12 @@ export default function QuizTable(props: any) {
         setPage(0);
     };
 
-    const handleChangeDense = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setDense(event.target.checked);
-    };
-
-    const navigateToQuizBuilderViewMode = (quizId: number) => {
-      history.push({ pathname: `/buildquiz/${quizId}`, state: { mode: 'VIEW' } })
+    const navigateToQuizBuilder = (quizId: number) => {
+      if (props.isEnrollmentActive) {
+        history.push({ pathname: `/buildquiz/${quizId}`, state: { mode: 'VIEW' } })
+      } else {
+        history.push({ pathname: `/buildquiz/${quizId}`, state: { mode: 'EDIT' } })
+      }
     }
 
     const isSelected = (index: number) => selectedIds.indexOf(index) !== -1;
@@ -529,9 +538,10 @@ export default function QuizTable(props: any) {
         <div className={classes.root}>
         <Paper className={classes.paper}>
             <EnhancedTableToolbar 
+                isEnrollmentActive={props.isEnrollmentActive}
                 numSelected={selectedIds.length} 
                 selectedIds={selectedIds}
-                lessonIndex={props.lessonIndex}
+                selectedLessonId={props.selectedLessonId}
                 lessons={lessons}
                 setLessons={setLessons}
                 handleFormDataChange={handleFormDataChange}
@@ -542,10 +552,11 @@ export default function QuizTable(props: any) {
             <Table
                 className={classes.table}
                 aria-labelledby="tableTitle"
-                size={dense ? 'small' : 'medium'}
+                size={'small'}
                 aria-label="enhanced table"
             >
                 <EnhancedTableHead
+                isEnrollmentActive={props.isEnrollmentActive}
                 classes={classes}
                 numSelected={selectedIds.length}
                 order={order}
@@ -586,7 +597,7 @@ export default function QuizTable(props: any) {
                         <TableCell align="right">{row.maxAttemptsPerStudent}</TableCell>
                         <TableCell align="right">{row.timeLimit}</TableCell>
                         <TableCell align="right">
-                          <IconButton color="primary" onClick={() => navigateToQuizBuilderViewMode(row.contentId)}>
+                          <IconButton size="small" color="primary" onClick={() => navigateToQuizBuilder(row.contentId)}>
                               <NavigateNextIcon/>&nbsp;
                           </IconButton>
                         </TableCell>
@@ -594,7 +605,7 @@ export default function QuizTable(props: any) {
                     );
                     })}
                 {emptyRows > 0 && (
-                    <TableRow style={{ height: (dense ? 33 : 53) * emptyRows }}>
+                    <TableRow style={{ height: 33 * emptyRows }}>
                     <TableCell colSpan={6} />
                     </TableRow>
                 )}
@@ -611,10 +622,6 @@ export default function QuizTable(props: any) {
             onRowsPerPageChange={handleChangeRowsPerPage}
             />
         </Paper>
-        <FormControlLabel
-            control={<Switch checked={dense} onChange={handleChangeDense} />}
-            label="Dense padding"
-        />
         </div>
         </>
     );

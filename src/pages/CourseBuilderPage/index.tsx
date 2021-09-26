@@ -5,8 +5,6 @@ import { CourseBuilderCard, CourseBuilderCardHeader, CourseBuilderContainer, Cou
 import LessonPlan from "./components/LessonPlan";
 import { getCourseByCourseId, updateCourse, toggleEnrollmentActiveStatus } from './../../apis/Course/CourseApis';
 import { Tag } from "../../apis/Entities/Tag";
-import { Lesson } from "../../apis/Entities/Lesson";
-import { Multimedia } from "../../apis/Entities/Multimedia"
 import { UpdateCourseReq, Course } from "../../apis/Entities/Course";
 import { Autocomplete } from "@material-ui/lab";
 import { getAllTags } from '../../apis/Tag/TagApis';
@@ -131,43 +129,9 @@ function CourseBuilderPage(props: any) {
 
         const updatedCourseTagTitles = courseFormData.courseTags.map((tag: Tag) => tag.title)
 
-        const updatedLessonReqs = courseFormData.lessons.map((lesson: Lesson, index: number) => {
-            lesson.sequence = index + 1;
-
-            return {
-                lesson: lesson,
-                quizzes: lesson.quizzes,
-                multimediaReqs: lesson.multimedias.map((multimedia: Multimedia) => {
-
-                    // Set new multimedia object id to undefined
-                    if (multimedia.contentId === -1) {
-                        // @ts-ignore
-                        multimedia.contentId = undefined
-                    }
-                    return {
-                        multimedia: multimedia,
-                    }
-                })
-            }
-        })
-
         // @ts-ignore
-        const updateCourseReq: UpdateCourseReq = { course: updatedCourse, courseTagTitles: updatedCourseTagTitles, updateLessonReqs: updatedLessonReqs }
+        const updateCourseReq: UpdateCourseReq = { course: updatedCourse, courseTagTitles: updatedCourseTagTitles }
         return updateCourseReq
-    }
-
-    const buildLessonMultimedias = (courseFormData: any) => {
-        let lessonMultimedias: File[] = []
-
-        courseFormData.lessons.forEach((lesson: Lesson) => {
-            lesson.multimedias.forEach((multimedia: Multimedia) => {
-                if (multimedia.file !== undefined) {
-                    lessonMultimedias = lessonMultimedias.concat(multimedia.file)
-                }
-            })
-        })
-
-        return lessonMultimedias;
     }
 
     const handleUpdateCourse = () => {
@@ -176,9 +140,8 @@ function CourseBuilderPage(props: any) {
         }
 
         const updateCourseReq = buildUpdateCourseReq(courseFormData)
-        const lessonMultimedias = buildLessonMultimedias(courseFormData)
 
-        updateCourse(updateCourseReq, bannerImageFile, lessonMultimedias).then((updatedCourse) => {
+        updateCourse(updateCourseReq, bannerImageFile).then((updatedCourse) => {
             console.log(updatedCourse);
 
             setCourseFormData(updatedCourse)
@@ -239,13 +202,14 @@ function CourseBuilderPage(props: any) {
                 <CourseBuilderContent>
                     <Grid container spacing={3}>
                         <Grid item xs={12}>
-                            <TextField required error={errors['name']} id="standard-basic" fullWidth label="Name" name="name" value={courseFormData.name} onChange={handleFormDataChange}/>
+                            <TextField disabled={courseFormData.isEnrollmentActive} required error={errors['name']} id="standard-basic" fullWidth label="Name" name="name" value={courseFormData.name} onChange={handleFormDataChange}/>
                         </Grid>
                         <Grid item xs={12}>
-                            <TextField id="standard-basic" fullWidth multiline maxRows={3} name="description" label="Description" value={courseFormData.description} onChange={handleFormDataChange}/>
+                            <TextField disabled={courseFormData.isEnrollmentActive} id="standard-basic" fullWidth multiline maxRows={3} name="description" label="Description" value={courseFormData.description} onChange={handleFormDataChange}/>
                         </Grid>
                         <Grid item xs={12}>
                             <TextField
+                                disabled={courseFormData.isEnrollmentActive}
                                 fullWidth
                                 label="Price"
                                 name="price"
@@ -262,6 +226,7 @@ function CourseBuilderPage(props: any) {
                         </Grid>
                         <Grid item xs={12}>
                             <Autocomplete
+                                disabled={courseFormData.isEnrollmentActive}
                                 multiple
                                 options={tagLibrary.map((option) => option.title)}
                                 defaultValue={courseFormData.courseTags.map((tag: Tag) => tag.title)}
@@ -279,7 +244,7 @@ function CourseBuilderPage(props: any) {
                             <TextField id="standard-basic" fullWidth disabled value={courseFormData.bannerPictureFileName} label="Banner Image"></TextField>
                         </Grid>
                         <Grid item xs={2}>
-                            <Button variant="contained" component="label" big>
+                            <Button disabled={courseFormData.isEnrollmentActive} variant="contained" component="label" big>
                                 Change Banner Image
                                 <input
                                     id="banner-image-upload"
@@ -290,29 +255,30 @@ function CourseBuilderPage(props: any) {
                                 />
                             </Button>
                         </Grid>
+                        <Grid container spacing={3} justifyContent="flex-end">
+                            <Box m={1} pt={2}>
+                                <Button
+                                    disabled={courseFormData.isEnrollmentActive}
+                                    primary={!courseFormData.isEnrollmentActive}
+                                    big
+                                    onClick={handleUpdateCourse}>
+                                    Update Course
+                                </Button>
+                            </Box>
+                            <Box m={1} pt={2}>
+                                <Button
+                                    big
+                                    onClick={navigateToPreviousPage}>
+                                    Cancel
+                                </Button>
+                            </Box>
+                        </Grid>
                     </Grid>
                 </CourseBuilderContent>
             </CourseBuilderCard>
             <CourseBuilderCard id="lesson-plan">
-                <LessonPlan courseFormData={courseFormData} lessons={courseFormData.lessons} handleFormDataChange={handleFormDataChange}/>
+                <LessonPlan isEnrollmentActive={courseFormData.isEnrollmentActive} courseFormData={courseFormData} lessons={courseFormData.lessons} handleFormDataChange={handleFormDataChange} courseId={courseId}/>
             </CourseBuilderCard>
-            <Grid container spacing={3} justifyContent="flex-end">
-                <Box m={1} pt={2}>
-                    <Button
-                        primary
-                        big
-                        onClick={handleUpdateCourse}>
-                        Update Course
-                    </Button>
-                </Box>
-                <Box m={1} pt={2}>
-                    <Button
-                        big
-                        onClick={navigateToPreviousPage}>
-                        Cancel
-                    </Button>
-                </Box>
-            </Grid>
             {/* Toggle Enrollment Course Dialog */}
             <Dialog fullWidth open={isToggleActiveEnrollmentDialogOpen} onClose={handleCloseToggleEnrollmentDialog} aria-labelledby="toggle-dialog">
 

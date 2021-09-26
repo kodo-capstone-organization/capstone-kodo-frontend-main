@@ -7,6 +7,7 @@ export function getFileType(filename: string): MultimediaType {
         case "png":
         case "jpg":
         case "jpeg":
+        case "gif":
             return MultimediaType.IMAGE
         case "doc":
         case "docx":

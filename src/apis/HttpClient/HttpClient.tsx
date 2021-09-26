@@ -67,7 +67,7 @@ export class HttpClient implements IHttpClient {
             const { url, payload } = parameters
 
             axios
-                .delete(formatUrl(url), payload)
+                .delete(formatUrl(url), { headers: {}, data: payload })
                 .then((response: any) => {
                     resolve(response.data as R)
                 })

@@ -5,7 +5,7 @@ import { Multimedia, MultimediaReq} from "./Multimedia";
 
 export interface Lesson {
     lessonId: number
-    name: number,
+    name: string,
     description: string,
     sequence: number,
     contents: Content[],
