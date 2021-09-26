@@ -15,8 +15,6 @@ import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Switch from '@material-ui/core/Switch';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { Quiz } from '../../../apis/Entities/Quiz';
 import { Lesson } from '../../../apis/Entities/Lesson';
@@ -174,7 +172,7 @@ const useToolbarStyles = makeStyles((theme: Theme) =>
 interface EnhancedTableToolbarProps {
   numSelected: number;
   selectedIds: number[];
-  lessonIndex: number;
+  selectedLessonId: number;
   handleFormDataChange: any;
   lessons: Lesson[];
   setLessons: any;
@@ -184,7 +182,7 @@ interface EnhancedTableToolbarProps {
 
 const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   const classes = useToolbarStyles();
-  const { numSelected, selectedIds, lessonIndex, handleFormDataChange, setLessons, lessons, setSelectedIds} = props;
+  const { numSelected, selectedIds, selectedLessonId, handleFormDataChange, setLessons, lessons, setSelectedIds} = props;
   const [newQuizName, setNewQuizName] = useState<string>("");
   const [newQuizDescription, setNewQuizDescription] = useState<string>("");
   const [newQuizTimeLimitHours, setNewQuizTimeLimitHours] = useState<number>(0);
@@ -208,8 +206,8 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   // Update quizzes for a particular lesson from courseFormData
   const handleDeleteQuiz = () => {
     let quizIdsToDelete: number[] = []
-    const updatedLessons = lessons.map((lesson: Lesson, index: number) => {
-      if (index === lessonIndex) {
+    const updatedLessons = lessons.map((lesson: Lesson) => {
+      if (lesson.lessonId === selectedLessonId) {
         const updatedQuizzes = lesson.quizzes.filter((quiz: Quiz, index: number) => {
           if (selectedIds.includes(index)) quizIdsToDelete.push(quiz.contentId)
 
@@ -259,7 +257,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   const handleClickBuildQuiz = () => {
     if (!handleValidation()) return
     
-    const lessonId = lessons.filter((lesson: Lesson, index: number) => index === lessonIndex).pop()?.lessonId
+    const lessonId = lessons.filter((lesson: Lesson) => lesson.lessonId === selectedLessonId).pop()?.lessonId
 
     if (lessonId !== undefined) {
       createNewBasicQuiz(lessonId, newQuizName, newQuizDescription, newQuizTimeLimitHours, newQuizTimeLimitMinutes, newQuizMaxAttempts).then((newQuiz) => {
@@ -454,11 +452,11 @@ export default function QuizTable(props: any) {
 
     // Used to trigger rerendering of QuizTable whenever lessons is updated in Table Header component
     useEffect(() => {
-      const newQuizzes = lessons.find((lesson, index) => index === props.lessonIndex)?.quizzes
+      const newQuizzes = lessons.find((lesson: Lesson) => lesson.lessonId === props.selectedLessonId)?.quizzes
       if (newQuizzes) {
         setQuizzes(newQuizzes)
       }
-    }, [lessons, props.lessonIndex])
+    }, [lessons, props.selectedLessonId])
 
     const classes = useStyles();
     const [order, setOrder] = React.useState<Order>('asc');
@@ -526,7 +524,7 @@ export default function QuizTable(props: any) {
             <EnhancedTableToolbar 
                 numSelected={selectedIds.length} 
                 selectedIds={selectedIds}
-                lessonIndex={props.lessonIndex}
+                selectedLessonId={props.selectedLessonId}
                 lessons={lessons}
                 setLessons={setLessons}
                 handleFormDataChange={handleFormDataChange}

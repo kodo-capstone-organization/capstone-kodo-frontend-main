@@ -5,8 +5,6 @@ import { CourseBuilderCard, CourseBuilderCardHeader, CourseBuilderContainer, Cou
 import LessonPlan from "./components/LessonPlan";
 import { getCourseByCourseId, updateCourse, toggleEnrollmentActiveStatus } from './../../apis/Course/CourseApis';
 import { Tag } from "../../apis/Entities/Tag";
-import { Lesson } from "../../apis/Entities/Lesson";
-import { Multimedia } from "../../apis/Entities/Multimedia"
 import { UpdateCourseReq, Course } from "../../apis/Entities/Course";
 import { Autocomplete } from "@material-ui/lab";
 import { getAllTags } from '../../apis/Tag/TagApis';

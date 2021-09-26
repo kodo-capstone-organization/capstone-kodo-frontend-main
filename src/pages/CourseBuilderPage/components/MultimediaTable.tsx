@@ -15,8 +15,6 @@ import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Switch from '@material-ui/core/Switch';
 import DeleteIcon from '@material-ui/icons/Delete';
 import AddIcon from '@material-ui/icons/Add';
 import { Multimedia, MultimediaType } from '../../../apis/Entities/Multimedia';
@@ -24,14 +22,16 @@ import { Lesson } from '../../../apis/Entities/Lesson';
 import { Dialog, DialogContent, DialogContentText, DialogTitle, InputLabel, Input, FormControl, DialogActions} from '@material-ui/core';
 import { ACCEPTABLE_FILE_TYPE, getFileType } from '../../../utils/GetFileType';
 import { Button } from "../../../values/ButtonElements";
-import { addNewMultimediaToLesson, deleteMultimediasFromLesson } from '../../../apis/Multimedia/MultimediaApis';
+import { addNewMultimediaToLesson, deleteMultimediasFromLesson, updateMultimedia } from '../../../apis/Multimedia/MultimediaApis';
+import PublishIcon from '@material-ui/icons/Publish';
 
 interface Data {
   id: number,
   name: string,
   description: string,
   type: string,
-  urlFilename: string
+  urlFilename: string,
+  contentId: number
 }
 
 function createData(
@@ -39,9 +39,10 @@ function createData(
   name: string,
   description: string,
   type: string,
-  urlFilename: string
+  urlFilename: string,
+  contentId: number
 ): Data {
-  return { id, name, description, type, urlFilename };
+  return { id, name, description, type, urlFilename, contentId };
 }
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
@@ -85,7 +86,8 @@ interface HeadCell {
 const headCells: HeadCell[] = [
   { id: 'name', numeric: false, disablePadding: true, label: 'Name' },
   { id: 'description', numeric: true, disablePadding: false, label: 'Description' },
-  { id: 'type', numeric: true, disablePadding: false, label: 'File Type' }
+  { id: 'type', numeric: true, disablePadding: false, label: 'File Type' },
+  { id: 'contentId', numeric: true, disablePadding: false, label: 'Update Multimedia' }
 ];
 
 interface EnhancedTableProps {
@@ -171,7 +173,7 @@ const useToolbarStyles = makeStyles((theme: Theme) =>
 interface EnhancedTableToolbarProps {
   numSelected: number;
   selectedIds: number[];
-  lessonIndex: number;
+  selectedLessonId: number;
   handleFormDataChange: any;
   lessons: Lesson[];
   setLessons: any;
@@ -180,7 +182,7 @@ interface EnhancedTableToolbarProps {
 
 const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   const classes = useToolbarStyles();
-  const { numSelected, selectedIds, lessonIndex, handleFormDataChange, setLessons, lessons, setSelectedIds } = props;
+  const { numSelected, selectedIds, selectedLessonId, handleFormDataChange, setLessons, lessons, setSelectedIds } = props;
   const [newFile, setNewFile] = useState<Multimedia>({ contentId: -1, name: "", description: "", url: "", multimediaType: MultimediaType.EMPTY, urlFilename: "", file: new File([""], ""), type: "multimedia"});
 
   const [showAddMultimediaDialog, setShowAddMultimediaDialog] = useState<boolean>(false); 
@@ -194,14 +196,14 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   }
 
   const handleClickAddMultimedia = () => {
-    const currentLessonId = lessons.filter((lesson: Lesson, index: number) => index === lessonIndex).pop()?.lessonId
+    const currentLessonId = lessons.filter((lesson: Lesson) => lesson.lessonId === selectedLessonId).pop()?.lessonId
 
     if (currentLessonId !== undefined && newFile.file !== undefined) {
       addNewMultimediaToLesson(currentLessonId, newFile.name, newFile.description, newFile.file).then((newMultimedia) => {
         console.log(newMultimedia)
 
-        const updatedLessons = lessons.map((lesson: Lesson, index: number) => {
-          if (index === lessonIndex) {
+        const updatedLessons = lessons.map((lesson: Lesson) => {
+          if (lesson.lessonId === selectedLessonId) {
             const updatedMultimedias = lesson.multimedias.concat(newFile)
             lesson.multimedias = updatedMultimedias
           }
@@ -253,10 +255,8 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   const handleDeleteMultimedia = () => {
     let multimediaIdsToDelete: number[] = []
 
-    const currentLessonId = lessons.filter((lesson: Lesson, index: number) => index === lessonIndex).pop()?.lessonId
-    
-    const updatedLessons = lessons.map((lesson: Lesson, lessonIdx: number) => {
-      if (lessonIdx === lessonIndex) {
+    const updatedLessons = lessons.map((lesson: Lesson) => {
+      if (lesson.lessonId === selectedLessonId) {
         const updatedMultimedias = lesson.multimedias.filter((multimedia: Multimedia, multimediaIdx: number) => {
           if (selectedIds.includes(multimediaIdx)) multimediaIdsToDelete.push(multimedia.contentId)
           
@@ -268,25 +268,21 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
       return lesson
     })
 
-
-    if (currentLessonId !== undefined) {
-      deleteMultimediasFromLesson(currentLessonId, multimediaIdsToDelete).then((result) => {
-        if (result) {
-          setLessons(updatedLessons)
-
-          let wrapperEvent = {
-            target: {
-              name: "lessons",
-              value: updatedLessons
-            }
+    deleteMultimediasFromLesson(selectedLessonId, multimediaIdsToDelete).then((result) => {
+      if (result) {
+        setLessons(updatedLessons)
+     
+        let wrapperEvent = {
+           target: {
+            name: "lessons",
+            value: updatedLessons
           }
-
-          setSelectedIds([])
-          handleFormDataChange(wrapperEvent)
         }
-      })
-    }
-  }
+
+        setSelectedIds([])
+        handleFormDataChange(wrapperEvent)
+      }
+    })}
 
   return (
     <>
@@ -411,6 +407,9 @@ const useStyles = makeStyles((theme: Theme) =>
     table: {
       minWidth: 750,
     },
+    input: {
+      display: 'none',
+    },
     visuallyHidden: {
       border: 0,
       clip: 'rect(0 0 0 0)',
@@ -429,15 +428,105 @@ export default function MultimediaTable(props: any) {
     const handleFormDataChange = props.handleFormDataChange;
     const [multimedias, setMultimedias] = useState<Multimedia[]>(props.multimedias);
     const [lessons, setLessons] = useState<Lesson[]>(props.lessons);
-    const rows = multimedias?.length > 0 ? multimedias.map((row: Multimedia, index: number) => createData(index, row.name, row.description, row.multimediaType, row.urlFilename)) : []
+    const rows = multimedias?.length > 0 ? multimedias.map((row: Multimedia, index: number) => createData(index, row.name, row.description, row.multimediaType, row.urlFilename, row.contentId)) : []
+
+    const [selectedMultimediaId, setSelectedMultimediaId] = useState<number>(0);
+    const [newFile, setNewFile] = useState<Multimedia>({ contentId: -1, name: "", description: "", url: "", multimediaType: MultimediaType.EMPTY, urlFilename: "", file: new File([""], ""), type: "multimedia"});
+
+    const [showAddMultimediaDialog, setShowAddMultimediaDialog] = useState<boolean>(false); 
+  
+    const openDialog = () => {
+      setShowAddMultimediaDialog(true);
+    }
+  
+    const handleClose = () => {
+      setShowAddMultimediaDialog(false);
+    }
+  
+    const handleClickUpdateMultimedia = () => {
+      if (newFile.file !== undefined) {
+        updateMultimedia(selectedMultimediaId, newFile.name, newFile.description, newFile.file).then((newMultimedia) => {
+          console.log(newMultimedia)
+  
+          const updatedLessons = lessons.map((lesson: Lesson) => {
+            if (lesson.lessonId === props.selectedLessonId) {
+              lesson.multimedias = lesson.multimedias.map((multimedia: Multimedia) => {
+                if (multimedia.contentId === newMultimedia.contentId) {
+                  multimedia = newMultimedia
+                }
+                return multimedia
+              })
+            }
+            return lesson
+          })
+  
+          let wrapperEvent = {
+            target: {
+              name: "lessons",
+              value: updatedLessons
+            }
+          }
+      
+          handleFormDataChange(wrapperEvent)
+      
+          setLessons(updatedLessons)
+  
+          handleClose()
+          setNewFile({ contentId: -1, name: "", description: "", url: "", multimediaType: MultimediaType.EMPTY, urlFilename: "", file: new File([""], ""), type: "multimedia"})
+        })
+      }
+    }
+  
+    const handleFileChange = (event: any) => {
+      let updatedFile = newFile
+  
+      switch (event.target.name) {
+        case "name":
+          updatedFile.name = event.target.value
+          break;
+        case "description":
+          updatedFile.description = event.target.value
+          break;
+        case "file":
+          updatedFile.newFilename = event.target.files[0].name
+          updatedFile.file = event.target.files[0]
+  
+          if (updatedFile.newFilename !== undefined) {
+            updatedFile.multimediaType = getFileType(updatedFile.newFilename)
+          }
+      
+          break;
+      }
+      setNewFile({...updatedFile})
+    }
+
+    const handleOpenUpdateMultimediaDialog = (selectedContentId: number) => {
+      setSelectedMultimediaId(selectedContentId)
+
+      let updatedFile = newFile
+
+      lessons.forEach((lesson: Lesson) => {
+        if (lesson.lessonId === props.selectedLessonId) {
+          lesson.multimedias.forEach((multimedia: Multimedia) => {
+            if (multimedia.contentId === selectedContentId) {
+              updatedFile.name = multimedia.name
+              updatedFile.description = multimedia.description
+              updatedFile.urlFilename = multimedia.urlFilename
+            }
+          })
+        }
+      })
+
+      openDialog()
+    }
 
     // Used to trigger rerendering of MultimediaTable whenever lessons is updated in Table Header component
     useEffect(() => {
-      const newMultimedias = lessons.find((lesson, index) => index === props.lessonIndex)?.multimedias
+      const newMultimedias = lessons.find((lesson: Lesson) => lesson.lessonId === props.selectedLessonId)?.multimedias
       if (newMultimedias) {
         setMultimedias(newMultimedias)
       }
-    }, [lessons, props.lessonIndex])
+    }, [lessons, props.selectedLessonId])
 
     const classes = useStyles();
     const [order, setOrder] = React.useState<Order>('asc');
@@ -496,12 +585,88 @@ export default function MultimediaTable(props: any) {
 
     return (
         <>
+        <Dialog 
+        fullWidth
+        open={showAddMultimediaDialog}
+        onClose={handleClose}
+        aria-labelledby="simple-modal-title"
+        aria-describedby="simple-modal-description">
+            <DialogTitle>Update an existing Multimedia</DialogTitle>
+            <DialogContent
+              style={{height: '300px'}}>
+              <DialogContentText>
+                First, enter some basic details to update the multimedia below.
+              </DialogContentText>
+              <FormControl fullWidth margin="normal">
+                <InputLabel htmlFor="multimedia-name">Multimedia Name</InputLabel>
+                <Input
+                  id="multimedia-name"
+                  name="name"
+                  type="text"
+                  autoFocus
+                  fullWidth
+                  value={newFile.name}
+                  onChange={handleFileChange}
+                />
+                </FormControl>
+                <FormControl fullWidth margin="normal">
+                  <InputLabel htmlFor="multimedia-description">Description</InputLabel>
+                  <Input
+                    id="multimedia-description"
+                    name="description"
+                    type="text"
+                    autoFocus
+                    fullWidth
+                    value={newFile.description}
+                    onChange={handleFileChange}
+                  />
+                </FormControl>
+                <FormControl fullWidth margin="normal">
+                  <InputLabel htmlFor="multimedia-filename">File Name</InputLabel>
+                  <Input
+                    id="multimedia-filename"
+                    name="filename"
+                    type="text"
+                    autoFocus
+                    fullWidth
+                    value={newFile.file?.name === "" ? newFile.urlFilename : newFile.file?.name}
+                    disabled
+                  />
+                </FormControl>
+                <FormControl fullWidth margin="normal">
+                  <input 
+                    accept={ACCEPTABLE_FILE_TYPE}
+                    className={classes.input} 
+                    id="contained-button-file" 
+                    type="file" 
+                    name="file"
+                    onChange={handleFileChange} />
+                  <InputLabel htmlFor="contained-button-file">
+                    <Button 
+                      variant="contained" 
+                      color="primary" 
+                      aria-label="upload picture" 
+                      component="span">
+                        Upload
+                    </Button>
+                  </InputLabel>
+                </FormControl>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClose}>
+                Cancel
+              </Button>
+              <Button onClick={handleClickUpdateMultimedia}>
+                Update Multimedia
+              </Button>
+            </DialogActions>
+        </Dialog>
         <div className={classes.root}>
         <Paper className={classes.paper}>
             <EnhancedTableToolbar 
                 numSelected={selectedIds.length}
                 selectedIds={selectedIds}
-                lessonIndex={props.lessonIndex}
+                selectedLessonId={props.selectedLessonId}
                 lessons={lessons}
                 setLessons={setLessons}
                 handleFormDataChange={handleFormDataChange}
@@ -553,6 +718,11 @@ export default function MultimediaTable(props: any) {
                         </TableCell>
                         <TableCell align="right">{row.description}</TableCell>
                         <TableCell align="right">{row.type}</TableCell>
+                        <TableCell align="right">
+                          <IconButton size="small" color="primary" onClick={() => {handleOpenUpdateMultimediaDialog(row.contentId)}}>
+                              <PublishIcon/>&nbsp;
+                          </IconButton>
+                        </TableCell>
                         </TableRow>
                     );
                     })}

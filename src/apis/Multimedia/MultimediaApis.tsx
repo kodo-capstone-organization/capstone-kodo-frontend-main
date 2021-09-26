@@ -32,3 +32,20 @@ export async function deleteMultimediasFromLesson(lessonId: number, contentIds: 
 
     return httpClient.delete<FormData, boolean>(deleteParamaters);
 }
+
+export async function updateMultimedia(multimediaId: number, name: string, description: string, file: File): Promise<Multimedia> {
+    const formData = new FormData();
+
+    formData.append('multimediaId', transformToBlob(multimediaId));
+    formData.append('name', name);
+    formData.append('description', description);
+
+    if (file.size !== 0) formData.append('file', file);
+
+    const postParameters: IHttpClientRequestParameters<FormData> = {
+        url: '/multimedia/updateMultimedia',
+        payload: formData
+    }
+
+    return httpClient.post<FormData, Multimedia>(postParameters)
+}

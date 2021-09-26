@@ -258,7 +258,7 @@ function LessonPlan(props: any) {
                                         <Grid item xs={12}>
                                             <QuizTable
                                                 handleFormDataChange={handleFormDataChange}
-                                                lessonIndex={index}
+                                                selectedLessonId={lesson.lessonId}
                                                 quizzes={lesson.quizzes}
                                                 lessons={lessons}
                                             />
@@ -266,7 +266,7 @@ function LessonPlan(props: any) {
                                         <Grid item xs={12}>
                                             <MultimediaTable
                                                 handleFormDataChange={handleFormDataChange}
-                                                lessonIndex={index}
+                                                selectedLessonId={lesson.lessonId}
                                                 multimedias={lesson.multimedias}
                                                 lessons={lessons}
                                             />
