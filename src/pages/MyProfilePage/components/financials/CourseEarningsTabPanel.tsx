@@ -91,7 +91,7 @@ function CourseEarningsTabPanel(props: any) {
                             <Paper elevation={2} style={{ height: "48%"}}>
                                 <Container style={{ padding: "1rem", color: colours.GRAY3, height: "100%" }}>
                                     <BigStatCaptionDiv># of Published Courses (out of all my Courses)</BigStatCaptionDiv>
-                                    <BigStatNumberDiv>{myEarnings.totalPublishedCourseCount}<span style={{ fontSize: fontSizes.HEADER, color: colours.GRAY4 }}>/4</span></BigStatNumberDiv>
+                                    <BigStatNumberDiv>{myEarnings.totalPublishedCourseCount}<span style={{ fontSize: fontSizes.HEADER, color: colours.GRAY4 }}>/{myEarnings.totalCourseCount}</span></BigStatNumberDiv>
                                 </Container>
                             </Paper>
                         </Grid>
