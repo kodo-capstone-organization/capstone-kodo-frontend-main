@@ -126,3 +126,21 @@ export const BlankStateContainer = styled.div`
     }
     
 `;
+
+export const BigStatCaptionDiv = styled.div`
+    display: flex;
+    padding: 0.5rem 0;
+    font-size: ${fontSizes.CONTENT};
+    text-align: center;
+    justify-content: center;
+`;
+
+export const BigStatNumberDiv = styled.div`
+    display: flex;
+    height: 60%;
+    font-size: ${fontSizes.GIANT};
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    color: ${colours.DARKBLUE1};
+`;

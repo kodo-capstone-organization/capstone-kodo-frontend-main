@@ -19,6 +19,9 @@ export interface GroupedByMonthsTransaction {
 }
 
 export interface TutorCourseEarningsResp {
+    totalEnrollmentCount: number,
+    totalPublishedCourseCount: number,
+    totalCourseCount: number,
     lifetimeTotalEarnings: number,
     lifetimeEarningsByCourse: any[],
     currentMonthTotalEarnings: number,
@@ -29,5 +32,9 @@ export interface TutorCourseEarningsResp {
 export interface NestedCourseStats {
     courseId: string,
     courseName: string,
+    lifetimeEarnings: string,
+    currentMonthEarnings: string,
+    monthlyAverageEarnings: string,
+    highestEarningMonthWithValue: string,
     data: any // stringified
 }
