@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Lesson } from './../../../apis/Entities/Lesson';
-import { Dialog, DialogContent, DialogContentText, DialogTitle, InputLabel, Input, FormControl, DialogActions, AppBar, Tabs, Tab, Grid, IconButton, TextField, Typography } from "@material-ui/core";
+import { Dialog, DialogContent, DialogContentText, DialogTitle, InputLabel, Input, FormControl, DialogActions, AppBar, Tabs, Tab, Grid, IconButton, TextField, Typography, Box } from "@material-ui/core";
 import AddIcon from '@material-ui/icons/Add';
 import { CourseBuilderCardHeader, CourseBuilderContent } from "./../CourseBuilderElements";
 import { tabProps, TabPanel }from './TabPanel';
@@ -8,7 +8,7 @@ import QuizTable from './QuizTable';
 import MultimediaTable from './MultimediaTable';
 import { Button } from "../../../values/ButtonElements";
 import { BlankStateContainer } from '../../MyProfilePage/ProfileElements';
-import { createNewLesson, deleteLesson } from '../../../apis/Lesson/LessonApis';
+import { createNewLesson, deleteLesson, updateLesson } from '../../../apis/Lesson/LessonApis';
 
 interface IErrors<TValue> {
     [id: string]: TValue;
@@ -54,6 +54,30 @@ function LessonPlan(props: any) {
                 setLessons(updatedLessons)
             }
         }) 
+    }
+
+    const handleUpdateLesson = (lessonId: number) => {
+        const selectedLesson = lessons.filter((lesson: Lesson) => lesson.lessonId === lessonId).pop()
+
+        if (selectedLesson !== undefined) {
+            updateLesson(selectedLesson.lessonId, selectedLesson.name, selectedLesson.description).then((newLesson) => {
+                const updatedLessons = lessons.map((lesson: Lesson) => {
+                    if (lesson.lessonId === newLesson.lessonId) {
+                        lesson = newLesson
+                    }
+                    return lesson
+                })
+        
+                let wrapperEvent = {
+                    target: {
+                        name: "lessons",
+                        value: updatedLessons
+                    }
+                }
+                handleFormDataChange(wrapperEvent)
+            })
+        }
+
     }
 
     const handleLessonNameChange = (event: any) => {
@@ -247,10 +271,22 @@ function LessonPlan(props: any) {
                                                 lessons={lessons}
                                             />
                                         </Grid>
-                                        <Grid container justifyContent="flex-end">
-                                            <Button onClick={() => handleDeleteLesson(lesson.lessonId)}>
-                                                Delete Lesson
-                                            </Button>
+                                        <Grid container spacing={3} justifyContent="flex-end">
+                                            <Box m={1} pt={2}>
+                                                <Button
+                                                    primary
+                                                    big
+                                                    onClick={() => handleUpdateLesson(lesson.lessonId)}>
+                                                    Update Lesson
+                                                </Button>
+                                            </Box>
+                                            <Box m={1} pt={2}>
+                                                <Button 
+                                                    big
+                                                    onClick={() => handleDeleteLesson(lesson.lessonId)}>
+                                                    Delete Lesson
+                                                </Button>
+                                            </Box>
                                         </Grid>
                                     </Grid>
                                 </CourseBuilderContent>

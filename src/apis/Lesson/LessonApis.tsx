@@ -34,3 +34,18 @@ export async function deleteLesson(lessonId: number): Promise<boolean> {
 
     return httpClient.delete<undefined, boolean>(deleteParameters);
 }
+
+export async function updateLesson(lessonId: number, name: string, description: string): Promise<Lesson> {
+    const formData = new FormData();
+
+    formData.append('lessonId', transformToBlob(lessonId));
+    formData.append('name', name);
+    formData.append('description', description);
+
+    const postParameters: IHttpClientRequestParameters<FormData> = {
+        url: '/lesson/updateLesson',
+        payload: formData
+    }
+
+    return httpClient.post<FormData, Lesson>(postParameters);
+}
