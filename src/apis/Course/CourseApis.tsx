@@ -62,6 +62,14 @@ export async function getCoursesToRecommend(accountId: number, limit: number): P
     return httpClient.get<undefined, RecommendedCoursesWithTags>(getParameters)
 }
 
+export async function getAllCoursesThatArePopular(): Promise<Course[]> {
+    const getParameters: IHttpClientRequestParameters<undefined> = {
+        url: `/course/getAllCoursesThatArePopular/`
+    }
+
+    return httpClient.get<undefined, Course[]>(getParameters)
+}
+
 export async function updateCourse(updateCourseReq: UpdateCourseReq, updatedBannerPicture: File, lessonMultimedias: File[]): Promise<Course> {
     const formData = new FormData();
     formData.append('updateCourseReq', transformToBlob(updateCourseReq));

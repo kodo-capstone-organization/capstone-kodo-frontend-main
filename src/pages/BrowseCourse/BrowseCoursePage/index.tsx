@@ -6,7 +6,8 @@ import {
 import { Account } from "../../../apis/Entities/Account";
 import {
   getAllCourses,
-  getCoursesToRecommend
+  getCoursesToRecommend,
+  getAllCoursesThatArePopular
 } from "../../../apis/Course/CourseApis";
 import { getMyAccount } from "../../../apis/Account/AccountApis";
 import { Tag } from "../../../apis/Entities/Tag";
@@ -33,6 +34,7 @@ function BrowseCourse() {
   const [tags, setTags] = useState<string[]>([]);
   const [recommendationLimit, _] = useState<number>(5); // default at 5
   const [coursesRecommended, setCoursesRecommended] = useState<Course[]>();
+  const [coursesPopular, setCoursesPopular] = useState<Course[]>();
   const [tagsRecommended, setTagsRecommended] = useState<Tag[]>();
   const [myAccount, setAccount] = useState<Account>();
   const [tab, setTab] = useState<number>(0); // track tab index
@@ -59,7 +61,10 @@ function BrowseCourse() {
     });
     getAllTags()
       .then(res => setTagLibrary(res))
-      .catch(error => console.log("error getting tags."));
+      .catch(error => console.log("error getting tags."));    
+    getAllCoursesThatArePopular()
+      .then(res => setCoursesPopular(res))
+      .catch(error => console.log("error getting popular courses."));
     setLoading(false);
   }, []);
 
@@ -77,7 +82,7 @@ function BrowseCourse() {
   const handleTabChange = (event: any, newTabIndex: number) => {
     setTab(newTabIndex);
   };
-  
+
   const getNewReleases = () => { // courses created in the last 14 days
     const nowDate = new Date()
     // @ts-ignore
@@ -106,7 +111,7 @@ function BrowseCourse() {
         // TODO: Browsing via popularity e.g. top x number of enrollments OR ratings? :O
         myTabIdx: 1,
         myTabName: "Popular On Kodo",
-        courseList: null,
+        courseList: coursesPopular,
         titleComponent: () => <></>
       },
       {
