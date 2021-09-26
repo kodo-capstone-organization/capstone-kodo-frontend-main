@@ -191,6 +191,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   var [errors, setErrors] = useState<IErrors<boolean>>({
     name: false,
     description: false,
+    file: false,
   });
 
   const [showAddMultimediaDialog, setShowAddMultimediaDialog] = useState<boolean>(false); 
@@ -475,6 +476,10 @@ export default function MultimediaTable(props: any) {
 
     const [selectedMultimediaId, setSelectedMultimediaId] = useState<number>(0);
     const [newFile, setNewFile] = useState<Multimedia>({ contentId: -1, name: "", description: "", url: "", multimediaType: MultimediaType.EMPTY, urlFilename: "", file: new File([""], ""), type: "multimedia"});
+    var [errors, setErrors] = useState<IErrors<boolean>>({
+      name: false,
+      description: false,
+    });
 
     const [showAddMultimediaDialog, setShowAddMultimediaDialog] = useState<boolean>(false); 
   
@@ -485,8 +490,29 @@ export default function MultimediaTable(props: any) {
     const handleClose = () => {
       setShowAddMultimediaDialog(false);
     }
+
+    const handleValidation = () => {
+      let formIsValid = true;
+      errors = {};
+  
+      if (newFile.name === "") {
+        formIsValid = false ;
+        errors['name'] = true;
+      }
+  
+      if (newFile.description === "") {
+        formIsValid = false;
+        errors['description'] = true;      
+      }
+  
+      setErrors(errors);
+  
+      return formIsValid;
+    }
   
     const handleClickUpdateMultimedia = () => {
+      if (!handleValidation()) return
+
       if (newFile.file !== undefined) {
         updateMultimedia(selectedMultimediaId, newFile.name, newFile.description, newFile.file).then((newMultimedia) => {
           console.log(newMultimedia)
@@ -546,19 +572,21 @@ export default function MultimediaTable(props: any) {
     const handleOpenUpdateMultimediaDialog = (selectedContentId: number) => {
       setSelectedMultimediaId(selectedContentId)
 
-      let updatedFile = newFile
+      let fileToUpdate = newFile
 
       lessons.forEach((lesson: Lesson) => {
         if (lesson.lessonId === props.selectedLessonId) {
           lesson.multimedias.forEach((multimedia: Multimedia) => {
             if (multimedia.contentId === selectedContentId) {
-              updatedFile.name = multimedia.name
-              updatedFile.description = multimedia.description
-              updatedFile.urlFilename = multimedia.urlFilename
+              fileToUpdate.name = multimedia.name
+              fileToUpdate.description = multimedia.description
+              fileToUpdate.urlFilename = multimedia.urlFilename
             }
           })
         }
       })
+
+      setNewFile(fileToUpdate)
 
       openDialog()
     }
@@ -643,6 +671,7 @@ export default function MultimediaTable(props: any) {
               <FormControl fullWidth margin="normal">
                 <InputLabel htmlFor="multimedia-name">Multimedia Name</InputLabel>
                 <Input
+                  error={errors['name']}
                   id="multimedia-name"
                   name="name"
                   type="text"
@@ -655,6 +684,7 @@ export default function MultimediaTable(props: any) {
                 <FormControl fullWidth margin="normal">
                   <InputLabel htmlFor="multimedia-description">Description</InputLabel>
                   <Input
+                    error={errors['description']}
                     id="multimedia-description"
                     name="description"
                     type="text"
