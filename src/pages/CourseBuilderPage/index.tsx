@@ -202,13 +202,14 @@ function CourseBuilderPage(props: any) {
                 <CourseBuilderContent>
                     <Grid container spacing={3}>
                         <Grid item xs={12}>
-                            <TextField required error={errors['name']} id="standard-basic" fullWidth label="Name" name="name" value={courseFormData.name} onChange={handleFormDataChange}/>
+                            <TextField disabled={courseFormData.isEnrollmentActive} required error={errors['name']} id="standard-basic" fullWidth label="Name" name="name" value={courseFormData.name} onChange={handleFormDataChange}/>
                         </Grid>
                         <Grid item xs={12}>
-                            <TextField id="standard-basic" fullWidth multiline maxRows={3} name="description" label="Description" value={courseFormData.description} onChange={handleFormDataChange}/>
+                            <TextField disabled={courseFormData.isEnrollmentActive} id="standard-basic" fullWidth multiline maxRows={3} name="description" label="Description" value={courseFormData.description} onChange={handleFormDataChange}/>
                         </Grid>
                         <Grid item xs={12}>
                             <TextField
+                                disabled={courseFormData.isEnrollmentActive}
                                 fullWidth
                                 label="Price"
                                 name="price"
@@ -225,6 +226,7 @@ function CourseBuilderPage(props: any) {
                         </Grid>
                         <Grid item xs={12}>
                             <Autocomplete
+                                disabled={courseFormData.isEnrollmentActive}
                                 multiple
                                 options={tagLibrary.map((option) => option.title)}
                                 defaultValue={courseFormData.courseTags.map((tag: Tag) => tag.title)}
@@ -242,7 +244,7 @@ function CourseBuilderPage(props: any) {
                             <TextField id="standard-basic" fullWidth disabled value={courseFormData.bannerPictureFileName} label="Banner Image"></TextField>
                         </Grid>
                         <Grid item xs={2}>
-                            <Button variant="contained" component="label" big>
+                            <Button disabled={courseFormData.isEnrollmentActive} variant="contained" component="label" big>
                                 Change Banner Image
                                 <input
                                     id="banner-image-upload"
@@ -256,7 +258,8 @@ function CourseBuilderPage(props: any) {
                         <Grid container spacing={3} justifyContent="flex-end">
                             <Box m={1} pt={2}>
                                 <Button
-                                    primary
+                                    disabled={courseFormData.isEnrollmentActive}
+                                    primary={!courseFormData.isEnrollmentActive}
                                     big
                                     onClick={handleUpdateCourse}>
                                     Update Course
@@ -274,7 +277,7 @@ function CourseBuilderPage(props: any) {
                 </CourseBuilderContent>
             </CourseBuilderCard>
             <CourseBuilderCard id="lesson-plan">
-                <LessonPlan courseFormData={courseFormData} lessons={courseFormData.lessons} handleFormDataChange={handleFormDataChange} courseId={courseId}/>
+                <LessonPlan isEnrollmentActive={courseFormData.isEnrollmentActive} courseFormData={courseFormData} lessons={courseFormData.lessons} handleFormDataChange={handleFormDataChange} courseId={courseId}/>
             </CourseBuilderCard>
             {/* Toggle Enrollment Course Dialog */}
             <Dialog fullWidth open={isToggleActiveEnrollmentDialogOpen} onClose={handleCloseToggleEnrollmentDialog} aria-labelledby="toggle-dialog">

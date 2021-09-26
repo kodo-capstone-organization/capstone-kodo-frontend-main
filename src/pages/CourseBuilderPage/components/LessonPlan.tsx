@@ -209,7 +209,7 @@ function LessonPlan(props: any) {
         <CourseBuilderCardHeader
             title="Lesson Plan"
             action={
-                <IconButton color="primary" onClick={openDialog}>
+                <IconButton disabled={props.isEnrollmentActive} color="primary" onClick={openDialog}>
                     <AddIcon/>&nbsp; Add Lesson
                 </IconButton>
             }/>
@@ -242,21 +242,28 @@ function LessonPlan(props: any) {
                                 <CourseBuilderContent key={index}>
                                     <Grid container spacing={3}>
                                         <Grid style={{ padding: "0!important"}} item xs={12}>
-                                            <TextField fullWidth required
-                                                       id={index.toString()}
-                                                       label="Name"
-                                                       value={lesson.name}
-                                                       onChange={handleLessonNameChange}/>
+                                            <TextField 
+                                                fullWidth 
+                                                required
+                                                disabled={props.isEnrollmentActive}
+                                                id={index.toString()}
+                                                label="Name"
+                                                value={lesson.name}
+                                                onChange={handleLessonNameChange}/>
                                         </Grid>
                                         <Grid style={{ padding: "0!important"}} item xs={12}>
-                                            <TextField fullWidth required
-                                                       id={index.toString()}
-                                                       label="Description"
-                                                       value={lesson.description}
-                                                       onChange={handleLessonDescriptionChange}/>
+                                            <TextField 
+                                                fullWidth
+                                                required
+                                                disabled={props.isEnrollmentActive}
+                                                id={index.toString()}
+                                                label="Description"
+                                                value={lesson.description}
+                                                onChange={handleLessonDescriptionChange}/>
                                         </Grid>
                                         <Grid item xs={12}>
                                             <QuizTable
+                                                isEnrollmentActive={props.isEnrollmentActive}
                                                 handleFormDataChange={handleFormDataChange}
                                                 selectedLessonId={lesson.lessonId}
                                                 quizzes={lesson.quizzes}
@@ -265,6 +272,7 @@ function LessonPlan(props: any) {
                                         </Grid>
                                         <Grid item xs={12}>
                                             <MultimediaTable
+                                                isEnrollmentActive={props.isEnrollmentActive}
                                                 handleFormDataChange={handleFormDataChange}
                                                 selectedLessonId={lesson.lessonId}
                                                 multimedias={lesson.multimedias}
@@ -274,14 +282,16 @@ function LessonPlan(props: any) {
                                         <Grid container spacing={3} justifyContent="flex-end">
                                             <Box m={1} pt={2}>
                                                 <Button
-                                                    primary
+                                                    disabled={props.isEnrollmentActive}
+                                                    primary={!props.isEnrollmentActive}
                                                     big
                                                     onClick={() => handleUpdateLesson(lesson.lessonId)}>
                                                     Update Lesson
                                                 </Button>
                                             </Box>
                                             <Box m={1} pt={2}>
-                                                <Button 
+                                                <Button
+                                                    disabled={props.isEnrollmentActive}
                                                     big
                                                     onClick={() => handleDeleteLesson(lesson.lessonId)}>
                                                     Delete Lesson

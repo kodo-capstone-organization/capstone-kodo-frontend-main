@@ -178,11 +178,12 @@ interface EnhancedTableToolbarProps {
   lessons: Lesson[];
   setLessons: any;
   setSelectedIds: any;
+  isEnrollmentActive: boolean;
 }
 
 const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   const classes = useToolbarStyles();
-  const { numSelected, selectedIds, selectedLessonId, handleFormDataChange, setLessons, lessons, setSelectedIds } = props;
+  const { numSelected, selectedIds, selectedLessonId, handleFormDataChange, setLessons, lessons, setSelectedIds, isEnrollmentActive } = props;
   const [newFile, setNewFile] = useState<Multimedia>({ contentId: -1, name: "", description: "", url: "", multimediaType: MultimediaType.EMPTY, urlFilename: "", file: new File([""], ""), type: "multimedia"});
 
   const [showAddMultimediaDialog, setShowAddMultimediaDialog] = useState<boolean>(false); 
@@ -354,10 +355,12 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
                 </FormControl>
             </DialogContent>
             <DialogActions>
-              <Button onClick={handleClose}>
+              <Button
+                onClick={handleClose}>
                 Cancel
               </Button>
-              <Button onClick={handleClickAddMultimedia}>
+              <Button
+                onClick={handleClickAddMultimedia}>
                 Add Multimedia
               </Button>
             </DialogActions>
@@ -377,7 +380,8 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
         </Typography>
       )}
       <Tooltip title="Add Multimedia">
-        <IconButton 
+        <IconButton
+          disabled={isEnrollmentActive} 
           aria-label="add" 
           onClick={openDialog}>
             <AddIcon />
@@ -385,7 +389,10 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
         </Tooltip>
       {numSelected > 0 && (
         <Tooltip title="Delete">
-          <IconButton aria-label="delete" onClick={handleDeleteMultimedia}>
+          <IconButton 
+            disabled={isEnrollmentActive} 
+            aria-label="delete" 
+            onClick={handleDeleteMultimedia}>
             <DeleteIcon />
           </IconButton>
         </Tooltip>
@@ -663,7 +670,8 @@ export default function MultimediaTable(props: any) {
         </Dialog>
         <div className={classes.root}>
         <Paper className={classes.paper}>
-            <EnhancedTableToolbar 
+            <EnhancedTableToolbar
+                isEnrollmentActive={props.isEnrollmentActive}
                 numSelected={selectedIds.length}
                 selectedIds={selectedIds}
                 selectedLessonId={props.selectedLessonId}
@@ -719,7 +727,11 @@ export default function MultimediaTable(props: any) {
                         <TableCell align="right">{row.description}</TableCell>
                         <TableCell align="right">{row.type}</TableCell>
                         <TableCell align="right">
-                          <IconButton size="small" color="primary" onClick={() => {handleOpenUpdateMultimediaDialog(row.contentId)}}>
+                          <IconButton 
+                            disabled={props.isEnrollmentActive} 
+                            size="small" 
+                            color="primary" 
+                            onClick={() => {handleOpenUpdateMultimediaDialog(row.contentId)}}>
                               <PublishIcon/>&nbsp;
                           </IconButton>
                         </TableCell>

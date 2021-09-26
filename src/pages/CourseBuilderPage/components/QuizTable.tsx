@@ -91,7 +91,7 @@ const headCells: HeadCell[] = [
   { id: 'description', numeric: true, disablePadding: false, label: 'Description' },
   { id: 'maxAttemptsPerStudent', numeric: true, disablePadding: false, label: 'Max Attempts per Student' },
   { id: 'timeLimit', numeric: true, disablePadding: false, label: 'Time Limit (HH:MM:SS)' },
-  { id: 'contentId', numeric: true, disablePadding: false, label: 'View Quiz' }
+  { id: 'contentId', numeric: true, disablePadding: false, label: '' }
 ];
 
 interface EnhancedTableProps {
@@ -102,13 +102,20 @@ interface EnhancedTableProps {
   order: Order;
   orderBy: string;
   rowCount: number;
+  isEnrollmentActive: boolean;
 }
 
 function EnhancedTableHead(props: EnhancedTableProps) {
-  const { classes, onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
+  const { classes, onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort, isEnrollmentActive } = props;
   const createSortHandler = (property: keyof Data) => (event: React.MouseEvent<unknown>) => {
     onRequestSort(event, property);
   };
+
+  headCells.map((headCell) => { 
+    if (headCell.id === "contentId") {
+      headCell.label = isEnrollmentActive ? 'View Quiz' : 'Edit Quiz'
+    }
+  })
 
   return (
     <TableHead>
@@ -178,11 +185,12 @@ interface EnhancedTableToolbarProps {
   setLessons: any;
   setSelectedIds: any;
   history: any;
+  isEnrollmentActive: boolean;
 }
 
 const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   const classes = useToolbarStyles();
-  const { numSelected, selectedIds, selectedLessonId, handleFormDataChange, setLessons, lessons, setSelectedIds} = props;
+  const { numSelected, selectedIds, selectedLessonId, handleFormDataChange, setLessons, lessons, setSelectedIds, isEnrollmentActive} = props;
   const [newQuizName, setNewQuizName] = useState<string>("");
   const [newQuizDescription, setNewQuizDescription] = useState<string>("");
   const [newQuizTimeLimitHours, setNewQuizTimeLimitHours] = useState<number>(0);
@@ -400,6 +408,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
       )}
       <Tooltip title="Add Quiz">
         <IconButton 
+          disabled={isEnrollmentActive}
           aria-label="add" 
           onClick={openDialog}>
             <AddIcon />
@@ -407,7 +416,10 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
         </Tooltip>
       {numSelected > 0 && (
         <Tooltip title="Delete">
-          <IconButton aria-label="delete" onClick={handleDeleteQuiz}>
+          <IconButton 
+            disabled={isEnrollmentActive}
+            aria-label="delete" 
+            onClick={handleDeleteQuiz}>
             <DeleteIcon />
           </IconButton>
         </Tooltip>
@@ -522,6 +534,7 @@ export default function QuizTable(props: any) {
         <div className={classes.root}>
         <Paper className={classes.paper}>
             <EnhancedTableToolbar 
+                isEnrollmentActive={props.isEnrollmentActive}
                 numSelected={selectedIds.length} 
                 selectedIds={selectedIds}
                 selectedLessonId={props.selectedLessonId}
@@ -539,6 +552,7 @@ export default function QuizTable(props: any) {
                 aria-label="enhanced table"
             >
                 <EnhancedTableHead
+                isEnrollmentActive={props.isEnrollmentActive}
                 classes={classes}
                 numSelected={selectedIds.length}
                 order={order}
