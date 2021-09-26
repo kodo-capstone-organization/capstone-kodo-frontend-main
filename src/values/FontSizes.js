@@ -1,4 +1,5 @@
 export const fontSizes = {
+    GIANT: "72px",
     TITLE: "48px",
     HEADER: "36px",
     SUBHEADER: "24px",
