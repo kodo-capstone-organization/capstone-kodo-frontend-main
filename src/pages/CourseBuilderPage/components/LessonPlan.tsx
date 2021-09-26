@@ -209,7 +209,8 @@ function LessonPlan(props: any) {
                               scrollButtons="auto"
                               aria-label="scrollable auto tabs example">
                             {lessons?.map((lesson, index) => {
-                                return (<Tab key={index} label={"Lesson " + index} {...tabProps(index)}/>)
+                                const weekNumber = index + 1
+                                return (<Tab key={index} label={"Week " + weekNumber} {...tabProps(index)}/>)
                             })}
                         </Tabs>
                     </AppBar>
