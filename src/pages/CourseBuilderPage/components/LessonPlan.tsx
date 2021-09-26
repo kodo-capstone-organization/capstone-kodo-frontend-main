@@ -23,7 +23,7 @@ function LessonPlan(props: any) {
 
     const [showAddLessonDialog, setShowAddLessonDialog] = useState<boolean>(false); 
 
-    var [errors, setErrors] = useState<IErrors<boolean>>({
+    let [errors, setErrors] = useState<IErrors<boolean>>({
         name: false,
         description: false,
     });
@@ -33,6 +33,7 @@ function LessonPlan(props: any) {
     }
   
     const handleClose = () => {
+        setErrors({}) // clear errors from form
         setShowAddLessonDialog(false);
     }
 
@@ -159,11 +160,12 @@ function LessonPlan(props: any) {
     return (
         <>
         <Dialog 
-        fullWidth
-        open={showAddLessonDialog}
-        onClose={handleClose}
-        aria-labelledby="simple-modal-title"
-        aria-describedby="simple-modal-description">
+            fullWidth
+            open={showAddLessonDialog}
+            onClose={handleClose}
+            aria-labelledby="create-lesson-modal"
+            aria-describedby="create-lesson-modal-description"
+        >
             <DialogTitle>Add a new Lesson</DialogTitle>
             <DialogContent
               style={{height: '300px'}}>
@@ -190,8 +192,8 @@ function LessonPlan(props: any) {
                     id="lesson-description"
                     name="description"
                     type="text"
-                    autoFocus
                     fullWidth
+                    multiline
                     value={newLessonDescription}
                     onChange={(e) => setNewLessonDescription(e.target.value)}
                   />
@@ -201,11 +203,11 @@ function LessonPlan(props: any) {
               <Button onClick={handleClose}>
                 Cancel
               </Button>
-              <Button onClick={handleClickCreateLesson}>
+              <Button primary onClick={handleClickCreateLesson}>
                 Create Lesson
               </Button>
             </DialogActions>
-    </Dialog>
+        </Dialog>
         <CourseBuilderCardHeader
             title="Lesson Plan"
             action={
@@ -213,7 +215,7 @@ function LessonPlan(props: any) {
                     <AddIcon/>&nbsp; Add Lesson
                 </IconButton>
             }/>
-            {lessons.length === 0 &&
+            {lessons.length === 0 && !props.isEnrollmentActive &&
                 <BlankStateContainer style={{ padding: "2rem"}}>
                     <Typography variant="h5">Begin building your course by adding one or more lessons! 🤓</Typography>
                     <br/>
@@ -247,7 +249,7 @@ function LessonPlan(props: any) {
                                                 required
                                                 disabled={props.isEnrollmentActive}
                                                 id={index.toString()}
-                                                label="Name"
+                                                label="Lesson Name"
                                                 value={lesson.name}
                                                 onChange={handleLessonNameChange}/>
                                         </Grid>
@@ -257,7 +259,7 @@ function LessonPlan(props: any) {
                                                 required
                                                 disabled={props.isEnrollmentActive}
                                                 id={index.toString()}
-                                                label="Description"
+                                                label="Lesson Description"
                                                 value={lesson.description}
                                                 onChange={handleLessonDescriptionChange}/>
                                         </Grid>

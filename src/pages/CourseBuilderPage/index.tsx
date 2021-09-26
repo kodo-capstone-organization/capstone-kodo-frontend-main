@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useReducer } from "react";
 import { useHistory } from "react-router-dom";
-import { Box, Grid, TextField, Chip, InputAdornment, Dialog, DialogTitle, DialogActions, DialogContent} from "@material-ui/core";
+import { Box, Grid, TextField, Chip, InputAdornment, Dialog, DialogTitle, DialogActions, DialogContent, Breadcrumbs, Link} from "@material-ui/core";
 import { CourseBuilderCard, CourseBuilderCardHeader, CourseBuilderContainer, CourseBuilderContent } from "./CourseBuilderElements";
 import LessonPlan from "./components/LessonPlan";
 import { getCourseByCourseId, updateCourse, toggleEnrollmentActiveStatus } from './../../apis/Course/CourseApis';
@@ -10,6 +10,7 @@ import { Autocomplete } from "@material-ui/lab";
 import { getAllTags } from '../../apis/Tag/TagApis';
 import DoneIcon from '@material-ui/icons/Done';
 import PublishIcon from '@material-ui/icons/Publish';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { Button } from "../../values/ButtonElements";
 
 interface IErrors<TValue> {
@@ -34,7 +35,7 @@ function CourseBuilderPage(props: any) {
     const [isToggleActiveEnrollmentDialogOpen, setIsToggleActiveEnrollmentDialogOpen] = useState<boolean>(false);
     const [courseFormData, setCourseFormData] = useReducer(formReducer, {});
     const [isTutorOfCourse, setIsTutorOfCourse] = useState<boolean>(false);
-    var [errors, setErrors] = useState<IErrors<boolean>>({
+    let [errors, setErrors] = useState<IErrors<boolean>>({
         name: false,
         description: false,
         price: false
@@ -93,6 +94,12 @@ function CourseBuilderPage(props: any) {
     }
 
     const handleFormDataChange = (event: any) => {
+        // Clear any existing errors on specific field while retaining other fields' error states
+        const fieldName = event.target.name;
+        const newErrorObj = Object.assign({}, errors, { [fieldName]: false })
+        setErrors(newErrorObj)
+
+        // Set data
         setCourseFormData({
             name: event.target.name,
             value: event.target.value,
@@ -182,13 +189,24 @@ function CourseBuilderPage(props: any) {
         return courseFormData.isEnrollmentActive ? "Unpublish" : "Publish"
     }
 
+    const navigateToCourseOverview = () => {
+        history.push(`/overview/${courseFormData.courseId}`)
+    }
+
     const navigateToPreviousPage = () => {
         history.goBack();
     }
 
     return !loading && ( !isTutorOfCourse ? 
         <h1>You are not a tutor of this course 😡</h1> :       
-        <CourseBuilderContainer> 
+        <CourseBuilderContainer>
+            <Breadcrumbs aria-label="coursebuilder-breadcrumb" style={{ marginBottom: "1rem"}}>
+                <Link color="primary" href={`/overview/${courseFormData.courseId}`}>
+                    <ArrowBackIcon style={{ verticalAlign: "middle"}}/>&nbsp;
+                    <span style={{ verticalAlign: "bottom"}}>Back To Overview</span>
+                </Link>
+            </Breadcrumbs>
+
             <CourseBuilderCard id="course-information">
                 <CourseBuilderCardHeader
                     title="Course Information"
@@ -262,14 +280,7 @@ function CourseBuilderPage(props: any) {
                                     primary={!courseFormData.isEnrollmentActive}
                                     big
                                     onClick={handleUpdateCourse}>
-                                    Update Course
-                                </Button>
-                            </Box>
-                            <Box m={1} pt={2}>
-                                <Button
-                                    big
-                                    onClick={navigateToPreviousPage}>
-                                    Cancel
+                                    Update Course Information
                                 </Button>
                             </Box>
                         </Grid>

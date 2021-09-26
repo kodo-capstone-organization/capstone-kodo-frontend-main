@@ -23,7 +23,7 @@ import { Dialog, DialogContent, DialogContentText, DialogTitle, InputLabel, Inpu
 import { ACCEPTABLE_FILE_TYPE, getFileType } from '../../../utils/GetFileType';
 import { Button } from "../../../values/ButtonElements";
 import { addNewMultimediaToLesson, deleteMultimediasFromLesson, updateMultimedia } from '../../../apis/Multimedia/MultimediaApis';
-import PublishIcon from '@material-ui/icons/Publish';
+import EditIcon from '@material-ui/icons/Edit';
 
 interface IErrors<TValue> {
   [id: string]: TValue;
@@ -353,8 +353,8 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
                     id="multimedia-description"
                     name="description"
                     type="text"
-                    autoFocus
                     fullWidth
+                    multiline
                     value={newFile.description}
                     onChange={handleFileChange}
                   />
@@ -366,7 +366,6 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
                     id="multimedia-filename"
                     name="filename"
                     type="text"
-                    autoFocus
                     fullWidth
                     value={newFile.file?.name}
                     disabled
@@ -396,8 +395,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
                 onClick={handleClose}>
                 Cancel
               </Button>
-              <Button
-                onClick={handleClickAddMultimedia}>
+              <Button primary onClick={handleClickAddMultimedia}>
                 Add Multimedia
               </Button>
             </DialogActions>
@@ -665,9 +663,6 @@ export default function MultimediaTable(props: any) {
             <DialogTitle>Update an existing Multimedia</DialogTitle>
             <DialogContent
               style={{height: '300px'}}>
-              <DialogContentText>
-                First, enter some basic details to update the multimedia below.
-              </DialogContentText>
               <FormControl fullWidth margin="normal">
                 <InputLabel htmlFor="multimedia-name">Multimedia Name</InputLabel>
                 <Input
@@ -688,8 +683,8 @@ export default function MultimediaTable(props: any) {
                     id="multimedia-description"
                     name="description"
                     type="text"
-                    autoFocus
                     fullWidth
+                    multiline
                     value={newFile.description}
                     onChange={handleFileChange}
                   />
@@ -700,7 +695,6 @@ export default function MultimediaTable(props: any) {
                     id="multimedia-filename"
                     name="filename"
                     type="text"
-                    autoFocus
                     fullWidth
                     value={newFile.file?.name === "" ? newFile.urlFilename : newFile.file?.name}
                     disabled
@@ -798,7 +792,7 @@ export default function MultimediaTable(props: any) {
                             size="small" 
                             color="primary" 
                             onClick={() => {handleOpenUpdateMultimediaDialog(row.contentId)}}>
-                              <PublishIcon/>&nbsp;
+                              <EditIcon/>&nbsp;
                           </IconButton>
                         </TableCell>
                         </TableRow>

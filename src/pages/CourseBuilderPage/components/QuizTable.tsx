@@ -310,8 +310,8 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
                     id="quiz-description"
                     name="description"
                     type="text"
-                    autoFocus
                     fullWidth
+                    multiline
                     value={newQuizDescription}
                     onChange={(e) => setNewQuizDescription(e.target.value)}
                   />
@@ -326,7 +326,6 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
                       placeholder="Hours"
                       name="timelimit"
                       type="number"
-                      autoFocus
                       value={newQuizTimeLimitHours}
                       onChange={(e) => {
                         let value = parseInt(e.target.value)
@@ -347,7 +346,6 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
                       placeholder="Minutes"
                       name="timelimit"
                       type="number"
-                      autoFocus
                       value={newQuizTimeLimitMinutes}
                       onChange={(e) => {
                         let value = parseInt(e.target.value)
@@ -368,7 +366,6 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
                     id="quiz-maxattempts"
                     name="description"
                     type="number"
-                    autoFocus
                     fullWidth
                     value={newQuizMaxAttempts}
                     onChange={(e) => {
@@ -387,7 +384,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
               <Button onClick={handleClose}>
                 Cancel
               </Button>
-              <Button onClick={handleClickBuildQuiz}>
+              <Button primary onClick={handleClickBuildQuiz}>
                 Build Quiz
               </Button>
             </DialogActions>

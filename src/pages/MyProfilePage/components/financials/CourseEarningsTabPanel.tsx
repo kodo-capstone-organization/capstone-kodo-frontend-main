@@ -48,7 +48,6 @@ function CourseEarningsTabPanel(props: any) {
     }, [accountId])
 
     useEffect(() => {
-        console.log("in useeffect")
         if (myEarnings && myEarnings.courseStatsByMonthForLastYear.length > 0)
         {
             const selectedCourse = myEarnings.courseStatsByMonthForLastYear.find(item => item.courseId === selectedCourseId)
