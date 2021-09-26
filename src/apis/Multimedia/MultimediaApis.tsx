@@ -47,5 +47,13 @@ export async function updateMultimedia(multimediaId: number, name: string, descr
         payload: formData
     }
 
-    return httpClient.post<FormData, Multimedia>(postParameters)
+    return httpClient.post<FormData, Multimedia>(postParameters)   
+}
+
+export async function getMultimediaByMultimediaId(multimediaId: number): Promise<Multimedia> {
+    const getParameters: IHttpClientRequestParameters<undefined> = {
+        url: `/multimedia/getMultimediaByMultimediaId/${multimediaId}`
+    }
+
+    return httpClient.get<undefined, Multimedia>(getParameters);
 }

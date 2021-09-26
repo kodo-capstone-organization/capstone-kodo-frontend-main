@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { NestedCourseStats, TutorCourseEarningsResp } from "../../../../apis/Entities/Transaction";
 import { getCourseEarningsPageData } from "../../../../apis/Transaction/TransactionApis";
-import { BlankStateContainer, ProfileCard, ProfileCardContent, ProfileCardHeader } from "../../ProfileElements";
+import {BigStatCaptionDiv, BigStatNumberDiv, ProfileCard, ProfileCardContent, ProfileCardHeader } from "../../ProfileElements";
 import { colours, paletteColours } from "../../../../values/Colours";
 import { fontSizes } from "../../../../values/FontSizes";
 import { MONTHS } from "../../../../values/DateTime";
@@ -82,14 +82,16 @@ function CourseEarningsTabPanel(props: any) {
                     <Grid container spacing={3}>
                         <Grid item xs={2} >
                             <Paper elevation={2} style={{ height: "48%"}}>
-                                <Container style={{ paddingTop: "1rem", color: colours.GRAY3 }}>
-                                    Total number of enrollments
+                                <Container style={{ padding: "1rem", color: colours.GRAY3, height: "100%"}}>
+                                    <BigStatCaptionDiv># of Student Enrollments</BigStatCaptionDiv>
+                                    <BigStatNumberDiv>{myEarnings.totalEnrollmentCount}</BigStatNumberDiv>
                                 </Container>
                             </Paper>
                             <br/>
                             <Paper elevation={2} style={{ height: "48%"}}>
-                                <Container style={{ paddingTop: "1rem", color: colours.GRAY3 }}>
-                                    Some other stat
+                                <Container style={{ padding: "1rem", color: colours.GRAY3, height: "100%" }}>
+                                    <BigStatCaptionDiv># of Published Courses (out of all my Courses)</BigStatCaptionDiv>
+                                    <BigStatNumberDiv>{myEarnings.totalPublishedCourseCount}<span style={{ fontSize: fontSizes.HEADER, color: colours.GRAY4 }}>/{myEarnings.totalCourseCount}</span></BigStatNumberDiv>
                                 </Container>
                             </Paper>
                         </Grid>
@@ -146,7 +148,7 @@ function CourseEarningsTabPanel(props: any) {
                             <Grid item xs={4}>
                                 <Paper elevation={2} style={{ height: "100%"}}>
                                     <Toolbar style={{ background: colours.GRAY7 }}>
-                                        My Course: &nbsp;&nbsp;
+                                        <span style={{ color: colours.GRAY3 }}>My Course</span>: &nbsp;&nbsp;
                                         <FormControl variant="outlined" size="small">
                                             <Select id="course-select" value={selectedCourseId} onChange={handleChangeCourse}>
                                                 { myEarnings?.courseStatsByMonthForLastYear.map(item => (
@@ -156,16 +158,17 @@ function CourseEarningsTabPanel(props: any) {
                                         </FormControl>
                                     </Toolbar>
                                     <Container style={{ paddingTop: "1rem", color: colours.GRAY3 }}>
-                                        Lifetime Earnings: $YYY
+                                        <br/>
+                                        Lifetime Earnings: <strong style={{ color: colours.DARKBLUE1 }}>${selectedCourseItem.lifetimeEarnings}</strong>
                                         <br/>
                                         <br/>
-                                        This Month's Earnings: $YYY
+                                        This Month's Earnings: <strong style={{ color: colours.DARKBLUE1 }}>${selectedCourseItem.currentMonthEarnings}</strong>
                                         <br/>
                                         <br/>
-                                        Highest Earning Month: XXX ($YY)
+                                        Highest Earning Month: <strong style={{ color: colours.DARKBLUE1 }}>{selectedCourseItem.highestEarningMonthWithValue}</strong>
                                         <br/>
                                         <br/>
-                                        Monthly Average Earnings: $ZZZ
+                                        Monthly Average Earnings: <strong style={{ color: colours.DARKBLUE1 }}>${selectedCourseItem.monthlyAverageEarnings}</strong>
                                     </Container>
                                 </Paper>
                             </Grid>

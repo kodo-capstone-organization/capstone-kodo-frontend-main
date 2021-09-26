@@ -15,6 +15,7 @@ export const colours = {
     WHITE: "#FFFFFF",
     YELLOW1: "#FFD23F",
     YELLOW2: "#FFE58F",
+    DARKBLUE1: "#274B69",
     BLUE1: "#3B60E4",
     BLUE2: "#748DE7",
     RED: "#EC3B3B",
