@@ -581,7 +581,7 @@ export default function QuizTable(props: any) {
                         <TableCell align="right">{row.maxAttemptsPerStudent}</TableCell>
                         <TableCell align="right">{row.timeLimit}</TableCell>
                         <TableCell align="right">
-                          <IconButton color="primary" onClick={() => navigateToQuizBuilderViewMode(row.contentId)}>
+                          <IconButton size="small" color="primary" onClick={() => navigateToQuizBuilderViewMode(row.contentId)}>
                               <NavigateNextIcon/>&nbsp;
                           </IconButton>
                         </TableCell>
