@@ -26,3 +26,11 @@ export async function createNewLesson(courseId: number, name: string, descriptio
 
     return httpClient.post<FormData, Lesson>(postParameters)
 }
+
+export async function deleteLesson(lessonId: number): Promise<boolean> {
+    const deleteParameters: IHttpClientRequestParameters<undefined> = {
+        url: `/lesson/deleteLesson/${lessonId}`
+    }
+
+    return httpClient.delete<undefined, boolean>(deleteParameters);
+}

@@ -8,7 +8,7 @@ import QuizTable from './QuizTable';
 import MultimediaTable from './MultimediaTable';
 import { Button } from "../../../values/ButtonElements";
 import { BlankStateContainer } from '../../MyProfilePage/ProfileElements';
-import { createNewLesson } from '../../../apis/Lesson/LessonApis';
+import { createNewLesson, deleteLesson } from '../../../apis/Lesson/LessonApis';
 
 interface IErrors<TValue> {
     [id: string]: TValue;
@@ -36,26 +36,24 @@ function LessonPlan(props: any) {
         setShowAddLessonDialog(false);
     }
 
-    const addToLessons = () => {
-        // @ts-ignore
-        const updatedLessons = lessons.concat({ multimedias: [], quizzes: [] });
-        setLessons(updatedLessons)
-    }
-
     const handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
         setTabValue(newValue);
     }
 
-    const handleDeleteLesson = (lessonIdxToDelete: number) => {
-        const updatedLessons = lessons.filter((lesson: Lesson, index: number) => index !== lessonIdxToDelete)
-        let wrapperEvent = {
-            target: {
-                name: "lessons",
-                value: updatedLessons
+    const handleDeleteLesson = (lessonId: number) => {
+        deleteLesson(lessonId).then((result) => {
+            if (result) {
+                const updatedLessons = lessons.filter((lesson: Lesson) => lesson.lessonId !== lessonId)
+                let wrapperEvent = {
+                    target: {
+                        name: "lessons",
+                        value: updatedLessons
+                    }
+                }
+                handleFormDataChange(wrapperEvent)
+                setLessons(updatedLessons)
             }
-        }
-        handleFormDataChange(wrapperEvent)
-        setLessons(updatedLessons)
+        }) 
     }
 
     const handleLessonNameChange = (event: any) => {
@@ -250,7 +248,7 @@ function LessonPlan(props: any) {
                                             />
                                         </Grid>
                                         <Grid container justifyContent="flex-end">
-                                            <Button onClick={() => handleDeleteLesson(index)}>
+                                            <Button onClick={() => handleDeleteLesson(lesson.lessonId)}>
                                                 Delete Lesson
                                             </Button>
                                         </Grid>
