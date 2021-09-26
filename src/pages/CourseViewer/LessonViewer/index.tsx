@@ -173,6 +173,7 @@ function LessonViewer(props: any) {
                   key={m.contentId}
                   isCompleted={checkCompleted(m.contentId)}
                   previousCompleted={previousLessonCompleted()}
+                  to={`/overview/lesson/${courseId}/${lessonId}/${m.contentId}`}
                 >
                   {m.multimediaType === "PDF" ? <ReadingIcon /> : <PlayIcon />}
                   {m.multimediaType === "PDF" ? "Reading" : "Video"}: {m.name}

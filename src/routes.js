@@ -16,7 +16,7 @@ import QuizBuidlerPage from "./pages/QuizBuilderPage";
 
 import CourseOverview from "./pages/CourseViewer";
 import LessonViewerWithRouter from "./pages/CourseViewer/LessonViewer";
-
+import MultimediaViewerWithRouter from "./pages/CourseViewer/MultimediaViewer";
 
 function Routes() {
     return (
@@ -40,6 +40,9 @@ function Routes() {
                             : <Redirect to="/" />}
                         {window.sessionStorage.getItem("loggedInAccountId") ?
                             <Route path="/overview/lesson/:courseId/:lessonId" component={LessonViewerWithRouter} exact />
+                            : <Redirect to="/" />}
+                        {window.sessionStorage.getItem("loggedInAccountId") ?
+                            <Route path="/overview/lesson/:courseId/:lessonId/:contentId" component={MultimediaViewerWithRouter} exact />
                             : <Redirect to="/" />}
                         {
                             RouteItemsWithSidebar.map(item => {
