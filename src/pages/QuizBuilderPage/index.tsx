@@ -91,7 +91,7 @@ function QuizBuilderPage(props: any) {
                 .then((res) => { console.log("Success updating quiz", res); setQuiz(res);})
                 .catch((err) => { console.log("error updating quiz", err) });
         }
-        // window.location.reload(false); 
+        window.location.reload(false); 
     }
 
     const handleUpdateQuestion = (updatedQuizQuestion: QuizQuestion, index: number) => {
