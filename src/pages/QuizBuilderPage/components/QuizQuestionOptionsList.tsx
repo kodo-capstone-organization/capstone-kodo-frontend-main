@@ -57,7 +57,11 @@ function QuizQuestionOptionsList(props: any) {
                 : x)
         });
         setQuizQuestionOptions(newQuizQuestionOptions);
-        props.onHandleQuizQuestionOptionUpdate(newQuizQuestionOptions, questionIndex)
+        console.log("option to update", event.target.value)
+        if(event.target.value != ""){
+            console.log("non-empty option to update", event.target.value)
+            props.onHandleQuizQuestionOptionUpdate(newQuizQuestionOptions, questionIndex)
+        }
     }
 
     const handleDeleteOption = (event: React.MouseEvent<unknown>, optionIndex: number) => {
@@ -85,7 +89,7 @@ function QuizQuestionOptionsList(props: any) {
         }
         const newQuizQuestionOptions = quizQuestionOptions?.concat([newQuizQuestionOption]);
         setQuizQuestionOptions(newQuizQuestionOptions);
-        props.onHandleQuizQuestionOptionUpdate(newQuizQuestionOptions, questionIndex)
+        // props.onHandleQuizQuestionOptionUpdate(newQuizQuestionOptions, questionIndex)
 
     }
 
