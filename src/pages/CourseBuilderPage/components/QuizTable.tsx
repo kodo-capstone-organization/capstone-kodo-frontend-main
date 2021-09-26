@@ -521,8 +521,12 @@ export default function QuizTable(props: any) {
         setPage(0);
     };
 
-    const navigateToQuizBuilderViewMode = (quizId: number) => {
-      history.push({ pathname: `/buildquiz/${quizId}`, state: { mode: 'VIEW' } })
+    const navigateToQuizBuilder = (quizId: number) => {
+      if (props.isEnrollmentActive) {
+        history.push({ pathname: `/buildquiz/${quizId}`, state: { mode: 'VIEW' } })
+      } else {
+        history.push({ pathname: `/buildquiz/${quizId}`, state: { mode: 'EDIT' } })
+      }
     }
 
     const isSelected = (index: number) => selectedIds.indexOf(index) !== -1;
@@ -593,7 +597,7 @@ export default function QuizTable(props: any) {
                         <TableCell align="right">{row.maxAttemptsPerStudent}</TableCell>
                         <TableCell align="right">{row.timeLimit}</TableCell>
                         <TableCell align="right">
-                          <IconButton size="small" color="primary" onClick={() => navigateToQuizBuilderViewMode(row.contentId)}>
+                          <IconButton size="small" color="primary" onClick={() => navigateToQuizBuilder(row.contentId)}>
                               <NavigateNextIcon/>&nbsp;
                           </IconButton>
                         </TableCell>
