@@ -25,6 +25,9 @@ import { Button } from "../../../values/ButtonElements";
 import { addNewMultimediaToLesson, deleteMultimediasFromLesson, updateMultimedia } from '../../../apis/Multimedia/MultimediaApis';
 import PublishIcon from '@material-ui/icons/Publish';
 
+interface IErrors<TValue> {
+  [id: string]: TValue;
+}
 interface Data {
   id: number,
   name: string,
@@ -185,6 +188,10 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   const classes = useToolbarStyles();
   const { numSelected, selectedIds, selectedLessonId, handleFormDataChange, setLessons, lessons, setSelectedIds, isEnrollmentActive } = props;
   const [newFile, setNewFile] = useState<Multimedia>({ contentId: -1, name: "", description: "", url: "", multimediaType: MultimediaType.EMPTY, urlFilename: "", file: new File([""], ""), type: "multimedia"});
+  var [errors, setErrors] = useState<IErrors<boolean>>({
+    name: false,
+    description: false,
+  });
 
   const [showAddMultimediaDialog, setShowAddMultimediaDialog] = useState<boolean>(false); 
 
@@ -196,7 +203,33 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
     setShowAddMultimediaDialog(false);
   }
 
+  const handleValidation = () => {
+    let formIsValid = true;
+    errors = {};
+
+    if (newFile.name === "") {
+      formIsValid = false;
+      errors['name'] = true;
+    }
+
+    if (newFile.description === "") {
+      formIsValid = false;
+      errors['description'] = true;      
+    }
+
+    if (newFile.file?.size === 0) {
+      formIsValid = false;
+      errors['file'] = true;
+    }
+
+    setErrors(errors);
+
+    return formIsValid;
+  }
+
   const handleClickAddMultimedia = () => {
+    if (!handleValidation()) return
+
     const currentLessonId = lessons.filter((lesson: Lesson) => lesson.lessonId === selectedLessonId).pop()?.lessonId
 
     if (currentLessonId !== undefined && newFile.file !== undefined) {
@@ -302,6 +335,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
               <FormControl fullWidth margin="normal">
                 <InputLabel htmlFor="multimedia-name">Multimedia Name</InputLabel>
                 <Input
+                  error={errors['name']}
                   id="multimedia-name"
                   name="name"
                   type="text"
@@ -314,6 +348,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
                 <FormControl fullWidth margin="normal">
                   <InputLabel htmlFor="multimedia-description">Description</InputLabel>
                   <Input
+                    error={errors['description']}
                     id="multimedia-description"
                     name="description"
                     type="text"
@@ -326,6 +361,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
                 <FormControl fullWidth margin="normal">
                   <InputLabel htmlFor="multimedia-filename">File Name</InputLabel>
                   <Input
+                    error={errors['file']}
                     id="multimedia-filename"
                     name="filename"
                     type="text"

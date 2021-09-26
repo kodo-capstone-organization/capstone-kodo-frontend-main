@@ -199,7 +199,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   var [errors, setErrors] = useState<IErrors<boolean>>({
     name: false,
     description: false,
-});
+  });
 
   const [showAddQuizDialog, setShowAddQuizDialog] = useState<boolean>(false); 
 
