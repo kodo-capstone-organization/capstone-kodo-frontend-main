@@ -64,15 +64,19 @@ export const LessonDescription = styled.div`
   padding: 0 20px 20px 20px;
 `;
 export const ContentMenu = styled.div`
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: repeat(4, 45px);
-  text-align: left;
+  // display: grid;
+  // grid-template-columns: 1fr;
+  // grid-template-rows: repeat(4, 45px);
+  // text-align: left;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 20px;
 `;
 export const ContentLink = styled(Link)`
   display: flex;
   align-items: center;
   justify-content: flex-start;
+  height: 55px;
   font-size: ${fontSizes.SUBTEXT};
   text-decoration: none;
   list-style: none;

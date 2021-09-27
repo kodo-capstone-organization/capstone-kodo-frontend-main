@@ -72,6 +72,8 @@ function LessonViewer(props: any) {
       setEnrolledLesson(receivedEnrolledLesson);
     });   
   }, []);
+  console.log(enrolledLesson);
+
 
   useEffect(() => {
     if (accountId !== null && courseId !== null ) {
@@ -137,6 +139,7 @@ function LessonViewer(props: any) {
     let enrolledContent = enrolledLesson?.enrolledContents.find(
       i => i.parentContent?.contentId === contentId
     );
+    console.log(enrolledContent?.enrolledContentId)
     if (enrolledContent?.dateTimeOfCompletion !== null || isCourseTutor) {
       return true;
     }
