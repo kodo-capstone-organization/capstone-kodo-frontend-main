@@ -162,8 +162,11 @@ function Profile(props: any) {
             setCourseBannerImageFile(null);
             handleClose();
 
-            // Redirect
+            // Display success + Redirect
+            props.callOpenSnackBar("Course successfully created", "success")
             props.history.push(`/builder/${res.courseId}`);
+        }).catch((error) => {
+            props.callOpenSnackBar(`Error in creating course: ${error}`, "error")
         });
 
         setCreateCourseLoading(false);

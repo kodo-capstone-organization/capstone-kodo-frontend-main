@@ -53,7 +53,7 @@ function MyProfilePage(props: any) {
             </Breadcrumbs>
 
             { /* Conditional Rendering of Subpage */}
-            { isIndexPage && myAccount && <Profile account={myAccount} history={history}/> }
+            { isIndexPage && myAccount && <Profile account={myAccount} history={history} callOpenSnackBar={props.callOpenSnackBar}/> }
             { !isIndexPage && history.location.pathname.includes("settings") && <ProfileSettings account={myAccount} history={history} /> }
             { !isIndexPage && !history.location.pathname.includes("settings") && <ProfileFinancials /> }
 

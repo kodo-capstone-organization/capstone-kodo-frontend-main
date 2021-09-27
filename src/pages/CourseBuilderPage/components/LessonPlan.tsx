@@ -44,6 +44,7 @@ function LessonPlan(props: any) {
     const handleDeleteLesson = (lessonId: number) => {
         deleteLesson(lessonId).then((result) => {
             if (result) {
+                props.callOpenSnackBar("Lesson successfully deleted", "success")
                 const updatedLessons = lessons.filter((lesson: Lesson) => lesson.lessonId !== lessonId)
                 let wrapperEvent = {
                     target: {
@@ -54,7 +55,7 @@ function LessonPlan(props: any) {
                 handleFormDataChange(wrapperEvent)
                 setLessons(updatedLessons)
             }
-        }) 
+        }).catch(error => { props.callOpenSnackBar(`Error in deleting lesson: ${error}`, "error") });
     }
 
     const handleUpdateLesson = (lessonId: number) => {
@@ -62,6 +63,9 @@ function LessonPlan(props: any) {
 
         if (selectedLesson !== undefined) {
             updateLesson(selectedLesson.lessonId, selectedLesson.name, selectedLesson.description).then((newLesson) => {
+
+                props.callOpenSnackBar("Lesson successfully updated", "success")
+
                 const updatedLessons = lessons.map((lesson: Lesson) => {
                     if (lesson.lessonId === newLesson.lessonId) {
                         lesson = newLesson
@@ -76,7 +80,7 @@ function LessonPlan(props: any) {
                     }
                 }
                 handleFormDataChange(wrapperEvent)
-            })
+            }).catch(error => { props.callOpenSnackBar(`Error in updating lesson: ${error}`, "error") });
         }
 
     }
@@ -151,10 +155,11 @@ function LessonPlan(props: any) {
             setLessons(updatedLessons)
 
             // Clean up modal
+            props.callOpenSnackBar("Lesson successfully created", "success")
             handleClose()
             setNewLessonName("")
             setNewLessonDescription("")
-        })
+        }).catch(error => { props.callOpenSnackBar(`Error in creating lesson: ${error}`, "error") });
     }
 
     return (
@@ -261,6 +266,7 @@ function LessonPlan(props: any) {
                                                 id={index.toString()}
                                                 label="Lesson Description"
                                                 value={lesson.description}
+                                                multiline
                                                 onChange={handleLessonDescriptionChange}/>
                                         </Grid>
                                         <Grid item xs={12}>

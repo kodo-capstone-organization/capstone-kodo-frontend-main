@@ -24,13 +24,14 @@ import { severityList } from './values/Colours';
 
 function Routes() {
 
-    const [isSnackBarOpen, setIsSnackBarOpen] = useState(false); // TODO: set to false
+    const [isSnackBarOpen, setIsSnackBarOpen] = useState(false);
     const [snackBarMessage, setSnackBarMessage] = useState("");
-    const [snackBarSeverity, setSnackBarSeverity] = useState("info"); // error, warning, info, success ONLY
+    const [snackBarSeverity, setSnackBarSeverity] = useState("info"); 
 
     // To be propped into children components for them to call
     const callOpenSnackBar = (messageFromCaller: string, severityFromCaller: string) => {
 
+        // severityList: error, warning, info, success ONLY
         if (!severityList.includes(severityFromCaller)) { // invalid severity received, default to info
             severityFromCaller = "info"
         }
