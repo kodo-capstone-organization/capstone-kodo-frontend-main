@@ -47,6 +47,10 @@ function MultimediaViewer(props: any) {
   const [currentMultimedia, setMultimedia] = useState<Multimedia>();
   const [currentLesson, setLesson] = useState<Lesson>();
   const [currentCourse, setCourse] = useState<Course>();
+  const [numPages, setNumPages] = useState<number>();
+  const [pageNumber, setPageNumber] = useState<number>(1);
+
+
 
   useEffect(() => {
     getMultimediaByMultimediaId(contentId).then(receivedMultimedia => {
@@ -62,8 +66,12 @@ function MultimediaViewer(props: any) {
 
   console.log(currentMultimedia);
 
-  const url =  "https://cors-anywhere.herokuapp.com/" +currentMultimedia?.url;
+  function onDocumentLoadSuccess({ numPages }: any) {
+    setNumPages(numPages);
+  }
 
+  //const url =  "https://cors-anywhere.herokuapp.com/" +currentMultimedia?.url;
+  const url1 =  "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf";
   // return (<div>hello! {currentMultimedia?.multimediaType} goes here</div>)
   return (
     <>
@@ -103,18 +111,15 @@ function MultimediaViewer(props: any) {
         </ImageCard> */}
 
         <PDFCard>
-          {currentMultimedia && currentMultimedia?.multimediaType === "PDF" &&
-          <Document file= {url} />
+          {currentMultimedia && currentMultimedia.multimediaType === "PDF" &&
+          <Document 
+          file= "https://downloads.hindawi.com/journals/mpe/2018/5213504.pdf"
+          onLoadSuccess={onDocumentLoadSuccess}
+          >
+          <Page pageNumber={pageNumber} />
+          </Document>
           }
-          {/* <Document file= {"./dummy.pdf"} />
-          {currentMultimedia?.url} */}
-          {/* <Document
-            file={{
-              url:
-                "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
-            }}
-            // onLoadSuccess={onDocumentLoadSuccess}
-          ></Document> */}
+          <p>Page {pageNumber} of {numPages}</p>
         </PDFCard>
 
       </MultimediaContainer>
