@@ -19,7 +19,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import { Quiz } from '../../../apis/Entities/Quiz';
 import { Lesson } from '../../../apis/Entities/Lesson';
 import { useHistory } from "react-router-dom";
-import NavigateNextIcon from '@material-ui/icons/NavigateNext';
+import EditIcon from '@material-ui/icons/Edit';
 import AddIcon from '@material-ui/icons/Add';
 import { Dialog, DialogContent, DialogContentText, DialogTitle, InputLabel, Input, FormControl, DialogActions, Grid, Chip} from '@material-ui/core';
 import { Button } from "../../../values/ButtonElements";
@@ -113,7 +113,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
 
   headCells.map((headCell) => { 
     if (headCell.id === "contentId") {
-      headCell.label = isEnrollmentActive ? 'View Quiz' : 'Edit Quiz'
+      headCell.label = isEnrollmentActive ? 'View Quiz' : 'Update Quiz'
     }
   })
 
@@ -186,6 +186,7 @@ interface EnhancedTableToolbarProps {
   setSelectedIds: any;
   history: any;
   isEnrollmentActive: boolean;
+  callOpenSnackBar: any;
 }
 
 const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
@@ -228,19 +229,24 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
     })
 
     // Delete all the selected quizzes
-    deleteQuizzes(quizIdsToDelete).then((result) => {
-      setLessons(updatedLessons)
-
-      let wrapperEvent = {
-        target: {
-          name: "lessons",
-          value: updatedLessons
-        }
-      }
-
-      handleFormDataChange(wrapperEvent)
-      setSelectedIds([])
-      })
+    deleteQuizzes(quizIdsToDelete)
+        .then((result) => {
+          props.callOpenSnackBar("Quiz successfully deleted", "success")
+          setLessons(updatedLessons)
+    
+          let wrapperEvent = {
+            target: {
+              name: "lessons",
+              value: updatedLessons
+            }
+          }
+              
+          handleFormDataChange(wrapperEvent)
+          setSelectedIds([])
+        })
+        .catch((error) => {
+            props.callOpenSnackBar(`Error in deleting quiz: ${error}`, "error")
+        })
   }
 
   const handleValidation = () => {
@@ -268,11 +274,14 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
     const lessonId = lessons.filter((lesson: Lesson) => lesson.lessonId === selectedLessonId).pop()?.lessonId
 
     if (lessonId !== undefined) {
-      createNewBasicQuiz(lessonId, newQuizName, newQuizDescription, newQuizTimeLimitHours, newQuizTimeLimitMinutes, newQuizMaxAttempts).then((newQuiz) => {
-        console.log(newQuiz);
-  
-        props.history.push({ pathname: `/buildquiz/${newQuiz.contentId}`, state: { mode: 'UPDATE' } })
-      })
+      createNewBasicQuiz(lessonId, newQuizName, newQuizDescription, newQuizTimeLimitHours, newQuizTimeLimitMinutes, newQuizMaxAttempts)
+          .then((newQuiz) => {
+            props.callOpenSnackBar("Quiz successfully created", "success")
+            props.history.push({ pathname: `/buildquiz/${newQuiz.contentId}`, state: { mode: 'UPDATE' } })
+          })
+          .catch((error) => {
+              props.callOpenSnackBar(`Error in creating quiz: ${error}`, "error")
+          })
     }
   }
 
@@ -543,7 +552,9 @@ export default function QuizTable(props: any) {
                 setLessons={setLessons}
                 handleFormDataChange={handleFormDataChange}
                 setSelectedIds={setSelectedIds}
-                history={history}/>
+                history={history}
+                callOpenSnackBar={props.callOpenSnackBar}
+            />
             {rows.length > 0 &&
             <TableContainer>
             <Table
@@ -572,32 +583,32 @@ export default function QuizTable(props: any) {
 
                     return (
                         <TableRow
-                        hover
-                        // @ts-ignore
-                        onClick={(event) => handleClick(event, row.id)}
-                        role="checkbox"
-                        aria-checked={isItemSelected}
-                        tabIndex={-1}
-                        key={row.name}
-                        selected={isItemSelected}
+                            hover
+                            // @ts-ignore
+                            onClick={(event) => handleClick(event, row.id)}
+                            role="checkbox"
+                            aria-checked={isItemSelected}
+                            tabIndex={-1}
+                            key={row.name}
+                            selected={isItemSelected}
                         >
-                        <TableCell padding="checkbox">
-                            <Checkbox
-                            checked={isItemSelected}
-                            inputProps={{ 'aria-labelledby': labelId }}
-                            />
-                        </TableCell>
-                        <TableCell component="th" id={labelId} scope="row" padding="none">
-                            {row.name}
-                        </TableCell>
-                        <TableCell align="right">{row.description}</TableCell>
-                        <TableCell align="right">{row.maxAttemptsPerStudent}</TableCell>
-                        <TableCell align="right">{row.timeLimit}</TableCell>
-                        <TableCell align="right">
-                          <IconButton size="small" color="primary" onClick={() => navigateToQuizBuilder(row.contentId)}>
-                              <NavigateNextIcon/>&nbsp;
-                          </IconButton>
-                        </TableCell>
+                            <TableCell padding="checkbox">
+                                <Checkbox
+                                checked={isItemSelected}
+                                inputProps={{ 'aria-labelledby': labelId }}
+                                />
+                            </TableCell>
+                            <TableCell component="th" id={labelId} scope="row" padding="none">
+                                {row.name}
+                            </TableCell>
+                            <TableCell align="right">{row.description}</TableCell>
+                            <TableCell align="right">{row.maxAttemptsPerStudent}</TableCell>
+                            <TableCell align="right">{row.timeLimit}</TableCell>
+                            <TableCell align="right">
+                              <IconButton size="small" color="primary" onClick={() => navigateToQuizBuilder(row.contentId)}>
+                                  <EditIcon/>&nbsp;
+                              </IconButton>
+                            </TableCell>
                         </TableRow>
                     );
                     })}

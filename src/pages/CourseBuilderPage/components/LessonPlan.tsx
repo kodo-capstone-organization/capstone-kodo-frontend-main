@@ -276,6 +276,7 @@ function LessonPlan(props: any) {
                                                 selectedLessonId={lesson.lessonId}
                                                 quizzes={lesson.quizzes}
                                                 lessons={lessons}
+                                                callOpenSnackBar={props.callOpenSnackBar}
                                             />
                                         </Grid>
                                         <Grid item xs={12}>
@@ -285,6 +286,7 @@ function LessonPlan(props: any) {
                                                 selectedLessonId={lesson.lessonId}
                                                 multimedias={lesson.multimedias}
                                                 lessons={lessons}
+                                                callOpenSnackBar={props.callOpenSnackBar}
                                             />
                                         </Grid>
                                         <Grid container spacing={3} justifyContent="flex-end">

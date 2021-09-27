@@ -182,6 +182,7 @@ interface EnhancedTableToolbarProps {
   setLessons: any;
   setSelectedIds: any;
   isEnrollmentActive: boolean;
+  callOpenSnackBar: any;
 }
 
 const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
@@ -234,32 +235,35 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
     const currentLessonId = lessons.filter((lesson: Lesson) => lesson.lessonId === selectedLessonId).pop()?.lessonId
 
     if (currentLessonId !== undefined && newFile.file !== undefined) {
-      addNewMultimediaToLesson(currentLessonId, newFile.name, newFile.description, newFile.file).then((newMultimedia) => {
-        console.log(newMultimedia)
+      addNewMultimediaToLesson(currentLessonId, newFile.name, newFile.description, newFile.file)
+          .then((newMultimedia) => {
+            props.callOpenSnackBar("Multimedia successfully added", "success")
 
-        const updatedLessons = lessons.map((lesson: Lesson) => {
-          if (lesson.lessonId === selectedLessonId) {
-            const updatedMultimedias = lesson.multimedias.concat(newFile)
-            lesson.multimedias = updatedMultimedias
-          }
-          return lesson
-        })
+            const updatedLessons = lessons.map((lesson: Lesson) => {
+              if (lesson.lessonId === selectedLessonId) {
+                const updatedMultimedias = lesson.multimedias.concat(newFile)
+                lesson.multimedias = updatedMultimedias
+              }
+              return lesson
+            })
 
-        let wrapperEvent = {
-          target: {
-            name: "lessons",
-            value: updatedLessons
-          }
-        }
-    
-        handleFormDataChange(wrapperEvent)
-    
-        setLessons(updatedLessons)
+            let wrapperEvent = {
+              target: {
+                name: "lessons",
+                value: updatedLessons
+              }
+            }
 
-        handleClose()
-        setNewFile({ contentId: -1, name: "", description: "", url: "", multimediaType: MultimediaType.EMPTY, urlFilename: "", file: new File([""], ""), type: "multimedia"})
-        
-      })
+            handleFormDataChange(wrapperEvent)
+
+            setLessons(updatedLessons)
+
+            handleClose()
+            setNewFile({ contentId: -1, name: "", description: "", url: "", multimediaType: MultimediaType.EMPTY, urlFilename: "", file: new File([""], ""), type: "multimedia"})
+          })
+          .catch((error) => {
+            props.callOpenSnackBar(`Error in adding multimedia: ${error}`, "error")
+          })
     }
   }
 
@@ -303,21 +307,30 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
       return lesson
     })
 
-    deleteMultimediasFromLesson(selectedLessonId, multimediaIdsToDelete).then((result) => {
-      if (result) {
-        setLessons(updatedLessons)
-     
-        let wrapperEvent = {
-           target: {
-            name: "lessons",
-            value: updatedLessons
-          }
-        }
+    deleteMultimediasFromLesson(selectedLessonId, multimediaIdsToDelete)
+        .then((result) => {
+          if (result) {
+            props.callOpenSnackBar("Multimedia successfully deleted", "success")
+            setLessons(updatedLessons)
 
-        setSelectedIds([])
-        handleFormDataChange(wrapperEvent)
-      }
-    })}
+            let wrapperEvent = {
+               target: {
+                name: "lessons",
+                value: updatedLessons
+              }
+            }
+
+            setSelectedIds([])
+            handleFormDataChange(wrapperEvent)
+          } else {
+            // some backend issue, but still managed to remove
+            props.callOpenSnackBar("Multimedia removed from lesson", "info")
+          }
+        })
+        .catch((error) => {
+          props.callOpenSnackBar(`Error in deleting multimedia: ${error}`, "error")
+        })
+  }
 
   return (
     <>
@@ -360,7 +373,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
                   />
                 </FormControl>
                 <FormControl fullWidth margin="normal">
-                  <InputLabel htmlFor="multimedia-filename">File Name</InputLabel>
+                  <InputLabel htmlFor="multimedia-filename">File</InputLabel>
                   <Input
                     error={errors['file']}
                     id="multimedia-filename"
@@ -512,35 +525,36 @@ export default function MultimediaTable(props: any) {
       if (!handleValidation()) return
 
       if (newFile.file !== undefined) {
-        updateMultimedia(selectedMultimediaId, newFile.name, newFile.description, newFile.file).then((newMultimedia) => {
-          console.log(newMultimedia)
-  
-          const updatedLessons = lessons.map((lesson: Lesson) => {
-            if (lesson.lessonId === props.selectedLessonId) {
-              lesson.multimedias = lesson.multimedias.map((multimedia: Multimedia) => {
-                if (multimedia.contentId === newMultimedia.contentId) {
-                  multimedia = newMultimedia
+        updateMultimedia(selectedMultimediaId, newFile.name, newFile.description, newFile.file)
+            .then((newMultimedia) => {
+              props.callOpenSnackBar("Multimedia successfully updated", "success")
+              const updatedLessons = lessons.map((lesson: Lesson) => {
+                if (lesson.lessonId === props.selectedLessonId) {
+                  lesson.multimedias = lesson.multimedias.map((multimedia: Multimedia) => {
+                    if (multimedia.contentId === newMultimedia.contentId) {
+                      multimedia = newMultimedia
+                    }
+                    return multimedia
+                  })
                 }
-                return multimedia
+                return lesson
               })
-            }
-            return lesson
-          })
-  
-          let wrapperEvent = {
-            target: {
-              name: "lessons",
-              value: updatedLessons
-            }
-          }
-      
-          handleFormDataChange(wrapperEvent)
-      
-          setLessons(updatedLessons)
-  
-          handleClose()
-          setNewFile({ contentId: -1, name: "", description: "", url: "", multimediaType: MultimediaType.EMPTY, urlFilename: "", file: new File([""], ""), type: "multimedia"})
-        })
+
+              let wrapperEvent = {
+                target: {
+                  name: "lessons",
+                  value: updatedLessons
+                }
+              }
+
+              handleFormDataChange(wrapperEvent)
+              setLessons(updatedLessons)
+              handleClose()
+              setNewFile({ contentId: -1, name: "", description: "", url: "", multimediaType: MultimediaType.EMPTY, urlFilename: "", file: new File([""], ""), type: "multimedia"})
+            })
+            .catch((error) => {
+              props.callOpenSnackBar(`Error in updating multimedia: ${error}`, "error")
+            })
       }
     }
   
@@ -655,11 +669,12 @@ export default function MultimediaTable(props: any) {
     return (
         <>
         <Dialog 
-        fullWidth
-        open={showAddMultimediaDialog}
-        onClose={handleClose}
-        aria-labelledby="simple-modal-title"
-        aria-describedby="simple-modal-description">
+          fullWidth
+          open={showAddMultimediaDialog}
+          onClose={handleClose}
+          aria-labelledby="simple-modal-title"
+          aria-describedby="simple-modal-description"
+        >
             <DialogTitle>Update an existing Multimedia</DialogTitle>
             <DialogContent
               style={{height: '300px'}}>
@@ -723,7 +738,7 @@ export default function MultimediaTable(props: any) {
               <Button onClick={handleClose}>
                 Cancel
               </Button>
-              <Button onClick={handleClickUpdateMultimedia}>
+              <Button primary onClick={handleClickUpdateMultimedia}>
                 Update Multimedia
               </Button>
             </DialogActions>
@@ -738,15 +753,17 @@ export default function MultimediaTable(props: any) {
                 lessons={lessons}
                 setLessons={setLessons}
                 handleFormDataChange={handleFormDataChange}
-                setSelectedIds={setSelectedIds} />
+                setSelectedIds={setSelectedIds}
+                callOpenSnackBar={props.callOpenSnackBar}
+            />
             {rows.length > 0 &&
             <TableContainer>
-            <Table
-                className={classes.table}
-                aria-labelledby="tableTitle"
-                size={'small'}
-                aria-label="enhanced table"
-            >
+              <Table
+                  className={classes.table}
+                  aria-labelledby="tableTitle"
+                  size={'small'}
+                  aria-label="enhanced table"
+              >
                 <EnhancedTableHead
                 classes={classes}
                 numSelected={selectedIds.length}

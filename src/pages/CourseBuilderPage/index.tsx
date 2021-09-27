@@ -191,13 +191,13 @@ function CourseBuilderPage(props: any) {
         return courseFormData.isEnrollmentActive ? "Unpublish" : "Publish"
     }
 
-    const navigateToCourseOverview = () => {
-        history.push(`/overview/${courseFormData.courseId}`)
-    }
-
-    const navigateToPreviousPage = () => {
-        history.goBack();
-    }
+    // const navigateToCourseOverview = () => {
+    //     history.push(`/overview/${courseFormData.courseId}`)
+    // }
+    //
+    // const navigateToPreviousPage = () => {
+    //     history.goBack();
+    // }
 
     return !loading && ( !isTutorOfCourse ? 
         <h1>You are not a tutor of this course 😡</h1> :       

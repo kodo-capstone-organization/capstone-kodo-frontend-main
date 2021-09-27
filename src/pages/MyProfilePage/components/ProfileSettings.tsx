@@ -2,8 +2,6 @@ import Alert from '@material-ui/lab/Alert';
 import CloseIcon from '@material-ui/icons/Close';
 import DeactivateAccountModal from "./DeactivateAccountModal";
 import ChangePasswordModal from "./ChangePasswordModal";
-import Visibility from '@material-ui/icons/Visibility';
-import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import React, { useEffect, useState } from 'react';
 import { Account } from "../../../apis/Entities/Account";
 import { Autocomplete } from "@material-ui/lab";
@@ -17,9 +15,6 @@ import {
     FormControl, 
     Grid, 
     IconButton,
-    Input, 
-    InputAdornment, 
-    InputLabel, 
     Snackbar,
     TextField
 } from "@material-ui/core";
@@ -38,7 +33,6 @@ interface IErrors<TValue> {
 function ProfileSettings(props: any) {
 
     const [myAccount, setMyAccount] = useState<Account>();
-    const [showPassword, setShowPassword] = useState<Boolean>(false);
     const [interests, setInterests] = useState<string[]>([]);
     const [name, setName] = useState<string>("");
     const [email, setEmail] = useState<string>("");
@@ -106,8 +100,10 @@ function ProfileSettings(props: any) {
         }
         //@ts-ignore
         updateAccount(updateAccountReq, displayPictureFile).then((res) => {
+            props.callOpenSnackBar("Profile successfully updated", "success");
             history.push("/profile")
-        }).catch(err => { 
+        }).catch(err => {
+            props.callOpenSnackBar("Error in updating profile", "error");
             setUpdateAccountFailed(err.response.data.message);
         })
     }
@@ -162,7 +158,6 @@ function ProfileSettings(props: any) {
     };
 
     const handleChipChange = (e: object, value: string[], reason: string) => {
-        console.log(value)
         setInterests(value)
     }
 
@@ -199,7 +194,7 @@ function ProfileSettings(props: any) {
                                 Status: <Chip variant="outlined" label={isActive ? "Activated" : "Deactivated"} style={{ color: isActive ? "green" : "red", border: isActive ? "1px solid green" : "1px solid red" }} />
                             </ProfileSubText>
                             <DeactivateAccountModal account={myAccount} style={{ margin: "auto" }} />
-                            <ChangePasswordModal account={myAccount} style={{ margin: "auto" }} />
+                            <ChangePasswordModal account={myAccount} style={{ margin: "auto" }} callOpenSnackBar={props.callOpenSnackBar} />
                         </div>
                         <div id="profile-details" style={{ margin: "20px", width: "70%" }}>
                             <ProfileSettingField error={errors["name"]} style={{ margin: "0 0 10px 0" }} label="Name" value={name} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setName(e.target.value)} />
