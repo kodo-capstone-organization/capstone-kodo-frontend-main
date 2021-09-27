@@ -58,7 +58,11 @@ function MultimediaViewer(props: any) {
     getCourseByCourseId(courseId).then(receivedCourse => {
       setCourse(receivedCourse);
     });
-  }, []);
+  }, [contentId, lessonId, courseId]);
+
+  console.log(currentMultimedia);
+
+  const url =  "https://cors-anywhere.herokuapp.com/" +currentMultimedia?.url;
 
   // return (<div>hello! {currentMultimedia?.multimediaType} goes here</div>)
   return (
@@ -99,8 +103,8 @@ function MultimediaViewer(props: any) {
         </ImageCard> */}
 
         <PDFCard>
-          {currentMultimedia?.multimediaType === "PDF" &&
-          <Document file= "https://cors-anywhere.herokuapp.com/" + {currentMultimedia.url} />
+          {currentMultimedia && currentMultimedia?.multimediaType === "PDF" &&
+          <Document file= {url} />
           }
           {/* <Document file= {"./dummy.pdf"} />
           {currentMultimedia?.url} */}
