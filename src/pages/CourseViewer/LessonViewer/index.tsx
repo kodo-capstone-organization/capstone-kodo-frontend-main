@@ -173,16 +173,11 @@ function LessonViewer(props: any) {
             {lessonMultimedias?.map(m => {
               return (
                 <ContentLink
-                  key={m.contentId}
-                  isCompleted={checkCompleted(m.contentId)}
-                  previousCompleted={previousLessonCompleted()}
+                  key={m.contentId} 
                   to={`/overview/lesson/${courseId}/${lessonId}/${m.contentId}`}
                 >
                   {m.multimediaType === "PDF" ? <ReadingIcon /> : <PlayIcon />}
                   {m.multimediaType === "PDF" ? "Reading" : "Video"}: {m.name}
-                  {checkCompleted(m.contentId) &&
-                  <CheckIcon />
-                  }
                 </ContentLink>
               );
             })}
@@ -190,7 +185,6 @@ function LessonViewer(props: any) {
         </LessonCard>
         <LessonCard>
           <LessonHeader>Quiz</LessonHeader>
-          <QuizHeading>{}</QuizHeading>
           <QuizWrapper>
             {getQuizAttempts()?.map(q => {
               return (
