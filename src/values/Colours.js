@@ -26,3 +26,9 @@ export const colours = {
 export const paletteColours = [
     "#c6ccd8", "#274b69", "#85a1c1", "#3f4d63", "#202022"
 ]
+
+// For severity
+
+export const severityList = [
+    "info", "warning", "error", "success"
+]

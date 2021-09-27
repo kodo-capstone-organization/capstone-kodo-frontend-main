@@ -3,18 +3,13 @@ import Sidebar from "./Sidebar";
 import TopMenu from "./TopMenu";
 import {LayoutContentWrapper, LayoutContentPage} from "./LayoutElements";
 import {RouteItemsWithSidebar} from "../routeItems";
-import Snackbar, { SnackbarOrigin } from '@material-ui/core/Snackbar';
-import Alert from '@material-ui/lab/Alert';
+
 
 function Layout(props) {
 
     const location = props.history.location;
 
     const [showSideBar, setShowSideBar] = useState(true);
-
-    const [isSnackBarOpen, setIsSnackBarOpen] = useState(true); // TODO: set to false
-    const [snackBarMessage, setSnackBarMessage] = useState("");
-    const [snackBarSeverity, setSnackBarSeverity] = useState(""); // error, warning, info, success ONLY
 
     useEffect(() => {
         if (RouteItemsWithSidebar.find(item => {
@@ -34,30 +29,13 @@ function Layout(props) {
         }
     }, [location])
 
-    const handleCloseSnackBar = () => {
-        setIsSnackBarOpen(false)
-        setSnackBarMessage("")
-        setSnackBarSeverity("")
-    }
-
     return (
         <div>
-            <Snackbar
-                id="kodo-snackbar"
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                open={isSnackBarOpen}
-                onClose={handleCloseSnackBar}
-                autoHideDuration={5000}
-            >
-                <Alert onClose={handleCloseSnackBar} severity={snackBarSeverity}>
-                    {snackBarMessage}
-                </Alert>
-            </Snackbar>
             <TopMenu />
             <LayoutContentWrapper>
                 { showSideBar && <Sidebar history={props.history}/> }
                 <LayoutContentPage showSideBar={showSideBar}>
-                    {props.children}
+                    { props.children }
                 </LayoutContentPage>
             </LayoutContentWrapper>
         </div>

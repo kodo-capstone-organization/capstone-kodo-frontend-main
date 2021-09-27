@@ -105,7 +105,6 @@ function CourseList(props: any) {
   };
 
   function coursesExist() {
-    console.log(myCourses?.length)
     return myCourses?.length > 0;
   }
 
