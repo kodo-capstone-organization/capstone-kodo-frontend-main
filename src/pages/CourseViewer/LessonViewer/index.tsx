@@ -174,6 +174,8 @@ function LessonViewer(props: any) {
               return (
                 <ContentLink
                   key={m.contentId} 
+                  isCompleted={checkCompleted(m.contentId)}
+                  previousCompleted={previousLessonCompleted()}
                   to={`/overview/lesson/${courseId}/${lessonId}/${m.contentId}`}
                 >
                   {m.multimediaType === "DOCUMENT" ? <ReadingIcon /> : <PlayIcon />}
