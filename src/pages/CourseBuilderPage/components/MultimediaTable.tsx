@@ -241,7 +241,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
 
             const updatedLessons = lessons.map((lesson: Lesson) => {
               if (lesson.lessonId === selectedLessonId) {
-                const updatedMultimedias = lesson.multimedias.concat(newFile)
+                const updatedMultimedias = lesson.multimedias.concat(newMultimedia)
                 lesson.multimedias = updatedMultimedias
               }
               return lesson
@@ -711,7 +711,7 @@ export default function MultimediaTable(props: any) {
                     name="filename"
                     type="text"
                     fullWidth
-                    value={newFile.file?.name === "" ? newFile.urlFilename : newFile.file?.name}
+                    value={newFile.urlFilename}
                     disabled
                   />
                 </FormControl>
