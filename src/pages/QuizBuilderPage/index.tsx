@@ -9,7 +9,7 @@ import QuestionBankModal from "./components/QuestionBankModal"
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import DeleteIcon from '@material-ui/icons/Delete';
 import {
-    Grid, TextField, IconButton
+    Grid, TextField, IconButton, Input, InputLabel
 } from "@material-ui/core";
 import { QuizContainer, QuizCard, QuizCardHeader, QuizCardContent, QuizQuestionCard } from "./QuizBuilderElements";
 import { UpdateQuizReq } from '../../apis/Entities/Quiz';
@@ -21,6 +21,9 @@ function QuizBuilderPage(props: any) {
     const contentId = props.match.params.contentId;
     const [name, setName] = useState<string>("");
     const [description, setDescription] = useState<string>("");
+    const [maxAttempts, setMaxAttempts] = useState<number>();
+    const [timeLimitHours, setTimeLimitHours] = useState<string>();
+    const [timeLimitMinutes, setTimeLimitMinutes] = useState<string>();
     const [quizQuestionArray, setQuizQuestionArray] = useState<QuizQuestion[]>([]);
     const [quiz, setQuiz] = useState<Quiz>();
     const [updatedQuiz, setUpdatedQuiz] = useState<Quiz>();
@@ -29,10 +32,13 @@ function QuizBuilderPage(props: any) {
 
     useEffect(() => {
         getQuizByQuizId(contentId).then((res) => {
-            setQuiz(res)
-            setUpdatedQuiz(res)
-            setName(res.name)
-            setDescription(res.description)
+            setQuiz(res);
+            setUpdatedQuiz(res);
+            setName(res.name);
+            setDescription(res.description);
+            setMaxAttempts(res.maxAttemptsPerStudent);
+            setTimeLimitHours(`${res.timeLimit.charAt(3)}${res.timeLimit.charAt(4)}`);
+            setTimeLimitMinutes(`${res.timeLimit.charAt(6)}${res.timeLimit.charAt(7)}`);
         }).catch((err) => { console.log("error:getQuizByQuizId", err) });
         getAllQuizQuestionsByQuizId(contentId).then((res) => {
             setQuizQuestionArray(res)
@@ -78,20 +84,60 @@ function QuizBuilderPage(props: any) {
         setUpdatedQuiz(newQuiz);
     }
 
+    const handleTimeLimitHourseChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        var value : any = parseInt(e.target.value);
+        if (value > 24) {
+            value = "24";
+        } else if (value < 0) {
+            value = "00";
+        }
+        setTimeLimitHours(value);
+        const timeLimit = `00:${value}:${timeLimitMinutes}`
+        const newQuiz = Object.assign(updatedQuiz, { timeLimit });
+        setUpdatedQuiz(newQuiz);
+    }
+
+    const handleTimeLimitMinutesChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        var value : any = parseInt(e.target.value);
+
+        if (value > 59) {
+            value = "59";
+        } else if (value < 0) {
+            value = "00";
+        }
+        setTimeLimitMinutes(value);
+        const timeLimit = `00:${timeLimitHours}:${value}`
+        const newQuiz = Object.assign(updatedQuiz, { timeLimit });
+        setUpdatedQuiz(newQuiz);
+    }
+
+    const handleAttemptChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        var value = parseInt(e.target.value);
+        if (value > 100) {
+            value = 100;
+        } else if (value < 0) {
+            value = 0;
+        }
+        setMaxAttempts(value);
+        const newQuiz = Object.assign(updatedQuiz, { maxAttemptsPerStudent: value });
+        setUpdatedQuiz(newQuiz);
+    }
+
+
     const handleSubmit = () => {
-        if (quiz !== undefined) {
+        if (updatedQuiz !== undefined) {
             const quizQuestionOptionLists = quizQuestionArray.map((question) => question.quizQuestionOptions)
             const updateQuizReq: UpdateQuizReq = {
-                quiz: quiz,
+                quiz: updatedQuiz,
                 quizQuestions: quizQuestionArray,
                 quizQuestionOptionLists
             }
             console.log("handle submit", updateQuizReq)
             updateQuizWithQuizQuestionsAndQuizQuestionOptions(updateQuizReq)
-                .then((res) => { console.log("Success updating quiz", res); setQuiz(res);})
+                .then((res) => { console.log("Success updating quiz", res); setQuiz(res); })
                 .catch((err) => { console.log("error updating quiz", err) });
         }
-        window.location.reload(false); 
+        window.location.reload(false);
     }
 
     const handleUpdateQuestion = (updatedQuizQuestion: QuizQuestion, index: number) => {
@@ -120,7 +166,7 @@ function QuizBuilderPage(props: any) {
         for (i = 0; i < questionBankQuestionIds.length; i++) {
             getQuizQuestionByQuizQuestionId(questionBankQuestionIds[i]).then((res) => {
                 console.log("Success in handleChangeFromQuestionBank", res);
-                const newQuestionFromBank = Object.assign(res, {quizQuestionId: null});
+                const newQuestionFromBank = Object.assign(res, { quizQuestionId: null });
                 const newQuestionArray = quizQuestionArray.concat([newQuestionFromBank]);
                 setQuizQuestionArray(newQuestionArray);
             }).catch((err) => { console.log("Error in handleChangeFromQuestionBank", err); })
@@ -160,8 +206,48 @@ function QuizBuilderPage(props: any) {
                             <Grid item xs={12}>
                                 <TextField required id="standard-basic" fullWidth value={name} label="Name" name="name" onChange={handleNameChange} />
                             </Grid>
+                            <Grid item xs={6}>
+                                <InputLabel htmlFor="quiz-timelimit">Time Limit Hours</InputLabel>
+                                <Input
+                                    fullWidth
+                                    id="quiz-timelimit"
+                                    placeholder="Hours"
+                                    name="timelimit"
+                                    type="number"
+                                    autoFocus
+                                    value={timeLimitHours}
+                                    onChange={handleTimeLimitHourseChange}
+                                    inputProps={{ min: 0, max: 24 }}
+                                />
+                            </Grid>
+                            <Grid item xs={6}>
+                                <InputLabel htmlFor="quiz-timelimit">Time Limit Minutes</InputLabel>
+                                <Input
+                                    fullWidth
+                                    id="quiz-timelimit"
+                                    placeholder="Minutes"
+                                    name="timelimit"
+                                    type="number"
+                                    autoFocus
+                                    value={timeLimitMinutes}
+                                    onChange={handleTimeLimitMinutesChange}
+                                    inputProps={{ min: 0, max: 59 }}
+                                />
+                            </Grid>
                             <Grid item xs={12}>
-                                <TextField required id="standard-basic" fullWidth value={description} multiline maxRows={3} name="description"
+                                <InputLabel htmlFor="quiz-maxattempts">Max Attempts*</InputLabel>
+                                <Input
+                                    id="quiz-maxattempts"
+                                    type="number"
+                                    autoFocus
+                                    fullWidth
+                                    value={maxAttempts}
+                                    onChange={handleAttemptChange}
+                                    inputProps={{ min: 0, max: 100 }}
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField required id="standard-basic" fullWidth value={description} name="description"
                                     label="Description" onChange={handleDescriptionChange} />
                             </Grid>
                         </Grid>
