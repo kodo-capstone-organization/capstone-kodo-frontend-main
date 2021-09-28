@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Lesson } from './../../../apis/Entities/Lesson';
 import { Dialog, DialogContent, DialogContentText, DialogTitle, InputLabel, Input, FormControl, DialogActions, AppBar, Tabs, Tab, Grid, IconButton, TextField, Typography, Box } from "@material-ui/core";
 import AddIcon from '@material-ui/icons/Add';
@@ -23,17 +23,30 @@ function LessonPlan(props: any) {
 
     const [showAddLessonDialog, setShowAddLessonDialog] = useState<boolean>(false); 
 
-    let [errors, setErrors] = useState<IErrors<boolean>>({
+    let [errorsForCreateLesson, setErrorsForCreateLesson] = useState<IErrors<boolean>>({
         name: false,
         description: false,
     });
+    let [errorsForUpdateLesson, setErrorsForUpdateLesson] = useState<Map<number, IErrors<boolean>>>();
+
+    const resetUpdateLessonErrorsMap = () => {
+        let lessonErrorsMap = new Map();
+        props.lessons.forEach((lesson: Lesson) => { 
+            lessonErrorsMap.set(lesson.lessonId, { name: false, description: false })
+        })
+        setErrorsForUpdateLesson(lessonErrorsMap)
+    }
+    
+    useEffect(() => {
+        resetUpdateLessonErrorsMap()
+    }, [props.lessons])
 
     const openDialog = () => {
         setShowAddLessonDialog(true);
     }
   
     const handleClose = () => {
-        setErrors({}) // clear errors from form
+        setErrorsForCreateLesson({}) // clear errors from form
         setShowAddLessonDialog(false);
     }
 
@@ -58,7 +71,35 @@ function LessonPlan(props: any) {
         }).catch(error => { props.callOpenSnackBar(`Error in deleting lesson: ${error}`, "error") });
     }
 
+    const handleValidationForUpdateLesson = (lessonId: number) => {
+        let formIsValid = true;
+        
+        const selectedLesson = lessons.filter((lesson: Lesson) => lesson.lessonId === lessonId).pop()
+        let errorsForSelectedLesson = errorsForUpdateLesson?.get(lessonId);
+        
+        if (selectedLesson && errorsForSelectedLesson) {
+            if (selectedLesson?.name === "") {
+                formIsValid = false ;
+                errorsForSelectedLesson['name'] = true;
+              }
+          
+              if (selectedLesson?.description === "") {
+                formIsValid = false;
+                errorsForSelectedLesson['description'] = true;      
+              }
+          
+              errorsForUpdateLesson?.set(lessonId, errorsForSelectedLesson)
+              setErrorsForUpdateLesson(errorsForUpdateLesson);
+          
+              return formIsValid;
+        } else {
+            return false
+        }
+      }
+
     const handleUpdateLesson = (lessonId: number) => {
+        if (!handleValidationForUpdateLesson(lessonId)) return
+
         const selectedLesson = lessons.filter((lesson: Lesson) => lesson.lessonId === lessonId).pop()
 
         if (selectedLesson !== undefined) {
@@ -119,27 +160,27 @@ function LessonPlan(props: any) {
         handleFormDataChange(wrapperEvent)
     }
 
-    const handleValidation = () => {
+    const handleValidationForCreateLesson = () => {
         let formIsValid = true;
-        errors = {};
+        errorsForCreateLesson = {};
     
         if (newLessonName === "") {
           formIsValid = false ;
-          errors['name'] = true;
+          errorsForCreateLesson['name'] = true;
         }
     
         if (newLessonDescription === "") {
           formIsValid = false;
-          errors['description'] = true;      
+          errorsForCreateLesson['description'] = true;      
         }
     
-        setErrors(errors);
+        setErrorsForCreateLesson(errorsForCreateLesson);
     
         return formIsValid;
       }
     
     const handleClickCreateLesson = () => {
-        if (!handleValidation()) return
+        if (!handleValidationForCreateLesson()) return
 
         createNewLesson(props.courseId, newLessonName, newLessonDescription, lessons.length + 1).then((newLesson) => {
             console.log(newLesson)
@@ -180,7 +221,7 @@ function LessonPlan(props: any) {
               <FormControl fullWidth margin="normal">
                 <InputLabel htmlFor="lesson-name">Lesson Name</InputLabel>
                 <Input
-                  error={errors['name']}
+                  error={errorsForCreateLesson['name']}
                   id="lesson-name"
                   name="name"
                   type="text"
@@ -193,7 +234,7 @@ function LessonPlan(props: any) {
                 <FormControl fullWidth margin="normal">
                   <InputLabel htmlFor="lesson-description">Description</InputLabel>
                   <Input
-                    error={errors['description']}
+                    error={errorsForCreateLesson['description']}
                     id="lesson-description"
                     name="description"
                     type="text"
@@ -250,6 +291,8 @@ function LessonPlan(props: any) {
                                     <Grid container spacing={3}>
                                         <Grid style={{ padding: "0!important"}} item xs={12}>
                                             <TextField 
+                                                // @ts-ignore
+                                                error={errorsForUpdateLesson && errorsForUpdateLesson.get(lesson.lessonId)['name']}
                                                 fullWidth 
                                                 required
                                                 disabled={props.isEnrollmentActive}
@@ -260,6 +303,8 @@ function LessonPlan(props: any) {
                                         </Grid>
                                         <Grid style={{ padding: "0!important"}} item xs={12}>
                                             <TextField 
+                                                // @ts-ignore
+                                                error={errorsForUpdateLesson && errorsForUpdateLesson.get(lesson.lessonId)['description']}
                                                 fullWidth
                                                 required
                                                 disabled={props.isEnrollmentActive}
