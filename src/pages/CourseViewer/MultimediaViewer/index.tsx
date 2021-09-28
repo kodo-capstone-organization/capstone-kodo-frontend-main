@@ -70,9 +70,6 @@ function MultimediaViewer(props: any) {
     setNumPages(numPages);
   }
 
-  //const url =  "https://cors-anywhere.herokuapp.com/" +currentMultimedia?.url;
-  const url1 =  "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf";
-  // return (<div>hello! {currentMultimedia?.multimediaType} goes here</div>)
   return (
     <>
       <MultimediaContainer>
@@ -111,9 +108,9 @@ function MultimediaViewer(props: any) {
         </ImageCard> */}
 
         <PDFCard>
-          {currentMultimedia && currentMultimedia.multimediaType === "PDF" &&
+          {currentMultimedia && currentMultimedia.multimediaType === "DOCUMENT" &&
           <Document 
-          file= "https://downloads.hindawi.com/journals/mpe/2018/5213504.pdf"
+          file= {currentMultimedia?.url}
           onLoadSuccess={onDocumentLoadSuccess}
           >
           <Page pageNumber={pageNumber} />

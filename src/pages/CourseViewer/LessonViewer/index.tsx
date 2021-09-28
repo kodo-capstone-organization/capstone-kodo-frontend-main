@@ -176,8 +176,8 @@ function LessonViewer(props: any) {
                   key={m.contentId} 
                   to={`/overview/lesson/${courseId}/${lessonId}/${m.contentId}`}
                 >
-                  {m.multimediaType === "PDF" ? <ReadingIcon /> : <PlayIcon />}
-                  {m.multimediaType === "PDF" ? "Reading" : "Video"}: {m.name}
+                  {m.multimediaType === "DOCUMENT" ? <ReadingIcon /> : <PlayIcon />}
+                  {m.multimediaType === "DOCUMENT" ? "Reading" : "Video"}: {m.name}
                 </ContentLink>
               );
             })}
