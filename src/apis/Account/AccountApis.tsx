@@ -6,7 +6,7 @@ import { transformToBlob } from "./../../utils/BlobCreator";
 import { DeactivateAccountResponse } from "../Entities/Deactivate";
 const FormData = require('form-data');
 
-export async function login(username: string, password: string): Promise<LoginResponse> {
+export async function login(username: string, password: string): Promise<Account> {
     const formData = new FormData();
     formData.append('username', username);
     formData.append('password', password);
@@ -16,7 +16,7 @@ export async function login(username: string, password: string): Promise<LoginRe
         payload: formData
     }
 
-    return httpClient.post<FormData, LoginResponse>(postParameters)
+    return httpClient.post<FormData, Account>(postParameters)
 }
 
 export async function getAllAccounts(): Promise<Account[]> {
@@ -60,6 +60,13 @@ export async function deactivateAccount(deactivatingAccountId: number, requestin
     return httpClient.delete<undefined, DeactivateAccountResponse>(deleteParameters);
 }
 
+export async function reactivateAccount(reactivatingAccountId: number, requestingAccountId: number): Promise<DeactivateAccountResponse> {
+    const deleteParameters: IHttpClientRequestParameters<undefined> = {
+        url: `/account/reactivateAccount/${reactivatingAccountId}&${requestingAccountId}`
+    }
+
+    return httpClient.delete<undefined, DeactivateAccountResponse>(deleteParameters);
+}
 
 export async function getAccountByEnrolledCourseId(enrolledCourseId: number): Promise<Account> {
     const getParameters: IHttpClientRequestParameters<undefined> = {
