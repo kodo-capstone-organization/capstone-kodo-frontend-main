@@ -18,7 +18,7 @@ import { QuizWithStudentAttemptCountResp } from "../../../apis/Entities/Quiz"
 import { Button } from "../../../values/ButtonElements";
 import { colours } from "../../../values/Colours";
 import ReactPlayer from "react-player";
-// import { Document, Page } from "react-pdf";
+import { Document, Page } from "react-pdf";
 import DocViewer, { DocViewerRenderers } from "react-doc-viewer";
 import { DocumentViewer } from 'react-documents';
 // import FileViewer from 'react-file-viewer';
@@ -113,19 +113,18 @@ function MultimediaViewer(props: any) {
         </VideoCard>
 
         <PDFCard>
-          {/* {currentMultimedia && currentMultimedia.multimediaType === "PDF" &&
-            <Document
-              file="https://downloads.hindawi.com/journals/mpe/2018/5213504.pdf"
-              onLoadSuccess={onDocumentLoadSuccess}
-            >
-              <Page pageNumber={pageNumber} />
-              <p>Page {pageNumber} of {numPages}</p>
-            </Document>
-          } */}
+          {currentMultimedia && currentMultimedia.multimediaType === "PDF" &&
+          <Document
+          file="https://downloads.hindawi.com/journals/mpe/2018/5213504.pdf"
+          onLoadSuccess={onDocumentLoadSuccess}
+          >
+          <Page pageNumber={pageNumber} />
+          </Document>
+          }
+          <p>Page {pageNumber} of {numPages}</p>
         </PDFCard>
 
         <ImageCard>
-          {/* <iframe width="100%" height="200" src={`https://media.istockphoto.com/photos/singapore-sky-line-picture-id505773333?k=20&m=505773333&s=612x612&w=0&h=vJAfrnRRgYVdYlcqoTxzKMCq6CWQCSncy4x-yaz_7Pg=`}></iframe> */}
           {currentMultimedia?.multimediaType === "IMAGE" &&
             <img
               src="http://placeimg.com/1200/800/nature"
@@ -145,10 +144,12 @@ function MultimediaViewer(props: any) {
           style="width:100%;height:50vh;"
         >
         </DocumentViewer> */}
+
+        { currentMultimedia?.multimediaType !== "VIDEO" && 
         <div>
-        <button onClick={saveFile}>download</button>
+        <button onClick={saveFile}>Download</button>
         </div>
-        {/* <button onClick={downloadFile} /> */}
+        }   
       </MultimediaContainer>
     </>
   );
