@@ -21,6 +21,7 @@ import Snackbar from '@material-ui/core/Snackbar';
 import Slide from '@material-ui/core/Slide';
 import Alert from '@material-ui/lab/Alert';
 import { severityList } from './values/Colours';
+import MarkedQuizViewer from "./pages/CourseViewer/LessonViewer/MarkedQuizViewer";
 
 function Routes() {
 
@@ -93,6 +94,12 @@ function Routes() {
                         {window.sessionStorage.getItem("loggedInAccountId") ?
                             <Route path="/overview/lesson/:courseId/:lessonId/:contentId" render={props => <MultimediaViewerWithRouter {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
                             : <Redirect to="/" />}
+
+                        {/* Need to change the path namings here, we have 2 types of content, talk to chandya */}
+                        {window.sessionStorage.getItem("loggedInAccountId") ?
+                            <Route path="/markedquizviewer/:studentAttemptId" render={props => <MarkedQuizViewer {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
+                            : <Redirect to="/" />}
+
                         {
                             RouteItemsWithSidebar.map(item => {
                                 return (
