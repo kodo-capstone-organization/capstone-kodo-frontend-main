@@ -97,7 +97,7 @@ function QuizQuestionOptionsList(props: any) {
     return (
         <>
             <TableContainer component={Paper} style={{ marginTop: "16px" }}>
-                <Table aria-label="simple table">
+                <Table size="small" aria-label="a dense table">
                     <TableHead>
                         <TableRow>
                             {

@@ -11,7 +11,10 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import {
     Grid, TextField, IconButton, Input, InputLabel
 } from "@material-ui/core";
-import { QuizContainer, QuizCard, QuizCardHeader, QuizCardContent, QuizQuestionCard } from "./QuizBuilderElements";
+import {
+    QuizContainer, QuizCard, QuizCardHeader, QuizCardContent,
+    QuizQuestionCard, QuizBuilderCardContent
+} from "./QuizBuilderElements";
 import { UpdateQuizReq } from '../../apis/Entities/Quiz';
 import { QuizQuestionOption } from '../../apis/Entities/QuizQuestionOption';
 
@@ -22,8 +25,8 @@ function QuizBuilderPage(props: any) {
     const [name, setName] = useState<string>("");
     const [description, setDescription] = useState<string>("");
     const [maxAttempts, setMaxAttempts] = useState<number>();
-    const [timeLimitHours, setTimeLimitHours] = useState<string>();
-    const [timeLimitMinutes, setTimeLimitMinutes] = useState<string>();
+    const [timeLimitHours, setTimeLimitHours] = useState<string>("00");
+    const [timeLimitMinutes, setTimeLimitMinutes] = useState<string>("00");
     const [quizQuestionArray, setQuizQuestionArray] = useState<QuizQuestion[]>([]);
     const [quiz, setQuiz] = useState<Quiz>();
     const [updatedQuiz, setUpdatedQuiz] = useState<Quiz>();
@@ -63,10 +66,10 @@ function QuizBuilderPage(props: any) {
         }
     }
 
-    const deleteQuestion = (event: React.MouseEvent<unknown>, index: number) => {
-        const updatedQuizQuestionArray = quizQuestionArray.filter((q, qId) => { return (qId !== index); })
-        setQuizQuestionArray(updatedQuizQuestionArray);
-    }
+    // const deleteQuestion = (event: React.MouseEvent<unknown>, index: number) => {
+    //     const updatedQuizQuestionArray = quizQuestionArray.filter((q, qId) => { return (qId !== index); })
+    //     setQuizQuestionArray(updatedQuizQuestionArray);
+    // }
 
     const onDragEnd = () => {
         //update state
@@ -85,7 +88,7 @@ function QuizBuilderPage(props: any) {
     }
 
     const handleTimeLimitHourseChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        var value : any = parseInt(e.target.value);
+        var value: any = parseInt(e.target.value);
         if (value > 24) {
             value = "24";
         } else if (value < 0) {
@@ -98,7 +101,7 @@ function QuizBuilderPage(props: any) {
     }
 
     const handleTimeLimitMinutesChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        var value : any = parseInt(e.target.value);
+        var value: any = parseInt(e.target.value);
 
         if (value > 59) {
             value = "59";
@@ -141,11 +144,18 @@ function QuizBuilderPage(props: any) {
     }
 
     const handleUpdateQuestion = (updatedQuizQuestion: QuizQuestion, index: number) => {
-        const updatedQuizQuestionArray = quizQuestionArray.map((q, qId) => {
-            return (
-                qId === index ? updatedQuizQuestion : q
-            );
-        })
+        var updatedQuizQuestionArray = [];
+        if (updatedQuizQuestion === null) {
+            // question deletion
+            updatedQuizQuestionArray = quizQuestionArray.filter((q, qId) =>  qId !== index );
+        } else {
+            // question update
+            updatedQuizQuestionArray = quizQuestionArray.map((q, qId) => {
+                return (
+                    qId === index ? updatedQuizQuestion : q
+                );
+            });
+        }
         setQuizQuestionArray(updatedQuizQuestionArray);
 
     }
@@ -182,9 +192,9 @@ function QuizBuilderPage(props: any) {
                             <QuizQuestionCard key={qId}>
                                 <QuizQuestionComponent type="mcq" question={q} questionIndex={qId}
                                     onUpdateQuestion={handleUpdateQuestion} onUpdateQuizQuestionOptions={handleQuizQuestionOptionUpdate} />
-                                <IconButton style={{ alignItems: "baseline" }} onClick={(event) => deleteQuestion(event, qId)}>
+                                {/* <IconButton style={{ alignItems: "baseline" }} onClick={(event) => deleteQuestion(event, qId)}>
                                     <DeleteIcon />
-                                </IconButton>
+                                </IconButton> */}
                             </QuizQuestionCard>
                         </>
                     );
@@ -207,8 +217,9 @@ function QuizBuilderPage(props: any) {
                                 <TextField required id="standard-basic" fullWidth value={name} label="Name" name="name" onChange={handleNameChange} />
                             </Grid>
                             <Grid item xs={6}>
-                                <InputLabel htmlFor="quiz-timelimit">Time Limit Hours</InputLabel>
+                                <InputLabel htmlFor="quiz-timelimit">Time Limit Hours*</InputLabel>
                                 <Input
+                                    required
                                     fullWidth
                                     id="quiz-timelimit"
                                     placeholder="Hours"
@@ -221,8 +232,9 @@ function QuizBuilderPage(props: any) {
                                 />
                             </Grid>
                             <Grid item xs={6}>
-                                <InputLabel htmlFor="quiz-timelimit">Time Limit Minutes</InputLabel>
+                                <InputLabel htmlFor="quiz-timelimit">Time Limit Minutes*</InputLabel>
                                 <Input
+                                    required
                                     fullWidth
                                     id="quiz-timelimit"
                                     placeholder="Minutes"
@@ -237,6 +249,7 @@ function QuizBuilderPage(props: any) {
                             <Grid item xs={12}>
                                 <InputLabel htmlFor="quiz-maxattempts">Max Attempts*</InputLabel>
                                 <Input
+                                    required
                                     id="quiz-maxattempts"
                                     type="number"
                                     autoFocus
@@ -265,7 +278,7 @@ function QuizBuilderPage(props: any) {
                             </div>
                         }
                     />
-                    <QuizCardContent>
+                    <QuizBuilderCardContent>
                         {mapQuestionArray(quizQuestionArray)}
                         {/* <DragDropContext onDragEnd={onDragEnd}>
                             {columns.map(columnId => {
@@ -273,7 +286,7 @@ function QuizBuilderPage(props: any) {
                                 return mapQuestionArray
                             })}
                         </DragDropContext> */}
-                    </QuizCardContent>
+                    </QuizBuilderCardContent>
                 </QuizCard>
             </QuizContainer>
         </>

@@ -58,6 +58,18 @@ export const QuizCardContent = styled(CardContent)`
     justify-content: center;
 `;
 
+export const QuizBuilderCardContent = styled(CardContent)`
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    background-color: ${colours.GRAY7};
+    color: ${colours.GRAY2};
+    align-items: center;
+    padding: 2rem !important;
+    padding: ${({ removePadTop }) => (removePadTop ? "0 2rem 2rem 2rem !important" : "2rem !important")};
+    justify-content: center;
+`;
+
 export const QuizSelectMenu = styled(Select)`
     width: 100%;
 `;
@@ -65,4 +77,25 @@ export const QuizSelectMenu = styled(Select)`
 export const QuizBuilderTextInput = styled(TextField)`
     width: 100%;
     margin: 16px;
+`;
+
+export const QuizEmptyStateText = styled.h1`
+  font-size: ${fontSizes.SUBTEXT};
+  color: ${colours.GRAY4};
+  font-family: "Roboto", sans-serif;
+  text-align: center;
+  padding: 50px;
+`;
+
+export const QuizEmptyStateContainer = styled.div`
+  display: ${({ coursesExist }) =>
+  coursesExist ? "none" : "flex"};
+  font-size: ${fontSizes.SUBTEXT};
+  color: ${colours.GRAY4};
+  font-family: "Roboto", sans-serif;
+  flex-direction: column;
+  justify-content: center; 
+  text-align: center; 
+  align-items: center;
+  padding: 50px;
 `;
