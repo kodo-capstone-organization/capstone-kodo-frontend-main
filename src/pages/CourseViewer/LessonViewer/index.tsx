@@ -17,6 +17,7 @@ import { QuizWithStudentAttemptCountResp } from "../../../apis/Entities/Quiz"
 import { Button } from "../../../values/ButtonElements";
 import { colours } from "../../../values/Colours";
 
+import { useHistory } from "react-router-dom";
 
 import {
   LessonContainer,
@@ -58,6 +59,8 @@ function LessonViewer(props: any) {
     window.sessionStorage.getItem("loggedInAccountId") || "{}"
   );
 
+  const history = useHistory();
+
   useEffect(() => {
     getCourseByCourseId(courseId).then(receivedCourse => {
       setCourse(receivedCourse);
@@ -72,8 +75,6 @@ function LessonViewer(props: any) {
       setEnrolledLesson(receivedEnrolledLesson);
     });   
   }, []);
-  console.log(enrolledLesson);
-
 
   useEffect(() => {
     if (accountId !== null && courseId !== null ) {
@@ -83,6 +84,14 @@ function LessonViewer(props: any) {
     }
   }, []);
 
+  function formatDate(date: Date): string {
+    var d = new Date(date);    
+    return d.toDateString() + ', ' + d.toLocaleTimeString();
+  }
+
+  function viewStudentAttempt(studentAttemptId: number): void {
+    history.push(`/markedquizviewer/${studentAttemptId}`);
+  }
 
   function getQuizAttempts(): QuizWithStudentAttemptCountResp[] {
     let quizAttemptsTemp: QuizWithStudentAttemptCountResp[] = [];
@@ -106,7 +115,8 @@ function LessonViewer(props: any) {
             contentId: enrolledContent.enrolledContentId,
             timeLimit: quiz.timeLimit,
             maxAttemptsPerStudent: quiz.maxAttemptsPerStudent,
-            studentAttemptCount: studentAttemptCount                 
+            studentAttemptCount: studentAttemptCount,
+            studentAttempts: enrolledContent.studentAttempts          
           }        
         );
       }
@@ -221,6 +231,29 @@ function LessonViewer(props: any) {
                     <QuizDescriptionTwo>
                       {q.studentAttemptCount}
                     </QuizDescriptionTwo>
+                    {/*
+                    <QuizSubheader>Grade:</QuizSubheader>
+                    <QuizDescriptionTwo>[To Finish]</QuizDescriptionTwo>
+                    */}
+                  </QuizRow>
+                  <QuizRow>
+                    <QuizSubheader>Previous Attempts</QuizSubheader>
+                    { q.studentAttempts.map(sa => {
+                        return (
+                          <>
+                            <QuizDescriptionTwo>                              
+                                { formatDate(sa.dateTimeOfAttempt) }                               
+                            </QuizDescriptionTwo>
+                            <QuizDescriptionTwo>
+                              <BtnWrapper>
+                                <Button onClick={() => viewStudentAttempt(sa.studentAttemptId)}>
+                                  View Attempt
+                                </Button>
+                              </BtnWrapper>
+                            </QuizDescriptionTwo>
+                          </>
+                        );
+                    })}                    
                     {/*
                     <QuizSubheader>Grade:</QuizSubheader>
                     <QuizDescriptionTwo>[To Finish]</QuizDescriptionTwo>
