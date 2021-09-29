@@ -129,11 +129,7 @@ function MultimediaViewer(props: any) {
         >
         </DocumentViewer> */}
 
-        { currentMultimedia?.multimediaType !== "VIDEO" && 
-        <div>
-        <button onClick={saveFile}>Download</button>
-        </div>
-        }   
+         
       </MultimediaContainer>
     </>
   );
