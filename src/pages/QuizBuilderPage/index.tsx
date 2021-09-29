@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import { Quiz } from './../../apis/Entities/Quiz';
 import { QuizQuestion } from "../../apis/Entities/QuizQuestion";
 import { getQuizByQuizId, updateQuizWithQuizQuestionsAndQuizQuestionOptions } from "../../apis/Quiz/QuizApis";
 import { getAllQuizQuestionsByQuizId, getQuizQuestionByQuizQuestionId } from "../../apis/QuizQuestion/QuizQuestionApis";
+import { getAccountByQuizId } from "../../apis/Account/AccountApis";
 import { Button } from "../../values/ButtonElements";
 import QuizQuestionComponent from "./components/QuizQuestionComponent"
 import QuestionBankModal from "./components/QuestionBankModal"
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
-import DeleteIcon from '@material-ui/icons/Delete';
 import {
     Grid, TextField, IconButton, Input, InputLabel
 } from "@material-ui/core";
@@ -27,14 +28,25 @@ function QuizBuilderPage(props: any) {
     const [maxAttempts, setMaxAttempts] = useState<number>();
     const [timeLimitHours, setTimeLimitHours] = useState<string>("00");
     const [timeLimitMinutes, setTimeLimitMinutes] = useState<string>("00");
-    const [quizQuestionArray, setQuizQuestionArray] = useState<QuizQuestion[]>([]);
-    const [quiz, setQuiz] = useState<Quiz>();
-    const [updatedQuiz, setUpdatedQuiz] = useState<Quiz>();
-    const loggedInAccountId = window.sessionStorage.getItem("loggedInAccountId")
-
+    const [quizQuestionArray, setQuizQuestionArray] = useState<QuizQuestion[]>([]); //updated at first render and question & option updates
+    const [quiz, setQuiz] = useState<Quiz>(); //only updated at first render & after submit
+    const [updatedQuiz, setUpdatedQuiz] = useState<Quiz>(); // updated with every field change
+    const loggedInAccountId = window.sessionStorage.getItem("loggedInAccountId");
+    const [isDisabled, setIsDisabled] = useState<boolean>(false);
+    const history = useHistory();
 
     useEffect(() => {
+        getAccountByQuizId(contentId).then((res) => {
+
+            if (res.accountId !== parseInt(loggedInAccountId)) {
+                history.push("/profile");
+            }
+        }).catch((err) => {
+            console.log("Error: get account by quizId", err)
+        });
+        history.location.state.mode === "VIEW" ? setIsDisabled(true) : setIsDisabled(false);
         getQuizByQuizId(contentId).then((res) => {
+            console.log(res)
             setQuiz(res);
             setUpdatedQuiz(res);
             setName(res.name);
@@ -65,11 +77,6 @@ function QuizBuilderPage(props: any) {
             quizQuestionArray.push(newQuizQuestion);
         }
     }
-
-    // const deleteQuestion = (event: React.MouseEvent<unknown>, index: number) => {
-    //     const updatedQuizQuestionArray = quizQuestionArray.filter((q, qId) => { return (qId !== index); })
-    //     setQuizQuestionArray(updatedQuizQuestionArray);
-    // }
 
     const onDragEnd = () => {
         //update state
@@ -147,7 +154,7 @@ function QuizBuilderPage(props: any) {
         var updatedQuizQuestionArray = [];
         if (updatedQuizQuestion === null) {
             // question deletion
-            updatedQuizQuestionArray = quizQuestionArray.filter((q, qId) =>  qId !== index );
+            updatedQuizQuestionArray = quizQuestionArray.filter((q, qId) => qId !== index);
         } else {
             // question update
             updatedQuizQuestionArray = quizQuestionArray.map((q, qId) => {
@@ -190,11 +197,8 @@ function QuizBuilderPage(props: any) {
                     return (
                         <>
                             <QuizQuestionCard key={qId}>
-                                <QuizQuestionComponent type="mcq" question={q} questionIndex={qId}
+                                <QuizQuestionComponent disabled={isDisabled} question={q} questionIndex={qId}
                                     onUpdateQuestion={handleUpdateQuestion} onUpdateQuizQuestionOptions={handleQuizQuestionOptionUpdate} />
-                                {/* <IconButton style={{ alignItems: "baseline" }} onClick={(event) => deleteQuestion(event, qId)}>
-                                    <DeleteIcon />
-                                </IconButton> */}
                             </QuizQuestionCard>
                         </>
                     );
@@ -214,11 +218,12 @@ function QuizBuilderPage(props: any) {
                     <QuizCardContent>
                         <Grid container spacing={3}>
                             <Grid item xs={12}>
-                                <TextField required id="standard-basic" fullWidth value={name} label="Name" name="name" onChange={handleNameChange} />
+                                <TextField disabled={isDisabled} required id="standard-basic" fullWidth value={name} label="Name" name="name" onChange={handleNameChange} />
                             </Grid>
                             <Grid item xs={6}>
                                 <InputLabel htmlFor="quiz-timelimit">Time Limit Hours*</InputLabel>
                                 <Input
+                                    disabled={isDisabled}
                                     required
                                     fullWidth
                                     id="quiz-timelimit"
@@ -234,6 +239,7 @@ function QuizBuilderPage(props: any) {
                             <Grid item xs={6}>
                                 <InputLabel htmlFor="quiz-timelimit">Time Limit Minutes*</InputLabel>
                                 <Input
+                                    disabled={isDisabled}
                                     required
                                     fullWidth
                                     id="quiz-timelimit"
@@ -249,6 +255,7 @@ function QuizBuilderPage(props: any) {
                             <Grid item xs={12}>
                                 <InputLabel htmlFor="quiz-maxattempts">Max Attempts*</InputLabel>
                                 <Input
+                                    disabled={isDisabled}
                                     required
                                     id="quiz-maxattempts"
                                     type="number"
@@ -260,11 +267,11 @@ function QuizBuilderPage(props: any) {
                                 />
                             </Grid>
                             <Grid item xs={12}>
-                                <TextField required id="standard-basic" fullWidth value={description} name="description"
+                                <TextField disabled={isDisabled} required id="standard-basic" fullWidth value={description} name="description"
                                     label="Description" onChange={handleDescriptionChange} />
                             </Grid>
                         </Grid>
-                        <Button primary onClick={handleSubmit}>Save</Button>
+                        <Button disabled={isDisabled} primary={!isDisabled} onClick={handleSubmit}>Save</Button>
                     </QuizCardContent>
                 </QuizCard>
 
@@ -273,8 +280,8 @@ function QuizBuilderPage(props: any) {
                         title="Quiz Builder"
                         action={
                             <div style={{ display: "flex" }}>
-                                <Button onClick={addNewQuestion}>Add New Question</Button>
-                                <QuestionBankModal onChangeFromQuestionBank={handleChangeFromQuestionBank} />
+                                <Button disabled={isDisabled} onClick={addNewQuestion}>Add New Question</Button>
+                                <QuestionBankModal disabled={isDisabled} onChangeFromQuestionBank={handleChangeFromQuestionBank} />
                             </div>
                         }
                     />

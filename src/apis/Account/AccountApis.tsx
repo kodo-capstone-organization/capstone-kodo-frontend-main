@@ -27,12 +27,19 @@ export async function getAllAccounts(): Promise<Account[]> {
     return httpClient.get<undefined, Account[]>(getParameters)
 }
 
+export async function getAccountByQuizId(quizId: number): Promise<Account[]> {
+    const getParameters: IHttpClientRequestParameters<undefined> = {
+        url: `/account/getAccountByQuizId/${quizId}`
+    }
+
+    return httpClient.get<undefined, Account>(getParameters)
+}
+
 export async function createNewAccount(createNewAccountReq: CreateNewAccountReq, displayPicture: File | null): Promise<Account> {
     const formData = new FormData();
 
     formData.append('account', transformToBlob(createNewAccountReq));
-    if (displayPicture !== null)
-    {
+    if (displayPicture !== null) {
         formData.append('displayPicture', displayPicture);
     }
 
