@@ -8,7 +8,7 @@ import Profile from './components/Profile';
 import ProfileSettings from './components/ProfileSettings';
 import ProfileFinancials from './components/ProfileFinancials';
 
-function MyProfilePage() {
+function MyProfilePage(props: any) {
 
     const [isIndexPage, setIsIndexPage] = useState<Boolean>();
     const [myAccount, setMyAccount] = useState<Account>();
@@ -53,8 +53,8 @@ function MyProfilePage() {
             </Breadcrumbs>
 
             { /* Conditional Rendering of Subpage */}
-            { isIndexPage && myAccount && <Profile account={myAccount} history={history}/> }
-            { !isIndexPage && history.location.pathname.includes("settings") && <ProfileSettings account={myAccount} history={history} /> }
+            { isIndexPage && myAccount && <Profile account={myAccount} history={history} callOpenSnackBar={props.callOpenSnackBar}/> }
+            { !isIndexPage && history.location.pathname.includes("settings") && <ProfileSettings account={myAccount} history={history} callOpenSnackBar={props.callOpenSnackBar} /> }
             { !isIndexPage && !history.location.pathname.includes("settings") && <ProfileFinancials /> }
 
         </ProfileContainer>

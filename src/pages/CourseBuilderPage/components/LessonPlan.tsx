@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Lesson } from './../../../apis/Entities/Lesson';
 import { Dialog, DialogContent, DialogContentText, DialogTitle, InputLabel, Input, FormControl, DialogActions, AppBar, Tabs, Tab, Grid, IconButton, TextField, Typography, Box } from "@material-ui/core";
 import AddIcon from '@material-ui/icons/Add';
@@ -23,17 +23,30 @@ function LessonPlan(props: any) {
 
     const [showAddLessonDialog, setShowAddLessonDialog] = useState<boolean>(false); 
 
-    let [errors, setErrors] = useState<IErrors<boolean>>({
+    let [errorsForCreateLesson, setErrorsForCreateLesson] = useState<IErrors<boolean>>({
         name: false,
         description: false,
     });
+    let [errorsForUpdateLesson, setErrorsForUpdateLesson] = useState<Map<number, IErrors<boolean>>>();
+
+    const resetUpdateLessonErrorsMap = () => {
+        let lessonErrorsMap = new Map();
+        props.lessons.forEach((lesson: Lesson) => { 
+            lessonErrorsMap.set(lesson.lessonId, { name: false, description: false })
+        })
+        setErrorsForUpdateLesson(lessonErrorsMap)
+    }
+    
+    useEffect(() => {
+        resetUpdateLessonErrorsMap()
+    }, [props.lessons])
 
     const openDialog = () => {
         setShowAddLessonDialog(true);
     }
   
     const handleClose = () => {
-        setErrors({}) // clear errors from form
+        setErrorsForCreateLesson({}) // clear errors from form
         setShowAddLessonDialog(false);
     }
 
@@ -44,6 +57,7 @@ function LessonPlan(props: any) {
     const handleDeleteLesson = (lessonId: number) => {
         deleteLesson(lessonId).then((result) => {
             if (result) {
+                props.callOpenSnackBar("Lesson successfully deleted", "success")
                 const updatedLessons = lessons.filter((lesson: Lesson) => lesson.lessonId !== lessonId)
                 let wrapperEvent = {
                     target: {
@@ -54,14 +68,45 @@ function LessonPlan(props: any) {
                 handleFormDataChange(wrapperEvent)
                 setLessons(updatedLessons)
             }
-        }) 
+        }).catch(error => { props.callOpenSnackBar(`Error in deleting lesson: ${error}`, "error") });
     }
 
+    const handleValidationForUpdateLesson = (lessonId: number) => {
+        let formIsValid = true;
+        
+        const selectedLesson = lessons.filter((lesson: Lesson) => lesson.lessonId === lessonId).pop()
+        let errorsForSelectedLesson = errorsForUpdateLesson?.get(lessonId);
+        
+        if (selectedLesson && errorsForSelectedLesson) {
+            if (selectedLesson?.name === "") {
+                formIsValid = false ;
+                errorsForSelectedLesson['name'] = true;
+              }
+          
+              if (selectedLesson?.description === "") {
+                formIsValid = false;
+                errorsForSelectedLesson['description'] = true;      
+              }
+          
+              errorsForUpdateLesson?.set(lessonId, errorsForSelectedLesson)
+              setErrorsForUpdateLesson(errorsForUpdateLesson);
+          
+              return formIsValid;
+        } else {
+            return false
+        }
+      }
+
     const handleUpdateLesson = (lessonId: number) => {
+        if (!handleValidationForUpdateLesson(lessonId)) return
+
         const selectedLesson = lessons.filter((lesson: Lesson) => lesson.lessonId === lessonId).pop()
 
         if (selectedLesson !== undefined) {
             updateLesson(selectedLesson.lessonId, selectedLesson.name, selectedLesson.description).then((newLesson) => {
+
+                props.callOpenSnackBar("Lesson successfully updated", "success")
+
                 const updatedLessons = lessons.map((lesson: Lesson) => {
                     if (lesson.lessonId === newLesson.lessonId) {
                         lesson = newLesson
@@ -76,7 +121,7 @@ function LessonPlan(props: any) {
                     }
                 }
                 handleFormDataChange(wrapperEvent)
-            })
+            }).catch(error => { props.callOpenSnackBar(`Error in updating lesson: ${error}`, "error") });
         }
 
     }
@@ -115,27 +160,27 @@ function LessonPlan(props: any) {
         handleFormDataChange(wrapperEvent)
     }
 
-    const handleValidation = () => {
+    const handleValidationForCreateLesson = () => {
         let formIsValid = true;
-        errors = {};
+        errorsForCreateLesson = {};
     
         if (newLessonName === "") {
           formIsValid = false ;
-          errors['name'] = true;
+          errorsForCreateLesson['name'] = true;
         }
     
         if (newLessonDescription === "") {
           formIsValid = false;
-          errors['description'] = true;      
+          errorsForCreateLesson['description'] = true;      
         }
     
-        setErrors(errors);
+        setErrorsForCreateLesson(errorsForCreateLesson);
     
         return formIsValid;
       }
     
     const handleClickCreateLesson = () => {
-        if (!handleValidation()) return
+        if (!handleValidationForCreateLesson()) return
 
         createNewLesson(props.courseId, newLessonName, newLessonDescription, lessons.length + 1).then((newLesson) => {
             console.log(newLesson)
@@ -151,10 +196,11 @@ function LessonPlan(props: any) {
             setLessons(updatedLessons)
 
             // Clean up modal
+            props.callOpenSnackBar("Lesson successfully created", "success")
             handleClose()
             setNewLessonName("")
             setNewLessonDescription("")
-        })
+        }).catch(error => { props.callOpenSnackBar(`Error in creating lesson: ${error}`, "error") });
     }
 
     return (
@@ -175,7 +221,7 @@ function LessonPlan(props: any) {
               <FormControl fullWidth margin="normal">
                 <InputLabel htmlFor="lesson-name">Lesson Name</InputLabel>
                 <Input
-                  error={errors['name']}
+                  error={errorsForCreateLesson['name']}
                   id="lesson-name"
                   name="name"
                   type="text"
@@ -188,7 +234,7 @@ function LessonPlan(props: any) {
                 <FormControl fullWidth margin="normal">
                   <InputLabel htmlFor="lesson-description">Description</InputLabel>
                   <Input
-                    error={errors['description']}
+                    error={errorsForCreateLesson['description']}
                     id="lesson-description"
                     name="description"
                     type="text"
@@ -245,6 +291,8 @@ function LessonPlan(props: any) {
                                     <Grid container spacing={3}>
                                         <Grid style={{ padding: "0!important"}} item xs={12}>
                                             <TextField 
+                                                // @ts-ignore
+                                                error={errorsForUpdateLesson && errorsForUpdateLesson.get(lesson.lessonId)['name']}
                                                 fullWidth 
                                                 required
                                                 disabled={props.isEnrollmentActive}
@@ -255,12 +303,15 @@ function LessonPlan(props: any) {
                                         </Grid>
                                         <Grid style={{ padding: "0!important"}} item xs={12}>
                                             <TextField 
+                                                // @ts-ignore
+                                                error={errorsForUpdateLesson && errorsForUpdateLesson.get(lesson.lessonId)['description']}
                                                 fullWidth
                                                 required
                                                 disabled={props.isEnrollmentActive}
                                                 id={index.toString()}
                                                 label="Lesson Description"
                                                 value={lesson.description}
+                                                multiline
                                                 onChange={handleLessonDescriptionChange}/>
                                         </Grid>
                                         <Grid item xs={12}>
@@ -270,6 +321,7 @@ function LessonPlan(props: any) {
                                                 selectedLessonId={lesson.lessonId}
                                                 quizzes={lesson.quizzes}
                                                 lessons={lessons}
+                                                callOpenSnackBar={props.callOpenSnackBar}
                                             />
                                         </Grid>
                                         <Grid item xs={12}>
@@ -279,6 +331,7 @@ function LessonPlan(props: any) {
                                                 selectedLessonId={lesson.lessonId}
                                                 multimedias={lesson.multimedias}
                                                 lessons={lessons}
+                                                callOpenSnackBar={props.callOpenSnackBar}
                                             />
                                         </Grid>
                                         <Grid container spacing={3} justifyContent="flex-end">

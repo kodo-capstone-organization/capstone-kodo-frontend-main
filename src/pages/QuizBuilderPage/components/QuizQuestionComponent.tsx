@@ -4,8 +4,9 @@ import { QuizQuestion } from "../../../apis/Entities/QuizQuestion";
 import { QuizQuestionOption } from '../../../apis/Entities/QuizQuestionOption';
 import QuizQuestionOptionsList from "./QuizQuestionOptionsList"
 import {
-    Box, FormControl, InputLabel, Divider
+    Box, FormControl, InputLabel, Divider, IconButton
 } from "@material-ui/core";
+import DeleteIcon from '@material-ui/icons/Delete';
 import { QuizBuilderTextInput, QuizSelectMenu } from "../QuizBuilderElements";
 
 
@@ -22,13 +23,15 @@ function QuizQuestionComponent(props: any) {
     const [questionType, setQuestionType] = useState<string>();
     const [marks, setMarks] = useState<number>();
     const [question, setQuestion] = useState<QuizQuestion>();
-    const [updatedQuestion, setUpdatedQuestion] = useState<QuizQuestion>();
+    // const [updatedQuestion, setUpdatedQuestion] = useState<QuizQuestion>();
+    const [isDisabled, setIsDisabled] = useState<boolean>(false);
     const [content, setContent] = useState<string>();
     const [questionIndex, setQuestionIndex] = useState<number>();
 
     useEffect(() => {
         setQuestion(props.question)
-        setUpdatedQuestion(props.question)
+        // setUpdatedQuestion(props.question)
+        setIsDisabled(props.disabled)
         setQuestionIndex(props.questionIndex)
         setContent(props.question.content)
         setMarks(props.question.marks)
@@ -42,29 +45,34 @@ function QuizQuestionComponent(props: any) {
 
     const handleTypeChange = (event: React.ChangeEvent<{ value: unknown }>) => {
         setQuestionType(event.target.value as string);
-        const newlyUpdatedQuestion = Object.assign(updatedQuestion, { questionType: event.target.value })
-        setUpdatedQuestion(newlyUpdatedQuestion)
+        const newlyUpdatedQuestion = Object.assign(question, { questionType: event.target.value })
+        // setUpdatedQuestion(newlyUpdatedQuestion)
         props.onUpdateQuestion(newlyUpdatedQuestion, questionIndex)
     };
 
     const handleMarkChange = (event: React.ChangeEvent<{ value: unknown }>) => {
         setMarks(event.target.value as number);
-        const newlyUpdatedQuestion = Object.assign(updatedQuestion, { marks: event.target.value })
-        setUpdatedQuestion(newlyUpdatedQuestion)
+        const newlyUpdatedQuestion = Object.assign(question, { marks: event.target.value })
+        // setUpdatedQuestion(newlyUpdatedQuestion)
         props.onUpdateQuestion(newlyUpdatedQuestion, questionIndex)
     };
 
     const handleContentChange = (event: React.ChangeEvent<{ value: unknown }>) => {
         setContent(event.target.value as string);
-        const newlyUpdatedQuestion = Object.assign(updatedQuestion, { content: event.target.value })
-        setUpdatedQuestion(newlyUpdatedQuestion)
+        const newlyUpdatedQuestion = Object.assign(question, { content: event.target.value })
+        // setUpdatedQuestion(newlyUpdatedQuestion)
         props.onUpdateQuestion(newlyUpdatedQuestion, questionIndex)
     };
 
     const handleQuizQuestionOptionUpdate = (quizQuestionOptions: QuizQuestionOption[], questionIndex: number) => {
         //recv data from child component
-        const newlyUpdatedQuestion = Object.assign(updatedQuestion, { quizQuestionOptions })
+        const newlyUpdatedQuestion = Object.assign(question, { quizQuestionOptions })
         props.onUpdateQuizQuestionOptions(newlyUpdatedQuestion, questionIndex)
+    }
+
+    const deleteQuestion = () => {
+        props.onUpdateQuestion(null, questionIndex)
+
     }
 
     return (
@@ -75,12 +83,13 @@ function QuizQuestionComponent(props: any) {
 
                     {
                         questionType != undefined &&
-                        <Box sx={{ minWidth: 120 }} style={{ margin: "16px" }}>
+                        <Box sx={{ minWidth: 120 }} style={{ margin: "6px" }}>
                             <FormControl fullWidth>
                                 <InputLabel variant="standard" htmlFor="uncontrolled-native">
                                     Question Type
                                 </InputLabel>
                                 <QuizSelectMenu
+                                disabled={isDisabled} 
                                     value={questionType}
                                     onChange={handleTypeChange}
                                 >
@@ -94,12 +103,13 @@ function QuizQuestionComponent(props: any) {
 
                     {
                         marks != undefined &&
-                        <Box sx={{ minWidth: 120 }} style={{ margin: "16px" }}>
+                        <Box sx={{ minWidth: 120 }} style={{ margin: "6px" }}>
                             <FormControl fullWidth>
                                 <InputLabel variant="standard" htmlFor="uncontrolled-native">
                                     Marks
                     </InputLabel>
                                 <QuizSelectMenu
+                                disabled={isDisabled} 
                                     value={marks}
                                     onChange={handleMarkChange}
                                 >
@@ -112,20 +122,18 @@ function QuizQuestionComponent(props: any) {
                             </FormControl>
                         </Box>
                     }
-
+                    <IconButton disabled={isDisabled} style={{ alignItems: "baseline", marginLeft:"auto" }} onClick={deleteQuestion}>
+                        <DeleteIcon />
+                    </IconButton>
                 </div>
-
-                <Divider />
 
                 {
                     content != undefined &&
-                    <QuizBuilderTextInput id="standard-basic" label="Question" variant="standard" value={content} onChange={handleContentChange} />
+                    <QuizBuilderTextInput disabled={isDisabled}  id="standard-basic" label="Question" variant="standard" value={content} onChange={handleContentChange} />
 
                 }
 
-                <Divider />
-                <QuizQuestionOptionsList questionIndex={questionIndex} question={question} questionType={questionType} onHandleQuizQuestionOptionUpdate={handleQuizQuestionOptionUpdate} />
-                <Divider />
+                <QuizQuestionOptionsList disabled={isDisabled}  questionIndex={questionIndex} question={question} questionType={questionType} onHandleQuizQuestionOptionUpdate={handleQuizQuestionOptionUpdate} />
             </div>
 
         </>

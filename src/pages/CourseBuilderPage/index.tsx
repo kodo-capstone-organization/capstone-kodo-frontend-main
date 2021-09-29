@@ -148,13 +148,15 @@ function CourseBuilderPage(props: any) {
 
         const updateCourseReq = buildUpdateCourseReq(courseFormData)
 
-        updateCourse(updateCourseReq, bannerImageFile).then((updatedCourse) => {
-            console.log(updatedCourse);
-
-            setCourseFormData(updatedCourse)
-
-            history.push(`/overview/${courseFormData.courseId}`)
-        })
+        updateCourse(updateCourseReq, bannerImageFile)
+            .then((updatedCourse) => {
+                setCourseFormData(updatedCourse)
+                history.push(`/overview/${courseFormData.courseId}`)
+                props.callOpenSnackBar("Course information successfully updated", "success")
+            })
+            .catch((error) => {
+                props.callOpenSnackBar(`Error in updating course information: ${error}`, "error")
+            })
     }
 
     const handleOpenToggleEnrollmentDialog = () => {
@@ -170,13 +172,13 @@ function CourseBuilderPage(props: any) {
         
         if (myAccountId !== null)
         {
-            toggleEnrollmentActiveStatus(courseFormData.courseId, parseInt(myAccountId)).then((res: any) => {
-                // Toggle success, refresh page
-                console.log(res);
-                window.location.reload();
-            }).catch(error => {
-                console.log("Error in deletion", error)
-            });
+            toggleEnrollmentActiveStatus(courseFormData.courseId, parseInt(myAccountId))
+                .then((res: any) => {
+                    // Display success message, refresh page
+                    props.callOpenSnackBar("Course successfully published", "success")
+                    window.location.reload();
+                })
+                .catch(error => { props.callOpenSnackBar(`Error in publishing course: ${error}`, "error") });
         }
         else
         {
@@ -189,13 +191,13 @@ function CourseBuilderPage(props: any) {
         return courseFormData.isEnrollmentActive ? "Unpublish" : "Publish"
     }
 
-    const navigateToCourseOverview = () => {
-        history.push(`/overview/${courseFormData.courseId}`)
-    }
-
-    const navigateToPreviousPage = () => {
-        history.goBack();
-    }
+    // const navigateToCourseOverview = () => {
+    //     history.push(`/overview/${courseFormData.courseId}`)
+    // }
+    //
+    // const navigateToPreviousPage = () => {
+    //     history.goBack();
+    // }
 
     return !loading && ( !isTutorOfCourse ? 
         <h1>You are not a tutor of this course 😡</h1> :       
@@ -288,7 +290,7 @@ function CourseBuilderPage(props: any) {
                 </CourseBuilderContent>
             </CourseBuilderCard>
             <CourseBuilderCard id="lesson-plan">
-                <LessonPlan isEnrollmentActive={courseFormData.isEnrollmentActive} courseFormData={courseFormData} lessons={courseFormData.lessons} handleFormDataChange={handleFormDataChange} courseId={courseId}/>
+                <LessonPlan isEnrollmentActive={courseFormData.isEnrollmentActive} courseFormData={courseFormData} lessons={courseFormData.lessons} handleFormDataChange={handleFormDataChange} courseId={courseId} callOpenSnackBar={props.callOpenSnackBar}/>
             </CourseBuilderCard>
             {/* Toggle Enrollment Course Dialog */}
             <Dialog fullWidth open={isToggleActiveEnrollmentDialogOpen} onClose={handleCloseToggleEnrollmentDialog} aria-labelledby="toggle-dialog">

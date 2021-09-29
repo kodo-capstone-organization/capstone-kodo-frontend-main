@@ -162,8 +162,11 @@ function Profile(props: any) {
             setCourseBannerImageFile(null);
             handleClose();
 
-            // Redirect
+            // Display success + Redirect
+            props.callOpenSnackBar("Course successfully created", "success")
             props.history.push(`/builder/${res.courseId}`);
+        }).catch((error) => {
+            props.callOpenSnackBar(`Error in creating course: ${error}`, "error")
         });
 
         setCreateCourseLoading(false);
@@ -207,7 +210,7 @@ function Profile(props: any) {
                         </ProfileUsername>
                     </ProfileDetails>
                 </ProfileCardContent>
-                <ProfileCardContent removePadTop>
+                <ProfileCardContent removePadTop="true">
                     <ProfileContentText>
                         { myAccount?.bio }
                     </ProfileContentText>
@@ -246,7 +249,8 @@ function Profile(props: any) {
                         <CourseWrapper>
                             { myAccount?.enrolledCourses.map((enrolledCourse: EnrolledCourse) => {
                                 return (
-                                    <CourseCard 
+                                    <CourseCard
+                                        key={enrolledCourse.enrolledCourseId}
                                         course={enrolledCourse.parentCourse} 
                                         myCourseView={false} 
                                         isCourseCompleted={enrolledCourse.dateTimeOfCompletion !== null} 
@@ -318,7 +322,8 @@ function Profile(props: any) {
                         <CourseWrapper>
                             { myAccount?.courses.map((myCourse: Course) => {
                                 return (
-                                    <CourseCard 
+                                    <CourseCard
+                                        key={myCourse.courseId}
                                         course={myCourse} 
                                         myCourseView={true} 
                                         isCourseCompleted={false} 

@@ -4,6 +4,7 @@ import TopMenu from "./TopMenu";
 import {LayoutContentWrapper, LayoutContentPage} from "./LayoutElements";
 import {RouteItemsWithSidebar} from "../routeItems";
 
+
 function Layout(props) {
 
     const location = props.history.location;
@@ -34,7 +35,7 @@ function Layout(props) {
             <LayoutContentWrapper>
                 { showSideBar && <Sidebar history={props.history}/> }
                 <LayoutContentPage showSideBar={showSideBar}>
-                    {props.children}
+                    { props.children }
                 </LayoutContentPage>
             </LayoutContentWrapper>
         </div>

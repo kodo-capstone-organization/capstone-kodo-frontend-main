@@ -18,7 +18,11 @@ import { QuizWithStudentAttemptCountResp } from "../../../apis/Entities/Quiz"
 import { Button } from "../../../values/ButtonElements";
 import { colours } from "../../../values/Colours";
 import ReactPlayer from "react-player";
-import { Document, Page, pdfjs } from "react-pdf";
+import { Document, Page } from "react-pdf";
+import DocViewer, { DocViewerRenderers } from "react-doc-viewer";
+import { DocumentViewer } from 'react-documents';
+// import FileViewer from 'react-file-viewer';
+import { saveAs } from "file-saver";
 
 import {
   MultimediaContainer,
@@ -37,7 +41,6 @@ import {
 } from "./MultimediaViewerElements";
 
 import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
 function MultimediaViewer(props: any) {
   const contentId = props.match.params.contentId;
@@ -50,8 +53,6 @@ function MultimediaViewer(props: any) {
   const [numPages, setNumPages] = useState<number>();
   const [pageNumber, setPageNumber] = useState<number>(1);
 
-
-
   useEffect(() => {
     getMultimediaByMultimediaId(contentId).then(receivedMultimedia => {
       setMultimedia(receivedMultimedia);
@@ -63,8 +64,6 @@ function MultimediaViewer(props: any) {
       setCourse(receivedCourse);
     });
   }, [contentId, lessonId, courseId]);
-
-  console.log(currentMultimedia);
 
   function onDocumentLoadSuccess({ numPages }: any) {
     setNumPages(numPages);
@@ -87,25 +86,15 @@ function MultimediaViewer(props: any) {
           <MultimediaName> Name: {currentMultimedia?.name}</MultimediaName>
           <MultimediaDescription> Description: {currentMultimedia?.description}</MultimediaDescription>
         </MultimediaCard>
+
         <VideoCard>
-          {currentMultimedia?.multimediaType === "VIDEO" &&
-          <ReactPlayer 
-            url = {currentMultimedia.url}
-            controls = {true}
-          />
+          {currentMultimedia && currentMultimedia.multimediaType === "VIDEO" &&
+            <ReactPlayer
+              url={currentMultimedia.url}
+              controls={true}
+            />
           }
         </VideoCard>
-
-        {/* <ImageCard>
-          {currentMultimedia?.multimediaType === "IMAGE" &&
-          // <ReactPlayer 
-          //   url = {currentMultimedia.url}
-          //   controls = {true}
-          // />
-          <iframe width="100%" height="600" src={`https://www.openstreetmap.org/export/embed.html?bbox=-0.004017949104309083%2C51.47612752641776%2C0.00030577182769775396%2C51.478569861898606&layer=mapnik`}></iframe>
-
-          }
-        </ImageCard> */}
 
         <PDFCard>
           {currentMultimedia && currentMultimedia.multimediaType === "DOCUMENT" &&
@@ -119,6 +108,32 @@ function MultimediaViewer(props: any) {
           <p>Page {pageNumber} of {numPages}</p>
         </PDFCard>
 
+        <ImageCard>
+          {currentMultimedia?.multimediaType === "IMAGE" &&
+            <img
+              src="http://placeimg.com/1200/800/nature"
+              // src={currentMultimedia.url}
+              width="600"
+              style={{ margin: '2px' }}
+              alt=""
+            />
+          }
+        </ImageCard>
+
+        {/* <DocViewer pluginRenderers={DocViewerRenderers} documents={docs} /> */}
+
+        {/* <DocumentViewer
+          url="https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
+          viewer="url"
+          style="width:100%;height:50vh;"
+        >
+        </DocumentViewer> */}
+
+        { currentMultimedia?.multimediaType !== "VIDEO" && 
+        <div>
+        <button onClick={saveFile}>Download</button>
+        </div>
+        }   
       </MultimediaContainer>
     </>
   );

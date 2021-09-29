@@ -1,8 +1,6 @@
 import { Account } from "../../../apis/Entities/Account";
 import { Button } from "../../../values/ButtonElements";
-import { ProfileSettingField } from "../ProfileElements";
 import { updateAccountPassword } from '../../../apis/Account/AccountApis';
-import { useHistory } from "react-router-dom";
 import {
     IconButton,
     Input, 
@@ -42,8 +40,6 @@ function ChangePasswordModal(props: any) {
         newPassword: "",
         confirmPassword: ""
     });
-
-    const history = useHistory();
 
     useEffect(() => {
         setMyAccount(props.account)
@@ -126,7 +122,9 @@ function ChangePasswordModal(props: any) {
 
                 updateAccountPassword(updateAccountPasswordReq)
                     .then((res) => {
+                        props.callOpenSnackBar("Password successfully changed", "success");
                         setUpdateAccountPasswordSuccess("Password Successfully Changed");
+                        handleClose();
                     })
                     .catch((err) => {
                         setUpdateAccountPasswordFailed(err.response.data.message);
@@ -165,7 +163,7 @@ function ChangePasswordModal(props: any) {
         <>
             <div>
                 <Button style={{ width: "fit-content", margin: "20px auto 10px auto" }} onClick={handleOpen}>Change Password</Button>
-                <Dialog open={open} onClose={handleClose}>
+                <Dialog fullWidth open={open} onClose={handleClose}>
                     <div style={{ display: "flex", justifyContent: "space-between" }}>
                         <DialogTitle id="form-dialog-title">Change Your Password</DialogTitle>
                         <IconButton onClick={handleClose}>
@@ -173,86 +171,95 @@ function ChangePasswordModal(props: any) {
                         </IconButton>
                     </div>
                     <DialogContent>
-                        <ProfileSettingField 
-                            error={errors["oldPassword"]} 
-                            style={{ margin: "0 0 10px 0", width: "30em" }} 
-                            label="Old Password" 
-                            value={oldPassword} 
-                            onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setOldPassword(e.target.value)} 
+                        <InputLabel
+                            style={{
+                                color: "rgba(0, 0, 0, 0.54)",
+                                padding: "0",
+                                fontSize: "0.75rem",
+                                lineHeight: "1",
+                                letterSpacing: "0.00938em"
+                            }}
+                            htmlFor="standard-adornment-old-password">Old Password</InputLabel>
+                        <Input
+                            autoComplete="off"
+                            error={errors["oldPassword"]}
+                            id="standard-adornment-old-password"
+                            type={showOldPassword ? 'text' : 'password'}
+                            value={oldPassword}
+                            style={{ margin: "0 0 10px 0", width: "100%" }}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setOldPassword(e.target.value)}
+                            endAdornment={
+                                <InputAdornment position="end">
+                                    <IconButton
+                                        aria-label="toggle password visibility"
+                                        onClick={handleClickShowOldPassword}
+                                        onMouseDown={handleMouseDownOldPassword}
+                                    >
+                                        {showOldPassword ? <Visibility /> : <VisibilityOff />}
+                                    </IconButton>
+                                </InputAdornment>
+                            }
                         />
                         <br/>
                         <InputLabel
-                                style={{
-                                    color: "rgba(0, 0, 0, 0.54)",
-                                    padding: "0",
-                                    fontSize: "0.75rem",
-                                    lineHeight: "1",
-                                    letterSpacing: "0.00938em"
-                                }}
-                                htmlFor="standard-adornment-new-password">New Password</InputLabel>
+                            style={{
+                                color: "rgba(0, 0, 0, 0.54)",
+                                padding: "0",
+                                fontSize: "0.75rem",
+                                lineHeight: "1",
+                                letterSpacing: "0.00938em"
+                            }}
+                            htmlFor="standard-adornment-new-password">New Password</InputLabel>
                         <Input
-                                error={errors["newPassword"]} 
-                                id="standard-adornment-new-password"
-                                type={showNewPassword ? 'text' : 'password'}
-                                value={newPassword}
-                                style={{ margin: "0 0 10px 0", width: "100%" }}
-                                onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setNewPassword(e.target.value)}
-                                endAdornment={
-                                    <InputAdornment position="end">
-                                        <IconButton
-                                            aria-label="toggle password visibility"
-                                            onClick={handleClickShowNewPassword}
-                                            onMouseDown={handleMouseDownNewPassword}
-                                        >
-                                            {showNewPassword ? <Visibility /> : <VisibilityOff />}
-                                        </IconButton>
-                                    </InputAdornment>
-                                }
-                            />
-                        {/* <br/>
-                        <ProfileSettingField 
-                            error={errors["newPassword"]} 
-                            style={{ margin: "0 0 10px 0" }} 
-                            label="New Password" 
-                            value={newPassword} 
-                            onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setNewPassword(e.target.value)} 
-                        /> */}
+                            autoComplete="off"
+                            error={errors["newPassword"]}
+                            id="standard-adornment-new-password"
+                            type={showNewPassword ? 'text' : 'password'}
+                            value={newPassword}
+                            style={{ margin: "0 0 10px 0", width: "100%" }}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setNewPassword(e.target.value)}
+                            endAdornment={
+                                <InputAdornment position="end">
+                                    <IconButton
+                                        aria-label="toggle password visibility"
+                                        onClick={handleClickShowNewPassword}
+                                        onMouseDown={handleMouseDownNewPassword}
+                                    >
+                                        {showNewPassword ? <Visibility /> : <VisibilityOff />}
+                                    </IconButton>
+                                </InputAdornment>
+                            }
+                        />
                         <br/>
                         <InputLabel
-                                style={{
-                                    color: "rgba(0, 0, 0, 0.54)",
-                                    padding: "0",
-                                    fontSize: "0.75rem",
-                                    lineHeight: "1",
-                                    letterSpacing: "0.00938em"
-                                }}
-                                htmlFor="standard-adornment-confirm-password">Confirm Password</InputLabel>
+                            style={{
+                                color: "rgba(0, 0, 0, 0.54)",
+                                padding: "0",
+                                fontSize: "0.75rem",
+                                lineHeight: "1",
+                                letterSpacing: "0.00938em"
+                            }}
+                            htmlFor="standard-adornment-confirm-password">Confirm New Password</InputLabel>
                         <Input
-                                error={errors["confirmPassword"]} 
-                                id="standard-adornment-confirm-password"
-                                type={showConfirmPassword ? 'text' : 'password'}
-                                value={confirmPassword}
-                                style={{ margin: "0 0 10px 0", width: "100%" }}
-                                onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setConfirmPassword(e.target.value)}
-                                endAdornment={
-                                    <InputAdornment position="end">
-                                        <IconButton
-                                            aria-label="toggle password visibility"
-                                            onClick={handleClickShowConfirmPassword}
-                                            onMouseDown={handleMouseDownConfirmPassword}
-                                        >
-                                            {showConfirmPassword ? <Visibility /> : <VisibilityOff />}
-                                        </IconButton>
-                                    </InputAdornment>
-                                }
-                            />
-                        {/* <ProfileSettingField 
-                            error={errors["confirmPassword"]} 
-                            style={{ margin: "0 0 10px 0" }} 
-                            label="Confirm Password" 
-                            value={confirmPassword} 
-                            onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setConfirmPassword(e.target.value)} 
-                        /> */}
+                            autoComplete="off"
+                            error={errors["confirmPassword"]}
+                            id="standard-adornment-confirm-password"
+                            type={showConfirmPassword ? 'text' : 'password'}
+                            value={confirmPassword}
+                            style={{ margin: "0 0 10px 0", width: "100%" }}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setConfirmPassword(e.target.value)}
+                            endAdornment={
+                                <InputAdornment position="end">
+                                    <IconButton
+                                        aria-label="toggle password visibility"
+                                        onClick={handleClickShowConfirmPassword}
+                                        onMouseDown={handleMouseDownConfirmPassword}
+                                    >
+                                        {showConfirmPassword ? <Visibility /> : <VisibilityOff />}
+                                    </IconButton>
+                                </InputAdornment>
+                            }
+                        />
                         { showErrors() }
                         { showSuccess() }
                     </DialogContent>

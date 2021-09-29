@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import { makeStyles, Theme, createStyles, withStyles, lighten } from '@material-ui/core/styles';
 import { QuizQuestion } from "../../../apis/Entities/QuizQuestion";
 import { getAllQuizQuestionsByTutorId } from "../../../apis/QuizQuestion/QuizQuestionApis";
@@ -100,8 +101,10 @@ function QuestionBankModal(props: any) {
     const [open, setOpen] = useState<boolean>(false);
     const [questionList, setQuestionList] = useState<any[]>([]);
     const [selectedQuestions, setSelectedQuestions] = useState<any>([]);
+    const [isDisabled, setIsDisabled] = useState<boolean>(false);
     const accountId = window.sessionStorage.getItem("loggedInAccountId");
     const classes = useStyles();
+    const history = useHistory();
 
 
     useEffect(() => {
@@ -114,7 +117,9 @@ function QuestionBankModal(props: any) {
                 })
                 .catch(err => { console.log("Question Bank Failed", err) })
         }
-    }, [accountId])
+        setIsDisabled(props.disabled);
+        console.log("props.disabled", props.disabled)
+    }, [accountId, props.disabled])
 
     const handleOpen = () => {
         setOpen(true);
@@ -138,7 +143,7 @@ function QuestionBankModal(props: any) {
     return (
         <>
             <div>
-                <Button onClick={handleOpen}>
+                <Button disabled={isDisabled} onClick={handleOpen}>
                     Add From Question Bank
                 </Button>
                 <Dialog open={open} onClose={handleClose} maxWidth={"lg"}>
