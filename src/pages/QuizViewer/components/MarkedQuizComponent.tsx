@@ -102,8 +102,9 @@ function MarkedQuizComponent(props: any) {
                         {
                             questionType === "TF" &&
                             quizQuestionOptions?.map((row, index) => (
-                                <TableRow
+                                <MarkedQuizViewerTableRow
                                     key={index}
+                                    selected={row.correct}
                                 >
                                     <TableCell component="th" scope="row">
                                         {row.leftContent}
@@ -114,14 +115,15 @@ function MarkedQuizComponent(props: any) {
                                             value={index}
                                         />
                                     </TableCell>
-                                </TableRow>
+                                </MarkedQuizViewerTableRow>
                             ))
                         }
                         {
                             questionType === "MATCHING" &&
                             quizQuestionOptions?.map((row, index) => (
-                                <TableRow
+                                <MarkedQuizViewerTableRow
                                     key={index}
+                                    selected={row.correct}
                                 >
                                     <TableCell component="th" scope="row">
                                         <TextField key={index} value={quizQuestionOptions[index].leftContent}/>
@@ -135,7 +137,7 @@ function MarkedQuizComponent(props: any) {
                                             value={index}
                                         />
                                     </TableCell>
-                                </TableRow>
+                                </MarkedQuizViewerTableRow>
                             ))
                         }
                     </TableBody>
