@@ -1,5 +1,6 @@
 import styled from "styled-components";
-import { TextField, Avatar, Card, CardHeader, CardContent, CardActions, Select } from "@material-ui/core";
+import { TextField, Avatar, Card, CardHeader, CardContent,
+     CardActions, Select, TableRow } from "@material-ui/core";
 import { fontSizes } from "../../values/FontSizes";
 import { colours } from "../../values/Colours";
 
@@ -58,8 +59,6 @@ export const QuizViewerCardContent = styled(CardContent)`
     background-color: ${colours.GRAY7};
     color: ${colours.GRAY2};
     align-items: center;
-    padding: 2rem !important;
-    padding: ${({ removePadTop }) => (removePadTop ? "0 2rem 2rem 2rem !important" : "2rem !important")};
     justify-content: center;
 `;
 
@@ -67,5 +66,12 @@ export const QuizQuestionCard = styled(Card)`
     width: 800px;
     border-radius : 10px;
     padding: 16px;
-    display: flex;
+    display: block;
+    margin: 10px;
 `;
+
+export const MarkedQuizViewerTableRow = styled(TableRow)`
+    .MuiTableRow-root.Mui-selected, .MuiTableRow-root.Mui-selected:hover {
+        background-color: ${colours.GREEN};
+    }
+`
