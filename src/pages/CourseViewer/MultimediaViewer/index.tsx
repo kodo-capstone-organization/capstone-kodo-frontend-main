@@ -78,7 +78,7 @@ function MultimediaViewer(props: any) {
             <LessonTitle>Week {currentLesson?.sequence}</LessonTitle>
             <CourseTitle>{currentCourse?.name}</CourseTitle>
           </PageHeading>
-          <ExitWrapper to={`/overview/${currentCourse?.courseId}`}>
+          <ExitWrapper to={`/overview/lesson/${currentCourse?.courseId}/${currentLesson?.lessonId}`}>
             <CancelOutlinedIcon fontSize="large" style={{ color: colours.BLUE2, padding: 20 }} />
           </ExitWrapper>
         </PageHeadingAndButton>
