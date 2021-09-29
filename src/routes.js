@@ -16,12 +16,14 @@ import QuizBuidlerPage from "./pages/QuizBuilderPage";
 import CourseOverview from "./pages/CourseViewer";
 import LessonViewerWithRouter from "./pages/CourseViewer/LessonViewer";
 import MultimediaViewerWithRouter from "./pages/CourseViewer/MultimediaViewer";
+import QuizViewer from "./pages/QuizViewer";
+
 
 import Snackbar from '@material-ui/core/Snackbar';
 import Slide from '@material-ui/core/Slide';
 import Alert from '@material-ui/lab/Alert';
 import { severityList } from './values/Colours';
-import MarkedQuizViewer from "./pages/CourseViewer/LessonViewer/MarkedQuizViewer";
+// import MarkedQuizViewer from "./pages/CourseViewer/LessonViewer/MarkedQuizViewer";
 
 function Routes() {
 
@@ -97,7 +99,7 @@ function Routes() {
 
                         {/* Need to change the path namings here, we have 2 types of content, talk to chandya */}
                         {window.sessionStorage.getItem("loggedInAccountId") ?
-                            <Route path="/markedquizviewer/:studentAttemptId" render={props => <MarkedQuizViewer {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
+                            <Route path="/markedquizviewer/:studentAttemptId" render={props => <QuizViewer {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
                             : <Redirect to="/" />}
 
                         {
