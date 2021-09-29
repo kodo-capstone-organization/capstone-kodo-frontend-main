@@ -46,7 +46,6 @@ function QuizBuilderPage(props: any) {
         });
         history.location.state.mode === "VIEW" ? setIsDisabled(true) : setIsDisabled(false);
         getQuizByQuizId(contentId).then((res) => {
-            console.log(res)
             setQuiz(res);
             setUpdatedQuiz(res);
             setName(res.name);
@@ -257,6 +256,46 @@ function QuizBuilderPage(props: any) {
                                 <Input
                                     disabled={isDisabled}
                                     required
+                                    id="quiz-maxattempts"
+                                    type="number"
+                                    autoFocus
+                                    fullWidth
+                                    value={maxAttempts}
+                                    onChange={handleAttemptChange}
+                                    inputProps={{ min: 0, max: 100 }}
+                                />
+                            </Grid>
+                            <Grid item xs={6}>
+                                <InputLabel htmlFor="quiz-timelimit">Time Limit Hours</InputLabel>
+                                <Input
+                                    fullWidth
+                                    id="quiz-timelimit"
+                                    placeholder="Hours"
+                                    name="timelimit"
+                                    type="number"
+                                    autoFocus
+                                    value={timeLimitHours}
+                                    onChange={handleTimeLimitHourseChange}
+                                    inputProps={{ min: 0, max: 24 }}
+                                />
+                            </Grid>
+                            <Grid item xs={6}>
+                                <InputLabel htmlFor="quiz-timelimit">Time Limit Minutes</InputLabel>
+                                <Input
+                                    fullWidth
+                                    id="quiz-timelimit"
+                                    placeholder="Minutes"
+                                    name="timelimit"
+                                    type="number"
+                                    autoFocus
+                                    value={timeLimitMinutes}
+                                    onChange={handleTimeLimitMinutesChange}
+                                    inputProps={{ min: 0, max: 59 }}
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <InputLabel htmlFor="quiz-maxattempts">Max Attempts*</InputLabel>
+                                <Input
                                     id="quiz-maxattempts"
                                     type="number"
                                     autoFocus
