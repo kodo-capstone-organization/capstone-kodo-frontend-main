@@ -213,6 +213,9 @@ function QuizBuilderPage(props: any) {
                 <QuizCard>
                     <QuizCardHeader
                         title="Quiz Information"
+                        action={
+                            <Button disabled={isDisabled} primary={!isDisabled} onClick={handleSubmit}>Save Quiz</Button>
+                        }
                     />
                     <QuizCardContent>
                         <Grid container spacing={3}>
@@ -268,6 +271,7 @@ function QuizBuilderPage(props: any) {
                             <Grid item xs={6}>
                                 <InputLabel htmlFor="quiz-timelimit">Time Limit Hours</InputLabel>
                                 <Input
+                                    disabled={isDisabled}
                                     fullWidth
                                     id="quiz-timelimit"
                                     placeholder="Hours"
@@ -282,6 +286,7 @@ function QuizBuilderPage(props: any) {
                             <Grid item xs={6}>
                                 <InputLabel htmlFor="quiz-timelimit">Time Limit Minutes</InputLabel>
                                 <Input
+                                    disabled={isDisabled}
                                     fullWidth
                                     id="quiz-timelimit"
                                     placeholder="Minutes"
@@ -296,6 +301,7 @@ function QuizBuilderPage(props: any) {
                             <Grid item xs={12}>
                                 <InputLabel htmlFor="quiz-maxattempts">Max Attempts*</InputLabel>
                                 <Input
+                                    disabled={isDisabled}
                                     id="quiz-maxattempts"
                                     type="number"
                                     autoFocus
@@ -310,7 +316,7 @@ function QuizBuilderPage(props: any) {
                                     label="Description" onChange={handleDescriptionChange} />
                             </Grid>
                         </Grid>
-                        <Button disabled={isDisabled} primary={!isDisabled} onClick={handleSubmit}>Save</Button>
+                        {/* <Button disabled={isDisabled} primary={!isDisabled} onClick={handleSubmit}>Save</Button> */}
                     </QuizCardContent>
                 </QuizCard>
 
