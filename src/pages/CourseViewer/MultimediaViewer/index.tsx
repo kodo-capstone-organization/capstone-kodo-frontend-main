@@ -18,11 +18,13 @@ import { QuizWithStudentAttemptCountResp } from "../../../apis/Entities/Quiz"
 import { Button } from "../../../values/ButtonElements";
 import { colours } from "../../../values/Colours";
 import ReactPlayer from "react-player";
-import { Document, Page } from "react-pdf";
+import { Document, Page, pdfjs } from "react-pdf";
 import DocViewer, { DocViewerRenderers } from "react-doc-viewer";
 import { DocumentViewer } from 'react-documents';
 // import FileViewer from 'react-file-viewer';
 import { saveAs } from "file-saver";
+import ControlPanel from "./ControlPanel";
+import PDFViewer from "./PDFViewer";
 
 import {
   MultimediaContainer,
@@ -41,6 +43,7 @@ import {
 } from "./MultimediaViewerElements";
 
 import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
 function MultimediaViewer(props: any) {
   const contentId = props.match.params.contentId;
@@ -52,6 +55,8 @@ function MultimediaViewer(props: any) {
   const [currentCourse, setCourse] = useState<Course>();
   const [numPages, setNumPages] = useState<number>();
   const [pageNumber, setPageNumber] = useState<number>(1);
+  const [scale, setScale] = useState(1.0);
+
 
   useEffect(() => {
     getMultimediaByMultimediaId(contentId).then(receivedMultimedia => {
@@ -86,30 +91,49 @@ function MultimediaViewer(props: any) {
           <MultimediaName> Name: {currentMultimedia?.name}</MultimediaName>
           <MultimediaDescription> Description: {currentMultimedia?.description}</MultimediaDescription>
         </MultimediaCard>
-
+        
+        {currentMultimedia && currentMultimedia.multimediaType === "VIDEO" &&
         <VideoCard>
-          {currentMultimedia && currentMultimedia.multimediaType === "VIDEO" &&
             <ReactPlayer
               url={currentMultimedia.url}
               controls={true}
             />
-          }
         </VideoCard>
+        }
 
+        {currentMultimedia && currentMultimedia.multimediaType === "DOCUMENT" &&
         <PDFCard>
-          {currentMultimedia && currentMultimedia.multimediaType === "DOCUMENT" &&
-          <Document 
-          file= {currentMultimedia?.url}
-          onLoadSuccess={onDocumentLoadSuccess}
-          >
-          <Page pageNumber={pageNumber} />
-          </Document>
-          }
-          <p>Page {pageNumber} of {numPages}</p>
-        </PDFCard>
+          {/* <PDFViewer doc={"/assets/file-sample.pdf"} /> */}
+          <PDFViewer doc={currentMultimedia.url} />
+        </PDFCard>  
+        }
 
-        <ImageCard>
-          {currentMultimedia?.multimediaType === "IMAGE" &&
+        {/* <PDFCard>
+          {currentMultimedia && currentMultimedia.multimediaType === "DOCUMENT" &&
+            <>
+              <ControlPanel
+                scale={scale}
+                setScale={setScale}
+                numPages={numPages}
+                pageNumber={pageNumber}
+                setPageNumber={setPageNumber}
+                file={currentMultimedia?.url}
+                // file="/assets/file-sample.pdf"
+              />
+              <Document
+                file= {currentMultimedia?.url}
+                // file="/assets/file-sample.pdf"
+                onLoadSuccess={onDocumentLoadSuccess}
+              >
+                <Page pageNumber={pageNumber} scale={scale} />
+                <div>Page {pageNumber} of {numPages}</div>
+              </Document>
+            </>
+          }
+        </PDFCard> */}
+        
+        {currentMultimedia?.multimediaType === "IMAGE" &&
+        <ImageCard>  
             <img
               src="http://placeimg.com/1200/800/nature"
               // src={currentMultimedia.url}
@@ -117,9 +141,8 @@ function MultimediaViewer(props: any) {
               style={{ margin: '2px' }}
               alt=""
             />
-          }
         </ImageCard>
-
+        }
         {/* <DocViewer pluginRenderers={DocViewerRenderers} documents={docs} /> */}
 
         {/* <DocumentViewer
@@ -129,7 +152,7 @@ function MultimediaViewer(props: any) {
         >
         </DocumentViewer> */}
 
-         
+
       </MultimediaContainer>
     </>
   );

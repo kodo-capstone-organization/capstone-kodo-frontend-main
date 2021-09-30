@@ -46,14 +46,15 @@ export const VideoCard = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-`
+`;
+
 export const PDFCard = styled.div`
   height: auto;
   width: auto;
   display: flex;
   justify-content: center;
   align-items: center;
-`
+`;
 
 export const ImageCard = styled.div`
   height: auto;
@@ -61,7 +62,7 @@ export const ImageCard = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-`
+`;
 
 export const MultimediaHeader = styled.div`
   font-size: ${fontSizes.CONTENT};
@@ -85,5 +86,4 @@ export const MultimediaDescription = styled.div`
 
 export const ExitWrapper = styled(Link)`
   display: flex;
-`
-
+`;
