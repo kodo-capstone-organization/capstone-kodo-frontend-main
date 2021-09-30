@@ -4,7 +4,7 @@ import { QuizQuestionOption } from '../../../apis/Entities/QuizQuestionOption';
 import DeleteIcon from '@material-ui/icons/Delete';
 import {
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Checkbox, Paper, IconButton, TextField,
-    Radio
+    Radio, Select, MenuItem
 } from "@material-ui/core";
 import { AddQuizOptionButton } from "../QuizBuilderElements";
 import { Button } from "../../../values/ButtonElements";
@@ -16,11 +16,13 @@ function AttemptQuizOptionsComponent(props: any) {
     const [questionIndex, setQuestionIndex] = useState<number>();
     const [optionArrayToUpdate, setOptionArrayToUpdate] = useState<number[][]>([]);
     const [selectedOptionArray, setSelectedOptionArray] = useState<number[]>([]);
+    const [rightSelected, setRightSelected] = useState<any>("");
 
 
     useEffect(() => {
         if (props.question) {
             setQuestion(props.question);
+            setQuestionIndex(props.index);
             setQuestionIndex(props.index);
         }
     }, [props.question])
@@ -47,6 +49,24 @@ function AttemptQuizOptionsComponent(props: any) {
         props.onHandleAttemptAnswer([newOptionArray], questionIndex);
     }
 
+    const handleSelectorChange = (event: SelectChangeEvent, index: number) => {
+        var newOptionArray = [];
+        const rightOptionId = event.target.value;
+        const leftOptionId = question.quizQuestionOptions[index].quizQuestionOptionId;
+        const combinedOption = [leftOptionId, rightOptionId];
+        console.log("combinedOption", combinedOption)
+
+        console.log("1", selectedOptionArray)
+        newOptionArray = selectedOptionArray.filter((selectedOption) => selectedOption[0] != leftOptionId);
+        console.log("2", newOptionArray)
+        newOptionArray = newOptionArray.concat([combinedOption]);
+        console.log("3", newOptionArray)
+        setSelectedOptionArray(newOptionArray);
+        setOptionArrayToUpdate(newOptionArray);
+        props.onHandleAttemptAnswer(newOptionArray, questionIndex);
+
+    }
+
 
     return (
         <>
@@ -67,7 +87,6 @@ function AttemptQuizOptionsComponent(props: any) {
                                 <>
                                     <TableCell>LEFT</TableCell>
                                     <TableCell>RIGHT</TableCell>
-                                    <TableCell align="right">Answer</TableCell>
                                 </>
 
                             }
@@ -126,14 +145,16 @@ function AttemptQuizOptionsComponent(props: any) {
                                         {row.leftContent}
                                     </TableCell>
                                     <TableCell component="th" scope="row">
-                                        {row.rightContent}
-                                    </TableCell>
-                                    <TableCell align="right">
-                                        <Checkbox
-                                            checked={selectedOptionArray.includes(row.quizQuestionOptionId)}
-                                            value={row.quizQuestionOptionId}
-                                            onChange={handleOptionsChange}
-                                        />
+                                        <Select
+                                            value={rightSelected[index]}
+                                            onChange={(e) => handleSelectorChange(e, index)}
+                                        >
+                                            {
+                                                question.quizQuestionOptions?.map((row, index) => {
+                                                    return (<MenuItem value={row.quizQuestionOptionId} key={index}>{row.rightContent}</MenuItem>);
+                                                })
+                                            }
+                                        </Select>
                                     </TableCell>
                                 </TableRow>
                             ))

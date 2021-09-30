@@ -83,7 +83,7 @@ function AttemptQuizComponent(props: any) {
                 enrolledContentId: parseInt(props.enrolledContentId),
                 quizQuestionOptionIdLists: quizQuestionOptionIdList
             };
-            console.log("createNewStudentAttemptReq, quizQuestionOptionIdList", quizQuestionOptionIdList);
+            console.log("createNewStudentAttemptReq, quizQuestionOptionIdList", quizQuestionOptionIdList[2]);
             createNewStudentAttempt(createNewStudentAttemptReq)
             .then(res => {
                 console.log("Attempt quiz success:", res);
