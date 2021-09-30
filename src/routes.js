@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { Redirect } from "react-router"
 
@@ -29,7 +29,7 @@ function Routes() {
 
     const [isSnackBarOpen, setIsSnackBarOpen] = useState(false);
     const [snackBarMessage, setSnackBarMessage] = useState("");
-    const [snackBarSeverity, setSnackBarSeverity] = useState("info"); 
+    const [snackBarSeverity, setSnackBarSeverity] = useState("info");
 
     // To be propped into children components for them to call
     const callOpenSnackBar = (messageFromCaller: string, severityFromCaller: string) => {
@@ -101,12 +101,15 @@ function Routes() {
                         {window.sessionStorage.getItem("loggedInAccountId") ?
                             <Route path="/markedquizviewer/:studentAttemptId" render={props => <QuizViewer {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
                             : <Redirect to="/" />}
+                        {window.sessionStorage.getItem("loggedInAccountId") ?
+                            <Route path="/attemptquizviewer/:quizId" render={props => <QuizViewer {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
+                            : <Redirect to="/" />}
 
                         {
                             RouteItemsWithSidebar.map(item => {
                                 return (
                                     window.sessionStorage.getItem("loggedInAccountId") ?
-                                        <Route key={item.path} path={item.path} render={props => React.createElement(item.component, {...props, callOpenSnackBar: callOpenSnackBar})} exact />
+                                        <Route key={item.path} path={item.path} render={props => React.createElement(item.component, { ...props, callOpenSnackBar: callOpenSnackBar })} exact />
                                         : <Redirect to="/" />
 
                                 );

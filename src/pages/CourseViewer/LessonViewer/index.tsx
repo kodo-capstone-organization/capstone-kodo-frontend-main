@@ -73,11 +73,11 @@ function LessonViewer(props: any) {
     });
     getEnrolledLesson(accountId, lessonId).then(receivedEnrolledLesson => {
       setEnrolledLesson(receivedEnrolledLesson);
-    });   
+    });
   }, []);
 
   useEffect(() => {
-    if (accountId !== null && courseId !== null ) {
+    if (accountId !== null && courseId !== null) {
       getEnrolledCourseByStudentIdAndCourseId(accountId, courseId).then(receivedEnrolledCourse => {
         setEnrolledCourse(receivedEnrolledCourse);
       });
@@ -85,28 +85,32 @@ function LessonViewer(props: any) {
   }, []);
 
   function formatDate(date: Date): string {
-    var d = new Date(date);    
+    var d = new Date(date);
     return d.toDateString() + ', ' + d.toLocaleTimeString();
   }
 
-  function viewStudentAttempt(studentAttemptId: number): void {
-    history.push(`/markedquizviewer/${studentAttemptId}`);
+  const viewStudentAttempt = (studentAttemptId: number) => {
+    // history.push({ pathname: `/markedquizviewer/${studentAttemptId}`, state: { quizViewer: "VIEW" } });
+    history.push({ pathname: `/markedquizviewer/${studentAttemptId}`, state: { mode: 'VIEW' } });
+
+  }
+
+  const attemptQuiz = (quizId: number) => {
+    // history.push({ pathname: `/attemptquizviewer/${quizId}`, state: { quizViewer: "ATTEMPT" } });
+    history.push({ pathname: `/attemptquizviewer/${quizId}`, state: { mode: 'ATTEMPT' } })
   }
 
   function getQuizAttempts(): QuizWithStudentAttemptCountResp[] {
     let quizAttemptsTemp: QuizWithStudentAttemptCountResp[] = [];
     enrolledLesson?.enrolledContents.forEach(enrolledContent => {
-      if ("maxAttemptsPerStudent" in enrolledContent.parentContent)
-      {
-        let quiz: Quiz = enrolledContent.parentContent as Quiz; 
+      if ("maxAttemptsPerStudent" in enrolledContent.parentContent) {
+        let quiz: Quiz = enrolledContent.parentContent as Quiz;
         let studentAttemptCount;
-        
-        if (enrolledContent.studentAttempts)
-        {
+
+        if (enrolledContent.studentAttempts) {
           studentAttemptCount = quiz.maxAttemptsPerStudent - enrolledContent.studentAttempts.length;
         }
-        else
-        {
+        else {
           studentAttemptCount = quiz.maxAttemptsPerStudent;
         }
 
@@ -116,25 +120,25 @@ function LessonViewer(props: any) {
             timeLimit: quiz.timeLimit,
             maxAttemptsPerStudent: quiz.maxAttemptsPerStudent,
             studentAttemptCount: studentAttemptCount,
-            studentAttempts: enrolledContent.studentAttempts          
-          }        
+            studentAttempts: enrolledContent.studentAttempts
+          }
         );
       }
     });
     return quizAttemptsTemp;
   }
-  
+
 
   function previousLessonCompleted(): boolean {
-   let allEnrolledLessons = enrolledCourse?.enrolledLessons;
-   if (allEnrolledLessons && enrolledLesson && enrolledLesson?.parentLesson.sequence > 1) {
-     let sequence = enrolledLesson.parentLesson.sequence
-     let pLesson = allEnrolledLessons[sequence - 2];
-     if (pLesson.dateTimeOfCompletion !== null) {
-       return true;
-     } else {
-       return false;
-     }
+    let allEnrolledLessons = enrolledCourse?.enrolledLessons;
+    if (allEnrolledLessons && enrolledLesson && enrolledLesson?.parentLesson.sequence > 1) {
+      let sequence = enrolledLesson.parentLesson.sequence
+      let pLesson = allEnrolledLessons[sequence - 2];
+      if (pLesson.dateTimeOfCompletion !== null) {
+        return true;
+      } else {
+        return false;
+      }
     }
     return true;
   }
@@ -159,18 +163,18 @@ function LessonViewer(props: any) {
   return (
     <>
       <LessonContainer>
-      <PageHeadingAndButton>
-        <PageHeading>
-          <LessonTitle>Week {currentLesson?.sequence}</LessonTitle>
-          <CourseTitle>{currentCourse?.name}</CourseTitle> 
-          {!previousLessonCompleted() &&
-          <HeadingDescription>You do not have access to this page. Complete your previous lessons.</HeadingDescription>
-          }
-        </PageHeading>
-        <ExitWrapper to={`/overview/${currentCourse?.courseId}`}>
-            <CancelOutlinedIcon fontSize="large" style={{ color: colours.BLUE2, padding: 20 }}/>
-        </ExitWrapper>
-      </PageHeadingAndButton>
+        <PageHeadingAndButton>
+          <PageHeading>
+            <LessonTitle>Week {currentLesson?.sequence}</LessonTitle>
+            <CourseTitle>{currentCourse?.name}</CourseTitle>
+            {!previousLessonCompleted() &&
+              <HeadingDescription>You do not have access to this page. Complete your previous lessons.</HeadingDescription>
+            }
+          </PageHeading>
+          <ExitWrapper to={`/overview/${currentCourse?.courseId}`}>
+            <CancelOutlinedIcon fontSize="large" style={{ color: colours.BLUE2, padding: 20 }} />
+          </ExitWrapper>
+        </PageHeadingAndButton>
         <LessonCard>
           <LessonHeader>Lesson Overview</LessonHeader>
           <LessonDescription>{currentLesson?.description}</LessonDescription>
@@ -191,7 +195,7 @@ function LessonViewer(props: any) {
                   {m.multimediaType === "PDF" ? <ReadingIcon /> : <PlayIcon />}
                   {m.multimediaType === "PDF" ? "Reading" : "Video"}: {m.name}
                   {checkCompleted(m.contentId) &&
-                  <CheckIcon />
+                    <CheckIcon />
                   }
                 </ContentLink>
               );
@@ -209,19 +213,21 @@ function LessonViewer(props: any) {
                     <QuizSubheader>TIME LIMIT:</QuizSubheader>
                     <QuizDescription>{q.timeLimit} H</QuizDescription>
                     <BtnWrapper>
-                      {!previousLessonCompleted() && 
-                      <Button disabled>
-                        Start
+                      {!previousLessonCompleted() &&
+                        <Button disabled>
+                          Start
                       </Button>
                       }
                       {previousLessonCompleted() && q.studentAttemptCount === 0 &&
-                      <Button disabled>
-                        Start
+                        <Button disabled>
+                          Start
                       </Button>
                       }
-                      {previousLessonCompleted() && q.studentAttemptCount > 0 && 
-                      <Button primary={true} big={false} fontBig={false} disabled={false}>
-                        Start
+                      {previousLessonCompleted() && q.studentAttemptCount > 0 &&
+                        <Button primary={true} big={false} fontBig={false} disabled={false}
+                          onClick={() => attemptQuiz(q.contentId)}
+                        >
+                          Start
                       </Button>
                       }
                     </BtnWrapper>
@@ -238,22 +244,22 @@ function LessonViewer(props: any) {
                   </QuizRow>
                   <QuizRow>
                     <QuizSubheader>Previous Attempts</QuizSubheader>
-                    { q.studentAttempts.map(sa => {
-                        return (
-                          <>
-                            <QuizDescriptionTwo>                              
-                                { formatDate(sa.dateTimeOfAttempt) }                               
-                            </QuizDescriptionTwo>
-                            <QuizDescriptionTwo>
-                              <BtnWrapper>
-                                <Button onClick={() => viewStudentAttempt(sa.studentAttemptId)}>
-                                  View Attempt
+                    {q.studentAttempts.map(sa => {
+                      return (
+                        <>
+                          <QuizDescriptionTwo>
+                            {formatDate(sa.dateTimeOfAttempt)}
+                          </QuizDescriptionTwo>
+                          <QuizDescriptionTwo>
+                            <BtnWrapper>
+                              <Button onClick={() => viewStudentAttempt(sa.studentAttemptId)}>
+                                View Attempt
                                 </Button>
-                              </BtnWrapper>
-                            </QuizDescriptionTwo>
-                          </>
-                        );
-                    })}                    
+                            </BtnWrapper>
+                          </QuizDescriptionTwo>
+                        </>
+                      );
+                    })}
                     {/*
                     <QuizSubheader>Grade:</QuizSubheader>
                     <QuizDescriptionTwo>[To Finish]</QuizDescriptionTwo>
