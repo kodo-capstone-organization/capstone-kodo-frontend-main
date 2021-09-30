@@ -1,17 +1,17 @@
 import React, { useState } from "react";
 import { Document, Page } from "react-pdf";
 
-export default function SinglePage(props:any) {
+function PDFViewer(props: any) {
 
     const [numPages, setNumPages] = useState<number>();
-    const [pageNumber, setPageNumber] = useState<number>(1); //setting 1 to show fisrt page
-    
+    const [pageNumber, setPageNumber] = useState<number>(1);
+
     function onDocumentLoadSuccess({ numPages }: any) {
         setNumPages(numPages);
         setPageNumber(1);
     }
 
-    function changePage(offset:number) {
+    function changePage(offset: number) {
         setPageNumber(prevPageNumber => prevPageNumber + offset);
     }
 
@@ -52,3 +52,5 @@ export default function SinglePage(props:any) {
         </>
     );
 }
+
+export default PDFViewer;
