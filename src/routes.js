@@ -30,7 +30,6 @@ function Routes() {
 
     // To be propped into children components for them to call
     const callOpenSnackBar = (messageFromCaller: string, severityFromCaller: string) => {
-
         // severityList: error, warning, info, success ONLY
         if (!severityList.includes(severityFromCaller)) { // invalid severity received, default to info
             severityFromCaller = "info"
@@ -58,6 +57,7 @@ function Routes() {
                         Top level snackbar. Function to invoke the display are propped into
                         routes' main components as 'callOpenSnackBar'.
                     */}
+                    {isSnackBarOpen &&
                     <Snackbar
                         id="kodo-snackbar"
                         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
@@ -69,7 +69,7 @@ function Routes() {
                         <Alert onClose={handleCloseSnackBar} severity={snackBarSeverity}>
                             {snackBarMessage}
                         </Alert>
-                    </Snackbar>
+                    </Snackbar>}
 
                     {/* Route Switch */}
                     <Switch>
