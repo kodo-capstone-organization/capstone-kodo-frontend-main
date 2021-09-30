@@ -46,7 +46,7 @@ function LinearProgressWithLabel(
 
 function TutorView(props: any) {
   const [currentCourse, setCourse] = useState<Course>({ ...props.course });
-  const [enrolledStudentsAndCompleteion, setEnrolledStudentsAndCompletion] = useState<EnrolledCourseWithStudentResp[]>();
+  const [enrolledStudentsAndCompletion, setEnrolledStudentsAndCompletion] = useState<EnrolledCourseWithStudentResp[]>();
   
   useEffect(() => {
     setCourse(props.course);
@@ -79,25 +79,34 @@ function TutorView(props: any) {
           <TutorTitle>by {currentCourse?.tutor.name}</TutorTitle>
         </PageHeading>
         <Button primary to={`/builder/${currentCourse?.courseId}`}>
-          Edit
+          Edit Course
         </Button>
       </PageHeadingAndButton>
 
-      <StudentProgressCard>
-        <CardTitle>Students</CardTitle>
-        <StudentProgressWrapper>
-          {enrolledStudentsAndCompleteion?.map(enrolledCourse => {
-            return (
-              <>
-                <p>{enrolledCourse.studentName}</p>
-                <LinearProgressWithLabel
-                  value={enrolledCourse.completionPercentage * 100}
-                />
-              </>
-            );
-          })}
-        </StudentProgressWrapper>
-      </StudentProgressCard>
+      { enrolledStudentsAndCompletion && enrolledStudentsAndCompletion?.length > 0 &&
+        <StudentProgressCard>        
+          <CardTitle>Students</CardTitle>
+          <StudentProgressWrapper>
+            {enrolledStudentsAndCompletion?.map(enrolledCourse => {
+              return (
+                <>
+                  <p>{enrolledCourse.studentName}</p>
+                  <LinearProgressWithLabel
+                    value={enrolledCourse.completionPercentage * 100}
+                  />
+                </>
+              );
+            })}
+          </StudentProgressWrapper>
+        </StudentProgressCard>
+      }
+
+      { !enrolledStudentsAndCompletion || enrolledStudentsAndCompletion?.length == 0 &&
+          <div style={{ textAlign: "center", fontSize: "2em" }}>
+            There are no students who are enrolled in this course!
+          </div>
+      }
+
     </TutorContainer>
   );
 }
