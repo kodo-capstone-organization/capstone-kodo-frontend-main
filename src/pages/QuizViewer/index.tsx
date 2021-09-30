@@ -36,7 +36,7 @@ const themeInstance = createMuiTheme({
 
 function QuizViewer(props: any) {
     const studentAttemptId = props.match.params.studentAttemptId;
-    const quizId = props.match.params.quizId;
+    const enrolledContentId = props.match.params.enrolledContentId;
     const [loading, setLoading] = useState<Boolean>(true);
     const [quiz, setQuiz] = useState<Quiz>();
     const [dateTimeOfAttempt, setDateTimeOfAttempt] = useState<string>("");
@@ -46,7 +46,12 @@ function QuizViewer(props: any) {
 
     useEffect(() => {
         setLoading(true);
-        props.match.params.studentAttemptId ? setViewMode(true) : setAttemptMode(true);
+        if(props.match.params.studentAttemptId){
+            setViewMode(true);
+        }else if (props.match.params.enrolledContentId){
+            console.log(quizId);
+            setAttemptMode(true);
+        }
         setLoading(false);
     }, []);
 
@@ -96,7 +101,7 @@ function QuizViewer(props: any) {
                 </QuizCard> */}
 
                 {viewMode && <MarkedQuizComponent studentAttemptId={studentAttemptId} />}
-                {attemptMode && <AttemptQuizComponent quizId={quizId} />}
+                {attemptMode && <AttemptQuizComponent enrolledContentId={enrolledContentId} />}
 
             </QuizContainer>
         </>

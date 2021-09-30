@@ -102,7 +102,7 @@ function Routes() {
                             <Route path="/markedquizviewer/:studentAttemptId" render={props => <QuizViewer {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
                             : <Redirect to="/" />}
                         {window.sessionStorage.getItem("loggedInAccountId") ?
-                            <Route path="/attemptquizviewer/:quizId" render={props => <QuizViewer {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
+                            <Route path="/attemptquizviewer/:enrolledContentId" render={props => <QuizViewer {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
                             : <Redirect to="/" />}
 
                         {

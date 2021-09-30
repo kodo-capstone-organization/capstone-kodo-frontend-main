@@ -90,14 +90,12 @@ function LessonViewer(props: any) {
   }
 
   const viewStudentAttempt = (studentAttemptId: number) => {
-    // history.push({ pathname: `/markedquizviewer/${studentAttemptId}`, state: { quizViewer: "VIEW" } });
     history.push({ pathname: `/markedquizviewer/${studentAttemptId}`, state: { mode: 'VIEW' } });
 
   }
 
-  const attemptQuiz = (quizId: number) => {
-    // history.push({ pathname: `/attemptquizviewer/${quizId}`, state: { quizViewer: "ATTEMPT" } });
-    history.push({ pathname: `/attemptquizviewer/${quizId}`, state: { mode: 'ATTEMPT' } })
+  const attemptQuiz = (enrolledContentId: number) => {
+    history.push({ pathname: `/attemptquizviewer/${enrolledContentId}`, state: { mode: 'ATTEMPT' } });
   }
 
   function getQuizAttempts(): QuizWithStudentAttemptCountResp[] {
@@ -123,6 +121,7 @@ function LessonViewer(props: any) {
             studentAttempts: enrolledContent.studentAttempts
           }
         );
+        console.log("enrolledContent.enrolledContentId", enrolledContent.enrolledContentId);
       }
     });
     return quizAttemptsTemp;

@@ -77,7 +77,7 @@ function MarkedQuizComponent(props: any) {
     const mapQuestionArray = (attemptArray: StudentAttemptQuestion[]) => {
         return (
             <div>
-                {attemptArray.map(function (studentAttempt, qId) {
+                {attemptArray.map( (studentAttempt, qId) => {
                     return (
                         <>
                             <QuizQuestionCard key={qId}>
