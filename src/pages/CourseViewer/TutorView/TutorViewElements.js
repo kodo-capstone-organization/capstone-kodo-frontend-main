@@ -6,6 +6,7 @@ import { fontSizes } from "../../../values/FontSizes";
 
 export const TutorContainer = styled.div`
   display: flex;
+  width: 100%;
   flex-direction: column;
   padding: 2rem;
   font-family: "Roboto", sans-serif;
