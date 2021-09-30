@@ -73,8 +73,6 @@ function LessonViewer(props: any) {
       setEnrolledLesson(receivedEnrolledLesson);
     });   
   }, []);
-  console.log(enrolledLesson);
-
 
   useEffect(() => {
     if (accountId !== null && courseId !== null ) {
@@ -140,7 +138,6 @@ function LessonViewer(props: any) {
     let enrolledContent = enrolledLesson?.enrolledContents.find(
       i => i.parentContent?.contentId === contentId
     );
-    console.log(enrolledContent?.enrolledContentId)
     if (enrolledContent?.dateTimeOfCompletion !== null || isCourseTutor) {
       return true;
     }
@@ -184,8 +181,11 @@ function LessonViewer(props: any) {
                   {m.multimediaType === "ZIP" && <ZipIcon />}
                   {m.multimediaType === "DOCUMENT" && "Reading: " + m.name } 
                   {m.multimediaType === "VIDEO" && "Video: " + m.name }
-                  {m.multimediaType === "ZIP" && "Zip: " + m.name }
-                </ContentLink>
+                  {m.multimediaType === "ZIP" && "Zip: " + m.name }                  
+                  {checkCompleted(m.contentId) &&
+                    <CheckIcon />
+                  }
+                </ContentLink>                
               );
             })}
           </ContentMenu>

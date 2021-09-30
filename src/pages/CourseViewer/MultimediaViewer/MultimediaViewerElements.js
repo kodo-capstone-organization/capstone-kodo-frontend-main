@@ -87,3 +87,8 @@ export const ExitWrapper = styled(Link)`
   display: flex;
 `
 
+export const MultimediaDoneButtonWrapper = styled.div`
+  display: flex;
+  flex-direction: row-reverse;
+`;
+
