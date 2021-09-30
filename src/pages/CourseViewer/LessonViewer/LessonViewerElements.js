@@ -6,6 +6,7 @@ import { colours } from "../../../values/Colours";
 import { fontSizes } from "../../../values/FontSizes";
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
+import * as FaIcons from 'react-icons/fa'
 
 export const LessonContainer = styled.div`
   display: flex;
@@ -84,7 +85,7 @@ export const ContentLink = styled(Link)`
   color: ${colours.GRAY5};
   cursor: pointer;
   pointer-events: ${({ isCompleted, previousCompleted }) =>
-    (isCompleted || !previousCompleted) ? "none" : "auto"};
+  (isCompleted || !previousCompleted) ? "none" : "auto"};
   font-family: "Roboto", sans-serif;
   padding: 0 20px 0 20px;
 
@@ -177,6 +178,13 @@ export const ExitIcon = styled(CancelOutlinedIcon)`
 `
 
 export const ExitText = styled.p`
+
+`
+
+export const ZipIcon = styled(FaIcons.FaFileArchive)`
+  padding-right: 8px;
+  height: 22px;
+  width: auto;
 
 `
 

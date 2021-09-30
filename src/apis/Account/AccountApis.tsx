@@ -1,7 +1,6 @@
 import { IHttpClientRequestParameters } from "./../HttpClient/IHttpClientRequestParameters";
 import { Account, CreateNewAccountReq, UpdateAccountReq, UpdateAccountPasswordReq } from "../Entities/Account";
 import { httpClient } from "../HttpClient/HttpClient";
-import { LoginResponse } from "../Entities/Login";
 import { transformToBlob } from "./../../utils/BlobCreator";
 import { DeactivateAccountResponse } from "../Entities/Deactivate";
 const FormData = require('form-data');
@@ -32,7 +31,7 @@ export async function getAccountByQuizId(quizId: number): Promise<Account[]> {
         url: `/account/getAccountByQuizId/${quizId}`
     }
 
-    return httpClient.get<undefined, Account>(getParameters)
+    return httpClient.get<undefined, Account[]>(getParameters)
 }
 
 export async function createNewAccount(createNewAccountReq: CreateNewAccountReq, displayPicture: File | null): Promise<Account> {

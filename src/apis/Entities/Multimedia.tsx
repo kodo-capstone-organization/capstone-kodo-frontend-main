@@ -14,7 +14,6 @@ export interface Multimedia extends Content {
 }
 
 export enum MultimediaType {
-    PDF = "PDF",
     IMAGE = "IMAGE",
     VIDEO = "VIDEO",
     ZIP = "ZIP",
