@@ -40,7 +40,8 @@ import {
   QuizDescriptionTwo,
   CheckIcon,
   BtnWrapper,
-  ExitWrapper
+  ExitWrapper,
+  ZipIcon
 } from "./LessonViewerElements";
 
 import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
@@ -178,8 +179,12 @@ function LessonViewer(props: any) {
                   previousCompleted={previousLessonCompleted()}
                   to={`/overview/lesson/${courseId}/${lessonId}/${m.contentId}`}
                 >
-                  {m.multimediaType === "DOCUMENT" ? <ReadingIcon /> : <PlayIcon />}
-                  {m.multimediaType === "DOCUMENT" ? "Reading" : "Video"}:{m.name}
+                  {m.multimediaType === "DOCUMENT" && <ReadingIcon />}
+                  {m.multimediaType === "VIDEO" && <PlayIcon />}
+                  {m.multimediaType === "ZIP" && <ZipIcon />}
+                  {m.multimediaType === "DOCUMENT" && "Reading: " + m.name } 
+                  {m.multimediaType === "VIDEO" && "Video: " + m.name }
+                  {m.multimediaType === "ZIP" && "Zip: " + m.name }
                 </ContentLink>
               );
             })}
