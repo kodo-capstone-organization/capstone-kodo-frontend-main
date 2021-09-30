@@ -14,6 +14,7 @@ function AttemptQuizOptionsComponent(props: any) {
 
     const [question, setQuestion] = useState<QuizQuestion>({});
     const [questionIndex, setQuestionIndex] = useState<number>();
+    const [optionArrayToUpdate, setOptionArrayToUpdate] = useState<number[][]>([]);
     const [selectedOptionArray, setSelectedOptionArray] = useState<number[]>([]);
 
 
@@ -42,7 +43,8 @@ function AttemptQuizOptionsComponent(props: any) {
             }
         }
         setSelectedOptionArray(newOptionArray);
-        props.onHandleAttemptAnswer(newOptionArray, questionIndex);
+        setOptionArrayToUpdate([newOptionArray]);
+        props.onHandleAttemptAnswer([newOptionArray], questionIndex);
     }
 
 

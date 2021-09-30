@@ -31,7 +31,7 @@ function AttemptQuizComponent(props: any) {
 
     const [quiz, setQuiz] = useState<Quiz>();
     const [quizQuestionArray, setQuizQuestionArray] = useState<QuizQuestion[]>();
-    const [quizQuestionOptionIdList, setQuizQuestionOptionIdList] = useState<number[][]>([]);
+    const [quizQuestionOptionIdList, setQuizQuestionOptionIdList] = useState<number[][][]>([]);
     const [initialSeconds, setInitalSeconds] = useState<number>();
     const [initialMinutes, setInitialMinutes] = useState<number>();
 
@@ -71,10 +71,9 @@ function AttemptQuizComponent(props: any) {
     }
 
     const handleAttemptAnswer = (optionArray: number[], questionIndex: number) => {
-        console.log("handleAttemptAnswer1", quizQuestionOptionIdList);
         var newQuizQuestionOptionIdList = quizQuestionOptionIdList;
         newQuizQuestionOptionIdList[questionIndex] = optionArray;
-        console.log("handleAttemptAnswer2", newQuizQuestionOptionIdList.length);
+        console.log("handleAttemptAnswer", newQuizQuestionOptionIdList);
         setQuizQuestionOptionIdList(newQuizQuestionOptionIdList);
     }
 
