@@ -24,6 +24,7 @@ import { ACCEPTABLE_FILE_TYPE, getFileType } from '../../../utils/GetFileType';
 import { Button } from "../../../values/ButtonElements";
 import { addNewMultimediaToLesson, deleteMultimediasFromLesson, updateMultimedia } from '../../../apis/Multimedia/MultimediaApis';
 import EditIcon from '@material-ui/icons/Edit';
+import Alert from '@material-ui/lab/Alert';
 
 interface IErrors<TValue> {
   [id: string]: TValue;
@@ -189,6 +190,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   const classes = useToolbarStyles();
   const { numSelected, selectedIds, selectedLessonId, handleFormDataChange, setLessons, lessons, setSelectedIds, isEnrollmentActive } = props;
   const [newFile, setNewFile] = useState<Multimedia>({ contentId: -1, name: "", description: "", url: "", multimediaType: MultimediaType.EMPTY, urlFilename: "", file: new File([""], ""), type: "multimedia"});
+  const [validationErrorMessage, setValidationErrorMessage] = useState<string>("");
   var [errors, setErrors] = useState<IErrors<boolean>>({
     name: false,
     description: false,
@@ -204,28 +206,34 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   const handleClose = () => {
     setShowAddMultimediaDialog(false);
     setErrors({})
+    setValidationErrorMessage("")
   }
 
   const handleValidation = () => {
     let formIsValid = true;
+    let newValidationErrorMessage = "";
     errors = {};
 
     if (newFile.name === "") {
       formIsValid = false;
       errors['name'] = true;
+      newValidationErrorMessage = newValidationErrorMessage.concat("Name cannot be empty. \n")
     }
 
     if (newFile.description === "") {
       formIsValid = false;
       errors['description'] = true;      
+      newValidationErrorMessage = newValidationErrorMessage.concat("Description cannot be empty. \n")
     }
 
     if (newFile.file?.size === 0) {
       formIsValid = false;
       errors['file'] = true;
+      newValidationErrorMessage = newValidationErrorMessage.concat("File cannot be empty. \n")
     }
 
     setErrors(errors);
+    setValidationErrorMessage(newValidationErrorMessage)
 
     return formIsValid;
   }
@@ -427,6 +435,9 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
                 Add Multimedia
               </Button>
             </DialogActions>
+            <DialogContent>
+              {validationErrorMessage && <Alert variant="filled" severity="error">{validationErrorMessage}</Alert>}
+            </DialogContent>
     </Dialog>
     <Toolbar
       className={clsx(classes.root, {
@@ -502,6 +513,7 @@ export default function MultimediaTable(props: any) {
 
     const [selectedMultimediaId, setSelectedMultimediaId] = useState<number>(0);
     const [newFile, setNewFile] = useState<Multimedia>({ contentId: -1, name: "", description: "", url: "", multimediaType: MultimediaType.EMPTY, urlFilename: "", file: new File([""], ""), type: "multimedia"});
+    const [validationErrorMessage, setValidationErrorMessage] = useState<string>("");
     var [errors, setErrors] = useState<IErrors<boolean>>({
       name: false,
       description: false,
@@ -516,23 +528,28 @@ export default function MultimediaTable(props: any) {
     const handleClose = () => {
       setShowAddMultimediaDialog(false);
       setErrors({})
+      setValidationErrorMessage("");
     }
 
     const handleValidation = () => {
       let formIsValid = true;
+      let newValidationErrorMessage = "";
       errors = {};
   
       if (newFile.name === "") {
         formIsValid = false ;
         errors['name'] = true;
+        newValidationErrorMessage = newValidationErrorMessage.concat("Name cannot be empty. \n")
       }
   
       if (newFile.description === "") {
         formIsValid = false;
         errors['description'] = true;      
+        newValidationErrorMessage = newValidationErrorMessage.concat("Description cannot be empty. \n")
       }
   
       setErrors(errors);
+      setValidationErrorMessage(newValidationErrorMessage)
   
       return formIsValid;
     }
@@ -773,6 +790,9 @@ export default function MultimediaTable(props: any) {
                 Update Multimedia
               </Button>
             </DialogActions>
+            <DialogContent>
+              {validationErrorMessage && <Alert variant="filled" severity="error">{validationErrorMessage}</Alert>}
+            </DialogContent>
         </Dialog>
         <div className={classes.root}>
         <Paper className={classes.paper}>

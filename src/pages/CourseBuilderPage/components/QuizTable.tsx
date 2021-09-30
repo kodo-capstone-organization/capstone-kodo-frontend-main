@@ -21,10 +21,11 @@ import { Lesson } from '../../../apis/Entities/Lesson';
 import { useHistory } from "react-router-dom";
 import EditIcon from '@material-ui/icons/Edit';
 import AddIcon from '@material-ui/icons/Add';
-import { Dialog, DialogContent, DialogContentText, DialogTitle, InputLabel, Input, FormControl, DialogActions, Grid, Chip} from '@material-ui/core';
+import { Dialog, DialogContent, DialogContentText, DialogTitle, InputLabel, Input, FormControl, DialogActions, Grid} from '@material-ui/core';
 import { Button } from "../../../values/ButtonElements";
 import { createNewBasicQuiz, deleteQuizzes } from '../../../apis/Quiz/QuizApis';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import Alert from '@material-ui/lab/Alert';
 
 interface IErrors<TValue> {
   [id: string]: TValue;
@@ -198,13 +199,13 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   const [newQuizTimeLimitHours, setNewQuizTimeLimitHours] = useState<number>(0);
   const [newQuizTimeLimitMinutes, setNewQuizTimeLimitMinutes] = useState<number>(15);
   const [newQuizMaxAttempts, setNewQuizMaxAttempts] = useState<number>(1);
+  const [validationErrorMessage, setValidationErrorMessage] = useState<string>("");
+  const [showAddQuizDialog, setShowAddQuizDialog] = useState<boolean>(false); 
   var [errors, setErrors] = useState<IErrors<boolean>>({
     name: false,
     description: false,
     minutes: false,
   });
-
-  const [showAddQuizDialog, setShowAddQuizDialog] = useState<boolean>(false); 
 
   const openDialog = () => {
     setShowAddQuizDialog(true);
@@ -213,6 +214,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   const handleClose = () => {
     setShowAddQuizDialog(false);
     setErrors({})
+    setValidationErrorMessage("")
   }
 
   // Update quizzes for a particular lesson from courseFormData
@@ -254,24 +256,29 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
 
   const handleValidation = () => {
     let formIsValid = true;
+    let newValidationErrorMessage = "";
     errors = {};
 
     if (newQuizName === "") {
       formIsValid = false ;
       errors['name'] = true;
+      newValidationErrorMessage = newValidationErrorMessage.concat("Name cannot be empty. \n")
     }
 
     if (newQuizDescription === "") {
       formIsValid = false;
-      errors['description'] = true;     
+      errors['description'] = true;   
+      newValidationErrorMessage = newValidationErrorMessage.concat("Description cannot be empty. \n")  
     }
 
     if ((newQuizTimeLimitHours === 0 && newQuizTimeLimitMinutes < 15) || newQuizTimeLimitMinutes === undefined) {
       formIsValid = false;
       errors['minutes'] = true;
+      newValidationErrorMessage = newValidationErrorMessage.concat("Duration must be at least 15 minutes. \n")
     }
 
     setErrors(errors);
+    setValidationErrorMessage(newValidationErrorMessage);
 
     return formIsValid;
   }
@@ -406,6 +413,9 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
                 Build Quiz
               </Button>
             </DialogActions>
+            <DialogContent>
+              {validationErrorMessage && <Alert variant="filled" severity="error">{validationErrorMessage}</Alert>}
+            </DialogContent>
     </Dialog>
     <Toolbar
       className={clsx(classes.root, {
