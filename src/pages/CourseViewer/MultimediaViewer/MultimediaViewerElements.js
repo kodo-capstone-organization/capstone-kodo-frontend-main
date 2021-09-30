@@ -57,8 +57,8 @@ export const PDFCard = styled.div`
 `;
 
 export const ImageCard = styled.div`
-  height: auto;
-  width: auto;
+  height: 600px;
+  width: 600px;
   display: flex;
   justify-content: center;
   align-items: center;

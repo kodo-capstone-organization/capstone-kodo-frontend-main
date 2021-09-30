@@ -21,7 +21,7 @@ import ReactPlayer from "react-player";
 import { Document, Page, pdfjs } from "react-pdf";
 import DocViewer, { DocViewerRenderers } from "react-doc-viewer";
 import { DocumentViewer } from 'react-documents';
-// import FileViewer from 'react-file-viewer';
+import FileViewer from 'react-file-viewer';
 import { saveAs } from "file-saver";
 import ControlPanel from "./ControlPanel";
 import PDFViewer from "./PDFViewer";
@@ -74,8 +74,20 @@ function MultimediaViewer(props: any) {
     setNumPages(numPages);
   }
 
+  const file = '/assets/sample-word.docx';
+  const type = 'docx';
+
   return (
     <>
+      <FileViewer
+      fileType={type}
+      filePath={file}
+      />
+      <PDFCard>
+      <iframe src='https://view.officeapps.live.com/op/embed.aspx?src=http%3A%2F%2Fieee802%2Eorg%3A80%2Fsecmail%2FdocIZSEwEqHFr%2Edoc' width='100%' height='100%'>This is an embedded <a target='_blank' href='http://office.com'>Microsoft Office</a> document, powered by <a target='_blank' href='http://office.com/webapps'>Office Online</a>.
+      </iframe>
+      </PDFCard>
+      
       <MultimediaContainer>
         <PageHeadingAndButton>
           <PageHeading>
