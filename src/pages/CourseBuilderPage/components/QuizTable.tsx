@@ -24,6 +24,7 @@ import AddIcon from '@material-ui/icons/Add';
 import { Dialog, DialogContent, DialogContentText, DialogTitle, InputLabel, Input, FormControl, DialogActions, Grid, Chip} from '@material-ui/core';
 import { Button } from "../../../values/ButtonElements";
 import { createNewBasicQuiz, deleteQuizzes } from '../../../apis/Quiz/QuizApis';
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 
 interface IErrors<TValue> {
   [id: string]: TValue;
@@ -195,11 +196,12 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   const [newQuizName, setNewQuizName] = useState<string>("");
   const [newQuizDescription, setNewQuizDescription] = useState<string>("");
   const [newQuizTimeLimitHours, setNewQuizTimeLimitHours] = useState<number>(0);
-  const [newQuizTimeLimitMinutes, setNewQuizTimeLimitMinutes] = useState<number>(0);
-  const [newQuizMaxAttempts, setNewQuizMaxAttempts] = useState<number>(0);
+  const [newQuizTimeLimitMinutes, setNewQuizTimeLimitMinutes] = useState<number>(15);
+  const [newQuizMaxAttempts, setNewQuizMaxAttempts] = useState<number>(1);
   var [errors, setErrors] = useState<IErrors<boolean>>({
     name: false,
     description: false,
+    minutes: false,
   });
 
   const [showAddQuizDialog, setShowAddQuizDialog] = useState<boolean>(false); 
@@ -210,6 +212,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
 
   const handleClose = () => {
     setShowAddQuizDialog(false);
+    setErrors({})
   }
 
   // Update quizzes for a particular lesson from courseFormData
@@ -260,7 +263,12 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
 
     if (newQuizDescription === "") {
       formIsValid = false;
-      errors['description'] = true;      
+      errors['description'] = true;     
+    }
+
+    if ((newQuizTimeLimitHours === 0 && newQuizTimeLimitMinutes < 15) || newQuizTimeLimitMinutes === undefined) {
+      formIsValid = false;
+      errors['minutes'] = true;
     }
 
     setErrors(errors);
@@ -350,6 +358,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
                     <Grid item xs={6}>
                       <InputLabel htmlFor="quiz-timelimit">Time Limit</InputLabel>
                       <Input
+                      error={errors['minutes']}
                       fullWidth
                       id="quiz-timelimit"
                       placeholder="Minutes"
@@ -381,11 +390,11 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
                         let value = parseInt(e.target.value)
 
                         if (value > 100) value = 100
-                        if (value < 0) value = 0
+                        if (value < 1) value = 1
 
                         setNewQuizMaxAttempts(value)
                     }}
-                    inputProps={{ min: 0, max: 100 }}
+                    inputProps={{ min: 1, max: 100 }}
                   />
                 </FormControl>
             </DialogContent>
@@ -606,7 +615,7 @@ export default function QuizTable(props: any) {
                             <TableCell align="right">{row.timeLimit}</TableCell>
                             <TableCell align="right">
                               <IconButton size="small" color="primary" onClick={() => navigateToQuizBuilder(row.contentId)}>
-                                  <EditIcon/>&nbsp;
+                                  {props.isEnrollmentActive ? <ChevronRightIcon/> : <EditIcon/>} &nbsp;
                               </IconButton>
                             </TableCell>
                         </TableRow>

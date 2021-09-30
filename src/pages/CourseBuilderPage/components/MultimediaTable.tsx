@@ -203,6 +203,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
 
   const handleClose = () => {
     setShowAddMultimediaDialog(false);
+    setErrors({})
   }
 
   const handleValidation = () => {
@@ -278,6 +279,9 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
         updatedFile.description = event.target.value
         break;
       case "file":
+        // User didn't select any file by clicking cancel button
+        if (event.target.files.length === 0) return
+
         updatedFile.newFilename = event.target.files[0].name
         updatedFile.file = event.target.files[0]
 
@@ -370,6 +374,17 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
                     multiline
                     value={newFile.description}
                     onChange={handleFileChange}
+                  />
+                </FormControl>
+                <FormControl fullWidth margin="normal">
+                  <InputLabel htmlFor="multimedia-type">File Type</InputLabel>
+                  <Input
+                    id="multimedia-type"
+                    name="type"
+                    type="text"
+                    fullWidth
+                    value={getFileType(newFile.file?.name === undefined ? "" : newFile.file.name)}
+                    disabled
                   />
                 </FormControl>
                 <FormControl fullWidth margin="normal">
@@ -500,6 +515,7 @@ export default function MultimediaTable(props: any) {
   
     const handleClose = () => {
       setShowAddMultimediaDialog(false);
+      setErrors({})
     }
 
     const handleValidation = () => {
@@ -569,6 +585,9 @@ export default function MultimediaTable(props: any) {
           updatedFile.description = event.target.value
           break;
         case "file":
+          // User didn't select any file by clicking cancel button
+          if (event.target.files.length === 0) return
+
           updatedFile.newFilename = event.target.files[0].name
           updatedFile.file = event.target.files[0]
   
@@ -593,6 +612,7 @@ export default function MultimediaTable(props: any) {
               fileToUpdate.name = multimedia.name
               fileToUpdate.description = multimedia.description
               fileToUpdate.urlFilename = multimedia.urlFilename
+              fileToUpdate.multimediaType = multimedia.multimediaType
             }
           })
         }
@@ -705,13 +725,24 @@ export default function MultimediaTable(props: any) {
                   />
                 </FormControl>
                 <FormControl fullWidth margin="normal">
+                  <InputLabel htmlFor="multimedia-type">File Type</InputLabel>
+                  <Input
+                    id="multimedia-type"
+                    name="type"
+                    type="text"
+                    fullWidth
+                    value={newFile.multimediaType}
+                    disabled
+                  />
+                </FormControl>
+                <FormControl fullWidth margin="normal">
                   <InputLabel htmlFor="multimedia-filename">File Name</InputLabel>
                   <Input
                     id="multimedia-filename"
                     name="filename"
                     type="text"
                     fullWidth
-                    value={newFile.urlFilename}
+                    value={newFile.file?.size !== 0 ? newFile.newFilename : newFile.urlFilename}
                     disabled
                   />
                 </FormControl>
