@@ -179,7 +179,7 @@ function LessonViewer(props: any) {
                   to={`/overview/lesson/${courseId}/${lessonId}/${m.contentId}`}
                 >
                   {m.multimediaType === "DOCUMENT" ? <ReadingIcon /> : <PlayIcon />}
-                  {m.multimediaType === "DOCUMENT" ? "Reading" : "Video"}: {m.name}
+                  {m.multimediaType === "DOCUMENT" ? "Reading" : "Video"}: {m.multimediaType}{m.name}
                 </ContentLink>
               );
             })}
