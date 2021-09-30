@@ -107,7 +107,7 @@ function AttemptQuizComponent(props: any) {
                 console.log(`${qId} in ${quizQuestionOptionIdList}`)
             }else{
                 console.log(`${qId} not in ${quizQuestionOptionIdList}`)
-                newQuizQuestionOptionIdList[qId] = [];
+                newQuizQuestionOptionIdList[qId] = [[]];
             }
         })
         const createNewStudentAttemptReq: CreateNewStudentAttemptReq = {
