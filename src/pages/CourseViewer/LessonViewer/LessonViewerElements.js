@@ -83,8 +83,8 @@ export const ContentLink = styled(Link)`
   transition: 0.2s ease-in-out;
   color: ${colours.GRAY5};
   cursor: pointer;
-  pointer-events: ${({ isCompleted, previousCompleted }) =>
-    (isCompleted || !previousCompleted) ? "none" : "auto"};
+  pointer-events: pointer-events: ${({ isCompleted, previousCompleted }) =>
+  (isCompleted || !previousCompleted) ? "none" : "auto"};
   font-family: "Roboto", sans-serif;
   padding: 0 20px 0 20px;
 

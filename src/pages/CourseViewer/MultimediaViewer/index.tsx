@@ -69,22 +69,6 @@ function MultimediaViewer(props: any) {
     setNumPages(numPages);
   }
 
-  const docs = [
-    { uri: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" },
-    { uri: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" },
-  ];
-  const downloadFile = () => {
-    window.location.href = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
-  }
-  const saveFile = () => {
-    saveAs(
-      "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
-      "example.pdf"
-    );
-  };
-  //const url =  "https://cors-anywhere.herokuapp.com/" +currentMultimedia?.url;
-  const url1 = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf";
-  // return (<div>hello! {currentMultimedia?.multimediaType} goes here</div>)
   return (
     <>
       <MultimediaContainer>
@@ -93,7 +77,7 @@ function MultimediaViewer(props: any) {
             <LessonTitle>Week {currentLesson?.sequence}</LessonTitle>
             <CourseTitle>{currentCourse?.name}</CourseTitle>
           </PageHeading>
-          <ExitWrapper to={`/overview/${currentCourse?.courseId}`}>
+          <ExitWrapper to={`/overview/lesson/${currentCourse?.courseId}/${currentLesson?.lessonId}`}>
             <CancelOutlinedIcon fontSize="large" style={{ color: colours.BLUE2, padding: 20 }} />
           </ExitWrapper>
         </PageHeadingAndButton>
@@ -113,9 +97,9 @@ function MultimediaViewer(props: any) {
         </VideoCard>
 
         <PDFCard>
-          {currentMultimedia && currentMultimedia.multimediaType === "PDF" &&
-          <Document
-          file="https://downloads.hindawi.com/journals/mpe/2018/5213504.pdf"
+          {currentMultimedia && currentMultimedia.multimediaType === "DOCUMENT" &&
+          <Document 
+          file= {currentMultimedia?.url}
           onLoadSuccess={onDocumentLoadSuccess}
           >
           <Page pageNumber={pageNumber} />
@@ -145,11 +129,7 @@ function MultimediaViewer(props: any) {
         >
         </DocumentViewer> */}
 
-        { currentMultimedia?.multimediaType !== "VIDEO" && 
-        <div>
-        <button onClick={saveFile}>Download</button>
-        </div>
-        }   
+         
       </MultimediaContainer>
     </>
   );
