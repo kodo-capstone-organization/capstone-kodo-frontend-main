@@ -22,3 +22,11 @@ export async function setDateTimeOfCompletionOfEnrolledContentByAccountIdAndCont
 
     return httpClient.post<FormData, EnrolledContent>(postParameters);
 }
+
+export async function getEnrolledContentByEnrolledContentId(enrolledContentId: number): Promise<EnrolledContent> {
+    const getParameters: IHttpClientRequestParameters<undefined> = {
+        url: `/enrolledContent/getEnrolledContentByEnrolledContentId/${enrolledContentId}`
+    }
+
+    return httpClient.get<undefined, EnrolledContent>(getParameters)
+}

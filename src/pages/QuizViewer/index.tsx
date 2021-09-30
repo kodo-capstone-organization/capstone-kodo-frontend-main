@@ -49,7 +49,6 @@ function QuizViewer(props: any) {
         if(props.match.params.studentAttemptId){
             setViewMode(true);
         }else if (props.match.params.enrolledContentId){
-            console.log(quizId);
             setAttemptMode(true);
         }
         setLoading(false);

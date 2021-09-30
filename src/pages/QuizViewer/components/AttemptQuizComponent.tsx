@@ -8,10 +8,11 @@ import { CreateNewStudentAttemptReq } from "../../../apis/Entities/StudentAttemp
 
 
 import { getQuizByQuizId } from "../../../apis/Quiz/QuizApis";
+import { getEnrolledContentByEnrolledContentId } from "../../../apis/EnrolledContent/EnrolledContentApis";
 import { getAllQuizQuestionsByQuizId, getQuizQuestionByQuizQuestionId } from "../../../apis/QuizQuestion/QuizQuestionApis";
-import { createNewStudentAttempt } from "../../../apis/Quiz/StudentAttemptApis";
+import { createNewStudentAttempt } from "../../../apis/StudentAttempt/StudentAttemptApis";
 
-
+import { Button } from "../../../values/ButtonElements";
 import {
     QuizContainer, QuizCard, QuizCardHeader, QuizCardContent, QuizQuestionCard,
     QuizViewerCardContent, MarkedQuizViewerTableRow
@@ -23,38 +24,106 @@ import {
 } from "@material-ui/core";
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import CancelIcon from '@material-ui/icons/Cancel';
+import AttemptQuizOptionsComponent from "./AttemptQuizOptionsComponent";
+import QuizAttemptTimer from "./QuizAttemptTimer";
 
 function AttemptQuizComponent(props: any) {
 
     const [quiz, setQuiz] = useState<Quiz>();
     const [quizQuestionArray, setQuizQuestionArray] = useState<QuizQuestion[]>();
     const [quizQuestionOptionIdList, setQuizQuestionOptionIdList] = useState<number[][]>([]);
+    const [initialSeconds, setInitalSeconds] = useState<number>();
+    const [initialMinutes, setInitialMinutes] = useState<number>();
+
 
 
 
     useEffect(() => {
         if (props.enrolledContentId != undefined) {
-            // getQuizByQuizId(props.quizId)
-            //     .then(res => {
-            //         setQuiz(res);
-            //         console.log("Success in getQuizByQuizId", res);
-            //     })
-            //     .catch(err => { console.log("Error in getQuizByQuizId", err); })
-            // getAllQuizQuestionsByQuizId(props.quizId).then((res) => {
-            //     setQuizQuestionArray(res)
-            //     console.log("Success in getAllQuizQuestionsByQuizId", res);
-            // }).catch((err) => { console.log("error:getAllQuizQuestionsByQuizId", err) });
+            console.log(props.enrolledContentId)
+            getEnrolledContentByEnrolledContentId(props.enrolledContentId)
+                .then(res => {
+                    console.log("Success in getEnrolledContentByEnrolledContentId", res);
+                    const quizId = res.parentContent.contentId;
+                    getQuizByQuizId(quizId)
+                        .then(res => {
+                            setQuiz(res);
+                            console.log(res.timeLimit);
+                            setInitialMinutes(parseInt(`${res.timeLimit.charAt(3)}${res.timeLimit.charAt(4)}`));
+                            setInitalSeconds(parseInt(`${res.timeLimit.charAt(6)}${res.timeLimit.charAt(7)}`));
+                            console.log("Success in getQuizByQuizId", res);
+                        })
+                        .catch(err => { console.log("Error in getQuizByQuizId", err); })
+                    getAllQuizQuestionsByQuizId(quizId).then((res) => {
+                        setQuizQuestionArray(res)
+                        console.log("Success in getAllQuizQuestionsByQuizId", res);
+                    }).catch((err) => { console.log("error:getAllQuizQuestionsByQuizId", err) });
+                })
+                .catch(err => {
+                    console.log("Error in getEnrolledContentByEnrolledContentId", err);
+                })
         }
-    }, [props.quizId]);
+    }, [props.enrolledContentId]);
 
     const formatDate = (date: Date) => {
         var d = new Date(date);
         return d.toDateString() + ', ' + d.toLocaleTimeString();
     }
 
-    const handleAttemptAnswer = (questionIndex: number, chosenOptions: number[]) => {
-        // quizQuestionOptionIdList[questionIndex] = chosenOptions;
+    const handleAttemptAnswer = (optionArray: number[], questionIndex: number) => {
+        console.log("handleAttemptAnswer1", quizQuestionOptionIdList);
+        var newQuizQuestionOptionIdList = quizQuestionOptionIdList;
+        newQuizQuestionOptionIdList[questionIndex] = optionArray;
+        console.log("handleAttemptAnswer2", newQuizQuestionOptionIdList.length);
+        setQuizQuestionOptionIdList(newQuizQuestionOptionIdList);
     }
+
+    const handleSubmit = () => {
+        if (quizQuestionOptionIdList.length === quizQuestionArray?.length) {
+            const createNewStudentAttemptReq: CreateNewStudentAttemptReq = {
+                enrolledContentId: parseInt(props.enrolledContentId),
+                quizQuestionOptionIdLists: quizQuestionOptionIdList
+            };
+            console.log("createNewStudentAttemptReq, quizQuestionOptionIdList", quizQuestionOptionIdList);
+            createNewStudentAttempt(createNewStudentAttemptReq)
+            .then(res => {
+                console.log("Attempt quiz success:", res);
+            })
+            .catch(err => {
+                console.log("Attempt quiz failed:", err);
+            });
+        } else {
+            console.log("Hey! complete the damn quiz!");
+            //send error
+        }
+
+    }
+
+    const handleTimeOut = (isTimedOut : boolean) => {
+        //complete the quiz
+        console.log("timeout")
+        var newQuizQuestionOptionIdList = quizQuestionOptionIdList;
+        quizQuestionArray?.map((q, qId) => {
+            if(qId in quizQuestionOptionIdList){
+                console.log(`${qId} in ${quizQuestionOptionIdList}`)
+            }else{
+                console.log(`${qId} not in ${quizQuestionOptionIdList}`)
+                newQuizQuestionOptionIdList[qId] = [];
+            }
+        })
+        const createNewStudentAttemptReq: CreateNewStudentAttemptReq = {
+            enrolledContentId: props.enrolledContentId,
+            quizQuestionOptionIdLists: newQuizQuestionOptionIdList
+        };
+        console.log("createNewStudentAttemptReq", createNewStudentAttemptReq);
+        createNewStudentAttempt(createNewStudentAttemptReq)
+        .then(res => {
+            console.log("Attempt quiz success:", res);
+        })
+        .catch(err => {
+            console.log("Attempt quiz failed:", err);
+        });
+    } 
 
     const mapQuestionArray = (questionArray: QuizQuestion[]) => {
         return (
@@ -64,92 +133,7 @@ function AttemptQuizComponent(props: any) {
                         <>
                             <QuizQuestionCard key={qId}>
                                 {qId + 1}. {question.content}
-                                <TableContainer component={Paper} style={{ margin: "16px 0px 16px 0px" }}>
-                                    <Table size="small" aria-label="a dense table">
-                                        <TableHead>
-                                            <TableRow>
-                                                {
-                                                    (question.questionType === "MCQ" || question.questionType === "TF") &&
-                                                    <>
-                                                        <TableCell>Options</TableCell>
-                                                        <TableCell align="right">Answer</TableCell>
-                                                    </>
-
-                                                }
-                                                {
-                                                    question.questionType === "MATCHING" &&
-                                                    <>
-                                                        <TableCell>LEFT</TableCell>
-                                                        <TableCell>RIGHT</TableCell>
-                                                        <TableCell align="right">Answer</TableCell>
-                                                    </>
-
-                                                }
-                                            </TableRow>
-                                        </TableHead>
-
-
-                                        <TableBody>
-                                            {
-                                                question.questionType === "MCQ" &&
-                                                question.quizQuestionOptions?.map((row, index) => (
-                                                    <MarkedQuizViewerTableRow
-                                                        key={index}
-                                                    >
-                                                        <TableCell component="th" scope="row">
-                                                            {row.leftContent}
-                                                        </TableCell>
-                                                        <TableCell align="right">
-                                                            <Radio
-                                                                value={index}
-                                                            />
-                                                        </TableCell>
-                                                    </MarkedQuizViewerTableRow>
-                                                ))
-
-
-                                            }
-
-                                            {
-                                                question.questionType === "TF" &&
-                                                question.quizQuestionOptions?.map((row, index) => (
-                                                    <MarkedQuizViewerTableRow
-                                                        key={index}
-                                                    >
-                                                        <TableCell component="th" scope="row">
-                                                            {row.leftContent}
-                                                        </TableCell>
-                                                        <TableCell align="right">
-                                                            <Radio
-                                                                value={index}
-                                                            />
-                                                        </TableCell>
-                                                    </MarkedQuizViewerTableRow>
-                                                ))
-                                            }
-                                            {
-                                                question.questionType === "MATCHING" &&
-                                                question.quizQuestionOptions?.map((row, index) => (
-                                                    <MarkedQuizViewerTableRow
-                                                        key={index}
-                                                    >
-                                                        <TableCell component="th" scope="row">
-                                                            {row.leftContent}
-                                                        </TableCell>
-                                                        <TableCell component="th" scope="row">
-                                                            {row.rightContent}
-                                                        </TableCell>
-                                                        <TableCell align="right">
-                                                            <Checkbox
-                                                                value={index}
-                                                            />
-                                                        </TableCell>
-                                                    </MarkedQuizViewerTableRow>
-                                                ))
-                                            }
-                                        </TableBody>
-                                    </Table>
-                                </TableContainer>
+                                <AttemptQuizOptionsComponent question={question} index={qId} onHandleAttemptAnswer={handleAttemptAnswer} />
                             </QuizQuestionCard>
                         </>
                     );
@@ -160,6 +144,7 @@ function AttemptQuizComponent(props: any) {
 
     return (
         <>
+            {initialSeconds != undefined && <QuizAttemptTimer initialSeconds={initialSeconds} initialMinutes={initialMinutes} onTimeOut={handleTimeOut}/>}
             <QuizCard>
                 <QuizCardHeader
                     title="Quiz Information"
@@ -179,6 +164,9 @@ function AttemptQuizComponent(props: any) {
             <QuizCard>
                 <QuizCardHeader
                     title={quiz != undefined ? quiz.name : ""}
+                    action={
+                        <Button primary onClick={handleSubmit}>Submit Quiz</Button>
+                    }
                 />
                 <QuizViewerCardContent>
                     {quizQuestionArray != undefined && mapQuestionArray(quizQuestionArray)}
