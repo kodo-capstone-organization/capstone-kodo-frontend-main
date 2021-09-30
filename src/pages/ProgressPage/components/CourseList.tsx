@@ -31,7 +31,7 @@ function CourseList(props: any) {
   }, [props]);
 
   const displayBannerUrl = (course: EnrolledCourse) => {
-    if (course.parentCourse.bannerUrl !== null) {
+    if (course.parentCourse.bannerUrl.length > 0) {
       return course.parentCourse.bannerUrl;
     } else {
       return "/chessplaceholder.png";
@@ -60,7 +60,7 @@ function CourseList(props: any) {
             <>
               <CourseElement key={lessonId}>
                 <LessonAvatar
-                  src="/chessplaceholder.png"
+                  src={displayBannerUrl(course)}
                   alt={course.parentCourse.name}
                 />
                 <SubjectContainer>

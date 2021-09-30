@@ -13,7 +13,7 @@ import {
     QuizViewerCardContent
 } from "./QuizViewerElements";
 import {
-    Grid
+    Grid, Divider
 } from "@material-ui/core";
 
 function QuizViewer(props: any) {
@@ -49,7 +49,7 @@ function QuizViewer(props: any) {
                     return (
                         <>
                             <QuizQuestionCard key={qId}>
-                                <MarkedQuizComponent studentAttemptQuestion={q} />
+                                <MarkedQuizComponent index={qId} studentAttemptQuestion={q} />
                             </QuizQuestionCard>
                         </>
                     );
@@ -70,9 +70,11 @@ function QuizViewer(props: any) {
                             <Grid item xs={12}>
                                 {quiz != undefined && quiz.name}
                             </Grid>
+                            <Divider style={{width:'-webkit-fill-available'}} variant="middle" />
                             <Grid item xs={12}>
                                 {quiz != undefined && quiz.description}
                             </Grid>
+                            <Divider style={{width:'-webkit-fill-available'}} variant="middle" />
                             <Grid item xs={12}>
                                 Completed On: {dateTimeOfAttempt != undefined && formatDate(dateTimeOfAttempt)}
                             </Grid>

@@ -3,6 +3,8 @@ import { StudentAttempt } from "../../../apis/Entities/StudentAttempt";
 import { StudentAttemptQuestion } from "../../../apis/Entities/StudentAttemptQuestion";
 import { QuizQuestion } from "../../../apis/Entities/QuizQuestion";
 import { Quiz } from "../../../apis/Entities/Quiz";
+import { StudentAttemptAnswer } from "../../../apis/Entities/StudentAttemptAnswer";
+
 import { getStudentAttemptByStudentAttemptId } from "../../../apis/StudentAttempt/StudentAttemptApis";
 
 import {
@@ -11,18 +13,20 @@ import {
 } from "../QuizViewerElements";
 import {
     Grid, Table, TableBody, TableCell, TableContainer, TableHead,
-     TableRow, Checkbox, Paper, IconButton, TextField,  Radio,
-     makeStyles, createStyles, Theme
+    TableRow, Checkbox, Paper, TextField, Radio,
+    makeStyles, createStyles, Theme
 } from "@material-ui/core";
-import { StudentAttemptAnswer } from "../../../apis/Entities/StudentAttemptAnswer";
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+import CancelIcon from '@material-ui/icons/Cancel';
+
 
 
 const useStyles = makeStyles((theme: Theme) =>
-createStyles({
-  table: {
-    // backgroundColor: "green"
-  }
-}),
+    createStyles({
+        table: {
+            // backgroundColor: "green"
+        }
+    }),
 );
 
 function MarkedQuizComponent(props: any) {
@@ -32,11 +36,13 @@ function MarkedQuizComponent(props: any) {
     const [questionType, setQuestionType] = useState<string>("");
     const [quizQuestionOptions, setQuizQuestionOptions] = useState<QuizQuestionOption[]>([]);
     const [studentAttemptAnswers, setStudentAttemptAnswers] = useState<StudentAttemptAnswer[]>();
+    const [index, setIndex] = useState<number>();
     const classes = useStyles();
 
 
     useEffect(() => {
-        console.log(props.studentAttemptQuestion);
+        console.log(props.studentAttemptQuestion.studentAttemptAnswers);
+        setIndex(props.index)
         setStudentAttemptQuestion(props.studentAttemptQuestion);
         setQuizQuestion(props.studentAttemptQuestion.quizQuestion);
         setStudentAttemptAnswers(props.studentAttemptQuestion.studentAttemptAnswers);
@@ -51,8 +57,8 @@ function MarkedQuizComponent(props: any) {
 
     return (
         <>
-            Question: {quizQuestion != undefined && quizQuestion.content}
-            <TableContainer component={Paper} style={{ marginTop: "16px" }}>
+            {index + 1}. {quizQuestion != undefined && quizQuestion.content}
+            <TableContainer component={Paper} style={{ margin: "16px 0px 16px 0px" }}>
                 <Table size="small" aria-label="a dense table">
                     <TableHead>
                         <TableRow>
@@ -97,6 +103,7 @@ function MarkedQuizComponent(props: any) {
                                 </MarkedQuizViewerTableRow>
                             ))
 
+
                         }
 
                         {
@@ -126,10 +133,10 @@ function MarkedQuizComponent(props: any) {
                                     selected={row.correct}
                                 >
                                     <TableCell component="th" scope="row">
-                                        <TextField key={index} value={quizQuestionOptions[index].leftContent}/>
+                                        {row.leftContent}
                                     </TableCell>
                                     <TableCell component="th" scope="row">
-                                        <TextField key={index} value={quizQuestionOptions[index].rightContent} />
+                                        {row.rightContent}
                                     </TableCell>
                                     <TableCell align="right">
                                         <Checkbox
@@ -140,6 +147,45 @@ function MarkedQuizComponent(props: any) {
                                 </MarkedQuizViewerTableRow>
                             ))
                         }
+                    </TableBody>
+                </Table>
+            </TableContainer>
+            Your Answer(s):
+            <TableContainer component={Paper} style={{ margin: "16px 0px 16px 0px" }}>
+                <Table size="small">
+                    <TableBody>
+                        {
+                            (questionType === "TF" || questionType === "MCQ") &&
+                            studentAttemptAnswers?.map((row, index) => (
+                                <MarkedQuizViewerTableRow>
+                                    <TableCell component="th" scope="row">
+                                        {row.leftContent}
+                                    </TableCell>
+                                    <TableCell align="right">
+                                        {row.correct ? <CheckCircleIcon style={{ color: "green" }} /> : <CancelIcon color={"error"} />}
+                                    </TableCell>
+                                </MarkedQuizViewerTableRow>
+
+                            ))
+                        }
+                        {
+                            questionType === "MATCHING" &&
+                            studentAttemptAnswers?.map((row, index) => (
+                                <MarkedQuizViewerTableRow>
+                                    <TableCell component="th" scope="row">
+                                        {row.leftContent}
+                                    </TableCell>
+                                    <TableCell component="th" scope="row">
+                                        {row.rightContent}
+                                    </TableCell>
+                                    <TableCell align="right">
+                                        {row.correct ? <CheckCircleIcon style={{ color: "green" }} /> : <CancelIcon color={"error"} />}
+                                    </TableCell>
+                                </MarkedQuizViewerTableRow>
+
+                            ))
+                        }
+
                     </TableBody>
                 </Table>
             </TableContainer>
