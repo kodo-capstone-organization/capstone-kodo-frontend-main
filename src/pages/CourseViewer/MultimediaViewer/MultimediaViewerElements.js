@@ -44,20 +44,23 @@ export const VideoCard = styled.div`
   height: auto;
   width: auto;
   display: flex;
-  justifyContent: center;
+  justify-content: center;
+  align-items: center;
 `
 export const PDFCard = styled.div`
   height: auto;
   width: auto;
   display: flex;
-  justifyContent: center;
+  justify-content: center;
+  align-items: center;
 `
 
 export const ImageCard = styled.div`
   height: auto;
   width: auto;
   display: flex;
-  justifyContent: center;
+  justify-content: center;
+  align-items: center;
 `
 
 export const MultimediaHeader = styled.div`
@@ -83,4 +86,9 @@ export const MultimediaDescription = styled.div`
 export const ExitWrapper = styled(Link)`
   display: flex;
 `
+
+export const MultimediaDoneButtonWrapper = styled.div`
+  display: flex;
+  flex-direction: row-reverse;
+`;
 
