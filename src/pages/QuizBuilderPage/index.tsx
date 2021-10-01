@@ -231,7 +231,7 @@ function QuizBuilderPage(props: any) {
                     setQuiz(res)
                 })
                 .catch((err) => {
-                    props.callOpenSnackBar(`Error in updating Quiz: ${err}`, "error")
+                    props.callOpenSnackBar(`Error in updating Quiz: Please check for no empty fields`, "error")
                 });
         }
     }
@@ -262,19 +262,17 @@ function QuizBuilderPage(props: any) {
 
     }
 
-    const handleChangeFromQuestionBank = (questionBankQuestionIds: number[]) => {
+    const handleChangeFromQuestionBank = (questionBankQuestions: any[]) => {
+        console.log("questionBankQuestionIds", questionBankQuestions);
+        let arrayWtihDraggableId: any = quizQuestionArray;
         var mapDraggable = draggableId + 1;
-        questionBankQuestionIds.map((id) => {
-            getQuizQuestionByQuizQuestionId(id).then((res) => {
-                props.callOpenSnackBar("Successfully updated Quiz", "success")
-                const withDraggableId = Object.assign(res, { draggableId: mapDraggable });
-                mapDraggable++;
-                quizQuestionArray.push(withDraggableId);
-            }).catch((err) => {
-                props.callOpenSnackBar(`Error in updating Quiz: ${err}`, "error")
-            })
+        questionBankQuestions.map((question) => {
+            const withDraggableId = Object.assign(question, { draggableId: mapDraggable });
+            arrayWtihDraggableId = arrayWtihDraggableId.concat([withDraggableId]);
+            mapDraggable++;
         })
         setDraggableId(mapDraggable);
+        setQuizQuestionArray(arrayWtihDraggableId);
     }
 
     const handleOnDragEnd = (result) => {

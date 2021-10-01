@@ -94,7 +94,8 @@ function QuestionBankModal(props: any) {
     }
 
     const handleConfirm = () => {
-        props.onChangeFromQuestionBank(selectedQuestions)
+        const selectedFromQuestionBank = questionList.filter((q)=>selectedQuestions.includes(q.quizQuestionId));
+        props.onChangeFromQuestionBank(selectedFromQuestionBank);
         setOpen(false);
     }
 
