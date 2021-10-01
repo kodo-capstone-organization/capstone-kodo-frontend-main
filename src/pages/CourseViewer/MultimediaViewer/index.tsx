@@ -6,13 +6,11 @@ import { getMultimediaByMultimediaId } from "../../../apis/Multimedia/Multimedia
 import { Multimedia } from "../../../apis/Entities/Multimedia";
 import { Course } from "../../../apis/Entities/Course";
 import { Lesson } from "../../../apis/Entities/Lesson";
-import { setDateTimeOfCompletionOfEnrolledContentByAccountIdAndContentId } from "../../../apis/EnrolledContent/EnrolledContentApis"
-
-import { Button } from "../../../values/ButtonElements";
 import { colours } from "../../../values/Colours";
 import ReactPlayer from "react-player";
-import { Document, Page } from "react-pdf";
-// import FileViewer from 'react-file-viewer';
+import PDFViewer from "./PDFViewer";
+import DownloadFile from "./DownloadFile";
+import { pdfjs } from "react-pdf";
 
 import {
   MultimediaContainer,
@@ -23,6 +21,7 @@ import {
   MultimediaCard,
   VideoCard,
   PDFCard,
+  DocumentCard,
   ImageCard,
   MultimediaName,
   MultimediaDescription,
@@ -34,7 +33,9 @@ import {
 import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
 import { EnrolledContent } from "../../../apis/Entities/EnrolledContent";
 import { useHistory } from "react-router-dom";
-
+import { Button } from "../../../values/ButtonElements";
+import { setDateTimeOfCompletionOfEnrolledContentByAccountIdAndContentId } from "../../../apis/EnrolledContent/EnrolledContentApis";
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
 function MultimediaViewer(props: any) {
   const contentId = props.match.params.contentId;
@@ -68,6 +69,10 @@ function MultimediaViewer(props: any) {
     setNumPages(numPages);
   }
 
+  function getUrlForDocument() {
+    return `https://docs.google.com/gview?url=https://storage.googleapis.com/capstone-kodo-bucket/${currentMultimedia?.urlFilename}&embedded=true`
+  }
+
   const completeMultimedia = () => {
     setDateTimeOfCompletionOfEnrolledContentByAccountIdAndContentId(true, accountId, contentId)
       .then((res: EnrolledContent) => {
@@ -95,58 +100,51 @@ function MultimediaViewer(props: any) {
           <MultimediaDescription> Description: {currentMultimedia?.description}</MultimediaDescription>
         </MultimediaCard>
 
-        <VideoCard>
-          {currentMultimedia && currentMultimedia.multimediaType === "VIDEO" &&
+        <div id="action-row" style={{ display: "flex", flexDirection: "row", justifyContent: "flex-end" }}>
+          <DownloadFile multimediaName={currentMultimedia?.name} multimediaUrl={currentMultimedia?.url} />
+          &nbsp;&nbsp;
+          <Button primary onClick={completeMultimedia}>
+            Mark as Done
+          </Button>
+        </div>
+
+        {currentMultimedia && currentMultimedia.multimediaType === "VIDEO" &&
+          <VideoCard>
             <ReactPlayer
               url={currentMultimedia.url}
               controls={true}
             />
-          }
-        </VideoCard>
+          </VideoCard>
+        }
 
-        <PDFCard>
-          {currentMultimedia && currentMultimedia.multimediaType === "DOCUMENT" &&
-          <Document 
-          file= {currentMultimedia?.url}
-          onLoadSuccess={onDocumentLoadSuccess}
-          >
-          <Page pageNumber={pageNumber} />
-          </Document>
-          }
-          <p>Page {pageNumber} of {numPages}</p>
-        </PDFCard>
+        {currentMultimedia && currentMultimedia.multimediaType === "PDF" &&
+          <PDFCard>
+            <PDFViewer doc={currentMultimedia.url} />
+          </PDFCard>
+        }
 
-        <ImageCard>
-          {currentMultimedia?.multimediaType === "IMAGE" &&
-            <img
-              src="http://placeimg.com/1200/800/nature"
-              // src={currentMultimedia.url}
-              width="600"
-              style={{ margin: '2px' }}
-              alt=""
-            />
-          }
-        </ImageCard>
-        
-        {/* <DocViewer pluginRenderers={DocViewerRenderers} documents={docs} /> */}
+        {currentMultimedia?.multimediaType === "IMAGE" &&
+          <div style={{ display: 'flex', justifyContent: 'center', flexDirection: 'row' }} >
+            <ImageCard>
+              <img
+                src={currentMultimedia.url}
+                width="600"
+              />
+            </ImageCard>
+          </div>
+        }
 
-        {/* <DocumentViewer
-          url="https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
-          viewer="url"
-          style="width:100%;height:50vh;"
-        >
-        </DocumentViewer> */}
+        {currentMultimedia?.multimediaType === "DOCUMENT" &&
+          <DocumentCard>
+            <iframe title="docx-view" width="560" height="780" src={getUrlForDocument()}>
+            </iframe>
+          </DocumentCard>
+        }
 
-        <MultimediaDoneButtonWrapper>
-         <Button primary big fontBig onClick={completeMultimedia}>
-           Done
-         </Button>
-        </MultimediaDoneButtonWrapper>
-      </MultimediaContainer>      
+      </MultimediaContainer>
     </>
   );
 }
 
 const MultimediaViewerWithRouter = withRouter(MultimediaViewer);
 export default MultimediaViewerWithRouter;
-

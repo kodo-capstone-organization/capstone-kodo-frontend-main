@@ -46,22 +46,42 @@ export const VideoCard = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-`
+`;
+
 export const PDFCard = styled.div`
   height: auto;
   width: auto;
   display: flex;
   justify-content: center;
   align-items: center;
-`
+  flex-direction: column;
+`;
 
-export const ImageCard = styled.div`
+export const DocumentCard = styled.div`
   height: auto;
   width: auto;
   display: flex;
   justify-content: center;
   align-items: center;
-`
+`;
+
+export const ImageCard = styled.div`
+  height: 600px;
+  width: 600px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align:center
+`;
+
+export const BtnWrapper = styled.div`
+  height: auto;
+  width: auto;
+  display: flex;
+  margin-left: 1rem;
+  margin-top: -8px;
+  justify-content: center;
+`;
 
 export const MultimediaHeader = styled.div`
   font-size: ${fontSizes.CONTENT};
@@ -85,10 +105,9 @@ export const MultimediaDescription = styled.div`
 
 export const ExitWrapper = styled(Link)`
   display: flex;
-`
+`;
 
 export const MultimediaDoneButtonWrapper = styled.div`
   display: flex;
   flex-direction: row-reverse;
 `;
-
