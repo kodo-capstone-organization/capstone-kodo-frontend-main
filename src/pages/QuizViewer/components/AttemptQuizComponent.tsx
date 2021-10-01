@@ -1,18 +1,25 @@
 import { useEffect, useState } from "react";
 
+import { useHistory } from "react-router-dom";
+
 import {
     Grid,
     Divider
 } from "@material-ui/core";
 
+import { Course } from "../../../apis/Entities/Course";
 import { CreateNewStudentAttemptReq } from "../../../apis/Entities/StudentAttempt";
+import { Lesson } from "../../../apis/Entities/Lesson";
 import { Quiz } from "../../../apis/Entities/Quiz";
 import { QuizQuestion } from "../../../apis/Entities/QuizQuestion";
 
 import { createNewStudentAttempt } from "../../../apis/StudentAttempt/StudentAttemptApis";
 import { getAllQuizQuestionsByQuizId } from "../../../apis/QuizQuestion/QuizQuestionApis";
+import { getCourseByEnrolledContentId } from "../../../apis/Course/CourseApis";
 import { getEnrolledContentByEnrolledContentId } from "../../../apis/EnrolledContent/EnrolledContentApis";
+import { getLessonByEnrolledContentId } from "../../../apis/Lesson/LessonApis";
 import { getQuizByQuizId } from "../../../apis/Quiz/QuizApis";
+
 
 import {
     QuizCard, 
@@ -27,6 +34,7 @@ import QuizAttemptTimer from "./QuizAttemptTimer";
 
 import { Button } from "../../../values/ButtonElements";
 
+
 function AttemptQuizComponent(props: any) {
 
     const [quiz, setQuiz] = useState<Quiz>();
@@ -35,8 +43,7 @@ function AttemptQuizComponent(props: any) {
     const [initialSeconds, setInitalSeconds] = useState<number>();
     const [initialMinutes, setInitialMinutes] = useState<number>();
 
-
-
+    const history = useHistory();
 
     useEffect(() => {
         if (props.enrolledContentId !== undefined) {
@@ -65,11 +72,6 @@ function AttemptQuizComponent(props: any) {
         }
     }, [props.enrolledContentId]);
 
-    const formatDate = (date: Date) => {
-        var d = new Date(date);
-        return d.toDateString() + ', ' + d.toLocaleTimeString();
-    }
-
     const handleAttemptAnswer = (optionArray: number[], questionIndex: number) => {
         var newQuizQuestionOptionIdList = quizQuestionOptionIdList;
         newQuizQuestionOptionIdList[questionIndex] = optionArray;
@@ -86,13 +88,28 @@ function AttemptQuizComponent(props: any) {
             console.log("createNewStudentAttemptReq, quizQuestionOptionIdList", quizQuestionOptionIdList[2]);
             createNewStudentAttempt(createNewStudentAttemptReq)
             .then(res => {
-                console.log("Attempt quiz success:", res);
+                props.callOpenSnackBar("Quiz Submitted Successfully", "success")
+
+                getCourseByEnrolledContentId(props.enrolledContentId).then((course: Course) => {
+                    getLessonByEnrolledContentId(props.enrolledContentId).then((lesson: Lesson) => {
+                        history.push(`/overview/lesson/${course.courseId}/${lesson.lessonId}`);
+                        // console.log("Attempt quiz success:", res);
+                    })
+                    .catch(err => {
+                        console.log(err.response.data.message)
+                    })
+                })
+                .catch(err => {
+                    console.log(err.response.data.message)
+                })                
             })
             .catch(err => {
-                console.log("Attempt quiz failed:", err);
+                props.callOpenSnackBar("There was an error in submitting the quiz", "error")
+                // console.log("Attempt quiz failed:", err);
             });
         } else {
-            console.log("Hey! complete the damn quiz!");
+            props.callOpenSnackBar("Please complete the quiz", "error")
+            // console.log("Hey! complete the damn quiz!");
             //send error
         }
 

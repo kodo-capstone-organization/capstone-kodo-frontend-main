@@ -93,7 +93,7 @@ function QuizViewer(props: any) {
                 </QuizCard> */}
 
                 {viewMode && <MarkedQuizComponent studentAttemptId={studentAttemptId} />}
-                {attemptMode && <AttemptQuizComponent enrolledContentId={enrolledContentId} />}
+                {attemptMode && <AttemptQuizComponent enrolledContentId={enrolledContentId} callOpenSnackBar={props.callOpenSnackBar} />}
 
             </QuizContainer>
         </>
