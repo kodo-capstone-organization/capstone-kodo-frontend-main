@@ -306,7 +306,7 @@ function QuizBuilderPage(props: any) {
                                     autoFocus
                                     value={timeLimitHours}
                                     onChange={handleTimeLimitHourseChange}
-                                    inputProps={{ min: 0, max: 24 }}
+                                    inputProps={{ min: 0, max: 23 }}
                                 />
                             </Grid>
                             <Grid item xs={4}>

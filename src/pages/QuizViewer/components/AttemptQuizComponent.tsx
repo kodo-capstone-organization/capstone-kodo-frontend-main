@@ -139,7 +139,7 @@ function AttemptQuizComponent(props: any) {
 
     return (
         <>
-            {initialSeconds != undefined && <QuizAttemptTimer initialSeconds={initialSeconds} initialMinutes={initialMinutes} onTimeOut={handleTimeOut}/>}
+            {/* {initialSeconds != undefined && <QuizAttemptTimer initialSeconds={initialSeconds} initialMinutes={initialMinutes} onTimeOut={handleTimeOut}/>} */}
             <QuizCard>
                 <QuizCardHeader
                     title="Quiz Information"
