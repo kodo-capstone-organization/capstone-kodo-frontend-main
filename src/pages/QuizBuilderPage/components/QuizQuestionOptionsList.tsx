@@ -81,15 +81,6 @@ function QuizQuestionOptionsList(props: any) {
         props.onHandleQuizQuestionOptionUpdate(newQuizQuestionOptions, event.target.value)
     };
 
-    const handleMatchingCorrectAnswerChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const newQuizQuestionOptions = quizQuestionOptions?.map((x, index) => {
-            return (index === parseInt(event.target.value) ? Object.assign(x, { correct: !x.correct })
-                : x);
-        });
-        setQuizQuestionOptions(newQuizQuestionOptions);
-        props.onHandleQuizQuestionOptionUpdate(newQuizQuestionOptions, event.target.value)
-    };
-
     const handleLeftContentChange = (event: any) => {
         if (event.target.value !== "") {
             const newQuizQuestionOptions = quizQuestionOptions?.map((x, index) => {
@@ -99,6 +90,8 @@ function QuizQuestionOptionsList(props: any) {
             setQuizQuestionOptions(newQuizQuestionOptions);
             console.log("non-empty option to update", event.target.value)
             props.onHandleQuizQuestionOptionUpdate(newQuizQuestionOptions, questionIndex)
+        } else {
+            handleCallSnackbar("Options must be non-empty");
         }
     }
 
@@ -110,6 +103,8 @@ function QuizQuestionOptionsList(props: any) {
             });
             setQuizQuestionOptions(newQuizQuestionOptions);
             props.onHandleQuizQuestionOptionUpdate(newQuizQuestionOptions, questionIndex)
+        } else {
+            handleCallSnackbar("Options must be non-empty");
         }
     }
 
@@ -118,6 +113,8 @@ function QuizQuestionOptionsList(props: any) {
             const newQuizQuestionOptions = quizQuestionOptions?.filter((option, index) => index !== optionIndex);
             setQuizQuestionOptions(newQuizQuestionOptions);
             props.onHandleQuizQuestionOptionUpdate(newQuizQuestionOptions, questionIndex)
+        } else {
+            handleCallSnackbar("Each Question Must Have At Least 1 Option");
         }
     }
 
@@ -142,6 +139,10 @@ function QuizQuestionOptionsList(props: any) {
         setQuizQuestionOptions(newQuizQuestionOptions);
         // props.onHandleQuizQuestionOptionUpdate(newQuizQuestionOptions, questionIndex)
 
+    }
+
+    const handleCallSnackbar = (msg: string) => {
+        props.onCallSnackbar(msg)
     }
 
     return (
