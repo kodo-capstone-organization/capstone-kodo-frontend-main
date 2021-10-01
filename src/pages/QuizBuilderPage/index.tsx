@@ -77,7 +77,7 @@ function QuizBuilderPage(props: any) {
         getAllQuizQuestionsByQuizId(contentId).then((res) => {
             setQuizQuestionArray(res)
         }).catch((err) => { console.log("error:getAllQuizQuestionsByQuizId", err) });
-    }, [contentId])
+    }, [contentId, loggedInAccountId, history])
 
     useEffect(() => {
         console.log("qn array updted", quizQuestionArray)

@@ -1,13 +1,5 @@
 import { useEffect, useState } from 'react';
 
-import { useHistory } from 'react-router-dom';
-
-import { 
-    Theme, 
-    createStyles, 
-    makeStyles, 
-} from '@material-ui/core/styles';
-
 import {
     Dialog, 
     DialogActions, 
@@ -21,21 +13,10 @@ import {
     GridValueGetterParams 
 } from '@material-ui/data-grid';
 
-import { Quiz } from '../../../apis/Entities/Quiz';
-import { QuizQuestionOption } from '../../../apis/Entities/QuizQuestionOption';
-
 import { getAllQuizQuestionsByTutorId } from "../../../apis/QuizQuestion/QuizQuestionApis";
 
 import { Button } from "../../../values/ButtonElements";
 
-interface Data {
-    content: string;
-    marks: number;
-    questionType: string;
-    quiz: Quiz;
-    quizQuestionId: number;
-    quizQuestionOptions: QuizQuestionOption[];
-}
 
 const columns: GridColDef[] = [
     {
@@ -75,36 +56,6 @@ const columns: GridColDef[] = [
     }
 ];
 
-const useStyles = makeStyles((theme: Theme) =>
-    createStyles({
-        root: {
-            width: '100%',
-        },
-        paper: {
-            width: '100%',
-            marginBottom: theme.spacing(2),
-        },
-        table: {
-            minWidth: 750,
-        },
-        visuallyHidden: {
-            border: 0,
-            clip: 'rect(0 0 0 0)',
-            height: 1,
-            margin: -1,
-            overflow: 'hidden',
-            padding: 0,
-            position: 'absolute',
-            top: 20,
-            width: 1,
-        },
-        dialogPaper: {
-            height: "400px",
-            width: 1000,
-        },
-    }),
-);
-
 function QuestionBankModal(props: any) {
 
     const [open, setOpen] = useState<boolean>(false);
@@ -112,9 +63,6 @@ function QuestionBankModal(props: any) {
     const [selectedQuestions, setSelectedQuestions] = useState<any>([]);
     const [isDisabled, setIsDisabled] = useState<boolean>(false);
     const accountId = window.sessionStorage.getItem("loggedInAccountId");
-    const classes = useStyles();
-    const history = useHistory();
-
 
     useEffect(() => {
         if (accountId !== null) {
@@ -180,7 +128,6 @@ function QuestionBankModal(props: any) {
                         <Button onClick={handleConfirm}>Confirm</Button>
                     </DialogActions>
                 </Dialog>
-
             </div>
         </>
     )

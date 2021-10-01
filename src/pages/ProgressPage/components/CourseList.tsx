@@ -1,20 +1,29 @@
-import React, { useState, useEffect } from "react";
-import {
-  LessonAvatar,
-  CourseElement,
-  Subject,
-  EmptyStateContainer,
-  SubjectContainer,
-} from "../ProgressElements";
-import { Button } from "../../../values/ButtonElements";
-import { Divider, Grid, Typography } from "@material-ui/core";
+import { useState, useEffect } from "react";
+
+import { useHistory } from "react-router";
+
+import LockIcon from "@material-ui/icons/Lock";
 import CircularProgress from '@material-ui/core/CircularProgress';
+import { 
+  Divider, 
+  Grid, 
+  Typography 
+} from "@material-ui/core";
+
 import { EnrolledCourse } from "../../../apis/Entities/EnrolledCourse";
 import { EnrolledLesson } from "../../../apis/Entities/EnrolledLesson";
 import { Account } from "../../../apis/Entities/Account";
-import LockIcon from "@material-ui/icons/Lock";
+
 import MultimediaModal from "./MultimediaModal";
-import { useHistory } from "react-router";
+import {
+  CourseElement,
+  EmptyStateContainer,
+  LessonAvatar,
+  Subject,
+  SubjectContainer,
+} from "../ProgressElements";
+
+import { Button } from "../../../values/ButtonElements";
 
 function CourseList(props: any) {
   const [myCourses, setMyCourses] = useState<EnrolledCourse[]>([]);

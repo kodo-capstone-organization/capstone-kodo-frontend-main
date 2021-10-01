@@ -48,13 +48,10 @@ function TutorView(props: any) {
   
   useEffect(() => {
     setCourse(props.course);
-  }, []);
-
-  useEffect(() => {
     getEnrolledCoursesWithStudentCompletion(currentCourse.courseId).then(receivedList => {
       setEnrolledStudentsAndCompletion(receivedList);
     });
-  }, [currentCourse.courseId]);
+  }, [props.course, currentCourse.courseId]);
 
   return (
     <TutorContainer>

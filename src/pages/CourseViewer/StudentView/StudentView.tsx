@@ -1,47 +1,60 @@
 import React, { useEffect, useState } from "react";
-import {
-  getEnrolledCourseByStudentIdAndCourseId,
-  setCourseRatingByEnrolledCourseId
-} from "../../../apis/EnrolledCourse/EnrolledCourseApis";
-import { EnrolledCourse } from "../../../apis/Entities/EnrolledCourse";
-import { Course } from "../../../apis/Entities/Course";
-import { Account } from "../../../apis/Entities/Account";
+
+import { useHistory } from "react-router";
+
 import clsx from 'clsx';
-import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-import { Stepper, Step, StepLabel, Link, Box } from "@material-ui/core";
-import { EnrolledLesson } from '../../../apis/Entities/EnrolledLesson';
-import { Button } from '../../../values/ButtonElements';
-import Rating from '@material-ui/lab/Rating';
+
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import LockIcon from '@material-ui/icons/Lock';
+import LockOpenIcon from '@material-ui/icons/LockOpen';
+import Rating from '@material-ui/lab/Rating';
 import { StepIconProps } from '@material-ui/core/StepIcon';
+import { 
+  Theme, 
+  createStyles, 
+  makeStyles, 
+} from '@material-ui/core/styles';
+import { 
+  Box, 
+  Link, 
+  Step, 
+  StepLabel, 
+  Stepper, 
+} from "@material-ui/core";
+
 import {
-  StudentContainer,
-  PageHeading,
-  CourseTitle,
-  TutorTitle,
-  StudentViewCard,
-  StudentViewCardHeader,
-  StudentViewCardContent,
   CardTitle,
-  TutorDetails,
+  CourseTitle,
+  PageHeading,
+  RatingCard,
+  RatingDescription,
+  RatingTitle,
+  StudentContainer,
+  StudentViewCard,
+  StudentViewCardContent,
+  StudentViewCardHeader,
+  TagChip,
+  TagWrapper,
   TutorDepartment,
+  TutorDetails,
   TutorName,
   TutorText,
-  RatingCard,
-  RatingTitle,
-  TagWrapper,
-  TagChip,
-  RatingDescription
+  TutorTitle,
 } from "./StudentViewElements";
-import { useHistory } from "react-router";
-import LockOpenIcon from '@material-ui/icons/LockOpen';
+
+import { Course } from "../../../apis/Entities/Course";
+import { EnrolledCourse } from "../../../apis/Entities/EnrolledCourse";
+import { EnrolledLesson } from '../../../apis/Entities/EnrolledLesson';
+
+import { setCourseRatingByEnrolledCourseId } from "../../../apis/EnrolledCourse/EnrolledCourseApis";
+
 import KodoAvatar from "../../../components/KodoAvatar/KodoAvatar";
+
+import { Button } from '../../../values/ButtonElements';
 
 function StudentView(props: any) {
   const [currentCourse, setCourse] = useState<Course>({ ...props.course });
   const [enrolledCourse, setEnrolledCourse] = useState<EnrolledCourse>({...props.enrolledCourse});
-  const [myAccount, setMyAccount] = useState<Account>({ ...props.account });
   const [rating, setRating] = useState<number | undefined>(enrolledCourse.courseRating === 0 ? 1 : Math.round(enrolledCourse.courseRating));
   const [activeStep, setActiveStep] = React.useState<number>();
   const [latestLesson, setLatestLesson] = React.useState<EnrolledLesson>();
@@ -50,7 +63,6 @@ function StudentView(props: any) {
 
   useEffect(() => {
     setCourse(props.course);
-    setMyAccount(props.account);     
     setEnrolledCourse(props.enrolledCourse);
     initialiseActiveStep(enrolledCourse);
     // const test = receivedEnrolledCourse.enrolledLessons.concat(receivedEnrolledCourse.enrolledLessons).concat(receivedEnrolledCourse.enrolledLessons).concat(receivedEnrolledCourse.enrolledLessons)
@@ -58,7 +70,7 @@ function StudentView(props: any) {
     setSteps(enrolledCourse.enrolledLessons);
     console.log(enrolledCourse.enrolledLessons)
     // setSteps(test);
-  }, [props.course]);
+  }, [props.course, props.enrolledCourse]);
 
   const initialiseActiveStep = (receivedEnrolledCourse: EnrolledCourse) => {
     var proxyActiveStep = 0 // to set stepper

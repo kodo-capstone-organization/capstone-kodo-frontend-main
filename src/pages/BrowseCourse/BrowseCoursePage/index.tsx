@@ -9,15 +9,13 @@ import {
   TextField
 } from "@material-ui/core";
 
-import { Account } from "../../../apis/Entities/Account";
 import { Tag } from "../../../apis/Entities/Tag";
+
+import { getAllTags } from "../../../apis/Tag/TagApis";
 import {
   Course,
   RecommendedCoursesWithTags
 } from "../../../apis/Entities/Course";
-
-import { getAllTags } from "../../../apis/Tag/TagApis";
-import { getMyAccount } from "../../../apis/Account/AccountApis";
 
 import {
   getAllCourses,
@@ -43,15 +41,14 @@ function BrowseCourse() {
   const [courses, setCourses] = useState<Course[]>();
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [tags, setTags] = useState<string[]>([]);
-  const [recommendationLimit, _] = useState<number>(5); // default at 5
   const [coursesRecommended, setCoursesRecommended] = useState<Course[]>();
   const [coursesPopular, setCoursesPopular] = useState<Course[]>();
   const [tagsRecommended, setTagsRecommended] = useState<Tag[]>();
-  const [myAccount, setAccount] = useState<Account>();
   const [tab, setTab] = useState<number>(0); // track tab index
   const [tagLibrary, setTagLibrary] = useState<Tag[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
+  const recommendationLimit = 5;
   const accountId = JSON.parse(
     window.sessionStorage.getItem("loggedInAccountId") || "{}"
   );
@@ -67,9 +64,6 @@ function BrowseCourse() {
         setTagsRecommended(receivedCoursesWithTags.tags);
       }
     );
-    getMyAccount(accountId).then(receivedAccount => {
-      setAccount(receivedAccount);
-    });
     getAllTags()
       .then(res => setTagLibrary(res))
       .catch(error => console.log("error getting tags."));    
@@ -77,7 +71,7 @@ function BrowseCourse() {
       .then(res => setCoursesPopular(res))
       .catch(error => console.log("error getting popular courses."));
     setLoading(false);
-  }, []);
+  }, [accountId, recommendationLimit]);
 
 
   /** HELPER METHODS */
