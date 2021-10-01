@@ -140,7 +140,7 @@ function ChangePasswordModal(props: any) {
     const showSuccess = () => {
         if (updateAccountPasswordSuccess)
         {
-            return(<Alert variant="filled" severity="success">{updateAccountPasswordSuccess}</Alert>);
+            return(<Alert severity="success">{updateAccountPasswordSuccess}</Alert>);
         }
         else
         {
@@ -151,7 +151,7 @@ function ChangePasswordModal(props: any) {
     const showErrors = () => {
         if (updateAccountPasswordFailed)
         {
-            return(<Alert variant="filled" severity="error">{updateAccountPasswordFailed}</Alert>);
+            return(<Alert severity="error">{updateAccountPasswordFailed}</Alert>);
         }
         else
         {

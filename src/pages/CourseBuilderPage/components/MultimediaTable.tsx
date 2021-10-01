@@ -444,7 +444,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
               </Button>
             </DialogActions>
             <DialogContent>
-              {validationErrorMessage && <Alert variant="filled" severity="error">{validationErrorMessage}</Alert>}
+              {validationErrorMessage && <Alert severity="error">{validationErrorMessage}</Alert>}
             </DialogContent>
     </Dialog>
     <Toolbar
@@ -867,7 +867,7 @@ export default function MultimediaTable(props: any) {
               </Button>
             </DialogActions>
             <DialogContent>
-              {validationErrorMessage && <Alert variant="filled" severity="error">{validationErrorMessage}</Alert>}
+              {validationErrorMessage && <Alert severity="error">{validationErrorMessage}</Alert>}
             </DialogContent>
         </Dialog>
         <div className={classes.root}>
