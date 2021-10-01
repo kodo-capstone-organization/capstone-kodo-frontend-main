@@ -529,6 +529,7 @@ export default function MultimediaTable(props: any) {
       setShowAddMultimediaDialog(false);
       setErrors({})
       setValidationErrorMessage("");
+      setNewFile({ contentId: -1, name: "", description: "", url: "", multimediaType: MultimediaType.EMPTY, urlFilename: "", file: new File([""], ""), type: "multimedia"})
     }
 
     const handleValidation = () => {
