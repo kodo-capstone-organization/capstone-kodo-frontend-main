@@ -45,7 +45,8 @@ function QuizQuestionComponent(props: any) {
 
     const handleTypeChange = (event: React.ChangeEvent<{ value: unknown }>) => {
         setQuestionType(event.target.value as string);
-        const newlyUpdatedQuestion = Object.assign(question, { questionType: event.target.value })
+        const newlyUpdatedQuestion = Object.assign(question, { questionType: event.target.value, quizQuestionOptions: [] })
+        console.log("newlyUpdatedQuestion", newlyUpdatedQuestion);
         // setUpdatedQuestion(newlyUpdatedQuestion)
         props.onUpdateQuestion(newlyUpdatedQuestion, questionIndex)
     };

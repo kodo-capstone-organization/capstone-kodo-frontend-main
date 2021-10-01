@@ -4,40 +4,41 @@ import { useHistory } from 'react-router-dom';
 
 import {
     Chip,
-    Grid, 
-    TextField, 
-    Input, 
+    Grid,
+    TextField,
+    Input,
     InputLabel
 } from "@material-ui/core";
 
-import { 
-    DragDropContext, 
-    Droppable, 
-    Draggable 
+import {
+    DragDropContext,
+    Droppable,
+    Draggable
 } from 'react-beautiful-dnd';
 
 import { Quiz } from './../../apis/Entities/Quiz';
 import { QuizQuestion } from "../../apis/Entities/QuizQuestion";
+import { QuizQuestionOption } from "../../apis/Entities/QuizQuestionOption";
 import { UpdateQuizReq } from '../../apis/Entities/Quiz';
 
 import { getAccountByQuizId } from "../../apis/Account/AccountApis";
 
-import { 
-    getQuizByQuizId, 
-    updateQuizWithQuizQuestionsAndQuizQuestionOptions 
+import {
+    getQuizByQuizId,
+    updateQuizWithQuizQuestionsAndQuizQuestionOptions
 } from "../../apis/Quiz/QuizApis";
-import { 
-    getAllQuizQuestionsByQuizId, 
-    getQuizQuestionByQuizQuestionId 
+import {
+    getAllQuizQuestionsByQuizId,
+    getQuizQuestionByQuizQuestionId
 } from "../../apis/QuizQuestion/QuizQuestionApis";
 
 import {
     QuizBuilderCardContent,
-    QuizCard, 
+    QuizCard,
     QuizCardContent,
-    QuizCardHeader, 
-    QuizContainer, 
-    QuizQuestionCard, 
+    QuizCardHeader,
+    QuizContainer,
+    QuizQuestionCard,
 } from "./QuizBuilderElements";
 
 import QuizQuestionComponent from "./components/QuizQuestionComponent"
@@ -73,12 +74,11 @@ function QuizBuilderPage(props: any) {
         }).catch((err) => {
             console.log("Error: get account by quizId", err)
         });
-      
-        if (history.location.state)
-        {
+
+        if (history.location.state) {
             history.location.state.mode === "VIEW" ? setIsDisabled(true) : setIsDisabled(false);
         }
-      
+
         getQuizByQuizId(contentId).then((res) => {
             setQuiz(res);
             setUpdatedQuiz(res);
@@ -111,13 +111,19 @@ function QuizBuilderPage(props: any) {
         if (quiz) {
             const newDraggableId = draggableId + 1;
             setDraggableId(newDraggableId);
+            const newQuizQuestionOption :QuizQuestionOption = {
+                quizQuestionOptionId: null,
+                leftContent: "OPTION 1",
+                rightContent: null,
+                correct: true
+            };
             const newQuizQuestion: any = {
                 quizQuestionId: null,
                 content: "",
                 questionType: "MCQ",
                 marks: 1,
                 quiz: quiz,
-                quizQuestionOptions: [],
+                quizQuestionOptions: [newQuizQuestionOption],
                 draggableId: newDraggableId
             }
             quizQuestionArray.push(newQuizQuestion);
@@ -136,51 +142,51 @@ function QuizBuilderPage(props: any) {
         setUpdatedQuiz(newQuiz);
     }
 
-    const handleTimeLimitHourseChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const handleTimeLimitHoursChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         var value: any = parseInt(e.target.value);
+        var resetMinutes = timeLimitMinutes;
         if (value > 24) {
             value = "24";
-        } else if (value < 0) {
+        } else if (value <= 0) {
             value = "00";
+            resetMinutes = "15";
         } else if (value < 10) {
             value = `0${value}`
         }
         setTimeLimitHours(value);
-        const timeLimit = `${value}:${timeLimitMinutes}:${timeLimitSeconds}`
+        setTimeLimitMinutes(resetMinutes);
+        const timeLimit = `${value}:${resetMinutes}:${timeLimitSeconds}`
+        console.log("timeLimit", timeLimit);
         const newQuiz = Object.assign(updatedQuiz, { timeLimit });
         setUpdatedQuiz(newQuiz);
     }
 
     const handleTimeLimitMinutesChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         var value: any = parseInt(e.target.value);
-
-        if (value > 59) {
-            value = "59";
-        } else if (value < 0) {
-            value = "00";
-        } else if (value < 10) {
-            value = `0${value}`
+        console.log(parseInt(timeLimitHours));
+        if (parseInt(timeLimitHours) != 0) {
+            if (value > 59) {
+                value = "59";
+            } else if (value < 0) {
+                value = "00";
+            } else if (value < 10) {
+                value = `0${value}`
+            }
+            setTimeLimitMinutes(value);
+            const timeLimit = `${timeLimitHours}:${value}:${timeLimitSeconds}`
+            const newQuiz = Object.assign(updatedQuiz, { timeLimit });
+            setUpdatedQuiz(newQuiz);
+        } else {
+            if (value > 59) {
+                value = "59";
+            } else if (value < 15) {
+                value = "15";
+            }
+            setTimeLimitMinutes(value);
+            const timeLimit = `${timeLimitHours}:${value}:${timeLimitSeconds}`
+            const newQuiz = Object.assign(updatedQuiz, { timeLimit });
+            setUpdatedQuiz(newQuiz);
         }
-        setTimeLimitMinutes(value);
-        const timeLimit = `${timeLimitHours}:${value}:${timeLimitSeconds}`
-        const newQuiz = Object.assign(updatedQuiz, { timeLimit });
-        setUpdatedQuiz(newQuiz);
-    }
-
-    const handleTimeLimitSecondsChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        var value: any = parseInt(e.target.value);
-
-        if (value > 59) {
-            value = "59";
-        } else if (value < 0) {
-            value = "00";
-        } else if (value < 10) {
-            value = `0${value}`
-        }
-        setTimeLimitSeconds(value);
-        const timeLimit = `${timeLimitHours}:${timeLimitMinutes}:${value}`
-        const newQuiz = Object.assign(updatedQuiz, { timeLimit });
-        setUpdatedQuiz(newQuiz);
     }
 
     const handleAttemptChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -224,7 +230,6 @@ function QuizBuilderPage(props: any) {
                     props.callOpenSnackBar(`Error in updating Quiz: ${err}`, "error")
                 });
         }
-        window.location.reload();
     }
 
     const handleUpdateQuestion = (updatedQuizQuestion: QuizQuestion, index: number) => {
@@ -326,7 +331,7 @@ function QuizBuilderPage(props: any) {
                             <Grid item xs={12}>
                                 <TextField disabled={isDisabled} required id="standard-basic" fullWidth value={name} label="Name" name="name" onChange={handleNameChange} />
                             </Grid>
-                            <Grid item xs={4}>
+                            <Grid item xs={6}>
                                 <InputLabel htmlFor="quiz-timelimit">Time Limit Hours</InputLabel>
                                 <Input
                                     disabled={isDisabled}
@@ -337,11 +342,11 @@ function QuizBuilderPage(props: any) {
                                     type="number"
                                     autoFocus
                                     value={timeLimitHours}
-                                    onChange={handleTimeLimitHourseChange}
-                                    inputProps={{ min: 0, max: 23 }}
+                                    onChange={handleTimeLimitHoursChange}
+                                    inputProps={{ min: 0, max: 24 }}
                                 />
                             </Grid>
-                            <Grid item xs={4}>
+                            <Grid item xs={6}>
                                 <InputLabel htmlFor="quiz-timelimit">Time Limit Minutes</InputLabel>
                                 <Input
                                     disabled={isDisabled}
@@ -353,21 +358,6 @@ function QuizBuilderPage(props: any) {
                                     autoFocus
                                     value={timeLimitMinutes}
                                     onChange={handleTimeLimitMinutesChange}
-                                    inputProps={{ min: 0, max: 59 }}
-                                />
-                            </Grid>
-                            <Grid item xs={4}>
-                                <InputLabel htmlFor="quiz-timelimit">Time Limit Seconds</InputLabel>
-                                <Input
-                                    disabled={isDisabled}
-                                    fullWidth
-                                    id="quiz-timelimit"
-                                    placeholder="Seconds"
-                                    name="timelimit"
-                                    type="number"
-                                    autoFocus
-                                    value={timeLimitSeconds}
-                                    onChange={handleTimeLimitSecondsChange}
                                     inputProps={{ min: 0, max: 59 }}
                                 />
                             </Grid>

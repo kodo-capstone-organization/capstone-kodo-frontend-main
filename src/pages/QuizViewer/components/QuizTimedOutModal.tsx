@@ -49,9 +49,6 @@ function QuizTimedOutModal(props: any) {
 
     return (
         <>
-            <Button style={{ display: "none" }} >
-                View Previous Attempts
-            </Button>
             <Dialog open={open} maxWidth={false} classes={{ paper: classes.dialogPaper }}>
                 <DialogTitle id="form-dialog-title">Time's Up!</DialogTitle>
                 <DialogContent>
