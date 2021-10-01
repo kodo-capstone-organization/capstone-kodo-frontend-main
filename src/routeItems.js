@@ -3,6 +3,7 @@ import CoursePreviewPageWithRouter from "./pages/BrowseCourse/CoursePreviewPage"
 import ProgressPage from "./pages/ProgressPage";
 import MyProfilePage from "./pages/MyProfilePage";
 import SessionPage from "./pages/Sessions/SessionPage";
+import CourseOverview from "./pages/CourseViewer";
 
 export const RouteItemsWithSidebar = [
     {
@@ -42,3 +43,10 @@ export const RouteItemsWithSidebar = [
     }
 ]
 
+export const RouteItemsWithoutSidePadding = [
+    {
+        path: "/overview/:courseId",
+        isDynamic: true,
+        component: CourseOverview
+    }
+]

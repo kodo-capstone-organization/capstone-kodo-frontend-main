@@ -14,6 +14,7 @@ import { QuizQuestion } from "../../apis/Entities/QuizQuestion";
 import { UpdateQuizReq } from '../../apis/Entities/Quiz';
 
 import { getAccountByQuizId } from "../../apis/Account/AccountApis";
+
 import { 
     getQuizByQuizId, 
     updateQuizWithQuizQuestionsAndQuizQuestionOptions 
@@ -61,10 +62,12 @@ function QuizBuilderPage(props: any) {
         }).catch((err) => {
             console.log("Error: get account by quizId", err)
         });
+      
         if (history.location.state)
         {
             history.location.state.mode === "VIEW" ? setIsDisabled(true) : setIsDisabled(false);
         }
+      
         getQuizByQuizId(contentId).then((res) => {
             setQuiz(res);
             setUpdatedQuiz(res);
@@ -95,10 +98,6 @@ function QuizBuilderPage(props: any) {
             }
             quizQuestionArray.push(newQuizQuestion);
         }
-    }
-
-    const onDragEnd = () => {
-        //update state
     }
 
     const handleNameChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -152,7 +151,6 @@ function QuizBuilderPage(props: any) {
         setUpdatedQuiz(newQuiz);
     }
 
-
     const handleSubmit = () => {
         if (updatedQuiz !== undefined) {
             const quizQuestionOptionLists = quizQuestionArray.map((question) => question.quizQuestionOptions)
@@ -161,10 +159,15 @@ function QuizBuilderPage(props: any) {
                 quizQuestions: quizQuestionArray,
                 quizQuestionOptionLists
             }
-            console.log("handle submit", updateQuizReq)
+
             updateQuizWithQuizQuestionsAndQuizQuestionOptions(updateQuizReq)
-                .then((res) => { console.log("Success updating quiz", res); setQuiz(res); })
-                .catch((err) => { console.log("error updating quiz", err) });
+                .then((res) => {
+                    props.callOpenSnackBar("Successfully updated Quiz", "success")
+                    setQuiz(res)
+                })
+                .catch((err) => {
+                    props.callOpenSnackBar(`Error in updating Quiz: ${err}`, "error")
+                });
         }
         window.location.reload();
     }
@@ -183,7 +186,6 @@ function QuizBuilderPage(props: any) {
             });
         }
         setQuizQuestionArray(updatedQuizQuestionArray);
-
     }
 
     const handleQuizQuestionOptionUpdate = (updatedQuizQuestion: QuizQuestion, index: number) => {
@@ -197,9 +199,8 @@ function QuizBuilderPage(props: any) {
     }
 
     const handleChangeFromQuestionBank = (questionBankQuestionIds: number[]) => {
-        var listOfQuestionsFromQuestionBank: QuizQuestion[] = [];
-        var i;
-        for (i = 0; i < questionBankQuestionIds.length; i++) {
+        let listOfQuestionsFromQuestionBank: QuizQuestion[] = [];
+        for (let i = 0; i < questionBankQuestionIds.length; i++) {
             getQuizQuestionByQuizQuestionId(questionBankQuestionIds[i]).then((res) => {
                 console.log("Success in handleChangeFromQuestionBank", res);
                 const newQuestionFromBank = Object.assign(res, { quizQuestionId: null });
@@ -209,17 +210,41 @@ function QuizBuilderPage(props: any) {
         }
     }
 
+    const handleOnDragEnd = (result) => {
+        //update state
+        var items = quizQuestionArray;
+        // console.log("items before", items);
+        const [reorderedItem] = items.splice(result.source.index, 1);
+        items = items.splice(result.destination.index, 0, reorderedItem);
+        // console.log("items after", items);
+        // setQuizQuestionArray(items);
+    }
+
     const mapQuestionArray = (questionArray: QuizQuestion[]) => {
         return (
             <div>
                 {questionArray.map(function (q, qId) {
                     return (
-                        <>
+                        isDisabled ?
                             <QuizQuestionCard key={qId}>
                                 <QuizQuestionComponent disabled={isDisabled} question={q} questionIndex={qId}
                                     onUpdateQuestion={handleUpdateQuestion} onUpdateQuizQuestionOptions={handleQuizQuestionOptionUpdate} />
                             </QuizQuestionCard>
-                        </>
+                            :
+                            <Draggable key={q.quizQuestionId} draggableId={q.quizQuestionId.toString()} index={qId}>
+                                {(provided) => (
+                                    <QuizQuestionCard ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
+                                        <QuizQuestionComponent disabled={isDisabled} question={q} questionIndex={qId}
+                                            onUpdateQuestion={handleUpdateQuestion} onUpdateQuizQuestionOptions={handleQuizQuestionOptionUpdate} />
+                                    </QuizQuestionCard>
+                                )}
+                            </Draggable>
+                        // <>
+                        //     <QuizQuestionCard key={qId}>
+                        //         <QuizQuestionComponent disabled={isDisabled} question={q} questionIndex={qId}
+                        //             onUpdateQuestion={handleUpdateQuestion} onUpdateQuizQuestionOptions={handleQuizQuestionOptionUpdate} />
+                        //     </QuizQuestionCard>
+                        // </>
                     );
                 })}
             </div>
@@ -230,11 +255,13 @@ function QuizBuilderPage(props: any) {
     return (
         <>
             <QuizContainer>
-                <QuizCard>
+                <QuizCard id="quiz-information-card">
                     <QuizCardHeader
                         title="Quiz Information"
                         action={
-                            <Button disabled={isDisabled} primary={!isDisabled} onClick={handleSubmit}>Save Quiz</Button>
+                            isDisabled ?
+                                <Chip variant="outlined" size="small" label="View Mode" style={{ color: "blue", border: "1px solid blue" }} disabled /> :
+                                <Button disabled={isDisabled} primary onClick={handleSubmit}>Save Quiz</Button>
                         }
                     />
                     <QuizCardContent>
@@ -340,24 +367,43 @@ function QuizBuilderPage(props: any) {
                     </QuizCardContent>
                 </QuizCard>
 
-                <QuizCard>
+                <QuizCard id="quiz-builder-card">
                     <QuizCardHeader
                         title="Quiz Builder"
                         action={
                             <div style={{ display: "flex" }}>
-                                <Button disabled={isDisabled} onClick={addNewQuestion}>Add New Question</Button>
-                                <QuestionBankModal disabled={isDisabled} onChangeFromQuestionBank={handleChangeFromQuestionBank} />
+                                {
+                                    isDisabled ? <Chip variant="outlined" size="small" label="View Mode" style={{ color: "blue", border: "1px solid blue" }} disabled /> :
+                                      <>
+                                          <QuestionBankModal disabled={isDisabled} onChangeFromQuestionBank={handleChangeFromQuestionBank} />
+                                          &nbsp;&nbsp;
+                                          <Button primary disabled={isDisabled} onClick={addNewQuestion}>Add New Question</Button>
+                                      </>
+                                }
                             </div>
                         }
                     />
                     <QuizBuilderCardContent>
-                        {mapQuestionArray(quizQuestionArray)}
-                        {/* <DragDropContext onDragEnd={onDragEnd}>
-                            {columns.map(columnId => {
-                                const column = columns[columnId];
-                                return mapQuestionArray
-                            })}
-                        </DragDropContext> */}
+                        {
+                            isDisabled && mapQuestionArray(quizQuestionArray)
+                        }
+                        {
+                            !isDisabled &&
+                            <DragDropContext onDragEnd={handleOnDragEnd}>
+                                <Droppable droppableId="characters">
+                                    {
+                                        (provided) => (
+                                            <div {...provided.droppableProps} ref={provided.innerRef}>
+                                                { mapQuestionArray(quizQuestionArray) }
+                                                { provided.placeholder }
+                                            </div>
+                                        )
+                                    }
+                                </Droppable>
+                            </DragDropContext>
+                        }
+
+                        {/* {mapQuestionArray(quizQuestionArray)} */}
                     </QuizBuilderCardContent>
                 </QuizCard>
             </QuizContainer>

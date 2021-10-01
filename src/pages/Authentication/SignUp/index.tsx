@@ -141,7 +141,7 @@ function SignUp() {
     const showErrors = () => {
         if (signUpFailed)
         {
-            return(<Alert variant="filled" severity="error">{signUpFailed}</Alert>);
+            return(<Alert severity="error">{signUpFailed}</Alert>);
         }
         else
         {

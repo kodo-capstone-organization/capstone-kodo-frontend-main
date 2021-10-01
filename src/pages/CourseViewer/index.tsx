@@ -15,6 +15,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 
 import { LayoutContainer, MessageContainer, Message, BtnWrapper } from "./CourseViewerElements";
 import { Button } from "../../values/ButtonElements";
+import { LayoutContentPage } from "../../components/LayoutElements";
 
 function CourseOverview(props: any) {
   const courseId = props.match.params.courseId;
@@ -88,18 +89,28 @@ function CourseOverview(props: any) {
   return (
     <>
     <LayoutContainer>
-      {courseIsEnrolled() &&
-      <> 
-        <Sidebar course={currentCourse}/>
-        <StudentView course={currentCourse} account={currentUser} enrolledCourse={enrolledCourse}/> 
-      </>
+      { (courseIsEnrolled() || isCourseTutor()) &&
+          <>
+            <Sidebar course={currentCourse} isTutorView={isCourseTutor()}/>
+            <LayoutContentPage showSideBar style={{ paddingRight: "10rem"}}>
+              { isCourseTutor() && <TutorView course={currentCourse}/>  }
+              { courseIsEnrolled() && <StudentView course={currentCourse} account={currentUser} enrolledCourse={enrolledCourse}/> }
+            </LayoutContentPage>
+          </>
       }
-      {isCourseTutor() &&
-      <>
-        <Sidebar course={currentCourse}/>
-        <TutorView course={currentCourse}/>
-      </>
-      }
+
+      {/*{courseIsEnrolled() &&*/}
+      {/*<> */}
+      {/*  <Sidebar course={currentCourse}/>*/}
+      {/*  <StudentView course={currentCourse} account={currentUser} enrolledCourse={enrolledCourse}/> */}
+      {/*</>*/}
+      {/*}*/}
+      {/*{isCourseTutor() &&*/}
+      {/*<>*/}
+      {/*  <Sidebar course={currentCourse}/>*/}
+      {/*  <TutorView course={currentCourse}/>*/}
+      {/*</>*/}
+      {/*}*/}
     </LayoutContainer>
     </>
   );

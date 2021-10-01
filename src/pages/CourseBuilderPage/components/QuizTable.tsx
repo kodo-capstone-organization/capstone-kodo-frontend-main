@@ -336,7 +336,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
         aria-describedby="simple-modal-description">
             <DialogTitle>Add a new Quiz</DialogTitle>
             <DialogContent
-              style={{height: '300px'}}>
+              style={{height: '40vh'}}>
               <DialogContentText>
                 First, enter some basic details about the new quiz below.
               </DialogContentText>
@@ -440,7 +440,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
               </Button>
             </DialogActions>
             <DialogContent>
-              {validationErrorMessage && <Alert variant="filled" severity="error">{validationErrorMessage}</Alert>}
+              {validationErrorMessage && <Alert severity="error">{validationErrorMessage}</Alert>}
             </DialogContent>
     </Dialog>
     <Toolbar

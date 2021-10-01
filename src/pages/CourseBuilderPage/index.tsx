@@ -8,16 +8,16 @@ import DoneIcon from '@material-ui/icons/Done';
 import PublishIcon from '@material-ui/icons/Publish';
 import { 
     Box, 
-    Grid, 
-    TextField, 
+    Breadcrumbs, 
     Chip, 
-    InputAdornment, 
     Dialog, 
-    DialogTitle, 
     DialogActions, 
     DialogContent, 
-    Breadcrumbs, 
+    DialogTitle, 
+    Grid, 
+    InputAdornment, 
     Link
+    TextField, 
 } from "@material-ui/core";
 
 import { Tag } from "../../apis/Entities/Tag";
@@ -74,7 +74,7 @@ function CourseBuilderPage(props: any) {
     });
     
     useEffect(() => {
-        getCourseByCourseId(courseId).then((receivedCourse: Course) => {
+        getCourseWithoutEnrollmentByCourseId(courseId).then((receivedCourse: Course) => {
             Object.keys(receivedCourse).forEach((key, index) => {
                 let wrapperEvent = {
                     target: {

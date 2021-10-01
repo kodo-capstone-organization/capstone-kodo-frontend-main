@@ -76,10 +76,8 @@ function QuizQuestionComponent(props: any) {
 
     return (
         <>
-
             <div id="questioncomponent" style={{ width: "inherit" }}>
                 <div id="typeAndMark" style={{ display: "flex", justifyContent: "center" }}>
-
                     {
                         questionType !== undefined &&
                         <Box sx={{ minWidth: 120 }} style={{ margin: "6px" }}>
@@ -99,16 +97,16 @@ function QuizQuestionComponent(props: any) {
                             </FormControl>
                         </Box>
                     }
-
+                    &nbsp;&nbsp;&nbsp;
                     {
                         marks !== undefined &&
                         <Box sx={{ minWidth: 120 }} style={{ margin: "6px" }}>
                             <FormControl fullWidth>
                                 <InputLabel variant="standard" htmlFor="uncontrolled-native">
                                     Marks
-                    </InputLabel>
+                                </InputLabel>
                                 <QuizSelectMenu
-                                disabled={isDisabled} 
+                                    disabled={isDisabled}
                                     value={marks}
                                     onChange={handleMarkChange}
                                 >
@@ -129,10 +127,10 @@ function QuizQuestionComponent(props: any) {
                 {
                     content !== undefined &&
                     <QuizBuilderTextInput disabled={isDisabled}  id="standard-basic" label="Question" variant="standard" value={content} onChange={handleContentChange} />
-
                 }
+                <br/>
 
-                <QuizQuestionOptionsList disabled={isDisabled}  questionIndex={questionIndex} question={question} questionType={questionType} onHandleQuizQuestionOptionUpdate={handleQuizQuestionOptionUpdate} />
+                <QuizQuestionOptionsList disabled={isDisabled} questionIndex={questionIndex} question={question} questionType={questionType} onHandleQuizQuestionOptionUpdate={handleQuizQuestionOptionUpdate} />
             </div>
 
         </>

@@ -88,7 +88,7 @@ function CoursePreviewPage(props: any) {
   return (
     <PreviewContainer>
       <EnrollCard>
-        <EnrollImage src="/chessplaceholder.png" />
+        <EnrollImage src={currentCourse?.bannerUrl} />
         <EnrollBtn>
           {currentCourse && currentCourse.isEnrollmentActive && !courseIsNotEnrolled(currentCourse) && !isCourseTutor(currentCourse) &&
             <Button primary onClick={invokeStripeSessionCreation}> Enroll </Button>

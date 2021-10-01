@@ -17,7 +17,6 @@ import { getAllQuizQuestionsByTutorId } from "../../../apis/QuizQuestion/QuizQue
 
 import { Button } from "../../../values/ButtonElements";
 
-
 const columns: GridColDef[] = [
     {
         field: 'id', headerName: 'ID', width: 90,

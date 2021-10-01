@@ -245,8 +245,11 @@ function QuizQuestionOptionsList(props: any) {
                 </Table>
             </TableContainer>
             {
-                (questionType === "MCQ" || questionType === "MATCHING") &&
-                <AddQuizOptionButton disabled={isDisabled} onClick={handleAddOption}>Add Option</AddQuizOptionButton>
+                !isDisabled && (questionType === "MCQ" || questionType === "MATCHING") &&
+                <>
+                    <br/>
+                    <AddQuizOptionButton disabled={isDisabled} onClick={handleAddOption}>Add Option</AddQuizOptionButton>
+                </>
             }
         </>
     )

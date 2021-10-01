@@ -12,7 +12,9 @@ import { Account } from "../../../apis/Entities/Account";
 import { Quiz } from "../../../apis/Entities/Quiz";
 import { EnrolledLesson } from "../../../apis/Entities/EnrolledLesson";
 import { EnrolledCourse } from "../../../apis/Entities/EnrolledCourse";
-import { QuizWithStudentAttemptCountResp } from "../../../apis/Entities/Quiz"
+import { QuizWithStudentAttemptCountResp } from "../../../apis/Entities/Quiz";
+
+import ViewQuizAttemptsModal from './components/ViewQuizAttemptsModal';
 
 import { Button } from "../../../values/ButtonElements";
 import { colours } from "../../../values/Colours";
@@ -58,6 +60,7 @@ function LessonViewer(props: any) {
   const accountId = JSON.parse(
     window.sessionStorage.getItem("loggedInAccountId") || "{}"
   );
+  const [loading, setLoading] = useState<boolean>(true);
 
   const history = useHistory();
 
@@ -77,6 +80,7 @@ function LessonViewer(props: any) {
     if (accountId !== null && courseId !== null) {
       getEnrolledCourseByStudentIdAndCourseId(accountId, courseId).then(receivedEnrolledCourse => {
         setEnrolledCourse(receivedEnrolledCourse);
+        setLoading(false)
       });
     }
   }, [accountId, courseId, lessonId]);
@@ -84,11 +88,6 @@ function LessonViewer(props: any) {
   function formatDate(date: Date): string {
     var d = new Date(date);
     return d.toDateString() + ', ' + d.toLocaleTimeString();
-  }
-
-  const viewStudentAttempt = (studentAttemptId: number) => {
-    history.push({ pathname: `/markedquizviewer/${studentAttemptId}`, state: { mode: 'VIEW' } });
-
   }
 
   const attemptQuiz = (enrolledContentId: number) => {
@@ -156,7 +155,7 @@ function LessonViewer(props: any) {
   }
 
   return (
-    <>
+    <>{!loading &&
       <LessonContainer>
         <PageHeadingAndButton>
           <PageHeading>
@@ -166,7 +165,7 @@ function LessonViewer(props: any) {
               <HeadingDescription>You do not have access to this page. Complete your previous lessons.</HeadingDescription>
             }
           </PageHeading>
-          <ExitWrapper to={`/overview/${currentCourse?.courseId}`}>
+          <ExitWrapper to={`/overview/${courseId}`}>
             <CancelOutlinedIcon fontSize="large" style={{ color: colours.BLUE2, padding: 20 }} />
           </ExitWrapper>
         </PageHeadingAndButton>
@@ -240,37 +239,17 @@ function LessonViewer(props: any) {
                     <QuizDescriptionTwo>[To Finish]</QuizDescriptionTwo>
                     */}
                   </QuizRow>
-                  <QuizRow style={{ borderBottom: "none" }}>
-                    <QuizSubheader>Previous Attempts</QuizSubheader>
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gridGap: "3em" }}>
-                      {q.studentAttempts.map(sa => {
-                        return (
-                          <>
-                            <QuizDescriptionTwo>
-                              {formatDate(sa.dateTimeOfAttempt)}
-                            </QuizDescriptionTwo>
-                            <QuizDescriptionTwo>
-                              <BtnWrapper>
-                                <Button onClick={() => viewStudentAttempt(sa.studentAttemptId)}>
-                                  View Attempt
-                                  </Button>
-                              </BtnWrapper>
-                            </QuizDescriptionTwo>
-                          </>
-                        );
-                      })}
-                    </div>
-                    {/*
-                    <QuizSubheader>Grade:</QuizSubheader>
-                    <QuizDescriptionTwo>[To Finish]</QuizDescriptionTwo>
-                    */}
+                  <QuizRow>
+                    <BtnWrapper>
+                      <ViewQuizAttemptsModal isButtonDisabled={!previousLessonCompleted()} studentAttempts={q.studentAttempts}/>
+                    </BtnWrapper>
                   </QuizRow>
                 </>
               );
             })}
           </QuizWrapper>
         </LessonCard>
-      </LessonContainer>
+      </LessonContainer>}
     </>
   );
 }

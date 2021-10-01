@@ -12,7 +12,7 @@ export const PreviewContainer = styled.div`
 `;
 
 export const EnrollCard = styled.div`
-    height: 150px;
+    height: 250px;
     width: auto;
     border-radius: 20px;
     margin-bottom: 40px;

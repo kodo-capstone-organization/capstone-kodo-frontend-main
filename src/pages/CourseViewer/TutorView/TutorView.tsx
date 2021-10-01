@@ -74,7 +74,8 @@ function TutorView(props: any) {
                 <>
                   <p>{enrolledCourse.studentName}</p>
                   <LinearProgressWithLabel
-                    value={enrolledCourse.completionPercentage * 100}
+                      key={enrolledCourse.enrolledCourseId}
+                      value={enrolledCourse.completionPercentage * 100}
                   />
                 </>
               );
