@@ -59,7 +59,7 @@ function CourseEarningsTabPanel(props: any) {
             }
             setSelectedCourseItem(selectedCourse);
         }
-    }, [selectedCourseId])
+    }, [selectedCourseId, myEarnings])
 
     const getCurrentMonthYear = () => {
         const curDate = new Date();

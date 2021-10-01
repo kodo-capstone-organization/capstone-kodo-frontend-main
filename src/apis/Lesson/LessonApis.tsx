@@ -11,6 +11,14 @@ export async function getLessonByLessonId(lessonId: number): Promise<Lesson> {
     return httpClient.get<undefined, Lesson>(getParameters);
 }
 
+export async function getLessonByEnrolledContentId(enrolledContentId: number): Promise<Lesson> {
+    const getParameters: IHttpClientRequestParameters<undefined> = {
+        url: `/lesson/getLessonByEnrolledContentId/${enrolledContentId}`
+    }
+
+    return httpClient.get<undefined, Lesson>(getParameters);
+}
+
 export async function createNewLesson(courseId: number, name: string, description: string, sequence: number): Promise<Lesson> {
     const formData = new FormData();
 

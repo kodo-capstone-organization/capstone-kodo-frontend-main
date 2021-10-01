@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useReducer } from "react";
+import { useState, useEffect, useReducer } from "react";
+
 import { useHistory } from "react-router-dom";
 import { Box, Grid, TextField, Chip, InputAdornment, Dialog, DialogTitle, DialogActions, DialogContent, Breadcrumbs, Link} from "@material-ui/core";
 import { CourseBuilderCard, CourseBuilderCardHeader, CourseBuilderContainer, CourseBuilderContent, MessageContainer } from "./CourseBuilderElements";
@@ -7,10 +8,10 @@ import { getCourseWithoutEnrollmentByCourseId, updateCourse, toggleEnrollmentAct
 import { Tag } from "../../apis/Entities/Tag";
 import { UpdateCourseReq, Course } from "../../apis/Entities/Course";
 import { Autocomplete } from "@material-ui/lab";
-import { getAllTags } from '../../apis/Tag/TagApis';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import DoneIcon from '@material-ui/icons/Done';
 import PublishIcon from '@material-ui/icons/Publish';
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import { getAllTags } from '../../apis/Tag/TagApis';
 import { Button } from "../../values/ButtonElements";
 import CircularProgress from '@material-ui/core/CircularProgress';
 
@@ -54,13 +55,7 @@ function CourseBuilderPage(props: any) {
                 handleFormDataChange(wrapperEvent)
             }) 
         });
-      }, [courseId]);
-
-    useEffect(() => {
         getAllTags().then((res: any)=> setTagLibrary(res)).catch(() => console.log("error getting tags."))
-    }, [])
-
-    useEffect(() => {
         if (courseFormData.tutor != null) {
             const accountId = window.sessionStorage.getItem("loggedInAccountId");
 
@@ -69,8 +64,7 @@ function CourseBuilderPage(props: any) {
                 setLoading(false);
             }
         }
-
-    }, [courseFormData.tutor])
+    }, [courseId, courseFormData.tutor]);
 
     const handleChipInputChange = (e: object, value: String[], reason: string) => {
         let wrapperEvent = {

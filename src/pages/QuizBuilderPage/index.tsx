@@ -1,22 +1,49 @@
 import React, { useState, useEffect } from 'react';
+
 import { useHistory } from 'react-router-dom';
+
+import {
+    Chip,
+    Grid, 
+    TextField, 
+    Input, 
+    InputLabel
+} from "@material-ui/core";
+
+import { 
+    DragDropContext, 
+    Droppable, 
+    Draggable 
+} from 'react-beautiful-dnd';
+
 import { Quiz } from './../../apis/Entities/Quiz';
 import { QuizQuestion } from "../../apis/Entities/QuizQuestion";
-import { getQuizByQuizId, updateQuizWithQuizQuestionsAndQuizQuestionOptions } from "../../apis/Quiz/QuizApis";
-import { getAllQuizQuestionsByQuizId, getQuizQuestionByQuizQuestionId } from "../../apis/QuizQuestion/QuizQuestionApis";
+import { UpdateQuizReq } from '../../apis/Entities/Quiz';
+
 import { getAccountByQuizId } from "../../apis/Account/AccountApis";
-import { Button } from "../../values/ButtonElements";
+
+import { 
+    getQuizByQuizId, 
+    updateQuizWithQuizQuestionsAndQuizQuestionOptions 
+} from "../../apis/Quiz/QuizApis";
+import { 
+    getAllQuizQuestionsByQuizId, 
+    getQuizQuestionByQuizQuestionId 
+} from "../../apis/QuizQuestion/QuizQuestionApis";
+
+import {
+    QuizBuilderCardContent,
+    QuizCard, 
+    QuizCardContent,
+    QuizCardHeader, 
+    QuizContainer, 
+    QuizQuestionCard, 
+} from "./QuizBuilderElements";
+
 import QuizQuestionComponent from "./components/QuizQuestionComponent"
 import QuestionBankModal from "./components/QuestionBankModal"
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import {
-    Grid, TextField, Input, InputLabel, Chip
-} from "@material-ui/core";
-import {
-    QuizContainer, QuizCard, QuizCardHeader, QuizCardContent,
-    QuizQuestionCard, QuizBuilderCardContent
-} from "./QuizBuilderElements";
-import { UpdateQuizReq } from '../../apis/Entities/Quiz';
+
+import { Button } from "../../values/ButtonElements";
 
 
 function QuizBuilderPage(props: any) {
@@ -36,14 +63,18 @@ function QuizBuilderPage(props: any) {
 
     useEffect(() => {
         getAccountByQuizId(contentId).then((res) => {
-
-            if (res.accountId !== parseInt(loggedInAccountId)) {
+            if (loggedInAccountId && res.accountId !== parseInt(loggedInAccountId)) {
                 history.push("/profile");
             }
         }).catch((err) => {
             console.log("Error: get account by quizId", err)
         });
-        history.location.state?.mode === "VIEW" ? setIsDisabled(true) : setIsDisabled(false);
+      
+        if (history.location.state)
+        {
+            history.location.state.mode === "VIEW" ? setIsDisabled(true) : setIsDisabled(false);
+        }
+      
         getQuizByQuizId(contentId).then((res) => {
             setQuiz(res);
             setUpdatedQuiz(res);
@@ -56,7 +87,7 @@ function QuizBuilderPage(props: any) {
         getAllQuizQuestionsByQuizId(contentId).then((res) => {
             setQuizQuestionArray(res)
         }).catch((err) => { console.log("error:getAllQuizQuestionsByQuizId", err) });
-    }, [contentId])
+    }, [contentId, loggedInAccountId, history])
 
     useEffect(() => {
         console.log("qn array updted", quizQuestionArray)
@@ -145,6 +176,7 @@ function QuizBuilderPage(props: any) {
                     props.callOpenSnackBar(`Error in updating Quiz: ${err}`, "error")
                 });
         }
+        window.location.reload();
     }
 
     const handleUpdateQuestion = (updatedQuizQuestion: QuizQuestion, index: number) => {
