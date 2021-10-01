@@ -25,12 +25,15 @@ import { getAccountByQuizId } from "../../apis/Account/AccountApis";
 
 import {
     getQuizByQuizId,
-    updateQuizWithQuizQuestionsAndQuizQuestionOptions
+    updateQuizWithQuizQuestionsAndQuizQuestionOptions,
 } from "../../apis/Quiz/QuizApis";
 import {
     getAllQuizQuestionsByQuizId,
     getQuizQuestionByQuizQuestionId
 } from "../../apis/QuizQuestion/QuizQuestionApis";
+import {
+    getCourseByContentId
+} from "../../apis/Course/CourseApis";
 
 import {
     QuizBuilderCardContent,
@@ -74,10 +77,15 @@ function QuizBuilderPage(props: any) {
         }).catch((err) => {
             props.callOpenSnackBar(`Error in initialising Quiz: ${err}`, "error")
         });
-
-        if (history.location.state) {
-            history.location.state.mode === "VIEW" ? setIsDisabled(true) : setIsDisabled(false);
-        }
+        getCourseByContentId(contentId).then((res) => {
+            console.log("Success: getCourseByContentId", res);
+            setIsDisabled(res.isEnrollmentActive);
+        }).catch((err) => {
+            console.log("Error: getCourseByContentId", err);
+        });
+        // if (history.location.state) {
+        //     history.location.state.mode === "VIEW" ? setIsDisabled(true) : setIsDisabled(false);
+        // }
 
         getQuizByQuizId(contentId).then((res) => {
             setQuiz(res);
@@ -149,8 +157,8 @@ function QuizBuilderPage(props: any) {
     const handleTimeLimitHoursChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         var value: any = parseInt(e.target.value);
         var resetMinutes = timeLimitMinutes;
-        if (value > 24) {
-            value = "24";
+        if (value > 23) {
+            value = "23";
         } else if (value <= 0) {
             value = "00";
             resetMinutes = "15";
@@ -353,7 +361,7 @@ function QuizBuilderPage(props: any) {
                                     autoFocus
                                     value={timeLimitHours}
                                     onChange={handleTimeLimitHoursChange}
-                                    inputProps={{ min: 0, max: 24 }}
+                                    inputProps={{ min: 0, max: 23 }}
                                 />
                             </Grid>
                             <Grid item xs={6}>
