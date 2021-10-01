@@ -23,8 +23,8 @@ import DocViewer, { DocViewerRenderers } from "react-doc-viewer";
 import { DocumentViewer } from 'react-documents';
 import FileViewer from 'react-file-viewer';
 import { saveAs } from "file-saver";
-import ControlPanel from "./ControlPanel";
 import PDFViewer from "./PDFViewer";
+import DownloadFile from "./DownloadFile";
 
 import {
   MultimediaContainer,
@@ -35,6 +35,7 @@ import {
   MultimediaCard,
   VideoCard,
   PDFCard,
+  DocumentCard,
   ImageCard,
   MultimediaName,
   MultimediaDescription,
@@ -55,8 +56,6 @@ function MultimediaViewer(props: any) {
   const [currentCourse, setCourse] = useState<Course>();
   const [numPages, setNumPages] = useState<number>();
   const [pageNumber, setPageNumber] = useState<number>(1);
-  const [scale, setScale] = useState(1.0);
-
 
   useEffect(() => {
     getMultimediaByMultimediaId(contentId).then(receivedMultimedia => {
@@ -74,20 +73,8 @@ function MultimediaViewer(props: any) {
     setNumPages(numPages);
   }
 
-  const file = '/assets/sample-word.docx';
-  const type = 'docx';
-
   return (
     <>
-      <FileViewer
-      fileType={type}
-      filePath={file}
-      />
-      <PDFCard>
-      <iframe src='https://view.officeapps.live.com/op/embed.aspx?src=http%3A%2F%2Fieee802%2Eorg%3A80%2Fsecmail%2FdocIZSEwEqHFr%2Edoc' width='100%' height='100%'>This is an embedded <a target='_blank' href='http://office.com'>Microsoft Office</a> document, powered by <a target='_blank' href='http://office.com/webapps'>Office Online</a>.
-      </iframe>
-      </PDFCard>
-      
       <MultimediaContainer>
         <PageHeadingAndButton>
           <PageHeading>
@@ -103,67 +90,42 @@ function MultimediaViewer(props: any) {
           <MultimediaName> Name: {currentMultimedia?.name}</MultimediaName>
           <MultimediaDescription> Description: {currentMultimedia?.description}</MultimediaDescription>
         </MultimediaCard>
-        
+
         {currentMultimedia && currentMultimedia.multimediaType === "VIDEO" &&
-        <VideoCard>
+          <VideoCard>
             <ReactPlayer
               url={currentMultimedia.url}
               controls={true}
             />
-        </VideoCard>
+          </VideoCard>
         }
 
-        {currentMultimedia && currentMultimedia.multimediaType === "DOCUMENT" &&
-        <PDFCard>
-          {/* <PDFViewer doc={"/assets/file-sample.pdf"} /> */}
-          <PDFViewer doc={currentMultimedia.url} />
-        </PDFCard>  
+        {currentMultimedia && currentMultimedia.multimediaType === "PDF" &&
+          <PDFCard>
+            <PDFViewer doc={currentMultimedia.url} />
+          </PDFCard>
         }
 
-        {/* <PDFCard>
-          {currentMultimedia && currentMultimedia.multimediaType === "DOCUMENT" &&
-            <>
-              <ControlPanel
-                scale={scale}
-                setScale={setScale}
-                numPages={numPages}
-                pageNumber={pageNumber}
-                setPageNumber={setPageNumber}
-                file={currentMultimedia?.url}
-                // file="/assets/file-sample.pdf"
-              />
-              <Document
-                file= {currentMultimedia?.url}
-                // file="/assets/file-sample.pdf"
-                onLoadSuccess={onDocumentLoadSuccess}
-              >
-                <Page pageNumber={pageNumber} scale={scale} />
-                <div>Page {pageNumber} of {numPages}</div>
-              </Document>
-            </>
-          }
-        </PDFCard> */}
-        
         {currentMultimedia?.multimediaType === "IMAGE" &&
-        <ImageCard>  
+          <ImageCard>
             <img
-              src="http://placeimg.com/1200/800/nature"
-              // src={currentMultimedia.url}
+              // src="https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/54ac91ee-583b-4cfd-99e9-1540388bb952.png?generation=1632977979927790&alt=media"
+              src={currentMultimedia.url}
               width="600"
               style={{ margin: '2px' }}
-              alt=""
             />
-        </ImageCard>
+          </ImageCard>
         }
-        {/* <DocViewer pluginRenderers={DocViewerRenderers} documents={docs} /> */}
 
-        {/* <DocumentViewer
-          url="https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
-          viewer="url"
-          style="width:100%;height:50vh;"
-        >
-        </DocumentViewer> */}
+        {currentMultimedia?.multimediaType === "DOCUMENT" &&
+          <DocumentCard>
+            <iframe
+              width="560" height="780" src="https://docs.google.com/gview?url=https://storage.googleapis.com/capstone-kodo-bucket/59f5e0e2-4352-4f32-8284-03358463acab.docx&embedded=true">
+            </iframe>
+          </DocumentCard>
+        }
 
+        <DownloadFile multimediaType={currentMultimedia?.multimediaType} multimediaName={currentMultimedia?.name} multimediaUrl={currentMultimedia?.url} />
 
       </MultimediaContainer>
     </>
@@ -172,4 +134,3 @@ function MultimediaViewer(props: any) {
 
 const MultimediaViewerWithRouter = withRouter(MultimediaViewer);
 export default MultimediaViewerWithRouter;
-

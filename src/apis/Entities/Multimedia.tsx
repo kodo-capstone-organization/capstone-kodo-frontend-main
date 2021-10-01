@@ -18,6 +18,7 @@ export enum MultimediaType {
     VIDEO = "VIDEO",
     ZIP = "ZIP",
     DOCUMENT = "DOCUMENT",
+    PDF = "PDF",
     EMPTY = "",
 }
 

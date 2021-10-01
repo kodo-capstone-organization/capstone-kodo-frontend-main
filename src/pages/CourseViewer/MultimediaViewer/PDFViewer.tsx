@@ -29,7 +29,7 @@ function PDFViewer(props: any) {
         <>
             <Document
                 file={doc}
-                options={{ workerSrc: "/pdf.worker.js" }}
+                // options={{ workerSrc: "/pdf.worker.js" }}
                 onLoadSuccess={onDocumentLoadSuccess}
             >
                 <Page pageNumber={pageNumber} />

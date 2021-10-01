@@ -56,6 +56,14 @@ export const PDFCard = styled.div`
   align-items: center;
 `;
 
+export const DocumentCard = styled.div`
+  height: auto;
+  width: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
 export const ImageCard = styled.div`
   height: 600px;
   width: 600px;
@@ -64,6 +72,10 @@ export const ImageCard = styled.div`
   align-items: center;
 `;
 
+export const BtnWrapper = styled.div`
+  margin-left: 1rem;
+  margin-top: -8px;
+`
 export const MultimediaHeader = styled.div`
   font-size: ${fontSizes.CONTENT};
   color: ${colours.GRAY3};
