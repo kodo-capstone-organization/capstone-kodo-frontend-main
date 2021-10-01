@@ -12,7 +12,9 @@ import { Account } from "../../../apis/Entities/Account";
 import { Quiz } from "../../../apis/Entities/Quiz";
 import { EnrolledLesson } from "../../../apis/Entities/EnrolledLesson";
 import { EnrolledCourse } from "../../../apis/Entities/EnrolledCourse";
-import { QuizWithStudentAttemptCountResp } from "../../../apis/Entities/Quiz"
+import { QuizWithStudentAttemptCountResp } from "../../../apis/Entities/Quiz";
+
+import ViewQuizAttemptsModal from './components/ViewQuizAttemptsModal';
 
 import { Button } from "../../../values/ButtonElements";
 import { colours } from "../../../values/Colours";
@@ -88,11 +90,6 @@ function LessonViewer(props: any) {
   function formatDate(date: Date): string {
     var d = new Date(date);
     return d.toDateString() + ', ' + d.toLocaleTimeString();
-  }
-
-  const viewStudentAttempt = (studentAttemptId: number) => {
-    history.push({ pathname: `/markedquizviewer/${studentAttemptId}`, state: { mode: 'VIEW' } });
-
   }
 
   const attemptQuiz = (enrolledContentId: number) => {
@@ -245,27 +242,10 @@ function LessonViewer(props: any) {
                     */}
                   </QuizRow>
                   <QuizRow>
-                    <QuizSubheader>Previous Attempts</QuizSubheader>
-                    {q.studentAttempts.map(sa => {
-                      return (
-                        <>
-                          <QuizDescriptionTwo>
-                            {formatDate(sa.dateTimeOfAttempt)}
-                          </QuizDescriptionTwo>
-                          <QuizDescriptionTwo>
-                            <BtnWrapper>
-                              <Button onClick={() => viewStudentAttempt(sa.studentAttemptId)}>
-                                View Attempt
-                                </Button>
-                            </BtnWrapper>
-                          </QuizDescriptionTwo>
-                        </>
-                      );
-                    })}
-                    {/*
-                    <QuizSubheader>Grade:</QuizSubheader>
-                    <QuizDescriptionTwo>[To Finish]</QuizDescriptionTwo>
-                    */}
+                    <BtnWrapper>
+                    <ViewQuizAttemptsModal studentAttempts={q.studentAttempts}/>
+                    </BtnWrapper>
+
                   </QuizRow>
                 </>
               );

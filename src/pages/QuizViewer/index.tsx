@@ -78,27 +78,6 @@ function QuizViewer(props: any) {
     return (
         <>
             <QuizContainer>
-                {/* <QuizCard>
-                    <QuizCardHeader
-                        title="Quiz Information"
-                    />
-                    <QuizCardContent>
-                        <Grid container spacing={3}>
-                            <Grid item xs={12}>
-                                Name: {quiz != undefined && quiz.name}
-                            </Grid>
-                            <Divider style={{ width: '-webkit-fill-available' }} variant="middle" />
-                            <Grid item xs={12}>
-                                Description: {quiz != undefined && quiz.description}
-                            </Grid>
-                            <Divider style={{ width: '-webkit-fill-available' }} variant="middle" />
-                            <Grid item xs={12}>
-                                Completed On: {dateTimeOfAttempt != undefined && formatDate(dateTimeOfAttempt)}
-                            </Grid>
-                        </Grid>
-                    </QuizCardContent>
-                </QuizCard> */}
-
                 {viewMode && <MarkedQuizComponent studentAttemptId={studentAttemptId} />}
                 {attemptMode && <AttemptQuizComponent enrolledContentId={enrolledContentId} />}
 
