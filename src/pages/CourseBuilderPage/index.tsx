@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useReducer } from "react";
 import { useHistory } from "react-router-dom";
 import { Box, Grid, TextField, Chip, InputAdornment, Dialog, DialogTitle, DialogActions, DialogContent, Breadcrumbs, Link} from "@material-ui/core";
-import { CourseBuilderCard, CourseBuilderCardHeader, CourseBuilderContainer, CourseBuilderContent } from "./CourseBuilderElements";
+import { CourseBuilderCard, CourseBuilderCardHeader, CourseBuilderContainer, CourseBuilderContent, MessageContainer } from "./CourseBuilderElements";
 import LessonPlan from "./components/LessonPlan";
 import { getCourseWithoutEnrollmentByCourseId, updateCourse, toggleEnrollmentActiveStatus } from './../../apis/Course/CourseApis';
 import { Tag } from "../../apis/Entities/Tag";
@@ -12,6 +12,7 @@ import DoneIcon from '@material-ui/icons/Done';
 import PublishIcon from '@material-ui/icons/Publish';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { Button } from "../../values/ButtonElements";
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 interface IErrors<TValue> {
     [id: string]: TValue;
@@ -199,7 +200,7 @@ function CourseBuilderPage(props: any) {
     //     history.goBack();
     // }
 
-    return !loading && ( !isTutorOfCourse ? 
+    return loading ? <MessageContainer><CircularProgress/></MessageContainer> : ( !isTutorOfCourse ? 
         <h1>You are not a tutor of this course 😡</h1> :       
         <CourseBuilderContainer>
             <Breadcrumbs aria-label="coursebuilder-breadcrumb" style={{ marginBottom: "1rem"}}>

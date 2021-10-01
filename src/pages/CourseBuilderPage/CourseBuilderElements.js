@@ -47,3 +47,11 @@ export const CourseBuilderCardHeader = styled(CardHeader)`
         }
     }
 `;
+
+export const MessageContainer = styled.div`
+  display: ${({ isEnrolled, isTutor}) =>
+  isEnrolled || isTutor ? "none" : "flex"};
+  margin: 3rem;
+  align-items: center;
+  justify-content: center;
+`
