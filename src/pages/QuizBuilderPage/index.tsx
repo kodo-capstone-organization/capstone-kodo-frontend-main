@@ -18,6 +18,7 @@ import {
 
 import { Quiz } from './../../apis/Entities/Quiz';
 import { QuizQuestion } from "../../apis/Entities/QuizQuestion";
+import { QuizQuestionOption } from "../../apis/Entities/QuizQuestionOption";
 import { UpdateQuizReq } from '../../apis/Entities/Quiz';
 
 import { getAccountByQuizId } from "../../apis/Account/AccountApis";
@@ -110,13 +111,19 @@ function QuizBuilderPage(props: any) {
         if (quiz) {
             const newDraggableId = draggableId + 1;
             setDraggableId(newDraggableId);
+            const newQuizQuestionOption :QuizQuestionOption = {
+                quizQuestionOptionId: null,
+                leftContent: "OPTION 1",
+                rightContent: null,
+                correct: true
+            };
             const newQuizQuestion: any = {
                 quizQuestionId: null,
                 content: "",
                 questionType: "MCQ",
                 marks: 1,
                 quiz: quiz,
-                quizQuestionOptions: [],
+                quizQuestionOptions: [newQuizQuestionOption],
                 draggableId: newDraggableId
             }
             quizQuestionArray.push(newQuizQuestion);
@@ -223,7 +230,6 @@ function QuizBuilderPage(props: any) {
                     props.callOpenSnackBar(`Error in updating Quiz: ${err}`, "error")
                 });
         }
-        // window.location.reload();
     }
 
     const handleUpdateQuestion = (updatedQuizQuestion: QuizQuestion, index: number) => {
