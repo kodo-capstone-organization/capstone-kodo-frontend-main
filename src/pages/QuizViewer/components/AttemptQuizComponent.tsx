@@ -26,6 +26,7 @@ import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import CancelIcon from '@material-ui/icons/Cancel';
 import AttemptQuizOptionsComponent from "./AttemptQuizOptionsComponent";
 import QuizAttemptTimer from "./QuizAttemptTimer";
+import QuizTimedOutModal from "./QuizTimedOutModal";
 
 function AttemptQuizComponent(props: any) {
 
@@ -34,6 +35,7 @@ function AttemptQuizComponent(props: any) {
     const [quizQuestionOptionIdList, setQuizQuestionOptionIdList] = useState<number[][][]>([]);
     const [initialSeconds, setInitalSeconds] = useState<number>();
     const [initialMinutes, setInitialMinutes] = useState<number>();
+    const [timeout, setTimeout] = useState<boolean>(false);
 
     useEffect(() => {
         if (props.enrolledContentId != undefined) {
@@ -118,6 +120,7 @@ function AttemptQuizComponent(props: any) {
         .catch(err => {
             console.log("Attempt quiz failed:", err);
         });
+        setTimeout(true);
     } 
 
     const mapQuestionArray = (questionArray: QuizQuestion[]) => {
@@ -139,7 +142,8 @@ function AttemptQuizComponent(props: any) {
 
     return (
         <>
-            {/* {initialSeconds != undefined && <QuizAttemptTimer initialSeconds={initialSeconds} initialMinutes={initialMinutes} onTimeOut={handleTimeOut}/>} */}
+            {initialSeconds != undefined && <QuizAttemptTimer initialSeconds={initialSeconds} initialMinutes={initialMinutes} onTimeOut={handleTimeOut}/>}
+            <QuizTimedOutModal open={timeout}/>
             <QuizCard>
                 <QuizCardHeader
                     title="Quiz Information"

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
-import { Button } from "../../../../values/ButtonElements";
-import { colours } from "../../../../values/Colours";
+import { Button } from "../../../values/ButtonElements";
+import { colours } from "../../../values/Colours";
 import {
     Dialog, DialogActions, DialogContent, Table,
     DialogTitle, TableBody, TableCell, TableContainer,
@@ -11,19 +11,13 @@ import { makeStyles, Theme, createStyles, withStyles } from '@material-ui/core/s
 import InfoIcon from '@material-ui/icons/Info';
 
 import { useHistory } from "react-router-dom";
-import { StudentAttempt } from "../../../../apis/Entities/StudentAttempt";
+import { StudentAttempt } from "../../../apis/Entities/StudentAttempt";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
-        table: {
-            minWidth: 700,
-        },
-        container: {
-            maxHeight: 440,
-        },
         dialogPaper: {
-            height: "400px",
-            width: 1000,
+            height: "200px",
+            width: 500,
         },
     }),
 );
@@ -59,9 +53,9 @@ function QuizTimedOutModal(props: any) {
                 View Previous Attempts
             </Button>
             <Dialog open={open} maxWidth={false} classes={{ paper: classes.dialogPaper }}>
-                <DialogTitle id="form-dialog-title">View Previous Attempts</DialogTitle>
+                <DialogTitle id="form-dialog-title">Time's Up!</DialogTitle>
                 <DialogContent>
-                    Timed Out
+                    You have exceeded the set time for this quiz, your attempt will be recorded up to where you stopped.
                 </DialogContent>
                 <DialogActions>
                     <Button >
