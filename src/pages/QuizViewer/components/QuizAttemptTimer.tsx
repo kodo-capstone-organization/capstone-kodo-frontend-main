@@ -43,7 +43,6 @@ function QuizAttemptTimer(props: any) {
         <div id="timer">
             <h1 style={{ textAlign: "center" }}> Time Left: {hours < 10 ? `0${hours}` : hours}:{minutes < 10 ? `0${minutes}` : minutes}:{seconds < 10 ? `0${seconds}` : seconds}</h1>
         </div>
-        {/* <QuizAttemptTimer open={isTimedOut}/> */}
         </>
     )
 }
