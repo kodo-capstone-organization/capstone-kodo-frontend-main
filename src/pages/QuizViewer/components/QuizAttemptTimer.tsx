@@ -9,15 +9,16 @@ function QuizAttemptTimer(props: any) {
     const [minutes, setMinutes] = useState(initialMinutes);
     const [seconds, setSeconds] = useState(initialSeconds);
     const [hours, setHours] = useState(initialHours);
-    const [isTimedOut, setIsTimedOut] = useState<boolean>("false");
+    const [isTimedOut, setIsTimedOut] = useState<boolean>(false);
 
-    useEffect(() => {
+    useEffect(() => {        
         let myInterval = setInterval(() => {
             if (seconds > 0) {
                 setSeconds(seconds - 1);
             }
             if (seconds === 0) {
                 if (minutes === 0) {
+                    console.log('QuizAttemptTimer minutes == 0', myInterval)
                     clearInterval(myInterval)
                     setIsTimedOut(true);
                     props.onTimeOut(true);

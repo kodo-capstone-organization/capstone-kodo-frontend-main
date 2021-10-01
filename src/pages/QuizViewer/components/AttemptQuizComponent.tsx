@@ -43,6 +43,8 @@ function AttemptQuizComponent(props: any) {
     const [initialSeconds, setInitalSeconds] = useState<number>();
     const [initialMinutes, setInitialMinutes] = useState<number>();
 
+    const [createNewStudentAttemptReq, setCreateNewStudentAttemptReq] = useState<CreateNewStudentAttemptReq>();
+
     const history = useHistory();
     const [timeout, setTimeout] = useState<boolean>(false);
 
@@ -73,7 +75,7 @@ function AttemptQuizComponent(props: any) {
         }
     }, [props.enrolledContentId]);
 
-    const handleAttemptAnswer = (optionArray: number[], questionIndex: number) => {
+    const handleAttemptAnswer = (optionArray: number[][], questionIndex: number) => {
         var newQuizQuestionOptionIdList = quizQuestionOptionIdList;
         newQuizQuestionOptionIdList[questionIndex] = optionArray;
         console.log("handleAttemptAnswer", newQuizQuestionOptionIdList);
@@ -121,26 +123,28 @@ function AttemptQuizComponent(props: any) {
         var newQuizQuestionOptionIdList = quizQuestionOptionIdList;
         quizQuestionArray?.map((q, qId) => {
             if(qId in quizQuestionOptionIdList){
-                console.log(`${qId} in ${quizQuestionOptionIdList}`)
+                // console.log(`${qId} in ${quizQuestionOptionIdList}`)
             }else{
-                console.log(`${qId} not in ${quizQuestionOptionIdList}`)
+                // console.log(`${qId} not in ${quizQuestionOptionIdList}`)
                 newQuizQuestionOptionIdList[qId] = [[]];
             }
         })
         
-        const createNewStudentAttemptReq: CreateNewStudentAttemptReq = {
+        const tmpCreateNewStudentAttemptReq: CreateNewStudentAttemptReq = {
             enrolledContentId: props.enrolledContentId,
             quizQuestionOptionIdLists: newQuizQuestionOptionIdList
         };
 
-        console.log("Time Out Auto Submit Method createNewStudentAttemptReq", createNewStudentAttemptReq);
-        createNewStudentAttempt(createNewStudentAttemptReq)
-        .then(res => {
-            console.log("Attempt quiz success:", res);
-        })
-        .catch(err => {
-            console.log("Attempt quiz failed:", err);
-        });
+        setCreateNewStudentAttemptReq(tmpCreateNewStudentAttemptReq);
+
+        // console.log("Time Out Auto Submit Method createNewStudentAttemptReq", createNewStudentAttemptReq);
+        // createNewStudentAttempt(createNewStudentAttemptReq)
+        // .then(res => {
+        //     console.log("Attempt quiz success:", res);
+        // })
+        // .catch(err => {
+        //     console.log("Attempt quiz failed:", err);
+        // });
         setTimeout(true);
     } 
 
@@ -164,7 +168,7 @@ function AttemptQuizComponent(props: any) {
     return (
         <>
             {initialSeconds != undefined && <QuizAttemptTimer initialSeconds={initialSeconds} initialMinutes={initialMinutes} onTimeOut={handleTimeOut}/>}
-            <QuizTimedOutModal open={timeout} enrolledContentId={props.enrolledContentId} />
+            <QuizTimedOutModal open={timeout} enrolledContentId={props.enrolledContentId} callOpenSnackBar={props.callOpenSnackBar} createNewStudentAttemptReq={createNewStudentAttemptReq} />
             <QuizCard>
                 <QuizCardHeader
                     title="Quiz Information"

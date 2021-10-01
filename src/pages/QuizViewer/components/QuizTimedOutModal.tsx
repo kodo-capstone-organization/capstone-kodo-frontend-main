@@ -19,6 +19,7 @@ import { Lesson } from "../../../apis/Entities/Lesson";
 
 import { getCourseByEnrolledContentId } from "../../../apis/Course/CourseApis";
 import { getLessonByEnrolledContentId } from "../../../apis/Lesson/LessonApis";
+import { createNewStudentAttempt } from "../../../apis/StudentAttempt/StudentAttemptApis";
 
 import { Button } from "../../../values/ButtonElements";
 
@@ -45,15 +46,19 @@ function QuizTimedOutModal(props: any) {
     }, [props.open]);
 
     const handleNextAction = () => {
-        getCourseByEnrolledContentId(props.enrolledContentId).then((course: Course) => {
-            getLessonByEnrolledContentId(props.enrolledContentId).then((lesson: Lesson) => {
-                history.push(`/overview/lesson/${course.courseId}/${lesson.lessonId}`);
-                // console.log("Attempt quiz success:", res);
-            })
-            .catch(err => {
-                console.log(err.response.data.message)
-            })
-        })            
+        createNewStudentAttempt(props.createNewStudentAttemptReq)
+            .then(res => {
+            props.callOpenSnackBar("Quiz Submitted Successfully", "success");
+            getCourseByEnrolledContentId(props.enrolledContentId).then((course: Course) => {
+                getLessonByEnrolledContentId(props.enrolledContentId).then((lesson: Lesson) => {
+                    history.push(`/overview/lesson/${course.courseId}/${lesson.lessonId}`);
+                    // console.log("Attempt quiz success:", res);
+                })
+                .catch(err => {
+                    console.log(err.response.data.message)
+                })
+            })            
+        })
     }
 
     // const formatDate = (date: Date) => {
