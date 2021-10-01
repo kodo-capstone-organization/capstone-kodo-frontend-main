@@ -239,7 +239,7 @@ function QuizBuilderPage(props: any) {
                     setQuiz(res)
                 })
                 .catch((err) => {
-                    props.callOpenSnackBar(`Error in updating Quiz: Please check for no empty fields`, "error")
+                    props.callOpenSnackBar(`Error in updating Quiz`, "error")
                 });
         }
     }
