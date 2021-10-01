@@ -1,28 +1,33 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { withRouter } from "react-router";
-import { getCourseByCourseId } from "../../../apis/Course/CourseApis";
-import { Course } from "../../../apis/Entities/Course";
+
 import { Account } from "../../../apis/Entities/Account";
+import { Course } from "../../../apis/Entities/Course";
+import { StripePaymentReq } from "../../../apis/Entities/Stripe"
+
+import { createStripeSession } from "../../../apis/Stripe/StripeApis";
+import { getCourseByCourseId } from "../../../apis/Course/CourseApis";
+import { getMyAccount } from "../../../apis/Account/AccountApis";
+
 import {
-  PreviewContainer,
+  CourseDescription,
+  CourseHeader,
+  CoursePrice,
+  CourseProviderName,
+  CourseTags,
+  EnrollBtn,
   EnrollCard,
   EnrollImage,
-  EnrollBtn,
-  CourseTags,
-  TagChip,
-  CourseHeader,
-  CourseProviderName,
-  CourseDescription,
-  CoursePrice,
+  PreviewContainer,
   SyllabusCard,
   SyllabusTable,
   SyllabusTableData,
-  SyllabusTableHeader
+  SyllabusTableHeader,
+  TagChip
 } from "./CoursePreviewElements";
+
 import { Button } from "../../../values/ButtonElements";
-import { getMyAccount } from "../../../apis/Account/AccountApis";
-import { createStripeSession } from "../../../apis/Stripe/StripeApis";
-import { StripePaymentReq } from "../../../apis/Entities/Stripe"
+
 
 function CoursePreviewPage(props: any) {
   const courseId = props.match.params.courseId;
