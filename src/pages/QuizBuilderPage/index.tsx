@@ -147,6 +147,7 @@ function QuizBuilderPage(props: any) {
             var quizQuestionOptionLists = quizQuestionArray;
             quizQuestionOptionLists = quizQuestionOptionLists.map((question) => question.quizQuestionOptions)
             var quizQuestions = quizQuestionArray;
+            // remove draggableId for submit
             quizQuestions = quizQuestions.map((question) => question = {
                 quizQuestionId: question.quizQuestionId,
                 content: question.content,
@@ -199,13 +200,14 @@ function QuizBuilderPage(props: any) {
     }
 
     const handleChangeFromQuestionBank = (questionBankQuestionIds: number[]) => {
-        let listOfQuestionsFromQuestionBank: QuizQuestion[] = [];
-        for (let i = 0; i < questionBankQuestionIds.length; i++) {
+        var i;
+        for (i = 0; i < questionBankQuestionIds.length; i++) {
             getQuizQuestionByQuizQuestionId(questionBankQuestionIds[i]).then((res) => {
                 console.log("Success in handleChangeFromQuestionBank", res);
-                const newQuestionFromBank = Object.assign(res, { quizQuestionId: null, draggableId });
                 const newDraggableId = draggableId + 1;
+                console.log("newDraggableId", newDraggableId);
                 setDraggableId(newDraggableId);
+                const newQuestionFromBank = Object.assign(res, { quizQuestionId: null, draggableId: newDraggableId });
                 const newQuestionArray = quizQuestionArray.concat([newQuestionFromBank]);
                 setQuizQuestionArray(newQuestionArray);
             }).catch((err) => { console.log("Error in handleChangeFromQuestionBank", err); })
@@ -233,9 +235,10 @@ function QuizBuilderPage(props: any) {
                                     onUpdateQuestion={handleUpdateQuestion} onUpdateQuizQuestionOptions={handleQuizQuestionOptionUpdate} />
                             </QuizQuestionCard>
                             :
-                            <Draggable key={q.draggableId} draggableId={q.draggableId.toString()} index={qId}>
+                            <Draggable key={qId} draggableId={q.draggableId.toString()} index={qId}>
                                 {(provided) => (
                                     <QuizQuestionCard ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
+                                        {q.draggableId.toString()}
                                         <QuizQuestionComponent disabled={isDisabled} question={q} questionIndex={qId}
                                             onUpdateQuestion={handleUpdateQuestion} onUpdateQuizQuestionOptions={handleQuizQuestionOptionUpdate} />
                                     </QuizQuestionCard>
