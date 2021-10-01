@@ -3,7 +3,7 @@ import { useHistory } from "react-router-dom";
 import { Box, Grid, TextField, Chip, InputAdornment, Dialog, DialogTitle, DialogActions, DialogContent, Breadcrumbs, Link} from "@material-ui/core";
 import { CourseBuilderCard, CourseBuilderCardHeader, CourseBuilderContainer, CourseBuilderContent } from "./CourseBuilderElements";
 import LessonPlan from "./components/LessonPlan";
-import { getCourseByCourseId, updateCourse, toggleEnrollmentActiveStatus } from './../../apis/Course/CourseApis';
+import { getCourseWithoutEnrollmentByCourseId, updateCourse, toggleEnrollmentActiveStatus } from './../../apis/Course/CourseApis';
 import { Tag } from "../../apis/Entities/Tag";
 import { UpdateCourseReq, Course } from "../../apis/Entities/Course";
 import { Autocomplete } from "@material-ui/lab";
@@ -42,7 +42,7 @@ function CourseBuilderPage(props: any) {
     });
     
     useEffect(() => {
-        getCourseByCourseId(courseId).then((receivedCourse: Course) => {
+        getCourseWithoutEnrollmentByCourseId(courseId).then((receivedCourse: Course) => {
             Object.keys(receivedCourse).forEach((key, index) => {
                 let wrapperEvent = {
                     target: {
