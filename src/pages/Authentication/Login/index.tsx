@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 import { useHistory } from "react-router-dom";
 
-import { Typography } from '@material-ui/core';
+import { Typography, Input, InputLabel, InputAdornment, } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
 import CloseIcon from '@material-ui/icons/Close';
 import Dialog from '@material-ui/core/Dialog';
@@ -19,6 +19,8 @@ import { DeactivateAccountResponse } from '../../../apis/Entities/Deactivate';
 import { login, reactivateAccount } from '../../../apis/Account/AccountApis';
 
 import { Button } from "../../../values/ButtonElements";
+import Visibility from '@material-ui/icons/Visibility';
+import VisibilityOff from '@material-ui/icons/VisibilityOff';
 
 import {
     LoginForm,
@@ -44,6 +46,7 @@ function Login(props: any) {
     const [loginFailed, setLoginFailed] = useState('');
     const [reactivateFailed, setReactivateFailed] = useState('');
     const [open, setOpen] = React.useState(false);
+    const [showPassword, setShowPassword] = useState<Boolean>(false);
 
     let history = useHistory()
 
@@ -185,6 +188,14 @@ function Login(props: any) {
         }
     }
 
+    const handleClickShowPassword = () => {
+        setShowPassword(!showPassword)
+    };
+
+    const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault();
+    };
+
     return (
         <>
             <div
@@ -206,9 +217,36 @@ function Login(props: any) {
                         <br/>
                         <form noValidate autoComplete="off" onSubmit={loginBtnClick}>
                             <LoginForm>
-                                <TextField id="filled-basic" label="Username" variant="filled" type="text" value={username} onChange={e => setUsername(e.target.value)} />
+                                <InputLabel
+                                htmlFor="standard-adornment--username">Username</InputLabel>
+                                <Input
+                                autoComplete="off"
+                                id="standard-adornment-username"
+                                value={username}
+                                style={{ margin: "0 0 10px 0", width: "100%" }}
+                                onChange={e => setUsername(e.target.value)}/>
                                 <br/>
-                                <TextField id="filled-basic" label="Password" variant="filled" type="password" value={password} onChange={e => setPassword(e.target.value)} />
+                                <InputLabel
+                                htmlFor="standard-adornment--password">Old Password</InputLabel>
+                                <Input
+                                autoComplete="off"
+                                id="standard-adornment-password"
+                                type={showPassword ? 'text' : 'password'}
+                                value={password}
+                                style={{ margin: "0 0 10px 0", width: "100%" }}
+                                onChange={e => setPassword(e.target.value)}
+                                endAdornment={
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                            aria-label="toggle password visibility"
+                                            onClick={handleClickShowPassword}
+                                            onMouseDown={handleMouseDownPassword}
+                                        >
+                                            {showPassword ? <Visibility /> : <VisibilityOff />}
+                                        </IconButton>
+                                </InputAdornment>
+                            }
+                        />
                             </LoginForm>
                         
                             <br />
