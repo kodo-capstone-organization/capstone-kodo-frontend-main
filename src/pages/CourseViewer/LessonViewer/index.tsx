@@ -243,7 +243,7 @@ function LessonViewer(props: any) {
                   </QuizRow>
                   <QuizRow>
                     <BtnWrapper>
-                    <ViewQuizAttemptsModal studentAttempts={q.studentAttempts}/>
+                    <ViewQuizAttemptsModal isButtonDisabled={!previousLessonCompleted()} studentAttempts={q.studentAttempts}/>
                     </BtnWrapper>
 
                   </QuizRow>

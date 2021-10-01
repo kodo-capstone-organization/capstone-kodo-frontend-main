@@ -5,7 +5,6 @@ import { Lesson } from "../../../apis/Entities/Lesson";
 import {
   SidebarWrapper,
   SidebarMenu,
-  CourseBannerWrapper,
   CourseBanner,
   SidebarLink,
   LessonLink
@@ -30,22 +29,25 @@ function Sidebar(props: any) {
 
   return (
       <SidebarWrapper>
-        <CourseBannerWrapper>
-            <CourseBanner
-                alt={currentCourse.name}
-                src={currentCourse?.bannerUrl === "" ? "invalidurl.com" : currentCourse?.bannerUrl }
-                onError={handleImageError}
-            />
-        </CourseBannerWrapper>
+        <CourseBanner
+            alt={currentCourse.name}
+            src={currentCourse?.bannerUrl === "" ? "invalidurl.com" : currentCourse?.bannerUrl }
+            onError={handleImageError}
+        />
         <SidebarMenu>
-          <SidebarLink to={`/overview/${currentCourse.courseId}`}>Overview</SidebarLink>
-          {courseLessons?.map(lesson => {
+          {/* TODO: Conditional Active state of links */}
+          <SidebarLink className={"active"} to={`/overview/${currentCourse.courseId}`}>Overview</SidebarLink>
+            
+          {/* Weekly Lesson Links */}
+          { courseLessons?.map(lesson => {
             return (
               <LessonLink key={lesson.lessonId}>
                 <SidebarLink to={`/overview/lesson/${currentCourse.courseId}/${lesson.lessonId}`}>Week {lesson.sequence}</SidebarLink>
               </LessonLink>
             );
           })}
+            
+          {/* Discussion Forum Link */}
           <SidebarLink>Discussion Forum</SidebarLink>
         </SidebarMenu>
       </SidebarWrapper>

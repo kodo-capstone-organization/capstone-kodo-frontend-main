@@ -4,10 +4,10 @@ import {colours} from "../values/Colours";
 export const LayoutContentWrapper = styled.div`
   display: flex;
   flex-direction: row;
-  padding: 0 10rem;
   background: ${colours.WHITE};
   /* Account for Topbar's height */
   margin-top: 50px; 
+  padding: ${({showSidePadding}) => (showSidePadding ? "0 10rem" : "") } 
 `;
 
 export const LayoutContentPage = styled.div`
