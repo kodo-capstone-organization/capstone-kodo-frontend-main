@@ -20,7 +20,6 @@ import { getEnrolledContentByEnrolledContentId } from "../../../apis/EnrolledCon
 import { getLessonByEnrolledContentId } from "../../../apis/Lesson/LessonApis";
 import { getQuizByQuizId } from "../../../apis/Quiz/QuizApis";
 
-
 import {
     QuizCard, 
     QuizCardContent, 
@@ -87,7 +86,8 @@ function AttemptQuizComponent(props: any) {
                 enrolledContentId: parseInt(props.enrolledContentId),
                 quizQuestionOptionIdLists: quizQuestionOptionIdList
             };
-            console.log("createNewStudentAttemptReq, quizQuestionOptionIdList", quizQuestionOptionIdList[2]);
+            
+            console.log("Submit Method createNewStudentAttemptReq", createNewStudentAttemptReq);
             createNewStudentAttempt(createNewStudentAttemptReq)
             .then(res => {
                 props.callOpenSnackBar("Quiz Submitted Successfully", "success")
@@ -118,7 +118,6 @@ function AttemptQuizComponent(props: any) {
     }
 
     const handleTimeOut = (isTimedOut : boolean) => {
-        console.log("timeout")
         var newQuizQuestionOptionIdList = quizQuestionOptionIdList;
         quizQuestionArray?.map((q, qId) => {
             if(qId in quizQuestionOptionIdList){
@@ -128,11 +127,13 @@ function AttemptQuizComponent(props: any) {
                 newQuizQuestionOptionIdList[qId] = [[]];
             }
         })
+        
         const createNewStudentAttemptReq: CreateNewStudentAttemptReq = {
             enrolledContentId: props.enrolledContentId,
             quizQuestionOptionIdLists: newQuizQuestionOptionIdList
         };
-        console.log("createNewStudentAttemptReq", createNewStudentAttemptReq);
+
+        console.log("Time Out Auto Submit Method createNewStudentAttemptReq", createNewStudentAttemptReq);
         createNewStudentAttempt(createNewStudentAttemptReq)
         .then(res => {
             console.log("Attempt quiz success:", res);
@@ -163,7 +164,7 @@ function AttemptQuizComponent(props: any) {
     return (
         <>
             {initialSeconds != undefined && <QuizAttemptTimer initialSeconds={initialSeconds} initialMinutes={initialMinutes} onTimeOut={handleTimeOut}/>}
-            <QuizTimedOutModal open={timeout}/>
+            <QuizTimedOutModal open={timeout} enrolledContentId={props.enrolledContentId} />
             <QuizCard>
                 <QuizCardHeader
                     title="Quiz Information"
