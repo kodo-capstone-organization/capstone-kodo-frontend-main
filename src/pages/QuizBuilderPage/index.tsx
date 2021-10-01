@@ -7,8 +7,11 @@ import {
     Grid,
     TextField,
     Input,
-    InputLabel
+    InputLabel,
+    Breadcrumbs,
+    Link
 } from "@material-ui/core";
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 import {
     DragDropContext,
@@ -53,6 +56,8 @@ import { Button } from "../../values/ButtonElements";
 function QuizBuilderPage(props: any) {
 
     const contentId = props.match.params.contentId;
+    const [courseId, setCourseId] = useState<number>(); // for backwards navigation to course builder
+
     const [name, setName] = useState<string>("");
     const [description, setDescription] = useState<string>("");
     const [maxAttempts, setMaxAttempts] = useState<number>();
@@ -77,9 +82,10 @@ function QuizBuilderPage(props: any) {
         }).catch((err) => {
             props.callOpenSnackBar(`Error in initialising Quiz: ${err}`, "error")
         });
-        getCourseByContentId(contentId).then((res) => {
+        getCourseByContentId(contentId).then((res: Course) => {
             console.log("Success: getCourseByContentId", res);
             setIsDisabled(res.isEnrollmentActive);
+            setCourseId(res.courseId)
         }).catch((err) => {
             console.log(contentId)
             console.log("Error: getCourseByContentId", err);
@@ -336,6 +342,13 @@ function QuizBuilderPage(props: any) {
     return (
         <>
             <QuizContainer>
+                <Breadcrumbs aria-label="quizbuilder-breadcrumb" style={{ marginBottom: "1rem"}}>
+                    <Link color="primary" href={`/builder/${courseId}`}>
+                        <ArrowBackIcon style={{ verticalAlign: "middle"}}/>&nbsp;
+                        <span style={{ verticalAlign: "bottom"}}>Back To Coursebuilder</span>
+                    </Link>
+                </Breadcrumbs>
+
                 <QuizCard id="quiz-information-card">
                     <QuizCardHeader
                         title="Quiz Information"

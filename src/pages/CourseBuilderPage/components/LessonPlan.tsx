@@ -370,25 +370,27 @@ function LessonPlan(props: any) {
                                                 callOpenSnackBar={props.callOpenSnackBar}
                                             />
                                         </Grid>
-                                        <Grid container spacing={3} justifyContent="flex-end">
-                                            <Box m={1} pt={2}>
-                                                <Button
-                                                    disabled={props.isEnrollmentActive}
-                                                    primary={!props.isEnrollmentActive}
-                                                    big
-                                                    onClick={() => handleUpdateLesson(lesson.lessonId)}>
-                                                    Update Lesson
-                                                </Button>
-                                            </Box>
-                                            <Box m={1} pt={2}>
-                                                <Button
-                                                    disabled={props.isEnrollmentActive}
-                                                    big
-                                                    onClick={() => handleDeleteLesson(lesson.lessonId)}>
-                                                    Delete Lesson
-                                                </Button>
-                                            </Box>
-                                        </Grid>
+                                        { !props.isEnrollmentActive &&
+                                            <Grid container spacing={3} justifyContent="flex-end">
+                                                <Box m={1} pt={2}>
+                                                    <Button
+                                                        disabled={props.isEnrollmentActive}
+                                                        primary={!props.isEnrollmentActive}
+                                                        big
+                                                        onClick={() => handleUpdateLesson(lesson.lessonId)}>
+                                                        Update Lesson
+                                                    </Button>
+                                                </Box>
+                                                <Box m={1} pt={2}>
+                                                    <Button
+                                                        disabled={props.isEnrollmentActive}
+                                                        big
+                                                        onClick={() => handleDeleteLesson(lesson.lessonId)}>
+                                                        Delete Lesson
+                                                    </Button>
+                                                </Box>
+                                            </Grid>
+                                        }
                                     </Grid>
                                 </CourseBuilderContent>
                             </TabPanel>

@@ -212,7 +212,13 @@ function CourseBuilderPage(props: any) {
                     title="Course Information"
                     action={
                         <>
-                            {courseFormData.isEnrollmentActive && <Chip variant="outlined" size="small" label="Published" style={{ color: "green", border: "1px solid green" }} deleteIcon={<DoneIcon style={{ color: "green" }} />} onDelete={() => ("")}/>}
+                            {courseFormData.isEnrollmentActive &&
+                                <>
+                                    <Chip variant="outlined" size="small" label="Published" style={{ color: "green", border: "1px solid green" }} deleteIcon={<DoneIcon style={{ color: "green" }} />} onDelete={() => ("")}/>
+                                    &nbsp;&nbsp;
+                                    <Chip variant="outlined" size="small" label="View Mode" style={{ color: "blue", border: "1px solid blue" }} disabled />
+                                </>
+                            }
                             {!courseFormData.isEnrollmentActive && <Chip variant="outlined"  size="small" label="Publish This Course" color="secondary" onClick={handleOpenToggleEnrollmentDialog} deleteIcon={<PublishIcon color="secondary" />} onDelete={() => ("")} />}
                         </>
                     }

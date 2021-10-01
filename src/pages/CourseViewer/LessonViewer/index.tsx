@@ -46,12 +46,13 @@ import {
   ZipIcon,
   Image,
   NextBtnWrapper,
-  ArrowForward,
-  ArrowRight,
+  PrevBtnWrapper,
+  ArrowForward, 
+  ArrowBackward
 } from "./LessonViewerElements";
 
 import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
-
+import { Link } from '@material-ui/core';
 
 function LessonViewer(props: any) {
   const lessonId = props.match.params.lessonId;
@@ -66,10 +67,6 @@ function LessonViewer(props: any) {
     window.sessionStorage.getItem("loggedInAccountId") || "{}"
   );
   const [loading, setLoading] = useState<boolean>(true);
-
-  const onHover = () => {
-    setHover(!hover);
-  };
 
   const history = useHistory();
 
@@ -103,6 +100,11 @@ function LessonViewer(props: any) {
     history.push({ pathname: `/attemptquizviewer/${enrolledContentId}`, state: { mode: 'ATTEMPT' } });
   }
 
+  const getLessonIdToNavigateTo = (lessonSequence: number) => {
+    const enrolledLessonObj = enrolledCourse.enrolledLessons.find((enrolledLesson: EnrolledLesson) => enrolledLesson.parentLesson.sequence === lessonSequence)
+    return enrolledLessonObj?.parentLesson?.lessonId || lessonId;
+  }
+
   function getQuizAttempts(): QuizWithStudentAttemptCountResp[] {
     let quizAttemptsTemp: QuizWithStudentAttemptCountResp[] = [];
     enrolledLesson?.enrolledContents.forEach(enrolledContent => {
@@ -126,12 +128,10 @@ function LessonViewer(props: any) {
             studentAttempts: enrolledContent.studentAttempts
           }
         );
-        console.log("enrolledContent.enrolledContentId", enrolledContent.enrolledContentId);
       }
     });
     return quizAttemptsTemp;
   }
-
 
   function previousLessonCompleted(): boolean {
     let allEnrolledLessons = enrolledCourse?.enrolledLessons;
@@ -268,9 +268,38 @@ function LessonViewer(props: any) {
             })}
           </QuizWrapper>
         </LessonCard>
-        <NextBtnWrapper lessonCompleted={lessonCompleted}>
-          <Button to='#' onMouseEnter={onHover} onMouseLeave={onHover}>Next {hover ? <ArrowForward /> : <ArrowRight />}</Button>
-        </NextBtnWrapper>
+
+
+        <div style={{ display: "flex", flexDirection: "row" }}>
+
+          {/* Conditionally render prev button */}
+          { currentLesson && currentLesson.sequence !== 1 &&
+            <PrevBtnWrapper>
+              <Link
+                  type="button"
+                  color="primary"
+                  href={`/overview/lesson/${courseId}/${getLessonIdToNavigateTo(currentLesson.sequence - 1)}`}
+              >
+                <ArrowBackward/> Previous Lesson
+              </Link>
+            </PrevBtnWrapper>
+          }
+
+          {/* Conditionally render next button */}
+          { currentLesson && currentLesson.sequence !== enrolledCourse.enrolledLessons.length &&
+            <NextBtnWrapper lessonCompleted={lessonCompleted}>
+              <Link
+                  type="button"
+                  color="primary"
+                  href={`/overview/lesson/${courseId}/${getLessonIdToNavigateTo(currentLesson.sequence + 1)}`}
+              >
+                Next Lesson <ArrowForward />
+              </Link>
+            </NextBtnWrapper>
+          }
+        </div>
+
+
       </LessonContainer>}
     </>
   );
