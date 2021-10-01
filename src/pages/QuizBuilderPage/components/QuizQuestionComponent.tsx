@@ -8,7 +8,6 @@ import {
     InputLabel, 
 } from "@material-ui/core";
 
-import { Quiz } from '../../../apis/Entities/Quiz';
 import { QuizQuestion } from "../../../apis/Entities/QuizQuestion";
 import { QuizQuestionOption } from '../../../apis/Entities/QuizQuestionOption';
 
@@ -21,7 +20,6 @@ import {
 
 function QuizQuestionComponent(props: any) {
 
-    const [quiz, setQuiz] = useState<Quiz>();
     const [questionType, setQuestionType] = useState<string>();
     const [marks, setMarks] = useState<number>();
     const [question, setQuestion] = useState<QuizQuestion>();
@@ -38,7 +36,7 @@ function QuizQuestionComponent(props: any) {
         setContent(props.question.content)
         setMarks(props.question.marks)
         setQuestionType(props.question.questionType)
-    }, [props.question])
+    }, [props.question, props.disabled, props.questionIndex])
 
     // useEffect(() => {
     //     console.log("handleTYpechange", updatedQuestion)

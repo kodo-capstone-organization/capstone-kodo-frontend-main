@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useHistory } from "react-router-dom";
 import { ProfileContainer,  ProfileBreadcrumbItems } from "./ProfileElements";
 import { getMyAccount } from "../../apis/Account/AccountApis";
@@ -27,7 +27,7 @@ function MyProfilePage(props: any) {
             // No logged in account id found in session storage, redirect to login
             history.push('/login');
         }
-    }, [])
+    }, [history])
 
     // To update isIndexPage
     useEffect(() => {

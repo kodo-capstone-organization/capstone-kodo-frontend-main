@@ -57,6 +57,7 @@ function CourseList(props: any) {
       if (lesson.dateTimeOfCompletion !== null) {
         lessonIndex++;
       }
+      return lesson;
     })
     return lessonIndex
   }

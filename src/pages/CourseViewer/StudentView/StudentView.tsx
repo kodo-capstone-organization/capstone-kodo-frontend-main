@@ -70,24 +70,25 @@ function StudentView(props: any) {
     setSteps(enrolledCourse.enrolledLessons);
     console.log(enrolledCourse.enrolledLessons)
     // setSteps(test);
-  }, [props.course, props.enrolledCourse]);
+  }, [props.course, props.enrolledCourse, enrolledCourse]);
 
   const initialiseActiveStep = (receivedEnrolledCourse: EnrolledCourse) => {
     var proxyActiveStep = 0 // to set stepper
     var latestLessonCounter = 0 // to redirect in course overview section
-    receivedEnrolledCourse.enrolledLessons.map((x, index) => {
-      if (x.dateTimeOfCompletion !== null) { // if lesson has been completed, next lesson is active & set new latest Lesson
+    receivedEnrolledCourse.enrolledLessons.map((enrolledLesson, index) => {
+      if (enrolledLesson.dateTimeOfCompletion !== null) { // if lesson has been completed, next lesson is active & set new latest Lesson
         proxyActiveStep++;
         setActiveStep(proxyActiveStep);
-        setLatestLesson(x);
-      } else if (x.dateTimeOfCompletion === null && latestLessonCounter === 0) { // set first uncompleted lesson as latest lesson
-        setLatestLesson(x);
+        setLatestLesson(enrolledLesson);
+      } else if (enrolledLesson.dateTimeOfCompletion === null && latestLessonCounter === 0) { // set first uncompleted lesson as latest lesson
+        setLatestLesson(enrolledLesson);
         latestLessonCounter++;
-        if (x.parentLesson.sequence === 1) { // if lesson one has not been completed, lesson 1 at index 0 is active
+        if (enrolledLesson.parentLesson.sequence === 1) { // if lesson one has not been completed, lesson 1 at index 0 is active
           proxyActiveStep++;
           setActiveStep(0);
         }
       }
+      return enrolledLesson;
     })
     console.log(proxyActiveStep)
   }

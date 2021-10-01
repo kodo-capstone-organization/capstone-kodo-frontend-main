@@ -54,6 +54,7 @@ function BrowseCourseTabPanel (props: any) {
                                 if (textSearchTerm === "" && tagSearchTerms.length === 0) { return course; }
                                 else if (tagSearchTerms.length > 0 && areTagsMatched(course)) { return course; }
                                 else if (textSearchTerm !== "" && isTextMatched(course)) { return course; }
+                                else { return null; }
                             })
                             .map(course => <CourseCard course={course} key={course.courseId} myCourseView={false} redirectUrlBase="/browsecourse/preview" /> )
                         }

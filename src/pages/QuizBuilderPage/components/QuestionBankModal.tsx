@@ -68,7 +68,10 @@ function QuestionBankModal(props: any) {
         if (accountId !== null) {
             getAllQuizQuestionsByTutorId(parseInt(accountId))
                 .then(res => {
-                    res.map((q) => { Object.assign(q, { id: q.quizQuestionId, quizQuestionsLength: q.quizQuestionOptions.length }) });
+                    res.map((q) => { 
+                        Object.assign(q, { id: q.quizQuestionId, quizQuestionsLength: q.quizQuestionOptions.length }) 
+                        return q;
+                    });
                     console.log("Question Bank Success", res);
                     setQuestionList(res);
                 })

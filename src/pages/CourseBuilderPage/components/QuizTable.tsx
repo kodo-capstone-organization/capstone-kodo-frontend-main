@@ -142,6 +142,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
     if (headCell.id === "contentId") {
       headCell.label = isEnrollmentActive ? 'View Quiz' : 'Update Quiz'
     }
+    return headCell;
   })
 
   return (
