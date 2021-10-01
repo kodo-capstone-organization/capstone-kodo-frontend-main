@@ -39,7 +39,7 @@ function Sidebar(props: any) {
           <SidebarLink className={"active"} to={`/overview/${currentCourse.courseId}`}>Overview</SidebarLink>
             
           {/* Weekly Lesson Links */}
-          { courseLessons?.map(lesson => {
+          { !props.isTutorView && courseLessons?.map(lesson => {
             return (
               <LessonLink key={lesson.lessonId}>
                 <SidebarLink to={`/overview/lesson/${currentCourse.courseId}/${lesson.lessonId}`}>Week {lesson.sequence}</SidebarLink>
