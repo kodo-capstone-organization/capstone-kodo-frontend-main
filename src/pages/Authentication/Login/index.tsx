@@ -119,7 +119,11 @@ function Login() {
             {
                 setReactivateFailed("Email and confirmation does not match");
             }
-        }        
+        }
+        else        
+        {
+            setReactivateFailed("Email or confirmation is not an email");
+        }
     }
 
     const loginBtnClick = (e: any) => {
