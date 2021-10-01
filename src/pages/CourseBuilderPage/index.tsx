@@ -212,7 +212,7 @@ function CourseBuilderPage(props: any) {
                     title="Course Information"
                     action={
                         <>
-                            {courseFormData.isEnrollmentActive && <Chip variant="outlined" size="small" label="Published" style={{ color: "green", border: "1px solid green" }} disabled deleteIcon={<DoneIcon style={{ color: "green" }} />} onDelete={() => ("")}/>}
+                            {courseFormData.isEnrollmentActive && <Chip variant="outlined" size="small" label="Published" style={{ color: "green", border: "1px solid green" }} deleteIcon={<DoneIcon style={{ color: "green" }} />} onDelete={() => ("")}/>}
                             {!courseFormData.isEnrollmentActive && <Chip variant="outlined"  size="small" label="Publish This Course" color="secondary" onClick={handleOpenToggleEnrollmentDialog} deleteIcon={<PublishIcon color="secondary" />} onDelete={() => ("")} />}
                         </>
                     }
@@ -261,29 +261,33 @@ function CourseBuilderPage(props: any) {
                         <Grid item xs={10}>
                             <TextField id="standard-basic" fullWidth disabled value={courseFormData.bannerPictureFileName} label="Banner Image"></TextField>
                         </Grid>
-                        <Grid item xs={2}>
-                            <Button disabled={courseFormData.isEnrollmentActive} variant="contained" component="label" big>
-                                Change Banner Image
-                                <input
-                                    id="banner-image-upload"
-                                    type="file"
-                                    accept="image/*"
-                                    hidden
-                                    onChange={handleBannerImageChange}
-                                />
-                            </Button>
-                        </Grid>
-                        <Grid container spacing={3} justifyContent="flex-end">
-                            <Box m={1} pt={2}>
-                                <Button
-                                    disabled={courseFormData.isEnrollmentActive}
-                                    primary={!courseFormData.isEnrollmentActive}
-                                    big
-                                    onClick={handleUpdateCourse}>
-                                    Update Course Information
-                                </Button>
-                            </Box>
-                        </Grid>
+                        { !courseFormData.isEnrollmentActive &&
+                            <>
+                                <Grid item xs={2}>
+                                    <Button disabled={courseFormData.isEnrollmentActive} variant="contained" component="label" big>
+                                        Change Banner Image
+                                        <input
+                                            id="banner-image-upload"
+                                            type="file"
+                                            accept="image/*"
+                                            hidden
+                                            onChange={handleBannerImageChange}
+                                        />
+                                    </Button>
+                                </Grid>
+                                <Grid container spacing={3} justifyContent="flex-end">
+                                    <Box m={1} pt={2}>
+                                        <Button
+                                            disabled={courseFormData.isEnrollmentActive}
+                                            primary={!courseFormData.isEnrollmentActive}
+                                            big
+                                            onClick={handleUpdateCourse}>
+                                            Update Course Information
+                                        </Button>
+                                    </Box>
+                                </Grid>
+                            </>
+                        }
                     </Grid>
                 </CourseBuilderContent>
             </CourseBuilderCard>

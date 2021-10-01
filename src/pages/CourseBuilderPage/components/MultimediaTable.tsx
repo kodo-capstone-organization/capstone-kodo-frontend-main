@@ -819,6 +819,10 @@ export default function MultimediaTable(props: any) {
                   />
                 </FormControl>
 
+                <br/>
+                <br/>
+
+
                 {selectedPreviewFile?.type === "VIDEO" &&
                   <VideoCard>
                     <ReactPlayer
@@ -847,7 +851,7 @@ export default function MultimediaTable(props: any) {
 
                 {selectedPreviewFile?.type === "DOCUMENT" &&
                   <DocumentCard>
-                    <iframe title="docx-view" width="560" height="780" src={getUrlForDocument(selectedPreviewFile.urlFilename)}>
+                    <iframe title="docx-view" width="560" height="600" src={getUrlForDocument(selectedPreviewFile.urlFilename)}>
                     </iframe>
                   </DocumentCard>
                 }

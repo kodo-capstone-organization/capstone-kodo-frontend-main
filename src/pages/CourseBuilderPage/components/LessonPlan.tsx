@@ -17,7 +17,8 @@ import {
     Tab, 
     Tabs, 
     TextField, 
-    Typography, 
+    Typography,
+    Chip
 } from "@material-ui/core";
 
 import { Lesson } from './../../../apis/Entities/Lesson';
@@ -289,7 +290,9 @@ function LessonPlan(props: any) {
         </Dialog>
         <CourseBuilderCardHeader
             title="Lesson Plan"
-            action={
+            action={ props.isEnrollmentActive ?
+                <Chip variant="outlined" size="small" label="View Mode" style={{ color: "blue", border: "1px solid blue" }} disabled />
+                :
                 <IconButton disabled={props.isEnrollmentActive} color="primary" onClick={openDialog}>
                     <AddIcon/>&nbsp; Add Lesson
                 </IconButton>

@@ -94,10 +94,10 @@ function LessonViewer(props: any) {
     }
   }, []);
 
-  function formatDate(date: Date): string {
-    var d = new Date(date);
-    return d.toDateString() + ', ' + d.toLocaleTimeString();
-  }
+  // function formatDate(date: Date): string {
+  //   var d = new Date(date);
+  //   return d.toDateString() + ', ' + d.toLocaleTimeString();
+  // }
 
   const attemptQuiz = (enrolledContentId: number) => {
     history.push({ pathname: `/attemptquizviewer/${enrolledContentId}`, state: { mode: 'ATTEMPT' } });
