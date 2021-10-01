@@ -23,6 +23,5 @@ export const LoginForm = styled.div`
 
 export const LoginSettingField = styled(TextField)`
     width: -webkit-fill-available;
-    margin: 20px;
-    
+    margin: 20px;    
 `;

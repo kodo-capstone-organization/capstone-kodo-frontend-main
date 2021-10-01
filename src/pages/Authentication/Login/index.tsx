@@ -1,33 +1,37 @@
 import React, { useState } from 'react';
-import { Button } from "../../../values/ButtonElements";
-import { Typography } from '@material-ui/core';
-import { login, reactivateAccount } from '../../../apis/Account/AccountApis';
+
 import { useHistory } from "react-router-dom";
+
+import { Typography } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
-import TextField from '@material-ui/core/TextField';
-import {
-    LoginForm,
-    LoginPaper,
-    LoginPaperWrapper
-} from "./LoginElements";
+import CloseIcon from '@material-ui/icons/Close';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
+import TextField from '@material-ui/core/TextField';
+
+import { Account } from '../../../apis/Entities/Account';
+
+import { DeactivateAccountResponse } from '../../../apis/Entities/Deactivate';
+import { login, reactivateAccount } from '../../../apis/Account/AccountApis';
+
+import { Button } from "../../../values/ButtonElements";
+
 import {
+    LoginForm,
+    LoginPaper,
+    LoginPaperWrapper,
     LoginSettingField
 } from "./LoginElements";
-import { Account } from '../../../apis/Entities/Account';
-import { DeactivateAccountResponse } from '../../../apis/Entities/Deactivate';
+
 
 interface IErrors<TValue> {
     [id: string]: TValue;
 }
 
-// function Login({ isOpen }) {
 function Login() {
 
     const [auth, setAuth] = useState(true);
@@ -52,7 +56,7 @@ function Login() {
         let formIsValid = true;
         errors = {};
 
-        //Email
+        // Email
         if (email === "") {
             formIsValid = false;
             errors["email"] = true;
@@ -66,7 +70,7 @@ function Login() {
             }
         }
 
-        //Confirm Email
+        // Confirm Email
         if (confirmEmail === "") {
             formIsValid = false;
             errors["confirmEmail"] = true;
@@ -125,7 +129,7 @@ function Login() {
     const loginBtnClick = (e: any) => {
         setAuth(!auth);
         e.preventDefault();
-        // @ts-ignore: Unreachable code error
+
         login(username, password).then((res: Account) => {
             if (res.isActive)
             {
@@ -141,8 +145,8 @@ function Login() {
         .catch(err => setLoginFailed("Login Failed! Please use valid credentials!"));
     }
 
-    // @ts-ignore: Unreachable code error
-    const loginCallback = (username, password, accountId) => {
+    const loginCallback = (username: any, password: any, accountId: any) => {
+
         // res is the last param (though not shown in the callback) since its a binded function
         // Set to local storage
         window.sessionStorage.setItem("loggedInAccountId", accountId);
@@ -178,7 +182,6 @@ function Login() {
     return (
         <>
             <div
-                // isOpen={isOpen}
                 style={{
                     display: "flex",
                     justifyContent: "center",
