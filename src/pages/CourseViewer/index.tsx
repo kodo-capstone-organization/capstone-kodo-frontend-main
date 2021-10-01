@@ -4,7 +4,7 @@ import { Course } from "../../apis/Entities/Course";
 import { Account } from "../../apis/Entities/Account";
 import { EnrolledCourse } from "../../apis/Entities/EnrolledCourse";
 import { getMyAccount } from "../../apis/Account/AccountApis";
-import { getCourseByCourseId } from "../../apis/Course/CourseApis";
+import { getCourseWithoutEnrollmentByCourseId } from "../../apis/Course/CourseApis";
 import {
   getEnrolledCourseByStudentIdAndCourseId,
 } from "../../apis/EnrolledCourse/EnrolledCourseApis";
@@ -34,7 +34,7 @@ function CourseOverview(props: any) {
     getMyAccount(accountId).then(receivedAccount => {
       setUser(receivedAccount);
     });
-    getCourseByCourseId(courseId).then(receivedCourse => {
+    getCourseWithoutEnrollmentByCourseId(courseId).then(receivedCourse => {
       setCourse(receivedCourse);
       setLoading(false);
     });
