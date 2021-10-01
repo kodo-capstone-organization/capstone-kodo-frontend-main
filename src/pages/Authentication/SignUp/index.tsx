@@ -42,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-function SignUp() {
+function SignUp(props: any) {
 
     const [name, setName] = useState<string>("");
     const [username, setUsername] = useState<string>("");
@@ -167,6 +167,7 @@ function SignUp() {
         {
             //@ts-ignore        
             createNewAccount(newUserAccount, null).then((res: Account) => {
+                props.callOpenSnackBar("Account successfully created", "success")
                 window.sessionStorage.setItem("loggedInAccountId", JSON.stringify(res.accountId));
                 window.sessionStorage.setItem("loggedInAccountUsername", username);
                 window.sessionStorage.setItem("loggedInAccountPassword", password);

@@ -6,7 +6,7 @@ import { Course } from "../../../apis/Entities/Course";
 import { StripePaymentReq } from "../../../apis/Entities/Stripe"
 
 import { createStripeSession } from "../../../apis/Stripe/StripeApis";
-import { getCourseByCourseId } from "../../../apis/Course/CourseApis";
+import { getCourseWithoutEnrollmentByCourseId } from "../../../apis/Course/CourseApis";
 import { getMyAccount } from "../../../apis/Account/AccountApis";
 
 import {
@@ -38,13 +38,13 @@ function CoursePreviewPage(props: any) {
   );
 
   useEffect(() => {
-    getCourseByCourseId(courseId).then(receivedCourse => {
+    getCourseWithoutEnrollmentByCourseId(courseId).then(receivedCourse => {
       setCourse(receivedCourse);
     });
     getMyAccount(accountId).then(receivedAccount => {
       setUser(receivedAccount);
     });
-  }, [courseId, accountId]);
+  }, []);
 
   const invokeStripeSessionCreation = () => {
     if (currentCourse !== undefined && currentUser !== undefined) {

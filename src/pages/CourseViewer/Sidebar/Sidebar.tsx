@@ -17,7 +17,7 @@ function Sidebar(props: any) {
   useEffect(() => {
       setCourse(props.course);
       setCourseLessons(currentCourse.lessons);
-  }, [currentCourse.lessons, props.course]);
+  }, [currentCourse.lessons]);
 
   const handleImageError = (e: any) => {
     e.target.onerror = null;

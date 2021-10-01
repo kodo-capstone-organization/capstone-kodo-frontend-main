@@ -32,7 +32,7 @@ interface IErrors<TValue> {
     [id: string]: TValue;
 }
 
-function Login() {
+function Login(props: any) {
 
     const [auth, setAuth] = useState(true);
     const [username, setUsername] = useState('');
@@ -109,7 +109,9 @@ function Login() {
             {
                 if (accountEmail === email)
                 {
-                    reactivateAccount(accountId, accountId).then((res: DeactivateAccountResponse) => {
+                    reactivateAccount(accountId, accountId)
+                    .then((res: DeactivateAccountResponse) => {
+                        props.callOpenSnackBar("Account successfully reactivated", "success")
                         loginCallback(username, password, accountId);
                     })
                     .catch(err => setLoginFailed("Reactivation Failed!"));

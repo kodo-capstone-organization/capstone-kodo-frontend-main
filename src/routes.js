@@ -79,8 +79,8 @@ function Routes() {
                         <Route path="/" component={HomePage} exact >
                             {window.sessionStorage.getItem("loggedInAccountId") ? <Redirect to="/progresspage" /> : <HomePage />}
                         </Route>
-                        <Route path="/login" component={Login} exact />
-                        <Route path="/signup" component={SignUp} exact />
+                        <Route path="/login" render={props => <Login {...props} callOpenSnackBar={callOpenSnackBar} /> } exact />
+                        <Route path="/signup" render={props => <SignUp {...props} callOpenSnackBar={callOpenSnackBar} /> } exact />
                         {window.sessionStorage.getItem("loggedInAccountId") ?
                             <Route path="/builder/:courseId" render={props => <CourseBuilderPage {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
                             : <Redirect to="/" />}
