@@ -72,7 +72,7 @@ function QuizBuilderPage(props: any) {
                 history.push("/profile");
             }
         }).catch((err) => {
-            console.log("Error: get account by quizId", err)
+            props.callOpenSnackBar(`Error in initialising Quiz: ${err}`, "error")
         });
 
         if (history.location.state) {
@@ -88,7 +88,9 @@ function QuizBuilderPage(props: any) {
             setTimeLimitHours(`${res.timeLimit.charAt(0)}${res.timeLimit.charAt(1)}`);
             setTimeLimitMinutes(`${res.timeLimit.charAt(3)}${res.timeLimit.charAt(4)}`);
             setTimeLimitSeconds(`${res.timeLimit.charAt(6)}${res.timeLimit.charAt(7)}`);
-        }).catch((err) => { console.log("error:getQuizByQuizId", err) });
+        }).catch((err) => {
+            props.callOpenSnackBar(`Error in initialising Quiz: ${err}`, "error")
+        });
         getAllQuizQuestionsByQuizId(contentId).then((res) => {
             let arrayWtihDraggableId: any = []
             var mapDraggable = 0;
@@ -100,7 +102,9 @@ function QuizBuilderPage(props: any) {
             setDraggableId(mapDraggable);
             setQuizQuestionArray(arrayWtihDraggableId);
             // setQuizQuestionArray(res)
-        }).catch((err) => { console.log("error:getAllQuizQuestionsByQuizId", err) });
+        }).catch((err) => {
+            props.callOpenSnackBar(`Error in initialising Quiz: ${err}`, "error")
+        });
     }, [contentId])
 
     useEffect(() => {
@@ -111,7 +115,7 @@ function QuizBuilderPage(props: any) {
         if (quiz) {
             const newDraggableId = draggableId + 1;
             setDraggableId(newDraggableId);
-            const newQuizQuestionOption :QuizQuestionOption = {
+            const newQuizQuestionOption: QuizQuestionOption = {
                 quizQuestionOptionId: null,
                 leftContent: "OPTION 1",
                 rightContent: null,
@@ -262,11 +266,13 @@ function QuizBuilderPage(props: any) {
         var mapDraggable = draggableId + 1;
         questionBankQuestionIds.map((id) => {
             getQuizQuestionByQuizQuestionId(id).then((res) => {
-                console.log("Success in handleChangeFromQuestionBank", res);
+                props.callOpenSnackBar("Successfully updated Quiz", "success")
                 const withDraggableId = Object.assign(res, { draggableId: mapDraggable });
                 mapDraggable++;
                 quizQuestionArray.push(withDraggableId);
-            }).catch((err) => { console.log("Error in handleChangeFromQuestionBank", err); })
+            }).catch((err) => {
+                props.callOpenSnackBar(`Error in updating Quiz: ${err}`, "error")
+            })
         })
         setDraggableId(mapDraggable);
     }
@@ -279,6 +285,10 @@ function QuizBuilderPage(props: any) {
         items = items.splice(result.destination.index, 0, reorderedItem);
         // console.log("items after", items);
         // setQuizQuestionArray(items);
+    }
+
+    const handleCallSnackbar = (msg: string) => {
+        props.callOpenSnackBar(`Error in updating Quiz: ${msg}`, "error")
     }
 
     const mapQuestionArray = (questionArray: QuizQuestion[]) => {
@@ -297,7 +307,9 @@ function QuizBuilderPage(props: any) {
                                     <QuizQuestionCard ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
                                         {/* {q.draggableId.toString()} */}
                                         <QuizQuestionComponent disabled={isDisabled} question={q} questionIndex={q.draggableId.toString()}
-                                            onUpdateQuestion={handleUpdateQuestion} onUpdateQuizQuestionOptions={handleQuizQuestionOptionUpdate} />
+                                            onUpdateQuestion={handleUpdateQuestion} onUpdateQuizQuestionOptions={handleQuizQuestionOptionUpdate}
+                                            onCallSnackbar={handleCallSnackbar}
+                                        />
                                     </QuizQuestionCard>
                                 )}
                             </Draggable>

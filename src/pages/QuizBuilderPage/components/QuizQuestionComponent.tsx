@@ -38,11 +38,6 @@ function QuizQuestionComponent(props: any) {
         setQuestionType(props.question.questionType)
     }, [props.question])
 
-    // useEffect(() => {
-    //     console.log("handleTYpechange", updatedQuestion)
-
-    // }, [updatedQuestion])
-
     const handleTypeChange = (event: React.ChangeEvent<{ value: unknown }>) => {
         setQuestionType(event.target.value as string);
         const newlyUpdatedQuestion = Object.assign(question, { questionType: event.target.value, quizQuestionOptions: [] })
@@ -73,6 +68,10 @@ function QuizQuestionComponent(props: any) {
 
     const deleteQuestion = () => {
         props.onUpdateQuestion(null, questionIndex)
+    }
+
+    const handleCallSnackbar = (msg : string) => {
+        props.onCallSnackbar(msg);
     }
 
     return (
@@ -136,7 +135,8 @@ function QuizQuestionComponent(props: any) {
 
                 <br/>
 
-                <QuizQuestionOptionsList disabled={isDisabled} questionIndex={questionIndex} question={question} questionType={questionType} onHandleQuizQuestionOptionUpdate={handleQuizQuestionOptionUpdate} />
+                <QuizQuestionOptionsList disabled={isDisabled} questionIndex={questionIndex} question={question} questionType={questionType} 
+                onHandleQuizQuestionOptionUpdate={handleQuizQuestionOptionUpdate} onCallSnackbar={handleCallSnackbar}/>
             </div>
 
         </>

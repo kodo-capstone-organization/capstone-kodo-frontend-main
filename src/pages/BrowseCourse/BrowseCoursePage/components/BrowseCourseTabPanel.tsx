@@ -1,8 +1,10 @@
+import Typography from "@material-ui/core/Typography";
 import { useState, useEffect } from "react";
 
 import { Course } from "../../../../apis/Entities/Course";
 
 import CourseCard from "../../../../components/CourseCard";
+import { BlankStateContainer } from "../../../MyProfilePage/ProfileElements";
 
 import { CourseWrapper } from "../BrowseCourseElements";
 
@@ -41,24 +43,40 @@ function BrowseCourseTabPanel (props: any) {
         return course.name.toLowerCase().includes(textSearchTerm.toLowerCase())
     }
 
+    const getFilteredCourseCardList = () => {
+        return courseList?.filter(course => course.isEnrollmentActive)
+            .filter(course => {
+                if (textSearchTerm === "" && tagSearchTerms.length === 0) { return course; }
+                else if (tagSearchTerms.length > 0 && areTagsMatched(course)) { return course; }
+                else if (textSearchTerm !== "" && isTextMatched(course)) { return course; }
+                else { return null; }
+            })
+            .map(course =>
+                <CourseCard course={course} key={course.courseId} myCourseView={false} redirectUrlBase="/browsecourse/preview" />
+            )
+    }
+
     return(
         <>
             { curTabIdx === myTabIdx &&
                 <div role="tabpanel">
                     { titleComponent }
                     <br/>
-                    <CourseWrapper>
-                        { courseList
-                            ?.filter(course => course.isEnrollmentActive)
-                            .filter(course => {
-                                if (textSearchTerm === "" && tagSearchTerms.length === 0) { return course; }
-                                else if (tagSearchTerms.length > 0 && areTagsMatched(course)) { return course; }
-                                else if (textSearchTerm !== "" && isTextMatched(course)) { return course; }
-                                else { return null; }
-                            })
-                            .map(course => <CourseCard course={course} key={course.courseId} myCourseView={false} redirectUrlBase="/browsecourse/preview" /> )
-                        }
-                    </CourseWrapper>
+                    { (courseList === undefined || courseList.length === 0 || getFilteredCourseCardList()?.length === 0) &&
+                        <>
+                            <BlankStateContainer>
+                                <Typography>Uh oh. No courses to be found 🔍</Typography>
+                                <br/>
+                            </BlankStateContainer>
+                        </>
+                    }
+                    { courseList &&
+                        <CourseWrapper>
+                            { getFilteredCourseCardList() }
+                        </CourseWrapper>
+                    }
+
+
                 </div>
             }
         </>
