@@ -1,23 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { makeStyles, Theme, createStyles, withStyles, lighten } from '@material-ui/core/styles';
-import { QuizQuestion } from "../../../apis/Entities/QuizQuestion";
 import { getAllQuizQuestionsByTutorId } from "../../../apis/QuizQuestion/QuizQuestionApis";
 import { QuizQuestionOption } from '../../../apis/Entities/QuizQuestionOption';
 import { Button } from "../../../values/ButtonElements";
 import {
-    Dialog, DialogTitle, DialogActions, DialogContent, DialogContentText,
-    Table, TableBody, TableCell, TableContainer, TableHead, TablePagination,
-    TableRow, TableSortLabel, Toolbar, Typography, Paper, Checkbox,
-    IconButton, Tooltip, FormControlLabel, Switch
+    Dialog, DialogTitle, DialogActions, DialogContent, DialogContentText
 } from "@material-ui/core";
-import clsx from 'clsx';
-import DeleteIcon from '@material-ui/icons/Delete';
-import FilterListIcon from '@material-ui/icons/FilterList';
-import { } from "../QuizBuilderElements";
 import { Quiz } from '../../../apis/Entities/Quiz';
 import { DataGrid, GridColDef, GridValueGetterParams } from '@material-ui/data-grid';
-
 
 interface Data {
     content: string;
