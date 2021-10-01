@@ -54,6 +54,7 @@ export const PDFCard = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
 `;
 
 export const DocumentCard = styled.div`

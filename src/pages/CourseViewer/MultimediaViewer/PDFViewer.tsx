@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Document, Page } from "react-pdf";
+import { Button } from "../../../values/ButtonElements";
 
 function PDFViewer(props: any) {
 
@@ -25,27 +26,26 @@ function PDFViewer(props: any) {
 
     return (
         <>
-            <Document
-                file={props.doc}
-                options={{ workerSrc: "/pdf.worker.js" }}
-                onLoadSuccess={onDocumentLoadSuccess}
-            >
-                <Page pageNumber={pageNumber} />
-            </Document>
-            <div>
-                <p>
-                    Page {pageNumber || (numPages ? 1 : "--")} of {numPages || "--"}
-                </p>
-                <button type="button" disabled={pageNumber <= 1} onClick={previousPage}>
-                    Previous
-                </button>
-                <button
-                    type="button"
-                    disabled={pageNumber >= numPages!}
-                    onClick={nextPage}
+            <div style={{ border: "2px solid darkblue"}}>
+                <Document
+                    file={props.doc}
+                    options={{ workerSrc: "/pdf.worker.js" }}
+                    onLoadSuccess={onDocumentLoadSuccess}
                 >
+                    <Page pageNumber={pageNumber} />
+                </Document>
+            </div>
+
+            <p>
+                Page {pageNumber || (numPages ? 1 : "--")} of {numPages || "--"}
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'row'}}>
+                <Button disabled={pageNumber <= 1} onClick={previousPage}>
+                    Previous
+                </Button>
+                <Button disabled={pageNumber >= numPages!} onClick={nextPage}>
                     Next
-                </button>
+                </Button>
             </div>
         </>
     );
