@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 import { useHistory } from "react-router-dom";
 
-import { Typography, Input, InputLabel, InputAdornment, } from '@material-ui/core';
+import { Typography, Input, InputLabel, InputAdornment } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
 import CloseIcon from '@material-ui/icons/Close';
 import Dialog from '@material-ui/core/Dialog';
@@ -11,7 +11,6 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import IconButton from '@material-ui/core/IconButton';
-import TextField from '@material-ui/core/TextField';
 
 import { Account } from '../../../apis/Entities/Account';
 
@@ -227,7 +226,7 @@ function Login(props: any) {
                                 onChange={e => setUsername(e.target.value)}/>
                                 <br/>
                                 <InputLabel
-                                htmlFor="standard-adornment--password">Old Password</InputLabel>
+                                htmlFor="standard-adornment--password">Password</InputLabel>
                                 <Input
                                 autoComplete="off"
                                 id="standard-adornment-password"

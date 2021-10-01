@@ -43,7 +43,11 @@ import {
   CheckIcon,
   BtnWrapper,
   ExitWrapper,
-  ZipIcon
+  ZipIcon,
+  Image,
+  NextBtnWrapper,
+  ArrowForward,
+  ArrowRight,
 } from "./LessonViewerElements";
 
 import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
@@ -57,10 +61,15 @@ function LessonViewer(props: any) {
   const [currentUser, setUser] = useState<Account>();
   const [enrolledLesson, setEnrolledLesson] = useState<EnrolledLesson>();
   const [enrolledCourse, setEnrolledCourse] = useState<EnrolledCourse>();
+  const [hover, setHover] = useState(false);
   const accountId = JSON.parse(
     window.sessionStorage.getItem("loggedInAccountId") || "{}"
   );
   const [loading, setLoading] = useState<boolean>(true);
+
+  const onHover = () => {
+    setHover(!hover);
+  };
 
   const history = useHistory();
 
@@ -141,6 +150,8 @@ function LessonViewer(props: any) {
   let isCourseTutor =
     currentCourse?.tutor.accountId === currentUser?.accountId ? true : false;
 
+  let lessonCompleted = enrolledLesson?.dateTimeOfCompletion;
+
 
   let lessonMultimedias = currentLesson?.multimedias;
 
@@ -188,10 +199,10 @@ function LessonViewer(props: any) {
                 >
                   {m.multimediaType === "PDF" && <ReadingIcon />}
                   {m.multimediaType === "DOCUMENT" && <ReadingIcon />}
-                  {m.multimediaType === "IMAGE" && <ReadingIcon/>}
+                  {m.multimediaType === "IMAGE" && <Image />}
                   {m.multimediaType === "VIDEO" && <PlayIcon />}
                   {m.multimediaType === "ZIP" && <ZipIcon />}
-                  {m.multimediaType === "PDF" && "PDF: " + m.name}
+                  {m.multimediaType === "PDF" && "Reading: " + m.name}
                   {m.multimediaType === "DOCUMENT" && "Reading: " + m.name } 
                   {m.multimediaType === "IMAGE" && "Image: " + m.name}
                   {m.multimediaType === "VIDEO" && "Video: " + m.name }
@@ -254,6 +265,9 @@ function LessonViewer(props: any) {
             })}
           </QuizWrapper>
         </LessonCard>
+        <NextBtnWrapper lessonCompleted={lessonCompleted}>
+          <Button to='#' onMouseEnter={onHover} onMouseLeave={onHover}>Next {hover ? <ArrowForward /> : <ArrowRight />}</Button>
+        </NextBtnWrapper>
       </LessonContainer>}
     </>
   );

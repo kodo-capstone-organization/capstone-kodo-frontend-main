@@ -13,6 +13,9 @@ import {
 import { Account } from "../../../apis/Entities/Account";
 import { Button } from "../../../values/ButtonElements";
 import { Tag } from "../../../apis/Entities/Tag";
+import IconButton from '@material-ui/core/IconButton';
+import Visibility from '@material-ui/icons/Visibility';
+import VisibilityOff from '@material-ui/icons/VisibilityOff';
 
 import { createNewAccount } from '../../../apis/Account/AccountApis';
 import { getAllTags } from '../../../apis/Tag/TagApis';
@@ -26,7 +29,10 @@ import {
 import {
     Chip,
     TextField, 
-    Typography
+    Typography,
+    Input, 
+    InputLabel, 
+    InputAdornment
 } from "@material-ui/core";
 
 
@@ -54,6 +60,8 @@ function SignUp(props: any) {
     const [tagLibrary, setTagLibrary] = useState<Tag[]>([]);
     const [signUpFailed, setSignUpFailed] = useState<String>("");
     const [btnTagFailed, setBtnTagFailed] = useState<Boolean>(false);
+    const [showPassword, setShowPassword] = useState<Boolean>(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState<Boolean>(false);
     var [errors, setErrors] = useState<IErrors<any>>({
         name: "",
         username: "",
@@ -80,6 +88,22 @@ function SignUp(props: any) {
         setBtnTagFailed(false)
         setBtnTags([newBtnTag])
     }
+
+    const handleClickShowPassword = () => {
+        setShowPassword(!showPassword)
+    };
+
+    const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault();
+    };
+
+    const handleClickShowConfirmPassword = () => {
+        setShowConfirmPassword(!showConfirmPassword)
+    };
+
+    const handleMouseDownConfirmPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault();
+    };
 
     const handleValidation = () => {
         let formIsValid = true;
@@ -204,15 +228,80 @@ function SignUp(props: any) {
                         <br/>
                         <form className={classes.root} autoComplete="off">
                             <SignUpForm>
-                                <TextField error={errors["username"]} required label="Username" variant="filled" value={username} onChange={e => setUsername(e.target.value)} />
-                                <br />
-                                <TextField error={errors["name"]} required label="Name" variant="filled" value={name} onChange={e => setName(e.target.value)} />
-                                <br />
-                                <TextField error={errors["email"]} required label="Email" variant="filled" value={email} onChange={e => setEmail(e.target.value)} />
-                                <br />
-                                <TextField error={errors["password"]} required type="password" label="Password" variant="filled" value={password} onChange={e => setPassword(e.target.value)} />
-                                <br />
-                                <TextField error={errors["confirmPassword"]} required type="password" label="Confirm Password" variant="filled" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} />
+                                <InputLabel style={{ textAlign: 'left' }}
+                                htmlFor="username">Username</InputLabel>
+                                <Input
+                                error={errors["username"]}
+                                required
+                                autoComplete="off"
+                                id="username"
+                                value={username}
+                                style={{ margin: "0 0 10px 0", width: "100%" }}
+                                onChange={e => setUsername(e.target.value)}/>
+                                <br/>
+                                <InputLabel style={{ textAlign: 'left' }}
+                                htmlFor="name">Name</InputLabel>
+                                <Input
+                                error={errors["name"]}
+                                required
+                                autoComplete="off"
+                                id="name"
+                                value={name}
+                                style={{ margin: "0 0 10px 0", width: "100%" }}
+                                onChange={e => setName(e.target.value)}/>
+                                <br/>
+                                <InputLabel style={{ textAlign: 'left' }}
+                                htmlFor="email">Email</InputLabel>
+                                <Input
+                                error={errors["email"]}
+                                required
+                                autoComplete="off"
+                                id="email"
+                                value={email}
+                                style={{ margin: "0 0 10px 0", width: "100%" }}
+                                onChange={e => setEmail(e.target.value)}/>
+                                <br/>
+                                <InputLabel style={{ textAlign: 'left' }}
+                                htmlFor="password">Password</InputLabel>
+                                <Input 
+                                error={errors["password"]}
+                                autoComplete="off"
+                                id="password"
+                                type={showPassword ? 'text' : 'password'}
+                                value={password}
+                                style={{ margin: "0 0 10px 0", width: "100%" }}
+                                onChange={e => setPassword(e.target.value)}
+                                endAdornment={
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                            aria-label="toggle password visibility"
+                                            onClick={handleClickShowPassword}
+                                            onMouseDown={handleMouseDownPassword}
+                                        >
+                                            {showPassword ? <Visibility /> : <VisibilityOff />}
+                                        </IconButton>
+                                </InputAdornment>}/>
+                                <br/>
+                                <InputLabel style={{ textAlign: 'left' }}
+                                htmlFor="confirm-password">Confirm Password</InputLabel>
+                                <Input
+                                error={errors["confirmPassword"]}
+                                autoComplete="off"
+                                id="confirm-password"
+                                type={showConfirmPassword ? 'text' : 'password'}
+                                value={confirmPassword}
+                                style={{ margin: "0 0 10px 0", width: "100%" }}
+                                onChange={e => setConfirmPassword(e.target.value)}
+                                endAdornment={
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                            aria-label="toggle password visibility"
+                                            onClick={handleClickShowConfirmPassword}
+                                            onMouseDown={handleMouseDownConfirmPassword}
+                                        >
+                                            {showConfirmPassword ? <Visibility /> : <VisibilityOff />}
+                                        </IconButton>
+                                </InputAdornment>}/>
                                 <br />
                                 <label>Join Kodo as a</label>
                                 <br />
@@ -252,7 +341,9 @@ function SignUp(props: any) {
                                         Expert
                                     </ToggleButton>
                                 </ToggleButtonGroup>
-                                <br />
+                                <br /><br/>
+                                <InputLabel style={{ textAlign: 'left' }}
+                                htmlFor="tags">What subjects are you interested in?</InputLabel>
                                 <Autocomplete
                                     multiple
                                     options={tagLibrary.map((option) => option.title)}
@@ -265,7 +356,7 @@ function SignUp(props: any) {
                                         ))
                                     }
                                     renderInput={(params) => (
-                                        <TextField {...params} variant="filled" label="What subjects are you interested in?" />
+                                        <TextField {...params} />
                                     )}
                                 />
                                 <br />
