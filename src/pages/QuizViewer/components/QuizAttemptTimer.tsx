@@ -1,10 +1,6 @@
-<<<<<<< HEAD
-import { useEffect, useState } from "react";
-=======
 import React, { useEffect, useState } from "react";
 import QuizTimedOutModal from "./QuizTimedOutModal";
 
->>>>>>> feature/viewMarkedQuiz
 
 
 function QuizAttemptTimer(props: any) {
