@@ -128,7 +128,6 @@ function QuizBuilderPage(props: any) {
         setUpdatedQuiz(newQuiz);
     }
 
-
     const handleSubmit = () => {
         if (updatedQuiz !== undefined) {
             const quizQuestionOptionLists = quizQuestionArray.map((question) => question.quizQuestionOptions)
@@ -200,14 +199,21 @@ function QuizBuilderPage(props: any) {
             <div>
                 {questionArray.map(function (q, qId) {
                     return (
-                        <Draggable key={q.quizQuestionId} draggableId={q.quizQuestionId.toString()} index={qId}>
-                            {(provided) => (
-                                <QuizQuestionCard ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
-                                    <QuizQuestionComponent disabled={isDisabled} question={q} questionIndex={qId}
-                                        onUpdateQuestion={handleUpdateQuestion} onUpdateQuizQuestionOptions={handleQuizQuestionOptionUpdate} />
-                                </QuizQuestionCard>
-                            )}
-                        </Draggable>
+
+                        isDisabled ?
+                            <QuizQuestionCard key={qId}>
+                                <QuizQuestionComponent disabled={isDisabled} question={q} questionIndex={qId}
+                                    onUpdateQuestion={handleUpdateQuestion} onUpdateQuizQuestionOptions={handleQuizQuestionOptionUpdate} />
+                            </QuizQuestionCard>
+                            :
+                            <Draggable key={q.quizQuestionId} draggableId={q.quizQuestionId.toString()} index={qId}>
+                                {(provided) => (
+                                    <QuizQuestionCard ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
+                                        <QuizQuestionComponent disabled={isDisabled} question={q} questionIndex={qId}
+                                            onUpdateQuestion={handleUpdateQuestion} onUpdateQuizQuestionOptions={handleQuizQuestionOptionUpdate} />
+                                    </QuizQuestionCard>
+                                )}
+                            </Draggable>
                         // <>
                         //     <QuizQuestionCard key={qId}>
                         //         <QuizQuestionComponent disabled={isDisabled} question={q} questionIndex={qId}
@@ -345,18 +351,25 @@ function QuizBuilderPage(props: any) {
                         }
                     />
                     <QuizBuilderCardContent>
-                        <DragDropContext onDragEnd={handleOnDragEnd}>
-                            <Droppable droppableId="characters">
-                                {
-                                    (provided) => (
-                                        <div {...provided.droppableProps} ref={provided.innerRef}>
-                                            {mapQuestionArray(quizQuestionArray)}
-                                            {provided.placeholder}
-                                        </div>
-                                    )
-                                }
-                            </Droppable>
-                        </DragDropContext>
+                        {
+                            isDisabled && mapQuestionArray(quizQuestionArray)
+                        }
+                        {
+                            !isDisabled &&
+                            <DragDropContext onDragEnd={handleOnDragEnd}>
+                                <Droppable droppableId="characters">
+                                    {
+                                        (provided) => (
+                                            <div {...provided.droppableProps} ref={provided.innerRef}>
+                                                {mapQuestionArray(quizQuestionArray)}
+                                                {provided.placeholder}
+                                            </div>
+                                        )
+                                    }
+                                </Droppable>
+                            </DragDropContext>
+                        }
+
                         {/* {mapQuestionArray(quizQuestionArray)} */}
                     </QuizBuilderCardContent>
                 </QuizCard>
