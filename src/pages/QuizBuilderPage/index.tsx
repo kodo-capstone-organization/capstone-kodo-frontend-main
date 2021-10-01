@@ -101,7 +101,7 @@ function QuizBuilderPage(props: any) {
             setQuizQuestionArray(arrayWtihDraggableId);
             // setQuizQuestionArray(res)
         }).catch((err) => { console.log("error:getAllQuizQuestionsByQuizId", err) });
-    }, [contentId, loggedInAccountId, history])
+    }, [contentId])
 
     useEffect(() => {
         console.log("qn array updted", quizQuestionArray)

@@ -27,7 +27,7 @@ function MyProfilePage(props: any) {
             // No logged in account id found in session storage, redirect to login
             history.push('/login');
         }
-    }, [history])
+    }, [])
 
     // To update isIndexPage
     useEffect(() => {

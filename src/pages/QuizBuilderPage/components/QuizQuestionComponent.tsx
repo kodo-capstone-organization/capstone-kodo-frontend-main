@@ -36,7 +36,7 @@ function QuizQuestionComponent(props: any) {
         setContent(props.question.content)
         setMarks(props.question.marks)
         setQuestionType(props.question.questionType)
-    }, [props.question, props.disabled, props.questionIndex])
+    }, [props.question])
 
     // useEffect(() => {
     //     console.log("handleTYpechange", updatedQuestion)

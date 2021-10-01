@@ -41,7 +41,7 @@ function CourseOverview(props: any) {
     getEnrolledCourseByStudentIdAndCourseId(accountId, courseId).then(receivedEC => {
       setEnrolledCourse(receivedEC)
     })
-  }, [accountId, courseId]);
+  }, []);
 
   //if current logged in user is enrolled in this course, returns true
   function courseIsEnrolled(): boolean {

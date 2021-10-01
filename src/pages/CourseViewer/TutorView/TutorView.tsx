@@ -51,7 +51,7 @@ function TutorView(props: any) {
     getEnrolledCoursesWithStudentCompletion(currentCourse.courseId).then(receivedList => {
       setEnrolledStudentsAndCompletion(receivedList);
     });
-  }, [props.course, currentCourse.courseId]);
+  }, []);
 
   return (
     <TutorContainer>

@@ -44,7 +44,7 @@ function CoursePreviewPage(props: any) {
     getMyAccount(accountId).then(receivedAccount => {
       setUser(receivedAccount);
     });
-  }, [courseId, accountId]);
+  }, []);
 
   const invokeStripeSessionCreation = () => {
     if (currentCourse !== undefined && currentUser !== undefined) {

@@ -83,7 +83,7 @@ function LessonViewer(props: any) {
         setLoading(false)
       });
     }
-  }, [accountId, courseId, lessonId]);
+  }, []);
 
   function formatDate(date: Date): string {
     var d = new Date(date);
