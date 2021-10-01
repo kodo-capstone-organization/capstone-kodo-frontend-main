@@ -143,7 +143,7 @@ function QuizBuilderPage(props: any) {
             value = "59";
         } else if (value < 0) {
             value = "00";
-        } else if (value < 10){
+        } else if (value < 10) {
             value = `0${value}`
         }
         setTimeLimitSeconds(value);
@@ -222,17 +222,15 @@ function QuizBuilderPage(props: any) {
     }
 
     const handleChangeFromQuestionBank = (questionBankQuestionIds: number[]) => {
-        console.log("handleChangeFromQuestionBank", questionBankQuestionIds);
-        var i;
-        var mapDraggable = draggableId + 1 ;
-        for (i = 0; i < questionBankQuestionIds.length; i++) {
-            getQuizQuestionByQuizQuestionId(questionBankQuestionIds[i]).then((res) => {
+        var mapDraggable = draggableId + 1;
+        questionBankQuestionIds.map((id) => {
+            getQuizQuestionByQuizQuestionId(id).then((res) => {
                 console.log("Success in handleChangeFromQuestionBank", res);
-                const newQuestionFromBank = Object.assign(res, { quizQuestionId: null, draggableId: mapDraggable });
+                const withDraggableId = Object.assign(res, { draggableId: mapDraggable });
                 mapDraggable++;
-                quizQuestionArray.push(newQuestionFromBank);
+                quizQuestionArray.push(withDraggableId);
             }).catch((err) => { console.log("Error in handleChangeFromQuestionBank", err); })
-        }
+        })
         setDraggableId(mapDraggable);
     }
 
