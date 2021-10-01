@@ -6,6 +6,8 @@ import { colours } from "../../../values/Colours";
 import { fontSizes } from "../../../values/FontSizes";
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
+import ImageIcon from '@material-ui/icons/Image';
+import { MdKeyboardArrowRight, MdArrowForward } from "react-icons/md";
 import * as FaIcons from 'react-icons/fa'
 
 export const LessonContainer = styled.div`
@@ -108,6 +110,10 @@ export const PlayIcon = styled(PlayCircleFilledIcon)`
   padding-right: 8px;
 `;
 
+export const Image = styled(ImageIcon)`
+  padding-right: 8px;
+`;
+
 export const QuizWrapper = styled.div`
     display: grid;
     grid-template-columns: 1fr;
@@ -181,10 +187,25 @@ export const ExitText = styled.p`
 
 `
 
+export const NextBtnWrapper = styled.div`
+  display: ${({ lessonCompleted }) =>
+  (lessonCompleted) ? "flex" : "none"};;
+  justify-content: flex-end;
+  align-items: center;
+`
+
 export const ZipIcon = styled(FaIcons.FaFileArchive)`
   padding-right: 8px;
   height: 22px;
   width: auto;
 
 `
+export const ArrowForward = styled(MdArrowForward)`
+  margin-left: 8px;
+  font-size: 20px;
+`;
+export const ArrowRight = styled(MdKeyboardArrowRight)`
+  margin-left: 8px;
+  font-size: 20px;
+`;
 
