@@ -35,9 +35,6 @@ function AttemptQuizComponent(props: any) {
     const [initialSeconds, setInitalSeconds] = useState<number>();
     const [initialMinutes, setInitialMinutes] = useState<number>();
 
-
-
-
     useEffect(() => {
         if (props.enrolledContentId != undefined) {
             console.log(props.enrolledContentId)

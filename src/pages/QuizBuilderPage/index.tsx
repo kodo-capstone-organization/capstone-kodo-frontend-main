@@ -28,12 +28,15 @@ function QuizBuilderPage(props: any) {
     const [maxAttempts, setMaxAttempts] = useState<number>();
     const [timeLimitHours, setTimeLimitHours] = useState<string>("00");
     const [timeLimitMinutes, setTimeLimitMinutes] = useState<string>("00");
-    const [quizQuestionArray, setQuizQuestionArray] = useState<QuizQuestion[]>([]); //updated at first render and question & option updates
+    // const [quizQuestionArray, setQuizQuestionArray] = useState<QuizQuestion[]>([]); //updated at first render and question & option updates
+    const [quizQuestionArray, setQuizQuestionArray] = useState<any[]>([]); //updated at first render and question & option updates, incl draggableId
     const [quiz, setQuiz] = useState<Quiz>(); //only updated at first render & after submit
     const [updatedQuiz, setUpdatedQuiz] = useState<Quiz>(); // updated with every field change
     const loggedInAccountId = window.sessionStorage.getItem("loggedInAccountId");
     const [isDisabled, setIsDisabled] = useState<boolean>(false);
     const history = useHistory();
+    const [draggableId, setDraggableId] = useState<number>(0);
+
 
     useEffect(() => {
         getAccountByQuizId(contentId).then((res) => {
@@ -55,7 +58,16 @@ function QuizBuilderPage(props: any) {
             setTimeLimitMinutes(`${res.timeLimit.charAt(6)}${res.timeLimit.charAt(7)}`);
         }).catch((err) => { console.log("error:getQuizByQuizId", err) });
         getAllQuizQuestionsByQuizId(contentId).then((res) => {
-            setQuizQuestionArray(res)
+            var arrayWtihDraggableId = []
+            var mapDraggable = 0;
+            res.map((question) => {
+                const withDraggableId = Object.assign(question, { draggableId: mapDraggable });
+                arrayWtihDraggableId = arrayWtihDraggableId.concat([withDraggableId]);
+                mapDraggable++;
+            })
+            setDraggableId(mapDraggable);
+            setQuizQuestionArray(arrayWtihDraggableId);
+            // setQuizQuestionArray(res)
         }).catch((err) => { console.log("error:getAllQuizQuestionsByQuizId", err) });
     }, [contentId])
 
@@ -65,13 +77,16 @@ function QuizBuilderPage(props: any) {
 
     const addNewQuestion = () => {
         if (quiz !== undefined) {
-            const newQuizQuestion: QuizQuestion = {
+            const newDraggableId = draggableId + 1;
+            setDraggableId(newDraggableId);
+            const newQuizQuestion: any = {
                 quizQuestionId: null,
                 content: "",
                 questionType: "MCQ",
                 marks: 1,
                 quiz: quiz,
-                quizQuestionOptions: []
+                quizQuestionOptions: [],
+                draggableId : newDraggableId
             }
             quizQuestionArray.push(newQuizQuestion);
         }
@@ -130,10 +145,20 @@ function QuizBuilderPage(props: any) {
 
     const handleSubmit = () => {
         if (updatedQuiz !== undefined) {
-            const quizQuestionOptionLists = quizQuestionArray.map((question) => question.quizQuestionOptions)
+            var quizQuestionOptionLists = quizQuestionArray;
+            quizQuestionOptionLists = quizQuestionOptionLists.map((question) => question.quizQuestionOptions)
+            var quizQuestions = quizQuestionArray;
+            quizQuestions = quizQuestions.map((question) => question = {
+                quizQuestionId: question.quizQuestionId,
+                content: question.content,
+                questionType: question.questionType,
+                marks: question.marks,
+                quiz: question.quiz,
+                quizQuestionOptions: question.quizQuestionOptions
+            })
             const updateQuizReq: UpdateQuizReq = {
                 quiz: updatedQuiz,
-                quizQuestions: quizQuestionArray,
+                quizQuestions,
                 quizQuestionOptionLists
             }
             console.log("handle submit", updateQuizReq)
@@ -141,7 +166,7 @@ function QuizBuilderPage(props: any) {
                 .then((res) => { console.log("Success updating quiz", res); setQuiz(res); })
                 .catch((err) => { console.log("error updating quiz", err) });
         }
-        window.location.reload(false);
+        // window.location.reload(false);
     }
 
     const handleUpdateQuestion = (updatedQuizQuestion: QuizQuestion, index: number) => {
@@ -177,7 +202,9 @@ function QuizBuilderPage(props: any) {
         for (i = 0; i < questionBankQuestionIds.length; i++) {
             getQuizQuestionByQuizQuestionId(questionBankQuestionIds[i]).then((res) => {
                 console.log("Success in handleChangeFromQuestionBank", res);
-                const newQuestionFromBank = Object.assign(res, { quizQuestionId: null });
+                const newQuestionFromBank = Object.assign(res, { quizQuestionId: null, draggableId });
+                const newDraggableId = draggableId + 1;
+                setDraggableId(newDraggableId);
                 const newQuestionArray = quizQuestionArray.concat([newQuestionFromBank]);
                 setQuizQuestionArray(newQuestionArray);
             }).catch((err) => { console.log("Error in handleChangeFromQuestionBank", err); })
@@ -197,7 +224,7 @@ function QuizBuilderPage(props: any) {
     const mapQuestionArray = (questionArray: QuizQuestion[]) => {
         return (
             <div>
-                {questionArray.map(function (q, qId) {
+                {questionArray.length> 0 && questionArray.map(function (q, qId) {
                     return (
 
                         isDisabled ?
@@ -206,7 +233,7 @@ function QuizBuilderPage(props: any) {
                                     onUpdateQuestion={handleUpdateQuestion} onUpdateQuizQuestionOptions={handleQuizQuestionOptionUpdate} />
                             </QuizQuestionCard>
                             :
-                            <Draggable key={q.quizQuestionId} draggableId={q.quizQuestionId.toString()} index={qId}>
+                            <Draggable key={q.draggableId} draggableId={q.draggableId.toString()} index={qId}>
                                 {(provided) => (
                                     <QuizQuestionCard ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
                                         <QuizQuestionComponent disabled={isDisabled} question={q} questionIndex={qId}
