@@ -186,12 +186,17 @@ function LessonViewer(props: any) {
                   previousCompleted={previousLessonCompleted()}
                   to={`/overview/lesson/${courseId}/${lessonId}/${m.contentId}`}
                 >
+                  {m.multimediaType === "PDF" && <ReadingIcon />}
                   {m.multimediaType === "DOCUMENT" && <ReadingIcon />}
+                  {m.multimediaType === "IMAGE" && <ReadingIcon/>}
                   {m.multimediaType === "VIDEO" && <PlayIcon />}
                   {m.multimediaType === "ZIP" && <ZipIcon />}
+                  {m.multimediaType === "PDF" && "PDF: " + m.name}
                   {m.multimediaType === "DOCUMENT" && "Reading: " + m.name } 
+                  {m.multimediaType === "IMAGE" && "Image: " + m.name}
                   {m.multimediaType === "VIDEO" && "Video: " + m.name }
-                  {m.multimediaType === "ZIP" && "Zip: " + m.name }                  
+                  {m.multimediaType === "ZIP" && "Zip: " + m.name }  
+                                  
                   {checkCompleted(m.contentId) &&
                     <CheckIcon />
                   }
