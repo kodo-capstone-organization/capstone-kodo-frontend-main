@@ -1,13 +1,22 @@
 import React, { useState, useEffect } from 'react';
+
+import DeleteIcon from '@material-ui/icons/Delete';
+import {
+    Box, 
+    FormControl, 
+    IconButton,
+    InputLabel, 
+} from "@material-ui/core";
+
 import { Quiz } from '../../../apis/Entities/Quiz';
 import { QuizQuestion } from "../../../apis/Entities/QuizQuestion";
 import { QuizQuestionOption } from '../../../apis/Entities/QuizQuestionOption';
+
 import QuizQuestionOptionsList from "./QuizQuestionOptionsList"
-import {
-    Box, FormControl, InputLabel, Divider, IconButton
-} from "@material-ui/core";
-import DeleteIcon from '@material-ui/icons/Delete';
-import { QuizBuilderTextInput, QuizSelectMenu } from "../QuizBuilderElements";
+import { 
+    QuizBuilderTextInput, 
+    QuizSelectMenu 
+} from "../QuizBuilderElements";
 
 
 const questionTypes = [

@@ -1,13 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { QuizQuestion } from '../../../apis/Entities/QuizQuestion';
-import { QuizQuestionOption } from '../../../apis/Entities/QuizQuestionOption';
+
 import DeleteIcon from '@material-ui/icons/Delete';
 import {
-    Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Checkbox, Paper, IconButton, TextField,
-    Radio
+    Checkbox, 
+    IconButton, 
+    Paper, 
+    Radio,
+    Table, 
+    TableBody, 
+    TableCell, 
+    TableContainer, 
+    TableHead, 
+    TableRow, 
+    TextField,
 } from "@material-ui/core";
+
+import { QuizQuestion } from '../../../apis/Entities/QuizQuestion';
+import { QuizQuestionOption } from '../../../apis/Entities/QuizQuestionOption';
+
 import { AddQuizOptionButton } from "../QuizBuilderElements";
-import { Button } from "../../../values/ButtonElements";
 
 
 interface IQuestionOption {
