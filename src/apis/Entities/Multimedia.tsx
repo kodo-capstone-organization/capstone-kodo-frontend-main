@@ -19,6 +19,7 @@ export enum MultimediaType {
     ZIP = "ZIP",
     DOCUMENT = "DOCUMENT",
     EMPTY = "",
+    PDF = "PDF"
 }
 
 export interface MultimediaReq {
