@@ -56,6 +56,9 @@ function CourseBuilderPage(props: any) {
             }) 
         });
         getAllTags().then((res: any)=> setTagLibrary(res)).catch(() => console.log("error getting tags."))
+    }, [courseId]);
+
+    useEffect(() => {
         if (courseFormData.tutor != null) {
             const accountId = window.sessionStorage.getItem("loggedInAccountId");
 
@@ -64,7 +67,7 @@ function CourseBuilderPage(props: any) {
                 setLoading(false);
             }
         }
-    }, [courseId, courseFormData.tutor]);
+    }, [courseFormData.tutor])
 
     const handleChipInputChange = (e: object, value: String[], reason: string) => {
         let wrapperEvent = {
