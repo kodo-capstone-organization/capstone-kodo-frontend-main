@@ -71,11 +71,9 @@ function MarkedQuizComponent(props: any) {
             const studentAttemptAnswerList = q.studentAttemptAnswers;
             var correct = true;
             studentAttemptAnswerList.map((studentAnswer) => {
-                return(studentAnswer.correct ? null: correct=false);
+                console.log(studentAnswer);
+                return(studentAnswer.correct ? score = score + studentAnswer.marks: correct=false);
             })
-            if(correct){
-                score= score + q.quizQuestion.marks
-            }
         })
         return `${score}/${totalMarks}`;
     }

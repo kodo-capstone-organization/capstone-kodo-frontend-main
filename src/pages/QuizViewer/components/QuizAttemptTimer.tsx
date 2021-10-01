@@ -9,6 +9,7 @@ function QuizAttemptTimer(props: any) {
     const [minutes, setMinutes] = useState(initialMinutes);
     const [seconds, setSeconds] = useState(initialSeconds);
     const [hours, setHours] = useState(initialHours);
+    
     const [isTimedOut, setIsTimedOut] = useState<boolean>(false);
 
     useEffect(() => {        
@@ -18,16 +19,14 @@ function QuizAttemptTimer(props: any) {
             }
             if (seconds === 0) {
                 if (minutes === 0) {
-                    console.log('QuizAttemptTimer minutes == 0', myInterval)
-                    clearInterval(myInterval)
-                    setIsTimedOut(true);
-                    props.onTimeOut(true);
-                    // if(hours === 0){
-                    // }else{
-                    //     setHours(hours-1);
-                    //     setMinutes(59);
-                    //     setSeconds(59);
-                    // }
+                    if (hours === 0) {
+                        clearInterval(myInterval);
+                        props.onTimeOut(true);
+                    } else {
+                        setHours(hours - 1);
+                        setMinutes(59);
+                        setSeconds(59);
+                    }
                 } else {
                     setMinutes(minutes - 1);
                     setSeconds(59);
@@ -41,9 +40,9 @@ function QuizAttemptTimer(props: any) {
 
     return (
         <>
-        <div id="timer">
-            <h1 style={{ textAlign: "center" }}> Time Left: {hours < 10 ? `0${hours}` : hours}:{minutes < 10 ? `0${minutes}` : minutes}:{seconds < 10 ? `0${seconds}` : seconds}</h1>
-        </div>
+            <div id="timer">
+                <h1 style={{ textAlign: "center" }}> Time Left: {hours < 10 ? `0${hours}` : hours}:{minutes < 10 ? `0${minutes}` : minutes}:{seconds < 10 ? `0${seconds}` : seconds}</h1>
+            </div>
         </>
     )
 }
