@@ -25,7 +25,7 @@ function QuizQuestionComponent(props: any) {
     const [question, setQuestion] = useState<QuizQuestion>();
     // const [updatedQuestion, setUpdatedQuestion] = useState<QuizQuestion>();
     const [isDisabled, setIsDisabled] = useState<boolean>(false);
-    const [content, setContent] = useState<string>();
+    const [content, setContent] = useState<string>("");
     const [questionIndex, setQuestionIndex] = useState<number>();
 
     useEffect(() => {
@@ -129,7 +129,7 @@ function QuizQuestionComponent(props: any) {
 
                 <div>
                     {
-                        content &&
+                        // content ! &&
                         <QuizBuilderTextInput disabled={isDisabled}  id="question-input" label="Question" variant="standard" value={content} onChange={handleContentChange} />
                     }
                 </div>
