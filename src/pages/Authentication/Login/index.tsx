@@ -145,11 +145,11 @@ function Login() {
         .catch(err => setLoginFailed("Login Failed! Please use valid credentials!"));
     }
 
-    const loginCallback = (username: any, password: any, accountId: any) => {
+    const loginCallback = (username: string, password: string, accountId: number) => {
 
         // res is the last param (though not shown in the callback) since its a binded function
         // Set to local storage
-        window.sessionStorage.setItem("loggedInAccountId", accountId);
+        window.sessionStorage.setItem("loggedInAccountId", JSON.stringify(accountId));
         window.sessionStorage.setItem("loggedInAccountUsername", username);
         window.sessionStorage.setItem("loggedInAccountPassword", password);
         history.push('/');
