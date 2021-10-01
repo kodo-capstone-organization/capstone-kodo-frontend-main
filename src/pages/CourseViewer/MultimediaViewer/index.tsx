@@ -32,6 +32,8 @@ import {
 import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
 import { EnrolledContent } from "../../../apis/Entities/EnrolledContent";
 import { useHistory } from "react-router-dom";
+import { Button } from "../../../values/ButtonElements";
+import { setDateTimeOfCompletionOfEnrolledContentByAccountIdAndContentId } from "../../../apis/EnrolledContent/EnrolledContentApis";
 
 function MultimediaViewer(props: any) {
   const contentId = props.match.params.contentId;
@@ -69,14 +71,14 @@ function MultimediaViewer(props: any) {
       return `https://docs.google.com/gview?url=https://storage.googleapis.com/capstone-kodo-bucket/${currentMultimedia?.urlFilename}&embedded=true`
   }
 
-  // const completeMultimedia = () => {
-  //   setDateTimeOfCompletionOfEnrolledContentByAccountIdAndContentId(true, accountId, contentId)
-  //     .then((res: EnrolledContent) => {
-  //       props.callOpenSnackBar("Multimedia completed", "success");
-  //       history.push(`/overview/lesson/${courseId}/${lessonId}`);
-  //     })
-  //     .catch(err => props.callOpenSnackBar(err.response.data.message, "error"))
-  // }
+  const completeMultimedia = () => {
+    setDateTimeOfCompletionOfEnrolledContentByAccountIdAndContentId(true, accountId, contentId)
+      .then((res: EnrolledContent) => {
+        props.callOpenSnackBar("Multimedia completed", "success");
+        history.push(`/overview/lesson/${courseId}/${lessonId}`);
+      })
+      .catch(err => props.callOpenSnackBar(err.response.data.message, "error"))
+  }
 
   return (
     <>
@@ -96,6 +98,14 @@ function MultimediaViewer(props: any) {
           <MultimediaDescription> Description: {currentMultimedia?.description}</MultimediaDescription>
         </MultimediaCard>
 
+        <div id="action-row" style={{ display: "flex", flexDirection: "row", justifyContent: "flex-end"}}>
+          <DownloadFile multimediaName={currentMultimedia?.name} multimediaUrl={currentMultimedia?.url} />
+          &nbsp;&nbsp;
+          <Button primary onClick={completeMultimedia}>
+            Mark as Done
+          </Button>
+        </div>
+
         {currentMultimedia && currentMultimedia.multimediaType === "VIDEO" &&
           <VideoCard>
             <ReactPlayer
@@ -105,7 +115,7 @@ function MultimediaViewer(props: any) {
           </VideoCard>
         }
 
-        {currentMultimedia && currentMultimedia.multimediaType === "PDF" &&
+        {currentMultimedia && currentMultimedia?.multimediaType === "PDF" &&
           <PDFCard>
             <PDFViewer doc={currentMultimedia.url} />
           </PDFCard>
@@ -124,13 +134,10 @@ function MultimediaViewer(props: any) {
 
         {currentMultimedia?.multimediaType === "DOCUMENT" &&
           <DocumentCard>
-            <iframe
-              width="560" height="780" src={getUrlForDocument()}>
+            <iframe title="docx-view" width="560" height="780" src={getUrlForDocument()}>
             </iframe>
           </DocumentCard>
         }
-
-        <DownloadFile multimediaName={currentMultimedia?.name} multimediaUrl={currentMultimedia?.url} />
 
       </MultimediaContainer>
     </>

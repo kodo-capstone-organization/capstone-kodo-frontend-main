@@ -43,11 +43,9 @@ function DownloadFile(props: any) {
 	}
 
 	return (
-		<BtnWrapper>
-			<Button primary onClick={downloadEmployeeData}>
-				Download
-			</Button>
-		</BtnWrapper>
+		<Button onClick={downloadEmployeeData}>
+			Download
+		</Button>
 	)
 }
 

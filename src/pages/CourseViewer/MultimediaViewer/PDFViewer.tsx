@@ -23,13 +23,10 @@ function PDFViewer(props: any) {
         changePage(1);
     }
 
-    const { doc } = props;
-
     return (
         <>
             <Document
-                file={doc}
-                // options={{ workerSrc: "/pdf.worker.js" }}
+                file={props.doc}
                 onLoadSuccess={onDocumentLoadSuccess}
             >
                 <Page pageNumber={pageNumber} />
