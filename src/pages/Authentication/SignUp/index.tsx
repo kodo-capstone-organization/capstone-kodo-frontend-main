@@ -213,15 +213,13 @@ function SignUp(props: any) {
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
-                    marginTop: "1.5em",
+                    marginTop: "10rem",
                     color: "#000000",
                     background: "white",
                 }}
             >
                 <SignUpPaper elevation={3}>
                     <SignUpPaperWrapper>
-                        { showErrors() }
-                        <br />
                         <Typography color="primary" variant="h4">
                             <strong>Sign Up</strong>
                         </Typography>
@@ -360,7 +358,9 @@ function SignUp(props: any) {
                                     )}
                                 />
                                 <br />
-                                <Button onClick={handleValidation}>Sign Up</Button>
+                                { showErrors() }
+                                <br />
+                                <Button primary big fontBig onClick={handleValidation}>Sign Up</Button>
                             </SignUpForm>
                         </form>
                     </SignUpPaperWrapper>
