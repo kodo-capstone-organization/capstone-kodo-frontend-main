@@ -356,7 +356,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
         aria-describedby="simple-modal-description">
             <DialogTitle>Add a new Multimedia</DialogTitle>
             <DialogContent
-              style={{height: '300px'}}>
+              style={{height: '40vh'}}>
               <DialogContentText>
                 First, enter some basic details about the new multimedia below.
               </DialogContentText>
@@ -734,7 +734,7 @@ export default function MultimediaTable(props: any) {
         >
             <DialogTitle>Multimedia Preview</DialogTitle>
             <DialogContent
-              style={{height: '300px'}}>
+              style={{height: '40vh'}}>
               <FormControl fullWidth margin="normal">
                 <InputLabel htmlFor="multimedia-name">Multimedia Name</InputLabel>
                 <Input
@@ -775,7 +775,7 @@ export default function MultimediaTable(props: any) {
         >
             <DialogTitle>Update an existing Multimedia</DialogTitle>
             <DialogContent
-              style={{height: '300px'}}>
+              style={{height: '40vh'}}>
               <FormControl fullWidth margin="normal">
                 <InputLabel htmlFor="multimedia-name">Multimedia Name</InputLabel>
                 <Input

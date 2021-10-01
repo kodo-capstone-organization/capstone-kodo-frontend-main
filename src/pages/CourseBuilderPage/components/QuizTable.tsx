@@ -310,7 +310,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
         aria-describedby="simple-modal-description">
             <DialogTitle>Add a new Quiz</DialogTitle>
             <DialogContent
-              style={{height: '300px'}}>
+              style={{height: '40vh'}}>
               <DialogContentText>
                 First, enter some basic details about the new quiz below.
               </DialogContentText>
