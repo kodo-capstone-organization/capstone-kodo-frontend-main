@@ -91,7 +91,7 @@ function CourseOverview(props: any) {
     <LayoutContainer>
       { (courseIsEnrolled() || isCourseTutor()) &&
           <>
-            <Sidebar course={currentCourse}/>
+            <Sidebar course={currentCourse} isTutorView={isCourseTutor()}/>
             <LayoutContentPage showSideBar style={{ paddingRight: "10rem"}}>
               { isCourseTutor() && <TutorView course={currentCourse}/>  }
               { courseIsEnrolled() && <StudentView course={currentCourse} account={currentUser} enrolledCourse={enrolledCourse}/> }
