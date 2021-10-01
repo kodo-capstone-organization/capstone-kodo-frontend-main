@@ -107,7 +107,7 @@ function MultimediaModal(props: any) {
                                 <TableHead>
                                     <TableRow>
                                         <StyledTableCell>Name</StyledTableCell>
-                                        {data[0]?.url && <StyledTableCell >URL</StyledTableCell>}
+                                        {/* {data[0]?.url && <StyledTableCell >Date Time Of Completion</StyledTableCell>} */}
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
@@ -117,7 +117,7 @@ function MultimediaModal(props: any) {
                                                 {row.name}
                                             </StyledTableCell>
                                             {/* // @ts-ignore */}
-                                            {row.url && <StyledTableCell><Link onClick={() => { window.open(row.url, "_blank") }}>{row.url}</Link></StyledTableCell>}
+                                            {/* {row.url && <StyledTableCell><Link onClick={() => { window.open(row.url, "_blank") }}>{row.url}</Link></StyledTableCell>} */}
                                         </StyledTableRow>
                                     ))}
                                 </TableBody>
