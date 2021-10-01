@@ -98,9 +98,20 @@ function QuizQuestionOptionsList(props: any) {
                 : x)
         });
         setQuizQuestionOptions(newQuizQuestionOptions);
-        console.log("option to update", event.target.value)
+        console.log("option to update", newQuizQuestionOptions)
         if (event.target.value !== "") {
             console.log("non-empty option to update", event.target.value)
+            props.onHandleQuizQuestionOptionUpdate(newQuizQuestionOptions, questionIndex)
+        }
+    }
+
+    const handleRightContentChange = (event: any) => {
+        const newQuizQuestionOptions = quizQuestionOptions?.map((x, index) => {
+            return (index === parseInt(event.index) ? Object.assign(x, { rightContent: event.target.value })
+                : x)
+        });
+        setQuizQuestionOptions(newQuizQuestionOptions);
+        if (event.target.value !== "") {
             props.onHandleQuizQuestionOptionUpdate(newQuizQuestionOptions, questionIndex)
         }
     }
@@ -224,10 +235,10 @@ function QuizQuestionOptionsList(props: any) {
                                     key={index}
                                 >
                                     <TableCell component="th" scope="row">
-                                        <TextField disabled={isDisabled} key={index} value={quizQuestionOptions[index].leftContent} onChange={handleLeftContentChange} />
+                                        <TextField disabled={isDisabled} key={index} value={quizQuestionOptions[index].leftContent} onChange={e => { Object.assign(e, { index }); handleLeftContentChange(e); }}  />
                                     </TableCell>
                                     <TableCell component="th" scope="row">
-                                        <TextField disabled={isDisabled} key={index} value={quizQuestionOptions[index].rightContent} />
+                                        <TextField disabled={isDisabled} key={index} value={quizQuestionOptions[index].rightContent} onChange={e => { Object.assign(e, { index }); handleRightContentChange(e); }} />
                                     </TableCell>
                                     <TableCell align="right">
                                         <Checkbox
