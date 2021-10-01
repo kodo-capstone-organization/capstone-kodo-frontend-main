@@ -64,7 +64,7 @@ function ViewQuizAttemptsModal(props: any) {
 
   return (
     <>
-      <Button onClick={handleOpen}>
+      <Button disabled={props.isButtonDisabled} onClick={handleOpen}>
         View Previous Attempts
       </Button>
       <Dialog open={open} onClose={handleClose} maxWidth={false} classes={{ paper: classes.dialogPaper }}>

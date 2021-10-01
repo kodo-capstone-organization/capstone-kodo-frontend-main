@@ -168,7 +168,7 @@ function ProfileSettings(props: any) {
     const showErrors = () => {
         if (updateAccountFailed)
         {
-            return(<Alert variant="filled" severity="error">{updateAccountFailed}</Alert>);
+            return(<Alert severity="error">{updateAccountFailed}</Alert>);
         }
         else
         {

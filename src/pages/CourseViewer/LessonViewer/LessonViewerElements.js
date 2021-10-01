@@ -25,7 +25,7 @@ export const PageHeadingAndButton = styled.div`
 `
 
 export const PageHeading = styled.div`
-  padding-left:19px;
+
 `
 
 export const LessonTitle = styled.div`

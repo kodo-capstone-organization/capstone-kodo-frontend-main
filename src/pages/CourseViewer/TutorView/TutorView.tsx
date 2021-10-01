@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from "react";
 import {
-  getEnrolledCourseByStudentIdAndCourseId,
-  setCourseRatingByEnrolledCourseId,
   getEnrolledCoursesWithStudentCompletion
 } from "../../../apis/EnrolledCourse/EnrolledCourseApis";
-import { getAccountByEnrolledCourseId } from "../../../apis/Account/AccountApis";
 import { EnrolledCourseWithStudentResp } from "../../../apis/Entities/EnrolledCourse";
 import { Course } from "../../../apis/Entities/Course";
 import { EnrolledLesson } from "../../../apis/Entities/EnrolledLesson";
@@ -92,7 +89,8 @@ function TutorView(props: any) {
                 <>
                   <p>{enrolledCourse.studentName}</p>
                   <LinearProgressWithLabel
-                    value={enrolledCourse.completionPercentage * 100}
+                      key={enrolledCourse.enrolledCourseId}
+                      value={enrolledCourse.completionPercentage * 100}
                   />
                 </>
               );

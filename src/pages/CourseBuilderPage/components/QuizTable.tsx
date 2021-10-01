@@ -414,7 +414,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
               </Button>
             </DialogActions>
             <DialogContent>
-              {validationErrorMessage && <Alert variant="filled" severity="error">{validationErrorMessage}</Alert>}
+              {validationErrorMessage && <Alert severity="error">{validationErrorMessage}</Alert>}
             </DialogContent>
     </Dialog>
     <Toolbar

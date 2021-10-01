@@ -160,7 +160,7 @@ function Login() {
     const showReactivateErrors = () => {
         if (reactivateFailed)
         {
-            return(<Alert variant="filled" severity="error">{reactivateFailed}</Alert>);
+            return(<Alert severity="error">{reactivateFailed}</Alert>);
         }
         else
         {
@@ -171,7 +171,7 @@ function Login() {
     const showLoginErrors = () => {
         if (loginFailed)
         {
-            return(<Alert variant="filled" severity="error">{loginFailed}</Alert>);
+            return(<Alert severity="error">{loginFailed}</Alert>);
         }
         else
         {

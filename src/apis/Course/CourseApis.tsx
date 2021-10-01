@@ -94,3 +94,11 @@ export async function toggleEnrollmentActiveStatus(courseId: number, requestingA
 
     return httpClient.delete<undefined, ToggleCourseResp>(deleteParameters);
 }
+
+export async function getCourseWithoutEnrollmentByCourseId(courseId: number): Promise<Course> {
+    const getParameters: IHttpClientRequestParameters<undefined> = {
+        url: `/course/getCourseWithoutEnrollmentByCourseId/${courseId}`
+    }
+
+    return httpClient.get<undefined, Course>(getParameters);
+}
