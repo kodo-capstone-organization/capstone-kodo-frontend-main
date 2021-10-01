@@ -157,8 +157,8 @@ function QuizBuilderPage(props: any) {
     const handleTimeLimitHoursChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         var value: any = parseInt(e.target.value);
         var resetMinutes = timeLimitMinutes;
-        if (value > 24) {
-            value = "24";
+        if (value > 23) {
+            value = "23";
         } else if (value <= 0) {
             value = "00";
             resetMinutes = "15";
@@ -361,7 +361,7 @@ function QuizBuilderPage(props: any) {
                                     autoFocus
                                     value={timeLimitHours}
                                     onChange={handleTimeLimitHoursChange}
-                                    inputProps={{ min: 0, max: 24 }}
+                                    inputProps={{ min: 0, max: 23 }}
                                 />
                             </Grid>
                             <Grid item xs={6}>
