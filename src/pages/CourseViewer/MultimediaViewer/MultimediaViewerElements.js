@@ -70,12 +70,18 @@ export const ImageCard = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  text-align:center
 `;
 
 export const BtnWrapper = styled.div`
+  height: auto;
+  width: auto;
+  display: flex;
   margin-left: 1rem;
   margin-top: -8px;
-`
+  justify-content: center;
+`;
+
 export const MultimediaHeader = styled.div`
   font-size: ${fontSizes.CONTENT};
   color: ${colours.GRAY3};

@@ -1,28 +1,15 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { withRouter } from "react-router";
 import { getCourseByCourseId } from "../../../apis/Course/CourseApis";
 import { getLessonByLessonId } from "../../../apis/Lesson/LessonApis";
-import { getMyAccount } from "../../../apis/Account/AccountApis";
-import { getEnrolledLesson } from "../../../apis/EnrolledLesson/EnrolledLessonApis";
-import { getEnrolledCourseByStudentIdAndCourseId } from "../../../apis/EnrolledCourse/EnrolledCourseApis";
 import { getMultimediaByMultimediaId } from "../../../apis/Multimedia/MultimediaApis";
 import { Multimedia } from "../../../apis/Entities/Multimedia";
 import { Course } from "../../../apis/Entities/Course";
 import { Lesson } from "../../../apis/Entities/Lesson";
-import { Account } from "../../../apis/Entities/Account";
-import { Quiz } from "../../../apis/Entities/Quiz";
-import { EnrolledLesson } from "../../../apis/Entities/EnrolledLesson";
-import { EnrolledCourse } from "../../../apis/Entities/EnrolledCourse";
-import { QuizWithStudentAttemptCountResp } from "../../../apis/Entities/Quiz"
 
-import { Button } from "../../../values/ButtonElements";
 import { colours } from "../../../values/Colours";
 import ReactPlayer from "react-player";
-import { Document, Page, pdfjs } from "react-pdf";
-import DocViewer, { DocViewerRenderers } from "react-doc-viewer";
-import { DocumentViewer } from 'react-documents';
-import FileViewer from 'react-file-viewer';
-import { saveAs } from "file-saver";
+import { pdfjs } from "react-pdf";
 import PDFViewer from "./PDFViewer";
 import DownloadFile from "./DownloadFile";
 
@@ -73,6 +60,10 @@ function MultimediaViewer(props: any) {
     setNumPages(numPages);
   }
 
+  function getUrlForDocument() {
+    return `https://docs.google.com/gview?url=https://storage.googleapis.com/capstone-kodo-bucket/${currentMultimedia?.urlFilename}&embedded=true`
+  }
+
   return (
     <>
       <MultimediaContainer>
@@ -107,25 +98,25 @@ function MultimediaViewer(props: any) {
         }
 
         {currentMultimedia?.multimediaType === "IMAGE" &&
-          <ImageCard>
-            <img
-              // src="https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/54ac91ee-583b-4cfd-99e9-1540388bb952.png?generation=1632977979927790&alt=media"
-              src={currentMultimedia.url}
-              width="600"
-              style={{ margin: '2px' }}
-            />
-          </ImageCard>
+          <div style={{ display: 'flex', justifyContent: 'center', flexDirection: 'row' }} >
+            <ImageCard>
+              <img
+                src={currentMultimedia.url}
+                width="600"
+              />
+            </ImageCard>
+          </div>
         }
 
         {currentMultimedia?.multimediaType === "DOCUMENT" &&
           <DocumentCard>
             <iframe
-              width="560" height="780" src="https://docs.google.com/gview?url=https://storage.googleapis.com/capstone-kodo-bucket/59f5e0e2-4352-4f32-8284-03358463acab.docx&embedded=true">
+              width="560" height="780" src={getUrlForDocument()}>
             </iframe>
           </DocumentCard>
         }
 
-        <DownloadFile multimediaType={currentMultimedia?.multimediaType} multimediaName={currentMultimedia?.name} multimediaUrl={currentMultimedia?.url} />
+        <DownloadFile multimediaName={currentMultimedia?.name} multimediaUrl={currentMultimedia?.url} />
 
       </MultimediaContainer>
     </>
