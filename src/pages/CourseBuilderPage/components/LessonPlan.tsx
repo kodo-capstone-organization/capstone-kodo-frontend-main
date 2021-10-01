@@ -72,7 +72,7 @@ function LessonPlan(props: any) {
     
     useEffect(() => {
         resetUpdateLessonErrorsMap()
-    }, [props.lessons, resetUpdateLessonErrorsMap])
+    }, [props.lessons])
 
     const openDialog = () => {
         setShowAddLessonDialog(true);
