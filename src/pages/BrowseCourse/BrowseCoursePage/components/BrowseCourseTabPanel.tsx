@@ -1,9 +1,10 @@
-import { useEffect } from "react";
-import { useState } from "react";
-import { Course } from "../../../../apis/Entities/Course";
-import CourseCard from "../../../../components/CourseCard";
-import { CourseWrapper } from "../BrowseCourseElements";
+import { useState, useEffect } from "react";
 
+import { Course } from "../../../../apis/Entities/Course";
+
+import CourseCard from "../../../../components/CourseCard";
+
+import { CourseWrapper } from "../BrowseCourseElements";
 
 function BrowseCourseTabPanel (props: any) {
     const [curTabIdx, setCurTabIdx] = useState<number>(0);

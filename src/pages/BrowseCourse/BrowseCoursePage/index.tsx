@@ -1,17 +1,29 @@
 import { useState, useEffect } from "react";
+
+import { Autocomplete } from "@material-ui/lab";
+import CircularProgress from '@material-ui/core/CircularProgress';
+import { 
+  Chip,
+  Tab, 
+  Tabs, 
+  TextField
+} from "@material-ui/core";
+
+import { Account } from "../../../apis/Entities/Account";
+import { Tag } from "../../../apis/Entities/Tag";
 import {
   Course,
   RecommendedCoursesWithTags
 } from "../../../apis/Entities/Course";
-import { Account } from "../../../apis/Entities/Account";
+
+import { getAllTags } from "../../../apis/Tag/TagApis";
+import { getMyAccount } from "../../../apis/Account/AccountApis";
+
 import {
   getAllCourses,
-  getCoursesToRecommend,
-  getAllCoursesThatArePopular
+  getAllCoursesThatArePopular,
+  getCoursesToRecommend
 } from "../../../apis/Course/CourseApis";
-import { getMyAccount } from "../../../apis/Account/AccountApis";
-import { Tag } from "../../../apis/Entities/Tag";
-import { getAllTags } from "../../../apis/Tag/TagApis";
 
 import {
   BrowseContainer,
@@ -22,10 +34,9 @@ import {
   SearchContainer,
   MessageContainer,
 } from "./BrowseCourseElements";
-import CircularProgress from '@material-ui/core/CircularProgress';
-import { TextField, Tabs, Tab, Chip } from "@material-ui/core";
+
 import { colours } from "../../../values/Colours";
-import { Autocomplete } from "@material-ui/lab";
+
 import BrowseCourseTabPanel from "./components/BrowseCourseTabPanel";
 
 function BrowseCourse() {
