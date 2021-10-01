@@ -45,15 +45,19 @@ function LinearProgressWithLabel(
 function TutorView(props: any) {
   const [currentCourse, setCourse] = useState<Course>({ ...props.course });
   const [enrolledStudentsAndCompletion, setEnrolledStudentsAndCompletion] = useState<EnrolledCourseWithStudentResp[]>();
+  const [loading, setLoading] = useState<Boolean>(true);
   
   useEffect(() => {
+    setLoading(true)
     setCourse(props.course);
     getEnrolledCoursesWithStudentCompletion(currentCourse.courseId).then(receivedList => {
       setEnrolledStudentsAndCompletion(receivedList);
+      setLoading(false)
     });
   }, []);
 
   return (
+    !loading &&
     <TutorContainer>
       <PageHeadingAndButton>
         <PageHeading>
