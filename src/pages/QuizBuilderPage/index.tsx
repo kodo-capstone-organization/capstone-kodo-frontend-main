@@ -136,7 +136,7 @@ function QuizBuilderPage(props: any) {
         setUpdatedQuiz(newQuiz);
     }
 
-    const handleTimeLimitHourseChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const handleTimeLimitHoursChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         var value: any = parseInt(e.target.value);
         if (value > 24) {
             value = "24";
@@ -163,22 +163,6 @@ function QuizBuilderPage(props: any) {
         }
         setTimeLimitMinutes(value);
         const timeLimit = `${timeLimitHours}:${value}:${timeLimitSeconds}`
-        const newQuiz = Object.assign(updatedQuiz, { timeLimit });
-        setUpdatedQuiz(newQuiz);
-    }
-
-    const handleTimeLimitSecondsChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        var value: any = parseInt(e.target.value);
-
-        if (value > 59) {
-            value = "59";
-        } else if (value < 0) {
-            value = "00";
-        } else if (value < 10) {
-            value = `0${value}`
-        }
-        setTimeLimitSeconds(value);
-        const timeLimit = `${timeLimitHours}:${timeLimitMinutes}:${value}`
         const newQuiz = Object.assign(updatedQuiz, { timeLimit });
         setUpdatedQuiz(newQuiz);
     }
@@ -326,7 +310,7 @@ function QuizBuilderPage(props: any) {
                             <Grid item xs={12}>
                                 <TextField disabled={isDisabled} required id="standard-basic" fullWidth value={name} label="Name" name="name" onChange={handleNameChange} />
                             </Grid>
-                            <Grid item xs={4}>
+                            <Grid item xs={6}>
                                 <InputLabel htmlFor="quiz-timelimit">Time Limit Hours</InputLabel>
                                 <Input
                                     disabled={isDisabled}
@@ -337,11 +321,11 @@ function QuizBuilderPage(props: any) {
                                     type="number"
                                     autoFocus
                                     value={timeLimitHours}
-                                    onChange={handleTimeLimitHourseChange}
-                                    inputProps={{ min: 0, max: 23 }}
+                                    onChange={handleTimeLimitHoursChange}
+                                    inputProps={{ min: 0, max: 24 }}
                                 />
                             </Grid>
-                            <Grid item xs={4}>
+                            <Grid item xs={6}>
                                 <InputLabel htmlFor="quiz-timelimit">Time Limit Minutes</InputLabel>
                                 <Input
                                     disabled={isDisabled}
@@ -353,22 +337,7 @@ function QuizBuilderPage(props: any) {
                                     autoFocus
                                     value={timeLimitMinutes}
                                     onChange={handleTimeLimitMinutesChange}
-                                    inputProps={{ min: 0, max: 59 }}
-                                />
-                            </Grid>
-                            <Grid item xs={4}>
-                                <InputLabel htmlFor="quiz-timelimit">Time Limit Seconds</InputLabel>
-                                <Input
-                                    disabled={isDisabled}
-                                    fullWidth
-                                    id="quiz-timelimit"
-                                    placeholder="Seconds"
-                                    name="timelimit"
-                                    type="number"
-                                    autoFocus
-                                    value={timeLimitSeconds}
-                                    onChange={handleTimeLimitSecondsChange}
-                                    inputProps={{ min: 0, max: 59 }}
+                                    inputProps={{ min: 15, max: 59 }}
                                 />
                             </Grid>
                             <Grid item xs={12}>

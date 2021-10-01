@@ -99,7 +99,6 @@ function QuizQuestionOptionsList(props: any) {
                 : x)
         });
         setQuizQuestionOptions(newQuizQuestionOptions);
-        console.log("option to update", newQuizQuestionOptions)
         if (event.target.value !== "") {
             console.log("non-empty option to update", event.target.value)
             props.onHandleQuizQuestionOptionUpdate(newQuizQuestionOptions, questionIndex)

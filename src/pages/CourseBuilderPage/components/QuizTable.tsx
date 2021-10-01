@@ -4,10 +4,10 @@ import { useHistory } from "react-router-dom";
 
 import clsx from 'clsx';
 
-import { 
+import {
   Theme,
-  createStyles, 
-  lighten, 
+  createStyles,
+  lighten,
   makeStyles
 } from '@material-ui/core/styles';
 
@@ -30,24 +30,24 @@ import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Toolbar from '@material-ui/core/Toolbar';
 import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
-import { 
-  Dialog, 
-  DialogActions, 
-  DialogContent, 
-  DialogContentText, 
-  DialogTitle, 
-  FormControl, 
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  FormControl,
   Grid,
-  Input, 
+  Input,
   InputLabel
 } from '@material-ui/core';
 
 import { Quiz } from '../../../apis/Entities/Quiz';
 import { Lesson } from '../../../apis/Entities/Lesson';
 
-import { 
-  createNewBasicQuiz, 
-  deleteQuizzes 
+import {
+  createNewBasicQuiz,
+  deleteQuizzes
 } from '../../../apis/Quiz/QuizApis';
 
 import { Button } from "../../../values/ButtonElements";
@@ -138,7 +138,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
     onRequestSort(event, property);
   };
 
-  headCells.map((headCell) => { 
+  headCells.map((headCell) => {
     if (headCell.id === "contentId") {
       headCell.label = isEnrollmentActive ? 'View Quiz' : 'Update Quiz'
     }
@@ -191,13 +191,13 @@ const useToolbarStyles = makeStyles((theme: Theme) =>
     highlight:
       theme.palette.type === 'light'
         ? {
-            color: theme.palette.secondary.main,
-            backgroundColor: lighten(theme.palette.secondary.light, 0.85),
-          }
+          color: theme.palette.secondary.main,
+          backgroundColor: lighten(theme.palette.secondary.light, 0.85),
+        }
         : {
-            color: theme.palette.text.primary,
-            backgroundColor: theme.palette.secondary.dark,
-          },
+          color: theme.palette.text.primary,
+          backgroundColor: theme.palette.secondary.dark,
+        },
     title: {
       flex: '1 1 100%',
     },
@@ -219,14 +219,14 @@ interface EnhancedTableToolbarProps {
 
 const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   const classes = useToolbarStyles();
-  const { numSelected, selectedIds, selectedLessonId, handleFormDataChange, setLessons, lessons, setSelectedIds, isEnrollmentActive} = props;
+  const { numSelected, selectedIds, selectedLessonId, handleFormDataChange, setLessons, lessons, setSelectedIds, isEnrollmentActive } = props;
   const [newQuizName, setNewQuizName] = useState<string>("");
   const [newQuizDescription, setNewQuizDescription] = useState<string>("");
   const [newQuizTimeLimitHours, setNewQuizTimeLimitHours] = useState<number>(0);
   const [newQuizTimeLimitMinutes, setNewQuizTimeLimitMinutes] = useState<number>(15);
   const [newQuizMaxAttempts, setNewQuizMaxAttempts] = useState<number>(1);
   const [validationErrorMessage, setValidationErrorMessage] = useState<string>("");
-  const [showAddQuizDialog, setShowAddQuizDialog] = useState<boolean>(false); 
+  const [showAddQuizDialog, setShowAddQuizDialog] = useState<boolean>(false);
   var [errors, setErrors] = useState<IErrors<boolean>>({
     name: false,
     description: false,
@@ -261,23 +261,23 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
 
     // Delete all the selected quizzes
     deleteQuizzes(quizIdsToDelete)
-        .then((result) => {
-          props.callOpenSnackBar("Quiz successfully deleted", "success")
-          setLessons(updatedLessons)
-    
-          let wrapperEvent = {
-            target: {
-              name: "lessons",
-              value: updatedLessons
-            }
+      .then((result) => {
+        props.callOpenSnackBar("Quiz successfully deleted", "success")
+        setLessons(updatedLessons)
+
+        let wrapperEvent = {
+          target: {
+            name: "lessons",
+            value: updatedLessons
           }
-              
-          handleFormDataChange(wrapperEvent)
-          setSelectedIds([])
-        })
-        .catch((error) => {
-            props.callOpenSnackBar(`Error in deleting quiz: ${error}`, "error")
-        })
+        }
+
+        handleFormDataChange(wrapperEvent)
+        setSelectedIds([])
+      })
+      .catch((error) => {
+        props.callOpenSnackBar(`Error in deleting quiz: ${error}`, "error")
+      })
   }
 
   const handleValidation = () => {
@@ -286,15 +286,15 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
     errors = {};
 
     if (newQuizName === "") {
-      formIsValid = false ;
+      formIsValid = false;
       errors['name'] = true;
       newValidationErrorMessage = newValidationErrorMessage.concat("Name cannot be empty. \n")
     }
 
     if (newQuizDescription === "") {
       formIsValid = false;
-      errors['description'] = true;   
-      newValidationErrorMessage = newValidationErrorMessage.concat("Description cannot be empty. \n")  
+      errors['description'] = true;
+      newValidationErrorMessage = newValidationErrorMessage.concat("Description cannot be empty. \n")
     }
 
     if ((newQuizTimeLimitHours === 0 && newQuizTimeLimitMinutes < 15) || newQuizTimeLimitMinutes === undefined) {
@@ -311,171 +311,171 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
 
   const handleClickBuildQuiz = () => {
     if (!handleValidation()) return
-    
+
     const lessonId = lessons.filter((lesson: Lesson) => lesson.lessonId === selectedLessonId).pop()?.lessonId
 
     if (lessonId !== undefined) {
       createNewBasicQuiz(lessonId, newQuizName, newQuizDescription, newQuizTimeLimitHours, newQuizTimeLimitMinutes, newQuizMaxAttempts)
-          .then((newQuiz) => {
-            props.callOpenSnackBar("Quiz successfully created", "success")
-            props.history.push({ pathname: `/buildquiz/${newQuiz.contentId}`, state: { mode: 'UPDATE' } })
-          })
-          .catch((error) => {
-              props.callOpenSnackBar(`Error in creating quiz: ${error}`, "error")
-          })
+        .then((newQuiz) => {
+          props.callOpenSnackBar("Quiz successfully created", "success")
+          props.history.push({ pathname: `/buildquiz/${newQuiz.contentId}`, state: { mode: 'UPDATE' } })
+        })
+        .catch((error) => {
+          props.callOpenSnackBar(`Error in creating quiz: ${error}`, "error")
+        })
     }
   }
 
   return (
     <>
-        <Dialog 
+      <Dialog
         fullWidth
         open={showAddQuizDialog}
         onClose={handleClose}
         aria-labelledby="simple-modal-title"
         aria-describedby="simple-modal-description">
-            <DialogTitle>Add a new Quiz</DialogTitle>
-            <DialogContent
-              style={{height: '40vh'}}>
-              <DialogContentText>
-                First, enter some basic details about the new quiz below.
+        <DialogTitle>Add a new Quiz</DialogTitle>
+        <DialogContent
+          style={{ height: '40vh' }}>
+          <DialogContentText>
+            First, enter some basic details about the new quiz below.
               </DialogContentText>
-              <FormControl fullWidth margin="normal">
-                <InputLabel htmlFor="quiz-name">Quiz Name</InputLabel>
+          <FormControl fullWidth margin="normal">
+            <InputLabel htmlFor="quiz-name">Quiz Name</InputLabel>
+            <Input
+              error={errors['name']}
+              id="quiz-name"
+              name="name"
+              type="text"
+              autoFocus
+              fullWidth
+              value={newQuizName}
+              onChange={(e) => setNewQuizName(e.target.value)}
+            />
+          </FormControl>
+          <FormControl fullWidth margin="normal">
+            <InputLabel htmlFor="quiz-description">Description</InputLabel>
+            <Input
+              error={errors['description']}
+              id="quiz-description"
+              name="description"
+              type="text"
+              fullWidth
+              multiline
+              value={newQuizDescription}
+              onChange={(e) => setNewQuizDescription(e.target.value)}
+            />
+          </FormControl>
+          <FormControl fullWidth margin="normal">
+            <Grid container spacing={3}>
+              <Grid item xs={6}>
+                <InputLabel htmlFor="quiz-timelimit">Time Limit</InputLabel>
                 <Input
-                  error={errors['name']}
-                  id="quiz-name"
-                  name="name"
-                  type="text"
-                  autoFocus
                   fullWidth
-                  value={newQuizName}
-                  onChange={(e) => setNewQuizName(e.target.value)}
+                  id="quiz-timelimit"
+                  placeholder="Hours"
+                  name="timelimit"
+                  type="number"
+                  value={newQuizTimeLimitHours}
+                  onChange={(e) => {
+                    let value = parseInt(e.target.value)
+
+                    if (value > 24) value = 24
+                    if (value < 0) value = 0
+
+                    setNewQuizTimeLimitHours(value)
+                  }}
+                  inputProps={{ min: 0, max: 24 }}
                 />
-                </FormControl>
-                <FormControl fullWidth margin="normal">
-                  <InputLabel htmlFor="quiz-description">Description</InputLabel>
-                  <Input
-                    error={errors['description']}
-                    id="quiz-description"
-                    name="description"
-                    type="text"
-                    fullWidth
-                    multiline
-                    value={newQuizDescription}
-                    onChange={(e) => setNewQuizDescription(e.target.value)}
-                  />
-                </FormControl>
-                <FormControl fullWidth margin="normal">
-                  <Grid container spacing={3}>
-                    <Grid item xs={6}>
-                      <InputLabel htmlFor="quiz-timelimit">Time Limit</InputLabel>
-                      <Input
-                      fullWidth
-                      id="quiz-timelimit"
-                      placeholder="Hours"
-                      name="timelimit"
-                      type="number"
-                      value={newQuizTimeLimitHours}
-                      onChange={(e) => {
-                        let value = parseInt(e.target.value)
+              </Grid>
+              <Grid item xs={6}>
+                <InputLabel htmlFor="quiz-timelimit">Time Limit</InputLabel>
+                <Input
+                  error={errors['minutes']}
+                  fullWidth
+                  id="quiz-timelimit"
+                  placeholder="Minutes"
+                  name="timelimit"
+                  type="number"
+                  value={newQuizTimeLimitMinutes}
+                  onChange={(e) => {
+                    let value = parseInt(e.target.value)
 
-                        if (value > 24) value = 24
-                        if (value < 0) value = 0
+                    if (value > 59) value = 59
+                    if (value < 0) value = 0
 
-                        setNewQuizTimeLimitHours(value)
-                      }}
-                      inputProps={{ min: 0, max: 24 }}
-                    />
-                    </Grid>
-                    <Grid item xs={6}>
-                      <InputLabel htmlFor="quiz-timelimit">Time Limit</InputLabel>
-                      <Input
-                      error={errors['minutes']}
-                      fullWidth
-                      id="quiz-timelimit"
-                      placeholder="Minutes"
-                      name="timelimit"
-                      type="number"
-                      value={newQuizTimeLimitMinutes}
-                      onChange={(e) => {
-                        let value = parseInt(e.target.value)
+                    setNewQuizTimeLimitMinutes(value)
+                  }}
+                  inputProps={{ min: 0, max: 59 }}
+                />
+              </Grid>
+            </Grid>
+          </FormControl>
+          <FormControl fullWidth margin="normal">
+            <InputLabel htmlFor="quiz-maxattempts">Max Attempts</InputLabel>
+            <Input
+              id="quiz-maxattempts"
+              name="description"
+              type="number"
+              fullWidth
+              value={newQuizMaxAttempts}
+              onChange={(e) => {
+                let value = parseInt(e.target.value)
 
-                        if (value > 59) value = 59
-                        if (value < 0) value = 0
+                if (value > 100) value = 100
+                if (value < 1) value = 1
 
-                        setNewQuizTimeLimitMinutes(value)
-                      }}
-                      inputProps={{ min: 0, max: 59 }}
-                    />
-                    </Grid>
-                  </Grid>
-                </FormControl>
-                <FormControl fullWidth margin="normal">
-                  <InputLabel htmlFor="quiz-maxattempts">Max Attempts</InputLabel>
-                  <Input
-                    id="quiz-maxattempts"
-                    name="description"
-                    type="number"
-                    fullWidth
-                    value={newQuizMaxAttempts}
-                    onChange={(e) => {
-                        let value = parseInt(e.target.value)
-
-                        if (value > 100) value = 100
-                        if (value < 1) value = 1
-
-                        setNewQuizMaxAttempts(value)
-                    }}
-                    inputProps={{ min: 1, max: 100 }}
-                  />
-                </FormControl>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleClose}>
-                Cancel
+                setNewQuizMaxAttempts(value)
+              }}
+              inputProps={{ min: 1, max: 100 }}
+            />
+          </FormControl>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>
+            Cancel
               </Button>
-              <Button primary onClick={handleClickBuildQuiz}>
-                Build Quiz
+          <Button primary onClick={handleClickBuildQuiz}>
+            Build Quiz
               </Button>
-            </DialogActions>
-            <DialogContent>
-              {validationErrorMessage && <Alert severity="error">{validationErrorMessage}</Alert>}
-            </DialogContent>
-    </Dialog>
-    <Toolbar
-      className={clsx(classes.root, {
-        [classes.highlight]: numSelected > 0,
-      })}
-    >
-      {numSelected > 0 ? (
-        <Typography className={classes.title} color="inherit" variant="subtitle1" component="span">
-          {numSelected} selected
-        </Typography>
-      ) : (
-        <Typography className={classes.title} variant="h6" id="tableTitle" component="span">
-          Quizzes
-        </Typography>
-      )}
-      <Tooltip title="Add Quiz">
-        <IconButton 
-          disabled={isEnrollmentActive}
-          aria-label="add" 
-          onClick={openDialog}>
-            <AddIcon />
-        </IconButton>
-        </Tooltip>
-      {numSelected > 0 && (
-        <Tooltip title="Delete">
-          <IconButton 
+        </DialogActions>
+        <DialogContent>
+          {validationErrorMessage && <Alert severity="error">{validationErrorMessage}</Alert>}
+        </DialogContent>
+      </Dialog>
+      <Toolbar
+        className={clsx(classes.root, {
+          [classes.highlight]: numSelected > 0,
+        })}
+      >
+        {numSelected > 0 ? (
+          <Typography className={classes.title} color="inherit" variant="subtitle1" component="span">
+            {numSelected} selected
+          </Typography>
+        ) : (
+            <Typography className={classes.title} variant="h6" id="tableTitle" component="span">
+              Quizzes
+            </Typography>
+          )}
+        <Tooltip title="Add Quiz">
+          <IconButton
             disabled={isEnrollmentActive}
-            aria-label="delete" 
-            onClick={handleDeleteQuiz}>
-            <DeleteIcon />
+            aria-label="add"
+            onClick={openDialog}>
+            <AddIcon />
           </IconButton>
         </Tooltip>
-      )}
-    </Toolbar>
+        {numSelected > 0 && (
+          <Tooltip title="Delete">
+            <IconButton
+              disabled={isEnrollmentActive}
+              aria-label="delete"
+              onClick={handleDeleteQuiz}>
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
+        )}
+      </Toolbar>
     </>
   );
 };
@@ -507,165 +507,165 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 export default function QuizTable(props: any) {
-    const handleFormDataChange = props.handleFormDataChange;
-    const [quizzes, setQuizzes] = useState<Quiz[]>(props.quizzes);
-    const [lessons, setLessons] = useState<Lesson[]>(props.lessons);
-    const rows = quizzes?.length > 0 ? quizzes.map((row: Quiz, index: number) => createData(index, row.name, row.description, row.maxAttemptsPerStudent, row.timeLimit, row.contentId)) : []
-    const history = useHistory();
+  const handleFormDataChange = props.handleFormDataChange;
+  const [quizzes, setQuizzes] = useState<Quiz[]>(props.quizzes);
+  const [lessons, setLessons] = useState<Lesson[]>(props.lessons);
+  const rows = quizzes?.length > 0 ? quizzes.map((row: Quiz, index: number) => createData(index, row.name, row.description, row.maxAttemptsPerStudent, row.timeLimit, row.contentId)) : []
+  const history = useHistory();
 
-    // Used to trigger rerendering of QuizTable whenever lessons is updated in Table Header component
-    useEffect(() => {
-      const newQuizzes = lessons.find((lesson: Lesson) => lesson.lessonId === props.selectedLessonId)?.quizzes
-      if (newQuizzes) {
-        setQuizzes(newQuizzes)
-      }
-    }, [lessons, props.selectedLessonId])
+  // Used to trigger rerendering of QuizTable whenever lessons is updated in Table Header component
+  useEffect(() => {
+    const newQuizzes = lessons.find((lesson: Lesson) => lesson.lessonId === props.selectedLessonId)?.quizzes
+    if (newQuizzes) {
+      setQuizzes(newQuizzes)
+    }
+  }, [lessons, props.selectedLessonId])
 
-    const classes = useStyles();
-    const [order, setOrder] = React.useState<Order>('asc');
-    const [orderBy, setOrderBy] = React.useState<keyof Data>('name');
-    const [selectedIds, setSelectedIds] = React.useState<number[]>([]);
-    const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const classes = useStyles();
+  const [order, setOrder] = React.useState<Order>('asc');
+  const [orderBy, setOrderBy] = React.useState<keyof Data>('name');
+  const [selectedIds, setSelectedIds] = React.useState<number[]>([]);
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
-    const handleRequestSort = (event: React.MouseEvent<unknown>, property: keyof Data) => {
-        const isAsc = orderBy === property && order === 'asc';
-        setOrder(isAsc ? 'desc' : 'asc');
-        setOrderBy(property);
-    };
+  const handleRequestSort = (event: React.MouseEvent<unknown>, property: keyof Data) => {
+    const isAsc = orderBy === property && order === 'asc';
+    setOrder(isAsc ? 'desc' : 'asc');
+    setOrderBy(property);
+  };
 
-    const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.checked) {
-          const newSelectedIds = rows.map((n: any) => n.id);
-          setSelectedIds(newSelectedIds);
-          return;
-        }
-        setSelectedIds([]);
-    };
+  const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.checked) {
+      const newSelectedIds = rows.map((n: any) => n.id);
+      setSelectedIds(newSelectedIds);
+      return;
+    }
+    setSelectedIds([]);
+  };
 
-    const handleClick = (event: React.MouseEvent<unknown>, id: number) => {
-        const selectedIndex = selectedIds.indexOf(id);
-        let newSelectedIds: number[] = [];
+  const handleClick = (event: React.MouseEvent<unknown>, id: number) => {
+    const selectedIndex = selectedIds.indexOf(id);
+    let newSelectedIds: number[] = [];
 
-        if (selectedIndex === -1) {
-          newSelectedIds = newSelectedIds.concat(selectedIds, id);
-        } else if (selectedIndex === 0) {
-          newSelectedIds = newSelectedIds.concat(selectedIds.slice(1));
-        } else if (selectedIndex === selectedIds.length - 1) {
-          newSelectedIds = newSelectedIds.concat(selectedIds.slice(0, -1));
-        } else if (selectedIndex > 0) {
-          newSelectedIds = newSelectedIds.concat(
-            selectedIds.slice(0, selectedIndex),
-            selectedIds.slice(selectedIndex + 1),
-          );
-        }
-
-        setSelectedIds(newSelectedIds);
-    };
-
-    const handleChangePage = (event: unknown, newPage: number) => {
-        setPage(newPage);
-    };
-
-    const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(0);
-    };
-
-    const navigateToQuizBuilder = (quizId: number) => {
-      if (props.isEnrollmentActive) {
-        history.push({ pathname: `/buildquiz/${quizId}`, state: { mode: 'VIEW' } })
-      } else {
-        history.push({ pathname: `/buildquiz/${quizId}`, state: { mode: 'EDIT' } })
-      }
+    if (selectedIndex === -1) {
+      newSelectedIds = newSelectedIds.concat(selectedIds, id);
+    } else if (selectedIndex === 0) {
+      newSelectedIds = newSelectedIds.concat(selectedIds.slice(1));
+    } else if (selectedIndex === selectedIds.length - 1) {
+      newSelectedIds = newSelectedIds.concat(selectedIds.slice(0, -1));
+    } else if (selectedIndex > 0) {
+      newSelectedIds = newSelectedIds.concat(
+        selectedIds.slice(0, selectedIndex),
+        selectedIds.slice(selectedIndex + 1),
+      );
     }
 
-    const isSelected = (index: number) => selectedIds.indexOf(index) !== -1;
+    setSelectedIds(newSelectedIds);
+  };
 
-    const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
+  const handleChangePage = (event: unknown, newPage: number) => {
+    setPage(newPage);
+  };
 
-    return (
-        <>
-        <div className={classes.root}>
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  const navigateToQuizBuilder = (quizId: number) => {
+    if (props.isEnrollmentActive) {
+      history.push({ pathname: `/buildquiz/${quizId}`, state: { mode: 'VIEW' } })
+    } else {
+      history.push({ pathname: `/buildquiz/${quizId}`, state: { mode: 'EDIT' } })
+    }
+  }
+
+  const isSelected = (index: number) => selectedIds.indexOf(index) !== -1;
+
+  const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
+
+  return (
+    <>
+      <div className={classes.root}>
         <Paper className={classes.paper}>
-            <EnhancedTableToolbar 
-                isEnrollmentActive={props.isEnrollmentActive}
-                numSelected={selectedIds.length} 
-                selectedIds={selectedIds}
-                selectedLessonId={props.selectedLessonId}
-                lessons={lessons}
-                setLessons={setLessons}
-                handleFormDataChange={handleFormDataChange}
-                setSelectedIds={setSelectedIds}
-                history={history}
-                callOpenSnackBar={props.callOpenSnackBar}
-            />
-            {rows.length > 0 &&
+          <EnhancedTableToolbar
+            isEnrollmentActive={props.isEnrollmentActive}
+            numSelected={selectedIds.length}
+            selectedIds={selectedIds}
+            selectedLessonId={props.selectedLessonId}
+            lessons={lessons}
+            setLessons={setLessons}
+            handleFormDataChange={handleFormDataChange}
+            setSelectedIds={setSelectedIds}
+            history={history}
+            callOpenSnackBar={props.callOpenSnackBar}
+          />
+          {rows.length > 0 &&
             <TableContainer>
-            <Table
+              <Table
                 className={classes.table}
                 aria-labelledby="tableTitle"
                 size={'small'}
                 aria-label="enhanced table"
-            >
+              >
                 <EnhancedTableHead
-                isEnrollmentActive={props.isEnrollmentActive}
-                classes={classes}
-                numSelected={selectedIds.length}
-                order={order}
-                orderBy={orderBy}
-                onSelectAllClick={handleSelectAllClick}
-                onRequestSort={handleRequestSort}
-                rowCount={rows.length}
+                  isEnrollmentActive={props.isEnrollmentActive}
+                  classes={classes}
+                  numSelected={selectedIds.length}
+                  order={order}
+                  orderBy={orderBy}
+                  onSelectAllClick={handleSelectAllClick}
+                  onRequestSort={handleRequestSort}
+                  rowCount={rows.length}
                 />
                 <TableBody>
-                {stableSort(rows, getComparator(order, orderBy))
+                  {stableSort(rows, getComparator(order, orderBy))
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row, index) => {
-                    // @ts-ignore
-                    const isItemSelected = isSelected(row.id);
-                    const labelId = `enhanced-table-checkbox-${index}`;
+                      // @ts-ignore
+                      const isItemSelected = isSelected(row.id);
+                      const labelId = `enhanced-table-checkbox-${index}`;
 
-                    return (
+                      return (
                         <TableRow
-                            hover
-                            // @ts-ignore
-                            onClick={(event) => handleClick(event, row.id)}
-                            role="checkbox"
-                            aria-checked={isItemSelected}
-                            tabIndex={-1}
-                            key={row.name}
-                            selected={isItemSelected}
+                          hover
+                          // @ts-ignore
+                          onClick={(event) => handleClick(event, row.id)}
+                          role="checkbox"
+                          aria-checked={isItemSelected}
+                          tabIndex={-1}
+                          key={row.name}
+                          selected={isItemSelected}
                         >
-                            <TableCell padding="checkbox">
-                                <Checkbox
-                                checked={isItemSelected}
-                                inputProps={{ 'aria-labelledby': labelId }}
-                                />
-                            </TableCell>
-                            <TableCell component="th" id={labelId} scope="row" padding="none">
-                                {row.name}
-                            </TableCell>
-                            <TableCell align="right">{row.description}</TableCell>
-                            <TableCell align="right">{row.maxAttemptsPerStudent}</TableCell>
-                            <TableCell align="right">{row.timeLimit}</TableCell>
-                            <TableCell align="right">
-                              <IconButton size="small" color="primary" onClick={() => navigateToQuizBuilder(row.contentId)}>
-                                  {props.isEnrollmentActive ? <ChevronRightIcon/> : <EditIcon/>} &nbsp;
+                          <TableCell padding="checkbox">
+                            <Checkbox
+                              checked={isItemSelected}
+                              inputProps={{ 'aria-labelledby': labelId }}
+                            />
+                          </TableCell>
+                          <TableCell component="th" id={labelId} scope="row" padding="none">
+                            {row.name}
+                          </TableCell>
+                          <TableCell align="right">{row.description}</TableCell>
+                          <TableCell align="right">{row.maxAttemptsPerStudent}</TableCell>
+                          <TableCell align="right">{row.timeLimit}</TableCell>
+                          <TableCell align="right">
+                            <IconButton size="small" color="primary" onClick={() => navigateToQuizBuilder(row.contentId)}>
+                              {props.isEnrollmentActive ? <ChevronRightIcon /> : <EditIcon />} &nbsp;
                               </IconButton>
-                            </TableCell>
+                          </TableCell>
                         </TableRow>
-                    );
+                      );
                     })}
-                {emptyRows > 0 && (
+                  {emptyRows > 0 && (
                     <TableRow style={{ height: 33 * emptyRows }}>
-                    <TableCell colSpan={6} />
+                      <TableCell colSpan={6} />
                     </TableRow>
-                )}
+                  )}
                 </TableBody>
-            </Table>
+              </Table>
             </TableContainer>}
-            <TablePagination
+          <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
             count={rows.length}
@@ -673,9 +673,9 @@ export default function QuizTable(props: any) {
             page={page}
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
-            />
+          />
         </Paper>
-        </div>
-        </>
-    );
+      </div>
+    </>
+  );
 }
