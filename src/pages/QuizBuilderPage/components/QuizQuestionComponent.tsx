@@ -129,7 +129,7 @@ function QuizQuestionComponent(props: any) {
 
                 <div>
                     {
-                        // content ! &&
+                        content !== undefined &&
                         <QuizBuilderTextInput disabled={isDisabled}  id="question-input" label="Question" variant="standard" value={content} onChange={handleContentChange} />
                     }
                 </div>
