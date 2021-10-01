@@ -27,6 +27,7 @@ function PDFViewer(props: any) {
         <>
             <Document
                 file={props.doc}
+                options={{ workerSrc: "/pdf.worker.js" }}
                 onLoadSuccess={onDocumentLoadSuccess}
             >
                 <Page pageNumber={pageNumber} />

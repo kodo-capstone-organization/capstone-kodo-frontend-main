@@ -10,6 +10,7 @@ import { colours } from "../../../values/Colours";
 import ReactPlayer from "react-player";
 import PDFViewer from "./PDFViewer";
 import DownloadFile from "./DownloadFile";
+import { pdfjs } from "react-pdf";
 
 import {
   MultimediaContainer,
@@ -34,6 +35,7 @@ import { EnrolledContent } from "../../../apis/Entities/EnrolledContent";
 import { useHistory } from "react-router-dom";
 import { Button } from "../../../values/ButtonElements";
 import { setDateTimeOfCompletionOfEnrolledContentByAccountIdAndContentId } from "../../../apis/EnrolledContent/EnrolledContentApis";
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
 function MultimediaViewer(props: any) {
   const contentId = props.match.params.contentId;
@@ -68,7 +70,7 @@ function MultimediaViewer(props: any) {
   }
 
   function getUrlForDocument() {
-      return `https://docs.google.com/gview?url=https://storage.googleapis.com/capstone-kodo-bucket/${currentMultimedia?.urlFilename}&embedded=true`
+    return `https://docs.google.com/gview?url=https://storage.googleapis.com/capstone-kodo-bucket/${currentMultimedia?.urlFilename}&embedded=true`
   }
 
   const completeMultimedia = () => {
@@ -98,7 +100,7 @@ function MultimediaViewer(props: any) {
           <MultimediaDescription> Description: {currentMultimedia?.description}</MultimediaDescription>
         </MultimediaCard>
 
-        <div id="action-row" style={{ display: "flex", flexDirection: "row", justifyContent: "flex-end"}}>
+        <div id="action-row" style={{ display: "flex", flexDirection: "row", justifyContent: "flex-end" }}>
           <DownloadFile multimediaName={currentMultimedia?.name} multimediaUrl={currentMultimedia?.url} />
           &nbsp;&nbsp;
           <Button primary onClick={completeMultimedia}>
@@ -115,7 +117,7 @@ function MultimediaViewer(props: any) {
           </VideoCard>
         }
 
-        {currentMultimedia && currentMultimedia?.multimediaType === "PDF" &&
+        {currentMultimedia && currentMultimedia.multimediaType === "PDF" &&
           <PDFCard>
             <PDFViewer doc={currentMultimedia.url} />
           </PDFCard>
