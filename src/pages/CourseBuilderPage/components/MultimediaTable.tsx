@@ -228,10 +228,16 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
       newValidationErrorMessage = newValidationErrorMessage.concat("Description cannot be empty. \n")
     }
 
-    if (newFile.file?.size === 0) {
+    if (!newFile.file || newFile.file.size === 0) {
       formIsValid = false;
       errors['file'] = true;
       newValidationErrorMessage = newValidationErrorMessage.concat("File cannot be empty. \n")
+    }
+
+    // Check whether file size larger than 200MB
+    if (newFile.file && newFile.file.size > 200000000) {
+      formIsValid = false;  
+      newValidationErrorMessage = newValidationErrorMessage.concat("File size cannot be larger than 200MB. \n")
     }
 
     setErrors(errors);
@@ -356,9 +362,9 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
         aria-describedby="simple-modal-description">
             <DialogTitle>Add a new Multimedia</DialogTitle>
             <DialogContent
-              style={{height: '40vh'}}>
+              style={{height: '60vh'}}>
               <DialogContentText>
-                First, enter some basic details about the new multimedia below.
+                First, enter some basic details about the new multimedia below. <br/> Note: The allowed file size is 200MB.
               </DialogContentText>
               <FormControl fullWidth margin="normal">
                 <InputLabel htmlFor="multimedia-name">Multimedia Name</InputLabel>
@@ -561,6 +567,12 @@ export default function MultimediaTable(props: any) {
         errors['description'] = true;      
         newValidationErrorMessage = newValidationErrorMessage.concat("Description cannot be empty. \n")
       }
+
+      // Check whether file size larger than 200MB
+      if (newFile.file && newFile.file.size > 200000000) {
+        formIsValid = false;  
+        newValidationErrorMessage = newValidationErrorMessage.concat("File size cannot be larger than 200MB. \n")
+      }
   
       setErrors(errors);
       setValidationErrorMessage(newValidationErrorMessage)
@@ -734,7 +746,7 @@ export default function MultimediaTable(props: any) {
         >
             <DialogTitle>Multimedia Preview</DialogTitle>
             <DialogContent
-              style={{height: '40vh'}}>
+              style={{height: '60vh'}}>
               <FormControl fullWidth margin="normal">
                 <InputLabel htmlFor="multimedia-name">Multimedia Name</InputLabel>
                 <Input
@@ -775,7 +787,10 @@ export default function MultimediaTable(props: any) {
         >
             <DialogTitle>Update an existing Multimedia</DialogTitle>
             <DialogContent
-              style={{height: '40vh'}}>
+              style={{height: '60vh'}}>
+              <DialogContentText>
+                Note: The allowed file size is 200MB.
+              </DialogContentText>
               <FormControl fullWidth margin="normal">
                 <InputLabel htmlFor="multimedia-name">Multimedia Name</InputLabel>
                 <Input
