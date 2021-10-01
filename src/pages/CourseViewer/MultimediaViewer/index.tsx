@@ -91,8 +91,8 @@ function MultimediaViewer(props: any) {
         </PageHeadingAndButton>
         <MultimediaCard>
           <MultimediaHeader>Multimedia Overview</MultimediaHeader>
-          <MultimediaName> Name: {currentMultimedia?.name}</MultimediaName>
-          <MultimediaDescription> Description: {currentMultimedia?.description}</MultimediaDescription>
+          <MultimediaName> <strong>Name: </strong> {currentMultimedia?.name}</MultimediaName>
+          <MultimediaDescription> <strong>Description: </strong> <p style={{ whiteSpace: 'pre'}}>{currentMultimedia?.description}</p></MultimediaDescription>
         </MultimediaCard>
 
         <div id="action-row" style={{ display: "flex", flexDirection: "row", justifyContent: "flex-end" }}>
