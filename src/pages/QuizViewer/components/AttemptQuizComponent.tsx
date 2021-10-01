@@ -31,6 +31,7 @@ import {
 
 import AttemptQuizOptionsComponent from "./AttemptQuizOptionsComponent";
 import QuizAttemptTimer from "./QuizAttemptTimer";
+import QuizTimedOutModal from "./QuizTimedOutModal";
 
 import { Button } from "../../../values/ButtonElements";
 
@@ -44,6 +45,7 @@ function AttemptQuizComponent(props: any) {
     const [initialMinutes, setInitialMinutes] = useState<number>();
 
     const history = useHistory();
+    const [timeout, setTimeout] = useState<boolean>(false);
 
     useEffect(() => {
         if (props.enrolledContentId !== undefined) {
@@ -116,7 +118,6 @@ function AttemptQuizComponent(props: any) {
     }
 
     const handleTimeOut = (isTimedOut : boolean) => {
-        //complete the quiz
         console.log("timeout")
         var newQuizQuestionOptionIdList = quizQuestionOptionIdList;
         quizQuestionArray?.map((q, qId) => {
@@ -139,6 +140,7 @@ function AttemptQuizComponent(props: any) {
         .catch(err => {
             console.log("Attempt quiz failed:", err);
         });
+        setTimeout(true);
     } 
 
     const mapQuestionArray = (questionArray: QuizQuestion[]) => {
@@ -160,7 +162,8 @@ function AttemptQuizComponent(props: any) {
 
     return (
         <>
-            {initialSeconds !== undefined && <QuizAttemptTimer initialSeconds={initialSeconds} initialMinutes={initialMinutes} onTimeOut={handleTimeOut}/>}
+            {initialSeconds != undefined && <QuizAttemptTimer initialSeconds={initialSeconds} initialMinutes={initialMinutes} onTimeOut={handleTimeOut}/>}
+            <QuizTimedOutModal open={timeout}/>
             <QuizCard>
                 <QuizCardHeader
                     title="Quiz Information"
