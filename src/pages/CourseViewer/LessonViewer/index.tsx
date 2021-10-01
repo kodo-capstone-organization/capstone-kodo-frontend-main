@@ -61,6 +61,7 @@ function LessonViewer(props: any) {
   const accountId = JSON.parse(
     window.sessionStorage.getItem("loggedInAccountId") || "{}"
   );
+  const [loading, setLoading] = useState<boolean>(true);
 
   const history = useHistory();
 
@@ -83,6 +84,7 @@ function LessonViewer(props: any) {
     if (accountId !== null && courseId !== null) {
       getEnrolledCourseByStudentIdAndCourseId(accountId, courseId).then(receivedEnrolledCourse => {
         setEnrolledCourse(receivedEnrolledCourse);
+        setLoading(false)
       });
     }
   }, []);
@@ -157,7 +159,7 @@ function LessonViewer(props: any) {
   }
 
   return (
-    <>
+    <>{!loading &&
       <LessonContainer>
         <PageHeadingAndButton>
           <PageHeading>
@@ -167,7 +169,7 @@ function LessonViewer(props: any) {
               <HeadingDescription>You do not have access to this page. Complete your previous lessons.</HeadingDescription>
             }
           </PageHeading>
-          <ExitWrapper to={`/overview/${currentCourse?.courseId}`}>
+          <ExitWrapper to={`/overview/${courseId}`}>
             <CancelOutlinedIcon fontSize="large" style={{ color: colours.BLUE2, padding: 20 }} />
           </ExitWrapper>
         </PageHeadingAndButton>
@@ -252,7 +254,7 @@ function LessonViewer(props: any) {
             })}
           </QuizWrapper>
         </LessonCard>
-      </LessonContainer>
+      </LessonContainer>}
     </>
   );
 }
