@@ -1,6 +1,24 @@
 import React, { useState, useEffect } from 'react';
+
+import { useHistory } from "react-router-dom";
+
 import clsx from 'clsx';
-import { createStyles, lighten, makeStyles, Theme } from '@material-ui/core/styles';
+
+import { 
+  Theme,
+  createStyles, 
+  lighten, 
+  makeStyles
+} from '@material-ui/core/styles';
+
+import AddIcon from '@material-ui/icons/Add';
+import Alert from '@material-ui/lab/Alert';
+import Checkbox from '@material-ui/core/Checkbox';
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import DeleteIcon from '@material-ui/icons/Delete';
+import EditIcon from '@material-ui/icons/Edit';
+import IconButton from '@material-ui/core/IconButton';
+import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -10,22 +28,29 @@ import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import Paper from '@material-ui/core/Paper';
-import Checkbox from '@material-ui/core/Checkbox';
-import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
-import DeleteIcon from '@material-ui/icons/Delete';
+import Typography from '@material-ui/core/Typography';
+import { 
+  Dialog, 
+  DialogActions, 
+  DialogContent, 
+  DialogContentText, 
+  DialogTitle, 
+  FormControl, 
+  Grid,
+  Input, 
+  InputLabel
+} from '@material-ui/core';
+
 import { Quiz } from '../../../apis/Entities/Quiz';
 import { Lesson } from '../../../apis/Entities/Lesson';
-import { useHistory } from "react-router-dom";
-import EditIcon from '@material-ui/icons/Edit';
-import AddIcon from '@material-ui/icons/Add';
-import { Dialog, DialogContent, DialogContentText, DialogTitle, InputLabel, Input, FormControl, DialogActions, Grid} from '@material-ui/core';
+
+import { 
+  createNewBasicQuiz, 
+  deleteQuizzes 
+} from '../../../apis/Quiz/QuizApis';
+
 import { Button } from "../../../values/ButtonElements";
-import { createNewBasicQuiz, deleteQuizzes } from '../../../apis/Quiz/QuizApis';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import Alert from '@material-ui/lab/Alert';
 
 interface IErrors<TValue> {
   [id: string]: TValue;

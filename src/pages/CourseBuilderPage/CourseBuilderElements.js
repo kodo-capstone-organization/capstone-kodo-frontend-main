@@ -1,7 +1,11 @@
 import styled from "styled-components";
-import { Card, CardHeader, CardContent } from "@material-ui/core";
 import { fontSizes } from "../../values/FontSizes";
 import { colours } from "../../values/Colours";
+import { 
+    Card, 
+    CardContent,
+    CardHeader
+} from "@material-ui/core";
 
 export const CourseBuilderContainer = styled.div`
     padding: 2rem;
