@@ -7,7 +7,6 @@ import {
     Radio
 } from "@material-ui/core";
 import { AddQuizOptionButton } from "../QuizBuilderElements";
-import { Button } from "../../../values/ButtonElements";
 
 
 interface IQuestionOption {
@@ -100,7 +99,7 @@ function QuizQuestionOptionsList(props: any) {
         });
         setQuizQuestionOptions(newQuizQuestionOptions);
         console.log("option to update", event.target.value)
-        if (event.target.value != "") {
+        if (event.target.value !== "") {
             console.log("non-empty option to update", event.target.value)
             props.onHandleQuizQuestionOptionUpdate(newQuizQuestionOptions, questionIndex)
         }
@@ -250,8 +249,11 @@ function QuizQuestionOptionsList(props: any) {
                 </Table>
             </TableContainer>
             {
-                (questionType === "MCQ" || questionType === "MATCHING") &&
-                <AddQuizOptionButton disabled={isDisabled} onClick={handleAddOption}>Add Option</AddQuizOptionButton>
+                !isDisabled && (questionType === "MCQ" || questionType === "MATCHING") &&
+                <>
+                    <br/>
+                    <AddQuizOptionButton disabled={isDisabled} onClick={handleAddOption}>Add Option</AddQuizOptionButton>
+                </>
             }
         </>
     )

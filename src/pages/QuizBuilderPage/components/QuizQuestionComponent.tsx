@@ -4,7 +4,7 @@ import { QuizQuestion } from "../../../apis/Entities/QuizQuestion";
 import { QuizQuestionOption } from '../../../apis/Entities/QuizQuestionOption';
 import QuizQuestionOptionsList from "./QuizQuestionOptionsList"
 import {
-    Box, FormControl, InputLabel, Divider, IconButton
+    Box, FormControl, InputLabel, IconButton
 } from "@material-ui/core";
 import DeleteIcon from '@material-ui/icons/Delete';
 import { QuizBuilderTextInput, QuizSelectMenu } from "../QuizBuilderElements";
@@ -77,13 +77,11 @@ function QuizQuestionComponent(props: any) {
 
     return (
         <>
-
             <div id="questioncomponent" style={{ width: "inherit" }}>
                 <div id="typeAndMark" style={{ display: "flex", justifyContent: "center" }}>
-
                     {
-                        questionType != undefined &&
-                        <Box sx={{ minWidth: 120 }} style={{ margin: "6px" }}>
+                        questionType &&
+                        <Box sx={{ minWidth: 120 }}>
                             <FormControl fullWidth>
                                 <InputLabel variant="standard" htmlFor="uncontrolled-native">
                                     Question Type
@@ -100,16 +98,16 @@ function QuizQuestionComponent(props: any) {
                             </FormControl>
                         </Box>
                     }
-
+                    &nbsp;&nbsp;&nbsp;
                     {
-                        marks != undefined &&
-                        <Box sx={{ minWidth: 120 }} style={{ margin: "6px" }}>
+                        marks &&
+                        <Box sx={{ minWidth: 120 }}>
                             <FormControl fullWidth>
                                 <InputLabel variant="standard" htmlFor="uncontrolled-native">
                                     Marks
-                    </InputLabel>
+                                </InputLabel>
                                 <QuizSelectMenu
-                                disabled={isDisabled} 
+                                    disabled={isDisabled}
                                     value={marks}
                                     onChange={handleMarkChange}
                                 >
@@ -127,13 +125,18 @@ function QuizQuestionComponent(props: any) {
                     </IconButton>
                 </div>
 
-                {
-                    content != undefined &&
-                    <QuizBuilderTextInput disabled={isDisabled}  id="standard-basic" label="Question" variant="standard" value={content} onChange={handleContentChange} />
+                <br/>
 
-                }
+                <div>
+                    {
+                        content &&
+                        <QuizBuilderTextInput disabled={isDisabled}  id="question-input" label="Question" variant="standard" value={content} onChange={handleContentChange} />
+                    }
+                </div>
 
-                <QuizQuestionOptionsList disabled={isDisabled}  questionIndex={questionIndex} question={question} questionType={questionType} onHandleQuizQuestionOptionUpdate={handleQuizQuestionOptionUpdate} />
+                <br/>
+
+                <QuizQuestionOptionsList disabled={isDisabled} questionIndex={questionIndex} question={question} questionType={questionType} onHandleQuizQuestionOptionUpdate={handleQuizQuestionOptionUpdate} />
             </div>
 
         </>
