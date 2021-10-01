@@ -1,4 +1,10 @@
+<<<<<<< HEAD
 import { useEffect, useState } from "react";
+=======
+import React, { useEffect, useState } from "react";
+import QuizTimedOutModal from "./QuizTimedOutModal";
+
+>>>>>>> feature/viewMarkedQuiz
 
 
 function QuizAttemptTimer(props: any) {
@@ -7,6 +13,7 @@ function QuizAttemptTimer(props: any) {
     const [minutes, setMinutes] = useState(initialMinutes);
     const [seconds, setSeconds] = useState(initialSeconds);
     const [hours, setHours] = useState(initialHours);
+    const [isTimedOut, setIsTimedOut] = useState<boolean>("false");
 
     useEffect(() => {
         let myInterval = setInterval(() => {
@@ -16,6 +23,7 @@ function QuizAttemptTimer(props: any) {
             if (seconds === 0) {
                 if (minutes === 0) {
                     clearInterval(myInterval)
+                    setIsTimedOut(true);
                     props.onTimeOut(true);
                     // if(hours === 0){
                     // }else{
@@ -35,9 +43,11 @@ function QuizAttemptTimer(props: any) {
     });
 
     return (
+        <>
         <div id="timer">
             <h1 style={{ textAlign: "center" }}> Time Left: {hours < 10 ? `0${hours}` : hours}:{minutes < 10 ? `0${minutes}` : minutes}:{seconds < 10 ? `0${seconds}` : seconds}</h1>
         </div>
+        </>
     )
 }
 
