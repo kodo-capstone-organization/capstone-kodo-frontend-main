@@ -244,24 +244,26 @@ function LessonViewer(props: any) {
                     <QuizDescriptionTwo>[To Finish]</QuizDescriptionTwo>
                     */}
                   </QuizRow>
-                  <QuizRow>
+                  <QuizRow style={{ borderBottom: "none" }}>
                     <QuizSubheader>Previous Attempts</QuizSubheader>
-                    {q.studentAttempts.map(sa => {
-                      return (
-                        <>
-                          <QuizDescriptionTwo>
-                            {formatDate(sa.dateTimeOfAttempt)}
-                          </QuizDescriptionTwo>
-                          <QuizDescriptionTwo>
-                            <BtnWrapper>
-                              <Button onClick={() => viewStudentAttempt(sa.studentAttemptId)}>
-                                View Attempt
-                                </Button>
-                            </BtnWrapper>
-                          </QuizDescriptionTwo>
-                        </>
-                      );
-                    })}
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gridGap: "3em" }}>
+                      {q.studentAttempts.map(sa => {
+                        return (
+                          <>
+                            <QuizDescriptionTwo>
+                              {formatDate(sa.dateTimeOfAttempt)}
+                            </QuizDescriptionTwo>
+                            <QuizDescriptionTwo>
+                              <BtnWrapper>
+                                <Button onClick={() => viewStudentAttempt(sa.studentAttemptId)}>
+                                  View Attempt
+                                  </Button>
+                              </BtnWrapper>
+                            </QuizDescriptionTwo>
+                          </>
+                        );
+                      })}
+                    </div>
                     {/*
                     <QuizSubheader>Grade:</QuizSubheader>
                     <QuizDescriptionTwo>[To Finish]</QuizDescriptionTwo>
