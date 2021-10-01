@@ -92,7 +92,7 @@ function AttemptQuizOptionsComponent(props: any) {
                                 question.questionType === "MATCHING" &&
                                 <>
                                     <TableCell>LEFT</TableCell>
-                                    <TableCell>RIGHT</TableCell>
+                                    <TableCell align="right">RIGHT</TableCell>
                                 </>
 
                             }
@@ -150,7 +150,7 @@ function AttemptQuizOptionsComponent(props: any) {
                                     <TableCell component="th" scope="row">
                                         {row.leftContent}
                                     </TableCell>
-                                    <TableCell component="th" scope="row">
+                                    <TableCell component="th" scope="row" align="right">
                                         <Select
                                             value={rightSelected[index]}
                                             onChange={(e) => handleSelectorChange(e, index)}
