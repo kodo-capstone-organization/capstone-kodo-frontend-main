@@ -57,7 +57,7 @@ function QuizBuilderPage(props: any) {
             setTimeLimitMinutes(`${res.timeLimit.charAt(6)}${res.timeLimit.charAt(7)}`);
         }).catch((err) => { console.log("error:getQuizByQuizId", err) });
         getAllQuizQuestionsByQuizId(contentId).then((res) => {
-            var arrayWtihDraggableId = []
+            let arrayWtihDraggableId: any = []
             var mapDraggable = 0;
             res.map((question) => {
                 const withDraggableId = Object.assign(question, { draggableId: mapDraggable });
@@ -75,7 +75,7 @@ function QuizBuilderPage(props: any) {
     }, [quizQuestionArray])
 
     const addNewQuestion = () => {
-        if (quiz !== undefined) {
+        if (quiz) {
             const newDraggableId = draggableId + 1;
             setDraggableId(newDraggableId);
             const newQuizQuestion: any = {
