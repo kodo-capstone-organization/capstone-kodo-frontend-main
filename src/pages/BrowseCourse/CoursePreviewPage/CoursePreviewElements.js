@@ -1,7 +1,7 @@
 import styled from "styled-components";
+import Chip from '@material-ui/core/Chip';
 import { fontSizes } from "../../../values/FontSizes";
 import { colours } from "../../../values/Colours";
-import Chip from '@material-ui/core/Chip';
 
 export const PreviewContainer = styled.div`
     padding: 2rem;
@@ -12,7 +12,7 @@ export const PreviewContainer = styled.div`
 `;
 
 export const EnrollCard = styled.div`
-    height: 150px;
+    height: 250px;
     width: auto;
     border-radius: 20px;
     margin-bottom: 40px;

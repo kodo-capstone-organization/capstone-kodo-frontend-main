@@ -1,27 +1,34 @@
-import Alert from '@material-ui/lab/Alert';
 import React, { useState, useEffect } from 'react';
-import { Account } from "../../../apis/Entities/Account";
-import { Button } from "../../../values/ButtonElements";
-import { Tag } from "../../../apis/Entities/Tag";
-import { createNewAccount } from '../../../apis/Account/AccountApis';
-import { getAllTags } from '../../../apis/Tag/TagApis';
-import { makeStyles } from '@material-ui/core/styles';
+
 import { useHistory } from 'react-router';
-import {
-    SignUpForm,
-    SignUpPaper,
-    SignUpPaperWrapper
-} from "./SignUpElements";
-import {
-    Chip,
-    TextField, 
-    Typography
-} from "@material-ui/core";
+
+import { makeStyles } from '@material-ui/core/styles';
+import Alert from '@material-ui/lab/Alert';
 import {
     Autocomplete,
     ToggleButton, 
     ToggleButtonGroup
 } from "@material-ui/lab";
+
+import { Account } from "../../../apis/Entities/Account";
+import { Button } from "../../../values/ButtonElements";
+import { Tag } from "../../../apis/Entities/Tag";
+
+import { createNewAccount } from '../../../apis/Account/AccountApis';
+import { getAllTags } from '../../../apis/Tag/TagApis';
+
+import {
+    SignUpForm,
+    SignUpPaper,
+    SignUpPaperWrapper
+} from "./SignUpElements";
+
+import {
+    Chip,
+    TextField, 
+    Typography
+} from "@material-ui/core";
+
 
 interface IErrors<TValue> {
     [id: string]: TValue;
@@ -35,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-function SignUp() {
+function SignUp(props: any) {
 
     const [name, setName] = useState<string>("");
     const [username, setUsername] = useState<string>("");
@@ -79,18 +86,18 @@ function SignUp() {
         errors = {};
         setBtnTagFailed(false)
 
-        //Username
+        // Username
         if (username === "") {
             formIsValid = false;
             errors["username"] = true;
         }
 
-        //Name
+        // Name
         if (name === "") {
             formIsValid = false;
             errors["name"] = true;
         }
-        //Email
+        // Email
         if (email === "") {
             formIsValid = false;
             errors["email"] = true;
@@ -104,19 +111,19 @@ function SignUp() {
             }
         }
 
-        //Password
+        // Password
         if (password === "") {
             formIsValid = false;
             errors["password"] = true;
         }
 
-        //Confirm Password
+        // Confirm Password
         if (confirmPassword === "") {
             formIsValid = false;
             errors["confirmPassword"] = true;
         }
 
-        //Btn
+        // Btn
         if (btnTags.length === 0) {
             console.log('btn invalid');
             formIsValid = false;
@@ -134,7 +141,7 @@ function SignUp() {
     const showErrors = () => {
         if (signUpFailed)
         {
-            return(<Alert variant="filled" severity="error">{signUpFailed}</Alert>);
+            return(<Alert severity="error">{signUpFailed}</Alert>);
         }
         else
         {
@@ -160,6 +167,7 @@ function SignUp() {
         {
             //@ts-ignore        
             createNewAccount(newUserAccount, null).then((res: Account) => {
+                props.callOpenSnackBar("Account successfully created", "success")
                 window.sessionStorage.setItem("loggedInAccountId", JSON.stringify(res.accountId));
                 window.sessionStorage.setItem("loggedInAccountUsername", username);
                 window.sessionStorage.setItem("loggedInAccountPassword", password);

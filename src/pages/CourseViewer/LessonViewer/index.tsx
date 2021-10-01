@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { withRouter } from "react-router";
 import { getCourseByCourseId } from "../../../apis/Course/CourseApis";
 import { getLessonByLessonId } from "../../../apis/Lesson/LessonApis";
@@ -12,11 +12,14 @@ import { Account } from "../../../apis/Entities/Account";
 import { Quiz } from "../../../apis/Entities/Quiz";
 import { EnrolledLesson } from "../../../apis/Entities/EnrolledLesson";
 import { EnrolledCourse } from "../../../apis/Entities/EnrolledCourse";
-import { QuizWithStudentAttemptCountResp } from "../../../apis/Entities/Quiz"
+import { QuizWithStudentAttemptCountResp } from "../../../apis/Entities/Quiz";
+
+import ViewQuizAttemptsModal from './components/ViewQuizAttemptsModal';
 
 import { Button } from "../../../values/ButtonElements";
 import { colours } from "../../../values/Colours";
 
+import { useHistory } from "react-router-dom";
 
 import {
   LessonContainer,
@@ -34,7 +37,6 @@ import {
   PlayIcon,
   QuizWrapper,
   QuizRow,
-  QuizHeading,
   QuizSubheader,
   QuizDescription,
   QuizDescriptionTwo,
@@ -58,6 +60,9 @@ function LessonViewer(props: any) {
   const accountId = JSON.parse(
     window.sessionStorage.getItem("loggedInAccountId") || "{}"
   );
+  const [loading, setLoading] = useState<boolean>(true);
+
+  const history = useHistory();
 
   useEffect(() => {
     getCourseByCourseId(courseId).then(receivedCourse => {
@@ -71,34 +76,35 @@ function LessonViewer(props: any) {
     });
     getEnrolledLesson(accountId, lessonId).then(receivedEnrolledLesson => {
       setEnrolledLesson(receivedEnrolledLesson);
-    });   
-  }, []);
-  console.log(enrolledLesson);
-
-
-  useEffect(() => {
-    if (accountId !== null && courseId !== null ) {
+    });
+    if (accountId !== null && courseId !== null) {
       getEnrolledCourseByStudentIdAndCourseId(accountId, courseId).then(receivedEnrolledCourse => {
         setEnrolledCourse(receivedEnrolledCourse);
+        setLoading(false)
       });
     }
   }, []);
 
+  function formatDate(date: Date): string {
+    var d = new Date(date);
+    return d.toDateString() + ', ' + d.toLocaleTimeString();
+  }
+
+  const attemptQuiz = (enrolledContentId: number) => {
+    history.push({ pathname: `/attemptquizviewer/${enrolledContentId}`, state: { mode: 'ATTEMPT' } });
+  }
 
   function getQuizAttempts(): QuizWithStudentAttemptCountResp[] {
     let quizAttemptsTemp: QuizWithStudentAttemptCountResp[] = [];
     enrolledLesson?.enrolledContents.forEach(enrolledContent => {
-      if ("maxAttemptsPerStudent" in enrolledContent.parentContent)
-      {
-        let quiz: Quiz = enrolledContent.parentContent as Quiz; 
+      if ("maxAttemptsPerStudent" in enrolledContent.parentContent) {
+        let quiz: Quiz = enrolledContent.parentContent as Quiz;
         let studentAttemptCount;
-        
-        if (enrolledContent.studentAttempts)
-        {
+
+        if (enrolledContent.studentAttempts) {
           studentAttemptCount = quiz.maxAttemptsPerStudent - enrolledContent.studentAttempts.length;
         }
-        else
-        {
+        else {
           studentAttemptCount = quiz.maxAttemptsPerStudent;
         }
 
@@ -107,25 +113,27 @@ function LessonViewer(props: any) {
             contentId: enrolledContent.enrolledContentId,
             timeLimit: quiz.timeLimit,
             maxAttemptsPerStudent: quiz.maxAttemptsPerStudent,
-            studentAttemptCount: studentAttemptCount                 
-          }        
+            studentAttemptCount: studentAttemptCount,
+            studentAttempts: enrolledContent.studentAttempts
+          }
         );
+        console.log("enrolledContent.enrolledContentId", enrolledContent.enrolledContentId);
       }
     });
     return quizAttemptsTemp;
   }
-  
+
 
   function previousLessonCompleted(): boolean {
-   let allEnrolledLessons = enrolledCourse?.enrolledLessons;
-   if (allEnrolledLessons && enrolledLesson && enrolledLesson?.parentLesson.sequence > 1) {
-     let sequence = enrolledLesson.parentLesson.sequence
-     let pLesson = allEnrolledLessons[sequence - 2];
-     if (pLesson.dateTimeOfCompletion !== null) {
-       return true;
-     } else {
-       return false;
-     }
+    let allEnrolledLessons = enrolledCourse?.enrolledLessons;
+    if (allEnrolledLessons && enrolledLesson && enrolledLesson?.parentLesson.sequence > 1) {
+      let sequence = enrolledLesson.parentLesson.sequence
+      let pLesson = allEnrolledLessons[sequence - 2];
+      if (pLesson.dateTimeOfCompletion !== null) {
+        return true;
+      } else {
+        return false;
+      }
     }
     return true;
   }
@@ -140,7 +148,6 @@ function LessonViewer(props: any) {
     let enrolledContent = enrolledLesson?.enrolledContents.find(
       i => i.parentContent?.contentId === contentId
     );
-    console.log(enrolledContent?.enrolledContentId)
     if (enrolledContent?.dateTimeOfCompletion !== null || isCourseTutor) {
       return true;
     }
@@ -148,20 +155,20 @@ function LessonViewer(props: any) {
   }
 
   return (
-    <>
+    <>{!loading &&
       <LessonContainer>
-      <PageHeadingAndButton>
-        <PageHeading>
-          <LessonTitle>Week {currentLesson?.sequence}</LessonTitle>
-          <CourseTitle>{currentCourse?.name}</CourseTitle> 
-          {!previousLessonCompleted() &&
-          <HeadingDescription>You do not have access to this page. Complete your previous lessons.</HeadingDescription>
-          }
-        </PageHeading>
-        <ExitWrapper to={`/overview/${currentCourse?.courseId}`}>
-            <CancelOutlinedIcon fontSize="large" style={{ color: colours.BLUE2, padding: 20 }}/>
-        </ExitWrapper>
-      </PageHeadingAndButton>
+        <PageHeadingAndButton>
+          <PageHeading>
+            <LessonTitle>Week {currentLesson?.sequence}</LessonTitle>
+            <CourseTitle>{currentCourse?.name}</CourseTitle>
+            {!previousLessonCompleted() &&
+              <HeadingDescription>You do not have access to this page. Complete your previous lessons.</HeadingDescription>
+            }
+          </PageHeading>
+          <ExitWrapper to={`/overview/${courseId}`}>
+            <CancelOutlinedIcon fontSize="large" style={{ color: colours.BLUE2, padding: 20 }} />
+          </ExitWrapper>
+        </PageHeadingAndButton>
         <LessonCard>
           <LessonHeader>Lesson Overview</LessonHeader>
           <LessonDescription>{currentLesson?.description}</LessonDescription>
@@ -179,13 +186,21 @@ function LessonViewer(props: any) {
                   previousCompleted={previousLessonCompleted()}
                   to={`/overview/lesson/${courseId}/${lessonId}/${m.contentId}`}
                 >
+                  {m.multimediaType === "PDF" && <ReadingIcon />}
                   {m.multimediaType === "DOCUMENT" && <ReadingIcon />}
+                  {m.multimediaType === "IMAGE" && <ReadingIcon/>}
                   {m.multimediaType === "VIDEO" && <PlayIcon />}
                   {m.multimediaType === "ZIP" && <ZipIcon />}
+                  {m.multimediaType === "PDF" && "PDF: " + m.name}
                   {m.multimediaType === "DOCUMENT" && "Reading: " + m.name } 
+                  {m.multimediaType === "IMAGE" && "Image: " + m.name}
                   {m.multimediaType === "VIDEO" && "Video: " + m.name }
-                  {m.multimediaType === "ZIP" && "Zip: " + m.name }
-                </ContentLink>
+                  {m.multimediaType === "ZIP" && "Zip: " + m.name }  
+                                  
+                  {checkCompleted(m.contentId) &&
+                    <CheckIcon />
+                  }
+                </ContentLink>                
               );
             })}
           </ContentMenu>
@@ -200,19 +215,21 @@ function LessonViewer(props: any) {
                     <QuizSubheader>TIME LIMIT:</QuizSubheader>
                     <QuizDescription>{q.timeLimit} H</QuizDescription>
                     <BtnWrapper>
-                      {!previousLessonCompleted() && 
-                      <Button disabled>
-                        Start
+                      {!previousLessonCompleted() &&
+                        <Button disabled>
+                          Start
                       </Button>
                       }
                       {previousLessonCompleted() && q.studentAttemptCount === 0 &&
-                      <Button disabled>
-                        Start
+                        <Button disabled>
+                          Start
                       </Button>
                       }
-                      {previousLessonCompleted() && q.studentAttemptCount > 0 && 
-                      <Button primary={true} big={false} fontBig={false} disabled={false}>
-                        Start
+                      {previousLessonCompleted() && q.studentAttemptCount > 0 &&
+                        <Button primary={true} big={false} fontBig={false} disabled={false}
+                          onClick={() => attemptQuiz(q.contentId)}
+                        >
+                          Start
                       </Button>
                       }
                     </BtnWrapper>
@@ -227,12 +244,17 @@ function LessonViewer(props: any) {
                     <QuizDescriptionTwo>[To Finish]</QuizDescriptionTwo>
                     */}
                   </QuizRow>
+                  <QuizRow>
+                    <BtnWrapper>
+                      <ViewQuizAttemptsModal isButtonDisabled={!previousLessonCompleted()} studentAttempts={q.studentAttempts}/>
+                    </BtnWrapper>
+                  </QuizRow>
                 </>
               );
             })}
           </QuizWrapper>
         </LessonCard>
-      </LessonContainer>
+      </LessonContainer>}
     </>
   );
 }

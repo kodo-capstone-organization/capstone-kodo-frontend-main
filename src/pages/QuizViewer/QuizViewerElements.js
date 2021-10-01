@@ -1,9 +1,12 @@
 import styled from "styled-components";
-import { TextField, Card, CardHeader, CardContent, Select } from "@material-ui/core";
+import { 
+    Card, 
+    CardContent,
+    CardHeader, 
+    TableRow 
+} from "@material-ui/core";
 import { fontSizes } from "../../values/FontSizes";
 import { colours } from "../../values/Colours";
-import { Button } from "../../values/ButtonElements";
-
 
 export const QuizContainer = styled.div`
     padding: 2rem;
@@ -16,14 +19,6 @@ export const QuizContainer = styled.div`
 
 export const QuizCard = styled(Card)`
     width: 100%;
-`;
-
-export const QuizQuestionCard = styled(Card)`
-    width: 800px;
-    border-radius : 10px;
-    padding: 16px;
-    display: flex;
-    margin: 10px;
 `;
 
 export const QuizCardHeader = styled(CardHeader)`
@@ -61,7 +56,7 @@ export const QuizCardContent = styled(CardContent)`
     justify-content: center;
 `;
 
-export const QuizBuilderCardContent = styled(CardContent)`
+export const QuizViewerCardContent = styled(CardContent)`
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -71,37 +66,16 @@ export const QuizBuilderCardContent = styled(CardContent)`
     justify-content: center;
 `;
 
-export const QuizSelectMenu = styled(Select)`
-    width: 100%;
+export const QuizQuestionCard = styled(Card)`
+    width: 800px;
+    border-radius : 10px;
+    padding: 16px;
+    display: block;
+    margin: 10px;
 `;
 
-export const QuizBuilderTextInput = styled(TextField)`
-    width: 100%;
-    margin: 16px;
-`;
-
-export const QuizEmptyStateText = styled.h1`
-  font-size: ${fontSizes.SUBTEXT};
-  color: ${colours.GRAY4};
-  font-family: "Roboto", sans-serif;
-  text-align: center;
-  padding: 50px;
-`;
-
-export const QuizEmptyStateContainer = styled.div`
-  display: ${({ coursesExist }) =>
-  coursesExist ? "none" : "flex"};
-  font-size: ${fontSizes.SUBTEXT};
-  color: ${colours.GRAY4};
-  font-family: "Roboto", sans-serif;
-  flex-direction: column;
-  justify-content: center; 
-  text-align: center; 
-  align-items: center;
-  padding: 50px;
-`;
-
-export const AddQuizOptionButton = styled(Button)`
-    width: fit-content;
-    margin: 4px auto;
+export const MarkedQuizViewerTableRow = styled(TableRow)`
+    .MuiTableRow-root.Mui-selected, .MuiTableRow-root.Mui-selected:hover {
+        background-color: ${colours.GREEN};
+    }
 `

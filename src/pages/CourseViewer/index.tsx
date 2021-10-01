@@ -4,7 +4,7 @@ import { Course } from "../../apis/Entities/Course";
 import { Account } from "../../apis/Entities/Account";
 import { EnrolledCourse } from "../../apis/Entities/EnrolledCourse";
 import { getMyAccount } from "../../apis/Account/AccountApis";
-import { getCourseByCourseId } from "../../apis/Course/CourseApis";
+import { getCourseWithoutEnrollmentByCourseId } from "../../apis/Course/CourseApis";
 import {
   getEnrolledCourseByStudentIdAndCourseId,
 } from "../../apis/EnrolledCourse/EnrolledCourseApis";
@@ -15,6 +15,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 
 import { LayoutContainer, MessageContainer, Message, BtnWrapper } from "./CourseViewerElements";
 import { Button } from "../../values/ButtonElements";
+import { LayoutContentPage } from "../../components/LayoutElements";
 
 function CourseOverview(props: any) {
   const courseId = props.match.params.courseId;
@@ -33,13 +34,13 @@ function CourseOverview(props: any) {
     getMyAccount(accountId).then(receivedAccount => {
       setUser(receivedAccount);
     });
-    getCourseByCourseId(courseId).then(receivedCourse => {
+    getCourseWithoutEnrollmentByCourseId(courseId).then(receivedCourse => {
       setCourse(receivedCourse);
-      setLoading(false);
     });
     getEnrolledCourseByStudentIdAndCourseId(accountId, courseId).then(receivedEC => {
       setEnrolledCourse(receivedEC)
     })
+    setLoading(false);
   }, []);
 
   //if current logged in user is enrolled in this course, returns true
@@ -67,40 +68,43 @@ function CourseOverview(props: any) {
     return false;
    }
 
-
-
-  if (loading) return (
-    <MessageContainer><CircularProgress /></MessageContainer>
-  );
-
-  if (currentUser && currentCourse && !courseIsEnrolled() && !isCourseTutor()) return (
-    <>
-    <MessageContainer isEnrolled={courseIsEnrolled()} isTutor={isCourseTutor()}>
-      <Message>You are not enrolled in this course 😡</Message>
-    </MessageContainer>
-    <BtnWrapper isEnrolled={courseIsEnrolled()} isTutor={isCourseTutor()}>
-      <Button primary to={`/browsecourse`}>Browse Courses</Button>
-    </BtnWrapper>
-    </>
-
-  );
-
   return (
     <>
-    <LayoutContainer>
-      {courseIsEnrolled() &&
-      <> 
-        <Sidebar course={currentCourse}/>
-        <StudentView course={currentCourse} account={currentUser} enrolledCourse={enrolledCourse}/> 
-      </>
-      }
-      {isCourseTutor() &&
-      <>
-        <Sidebar course={currentCourse}/>
-        <TutorView course={currentCourse}/>
-      </>
-      }
-    </LayoutContainer>
+    {loading ? 
+      <MessageContainer>
+        <CircularProgress/>
+      </MessageContainer> : (currentUser && currentCourse && !courseIsEnrolled() && !isCourseTutor() ? 
+        <>
+          <MessageContainer isEnrolled={courseIsEnrolled()} isTutor={isCourseTutor()}>
+            <Message>You are not enrolled in this course 😡</Message>
+          </MessageContainer>
+          <BtnWrapper isEnrolled={courseIsEnrolled()} isTutor={isCourseTutor()}>
+            <Button primary to={`/browsecourse`}>Browse Courses</Button>
+          </BtnWrapper>
+        </> :
+      <LayoutContainer>
+        { (courseIsEnrolled() || isCourseTutor()) &&
+            <>
+              <Sidebar course={currentCourse} isTutorView={isCourseTutor()}/>
+              <LayoutContentPage showSideBar style={{ paddingRight: "10rem"}}>
+                { isCourseTutor() && <TutorView course={currentCourse}/>  }
+                { courseIsEnrolled() && <StudentView course={currentCourse} account={currentUser} enrolledCourse={enrolledCourse}/> }
+              </LayoutContentPage>
+            </>
+        }
+      </LayoutContainer>)}
+      {/*{courseIsEnrolled() &&*/}
+      {/*<> */}
+      {/*  <Sidebar course={currentCourse}/>*/}
+      {/*  <StudentView course={currentCourse} account={currentUser} enrolledCourse={enrolledCourse}/> */}
+      {/*</>*/}
+      {/*}*/}
+      {/*{isCourseTutor() &&*/}
+      {/*<>*/}
+      {/*  <Sidebar course={currentCourse}/>*/}
+      {/*  <TutorView course={currentCourse}/>*/}
+      {/*</>*/}
+      {/*}*/}
     </>
   );
 }

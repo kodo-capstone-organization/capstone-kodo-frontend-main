@@ -6,10 +6,8 @@ import { getMultimediaByMultimediaId } from "../../../apis/Multimedia/Multimedia
 import { Multimedia } from "../../../apis/Entities/Multimedia";
 import { Course } from "../../../apis/Entities/Course";
 import { Lesson } from "../../../apis/Entities/Lesson";
-
 import { colours } from "../../../values/Colours";
 import ReactPlayer from "react-player";
-import { pdfjs } from "react-pdf";
 import PDFViewer from "./PDFViewer";
 import DownloadFile from "./DownloadFile";
 
@@ -27,22 +25,29 @@ import {
   MultimediaName,
   MultimediaDescription,
   MultimediaHeader,
+  MultimediaDoneButtonWrapper,
   ExitWrapper
 } from "./MultimediaViewerElements";
 
 import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
+import { EnrolledContent } from "../../../apis/Entities/EnrolledContent";
+import { useHistory } from "react-router-dom";
 
 function MultimediaViewer(props: any) {
   const contentId = props.match.params.contentId;
   const lessonId = props.match.params.lessonId;
   const courseId = props.match.params.courseId;
+  const accountId = JSON.parse(
+    window.sessionStorage.getItem("loggedInAccountId") || "{}"
+  );
 
   const [currentMultimedia, setMultimedia] = useState<Multimedia>();
   const [currentLesson, setLesson] = useState<Lesson>();
   const [currentCourse, setCourse] = useState<Course>();
   const [numPages, setNumPages] = useState<number>();
   const [pageNumber, setPageNumber] = useState<number>(1);
+
+  let history = useHistory();
 
   useEffect(() => {
     getMultimediaByMultimediaId(contentId).then(receivedMultimedia => {
@@ -61,8 +66,17 @@ function MultimediaViewer(props: any) {
   }
 
   function getUrlForDocument() {
-    return `https://docs.google.com/gview?url=https://storage.googleapis.com/capstone-kodo-bucket/${currentMultimedia?.urlFilename}&embedded=true`
+      return `https://docs.google.com/gview?url=https://storage.googleapis.com/capstone-kodo-bucket/${currentMultimedia?.urlFilename}&embedded=true`
   }
+
+  // const completeMultimedia = () => {
+  //   setDateTimeOfCompletionOfEnrolledContentByAccountIdAndContentId(true, accountId, contentId)
+  //     .then((res: EnrolledContent) => {
+  //       props.callOpenSnackBar("Multimedia completed", "success");
+  //       history.push(`/overview/lesson/${courseId}/${lessonId}`);
+  //     })
+  //     .catch(err => props.callOpenSnackBar(err.response.data.message, "error"))
+  // }
 
   return (
     <>

@@ -14,7 +14,8 @@ export interface QuizWithStudentAttemptCountResp {
     contentId: number,
     timeLimit: string,
     maxAttemptsPerStudent: number,
-    studentAttemptCount: number
+    studentAttemptCount: number,
+    studentAttempts: StudentAttempt[]
 }
 
 export interface UpdateQuizReq {

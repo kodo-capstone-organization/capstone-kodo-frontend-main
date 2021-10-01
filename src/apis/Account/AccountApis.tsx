@@ -1,7 +1,6 @@
 import { IHttpClientRequestParameters } from "./../HttpClient/IHttpClientRequestParameters";
 import { Account, CreateNewAccountReq, UpdateAccountReq, UpdateAccountPasswordReq } from "../Entities/Account";
 import { httpClient } from "../HttpClient/HttpClient";
-import { LoginResponse } from "../Entities/Login";
 import { transformToBlob } from "./../../utils/BlobCreator";
 import { DeactivateAccountResponse } from "../Entities/Deactivate";
 const FormData = require('form-data');
@@ -27,7 +26,7 @@ export async function getAllAccounts(): Promise<Account[]> {
     return httpClient.get<undefined, Account[]>(getParameters)
 }
 
-export async function getAccountByQuizId(quizId: number): Promise<Account[]> {
+export async function getAccountByQuizId(quizId: number): Promise<Account> {
     const getParameters: IHttpClientRequestParameters<undefined> = {
         url: `/account/getAccountByQuizId/${quizId}`
     }

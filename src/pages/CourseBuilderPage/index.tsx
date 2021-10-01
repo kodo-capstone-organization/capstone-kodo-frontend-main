@@ -1,17 +1,19 @@
-import React, { useState, useEffect, useReducer } from "react";
+import { useState, useEffect, useReducer } from "react";
+
 import { useHistory } from "react-router-dom";
 import { Box, Grid, TextField, Chip, InputAdornment, Dialog, DialogTitle, DialogActions, DialogContent, Breadcrumbs, Link} from "@material-ui/core";
-import { CourseBuilderCard, CourseBuilderCardHeader, CourseBuilderContainer, CourseBuilderContent } from "./CourseBuilderElements";
+import { CourseBuilderCard, CourseBuilderCardHeader, CourseBuilderContainer, CourseBuilderContent, MessageContainer } from "./CourseBuilderElements";
 import LessonPlan from "./components/LessonPlan";
-import { getCourseByCourseId, updateCourse, toggleEnrollmentActiveStatus } from './../../apis/Course/CourseApis';
+import { getCourseWithoutEnrollmentByCourseId, updateCourse, toggleEnrollmentActiveStatus } from './../../apis/Course/CourseApis';
 import { Tag } from "../../apis/Entities/Tag";
 import { UpdateCourseReq, Course } from "../../apis/Entities/Course";
 import { Autocomplete } from "@material-ui/lab";
-import { getAllTags } from '../../apis/Tag/TagApis';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import DoneIcon from '@material-ui/icons/Done';
 import PublishIcon from '@material-ui/icons/Publish';
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import { getAllTags } from '../../apis/Tag/TagApis';
 import { Button } from "../../values/ButtonElements";
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 interface IErrors<TValue> {
     [id: string]: TValue;
@@ -42,7 +44,7 @@ function CourseBuilderPage(props: any) {
     });
     
     useEffect(() => {
-        getCourseByCourseId(courseId).then((receivedCourse: Course) => {
+        getCourseWithoutEnrollmentByCourseId(courseId).then((receivedCourse: Course) => {
             Object.keys(receivedCourse).forEach((key, index) => {
                 let wrapperEvent = {
                     target: {
@@ -53,11 +55,8 @@ function CourseBuilderPage(props: any) {
                 handleFormDataChange(wrapperEvent)
             }) 
         });
-      }, [courseId]);
-
-    useEffect(() => {
         getAllTags().then((res: any)=> setTagLibrary(res)).catch(() => console.log("error getting tags."))
-    }, [])
+    }, [courseId]);
 
     useEffect(() => {
         if (courseFormData.tutor != null) {
@@ -68,7 +67,6 @@ function CourseBuilderPage(props: any) {
                 setLoading(false);
             }
         }
-
     }, [courseFormData.tutor])
 
     const handleChipInputChange = (e: object, value: String[], reason: string) => {
@@ -199,7 +197,7 @@ function CourseBuilderPage(props: any) {
     //     history.goBack();
     // }
 
-    return !loading && ( !isTutorOfCourse ? 
+    return loading ? <MessageContainer><CircularProgress/></MessageContainer> : ( !isTutorOfCourse ? 
         <h1>You are not a tutor of this course 😡</h1> :       
         <CourseBuilderContainer>
             <Breadcrumbs aria-label="coursebuilder-breadcrumb" style={{ marginBottom: "1rem"}}>

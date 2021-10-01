@@ -1,7 +1,11 @@
 import styled from "styled-components";
-import { Card, CardHeader, CardContent } from "@material-ui/core";
 import { fontSizes } from "../../values/FontSizes";
 import { colours } from "../../values/Colours";
+import { 
+    Card, 
+    CardContent,
+    CardHeader
+} from "@material-ui/core";
 
 export const CourseBuilderContainer = styled.div`
     padding: 2rem;
@@ -47,3 +51,11 @@ export const CourseBuilderCardHeader = styled(CardHeader)`
         }
     }
 `;
+
+export const MessageContainer = styled.div`
+  display: ${({ isEnrolled, isTutor}) =>
+  isEnrolled || isTutor ? "none" : "flex"};
+  margin: 3rem;
+  align-items: center;
+  justify-content: center;
+`

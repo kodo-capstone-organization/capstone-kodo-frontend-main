@@ -1,6 +1,21 @@
 import React, { useState, useEffect } from 'react';
+
 import clsx from 'clsx';
-import { createStyles, lighten, makeStyles, Theme } from '@material-ui/core/styles';
+
+import { 
+  Theme,
+  createStyles, 
+  lighten, 
+  makeStyles
+} from '@material-ui/core/styles';
+
+import AddIcon from '@material-ui/icons/Add';
+import Alert from '@material-ui/lab/Alert';
+import Checkbox from '@material-ui/core/Checkbox';
+import DeleteIcon from '@material-ui/icons/Delete';
+import EditIcon from '@material-ui/icons/Edit';
+import IconButton from '@material-ui/core/IconButton';
+import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -10,21 +25,38 @@ import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import Paper from '@material-ui/core/Paper';
-import Checkbox from '@material-ui/core/Checkbox';
-import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
-import DeleteIcon from '@material-ui/icons/Delete';
-import AddIcon from '@material-ui/icons/Add';
-import { Multimedia, MultimediaType } from '../../../apis/Entities/Multimedia';
+import Typography from '@material-ui/core/Typography';
+import VisibilityIcon from '@material-ui/icons/Visibility';
+import { 
+  Dialog, 
+  DialogActions,
+  DialogContent,
+  DialogContentText, 
+  DialogTitle, 
+  FormControl, 
+  Input, 
+  InputLabel, 
+} from '@material-ui/core';
+
+import { 
+  Multimedia, 
+  MultimediaType 
+} from '../../../apis/Entities/Multimedia';
+
 import { Lesson } from '../../../apis/Entities/Lesson';
-import { Dialog, DialogContent, DialogContentText, DialogTitle, InputLabel, Input, FormControl, DialogActions} from '@material-ui/core';
-import { ACCEPTABLE_FILE_TYPE, getFileType } from '../../../utils/GetFileType';
+import { 
+  addNewMultimediaToLesson,   
+  deleteMultimediasFromLesson,
+  updateMultimedia 
+} from '../../../apis/Multimedia/MultimediaApis';
+
+import { 
+  ACCEPTABLE_FILE_TYPE, 
+  getFileType 
+} from '../../../utils/GetFileType';
+
 import { Button } from "../../../values/ButtonElements";
-import { addNewMultimediaToLesson, deleteMultimediasFromLesson, updateMultimedia } from '../../../apis/Multimedia/MultimediaApis';
-import EditIcon from '@material-ui/icons/Edit';
-import Alert from '@material-ui/lab/Alert';
 
 interface IErrors<TValue> {
   [id: string]: TValue;
@@ -91,7 +123,8 @@ const headCells: HeadCell[] = [
   { id: 'name', numeric: false, disablePadding: true, label: 'Name' },
   { id: 'description', numeric: true, disablePadding: false, label: 'Description' },
   { id: 'type', numeric: true, disablePadding: false, label: 'File Type' },
-  { id: 'contentId', numeric: true, disablePadding: false, label: 'Update Multimedia' }
+  { id: 'contentId', numeric: true, disablePadding: false, label: 'Preview Multimedia' },
+  { id: 'contentId', numeric: true, disablePadding: false, label: 'Update Multimedia' },
 ];
 
 interface EnhancedTableProps {
@@ -226,10 +259,16 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
       newValidationErrorMessage = newValidationErrorMessage.concat("Description cannot be empty. \n")
     }
 
-    if (newFile.file?.size === 0) {
+    if (!newFile.file || newFile.file.size === 0) {
       formIsValid = false;
       errors['file'] = true;
       newValidationErrorMessage = newValidationErrorMessage.concat("File cannot be empty. \n")
+    }
+
+    // Check whether file size larger than 200MB
+    if (newFile.file && newFile.file.size > 200000000) {
+      formIsValid = false;  
+      newValidationErrorMessage = newValidationErrorMessage.concat("File size cannot be larger than 200MB. \n")
     }
 
     setErrors(errors);
@@ -354,9 +393,9 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
         aria-describedby="simple-modal-description">
             <DialogTitle>Add a new Multimedia</DialogTitle>
             <DialogContent
-              style={{height: '300px'}}>
+              style={{height: '50vh'}}>
               <DialogContentText>
-                First, enter some basic details about the new multimedia below.
+                First, enter some basic details about the new multimedia below. <br/> Note: The allowed file size is 200MB.
               </DialogContentText>
               <FormControl fullWidth margin="normal">
                 <InputLabel htmlFor="multimedia-name">Multimedia Name</InputLabel>
@@ -436,7 +475,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
               </Button>
             </DialogActions>
             <DialogContent>
-              {validationErrorMessage && <Alert variant="filled" severity="error">{validationErrorMessage}</Alert>}
+              {validationErrorMessage && <Alert severity="error">{validationErrorMessage}</Alert>}
             </DialogContent>
     </Dialog>
     <Toolbar
@@ -511,6 +550,7 @@ export default function MultimediaTable(props: any) {
     const [lessons, setLessons] = useState<Lesson[]>(props.lessons);
     const rows = multimedias?.length > 0 ? multimedias.map((row: Multimedia, index: number) => createData(index, row.name, row.description, row.multimediaType, row.urlFilename, row.contentId)) : []
 
+    const [selectedPreviewFile, setSelectedPreviewFile] = useState<Data>();
     const [selectedMultimediaId, setSelectedMultimediaId] = useState<number>(0);
     const [newFile, setNewFile] = useState<Multimedia>({ contentId: -1, name: "", description: "", url: "", multimediaType: MultimediaType.EMPTY, urlFilename: "", file: new File([""], ""), type: "multimedia"});
     const [validationErrorMessage, setValidationErrorMessage] = useState<string>("");
@@ -519,16 +559,27 @@ export default function MultimediaTable(props: any) {
       description: false,
     });
 
-    const [showAddMultimediaDialog, setShowAddMultimediaDialog] = useState<boolean>(false); 
+    const [showUpdateMultimediaDialog, setShowUpdateMultimediaDialog] = useState<boolean>(false); 
+    const [showPreviewMultimediaDialog, setShowPreviewMultimediaDialog] = useState<boolean>(false); 
   
-    const openDialog = () => {
-      setShowAddMultimediaDialog(true);
+    const openUpdateMultimediaDialog = () => {
+      setShowUpdateMultimediaDialog(true);
+    }
+
+    const openPreviewMultimediaDialog = () => {
+      setShowPreviewMultimediaDialog(true);
     }
   
-    const handleClose = () => {
-      setShowAddMultimediaDialog(false);
+    const handleCloseUpdateMultimediaDialog = () => {
+      setSelectedMultimediaId(0)
+      setShowUpdateMultimediaDialog(false);
       setErrors({})
       setValidationErrorMessage("");
+      setNewFile({ contentId: -1, name: "", description: "", url: "", multimediaType: MultimediaType.EMPTY, urlFilename: "", file: new File([""], ""), type: "multimedia"})
+    }
+
+    const handleClosePreviewMultimediaDialog = () => {
+      setShowPreviewMultimediaDialog(false);
     }
 
     const handleValidation = () => {
@@ -546,6 +597,12 @@ export default function MultimediaTable(props: any) {
         formIsValid = false;
         errors['description'] = true;      
         newValidationErrorMessage = newValidationErrorMessage.concat("Description cannot be empty. \n")
+      }
+
+      // Check whether file size larger than 200MB
+      if (newFile.file && newFile.file.size > 200000000) {
+        formIsValid = false;  
+        newValidationErrorMessage = newValidationErrorMessage.concat("File size cannot be larger than 200MB. \n")
       }
   
       setErrors(errors);
@@ -582,7 +639,7 @@ export default function MultimediaTable(props: any) {
 
               handleFormDataChange(wrapperEvent)
               setLessons(updatedLessons)
-              handleClose()
+              handleCloseUpdateMultimediaDialog()
               setNewFile({ contentId: -1, name: "", description: "", url: "", multimediaType: MultimediaType.EMPTY, urlFilename: "", file: new File([""], ""), type: "multimedia"})
             })
             .catch((error) => {
@@ -617,6 +674,12 @@ export default function MultimediaTable(props: any) {
       setNewFile({...updatedFile})
     }
 
+    const handleOpenPreviewMultimediaDialog = (selectedContent: Data) => {
+      setSelectedPreviewFile(selectedContent)
+
+      openPreviewMultimediaDialog()
+    }
+
     const handleOpenUpdateMultimediaDialog = (selectedContentId: number) => {
       setSelectedMultimediaId(selectedContentId)
 
@@ -637,7 +700,7 @@ export default function MultimediaTable(props: any) {
 
       setNewFile(fileToUpdate)
 
-      openDialog()
+      openUpdateMultimediaDialog()
     }
 
     // Used to trigger rerendering of MultimediaTable whenever lessons is updated in Table Header component
@@ -707,14 +770,58 @@ export default function MultimediaTable(props: any) {
         <>
         <Dialog 
           fullWidth
-          open={showAddMultimediaDialog}
-          onClose={handleClose}
+          open={showPreviewMultimediaDialog}
+          onClose={handleClosePreviewMultimediaDialog}
+          aria-labelledby="simple-modal-title"
+          aria-describedby="simple-modal-description"
+        >
+            <DialogTitle>Multimedia Preview</DialogTitle>
+            <DialogContent
+              style={{height: '50vh'}}>
+              <FormControl fullWidth margin="normal">
+                <InputLabel htmlFor="multimedia-name">Multimedia Name</InputLabel>
+                <Input
+                  id="multimedia-name"
+                  name="name"
+                  type="text"
+                  autoFocus
+                  fullWidth
+                  value={selectedPreviewFile?.name}
+                  disabled
+                />
+                </FormControl>
+                <FormControl fullWidth margin="normal">
+                  <InputLabel htmlFor="multimedia-description">Description</InputLabel>
+                  <Input
+                    id="multimedia-description"
+                    name="description"
+                    type="text"
+                    fullWidth
+                    multiline
+                    value={selectedPreviewFile?.description}
+                    disabled
+                  />
+                </FormControl>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClosePreviewMultimediaDialog}>
+                Close
+              </Button>
+            </DialogActions>
+        </Dialog>
+        <Dialog 
+          fullWidth
+          open={showUpdateMultimediaDialog}
+          onClose={handleCloseUpdateMultimediaDialog}
           aria-labelledby="simple-modal-title"
           aria-describedby="simple-modal-description"
         >
             <DialogTitle>Update an existing Multimedia</DialogTitle>
             <DialogContent
-              style={{height: '300px'}}>
+              style={{height: '50vh'}}>
+              <DialogContentText>
+                Note: The allowed file size is 200MB.
+              </DialogContentText>
               <FormControl fullWidth margin="normal">
                 <InputLabel htmlFor="multimedia-name">Multimedia Name</InputLabel>
                 <Input
@@ -783,7 +890,7 @@ export default function MultimediaTable(props: any) {
                 </FormControl>
             </DialogContent>
             <DialogActions>
-              <Button onClick={handleClose}>
+              <Button onClick={handleCloseUpdateMultimediaDialog}>
                 Cancel
               </Button>
               <Button primary onClick={handleClickUpdateMultimedia}>
@@ -791,7 +898,7 @@ export default function MultimediaTable(props: any) {
               </Button>
             </DialogActions>
             <DialogContent>
-              {validationErrorMessage && <Alert variant="filled" severity="error">{validationErrorMessage}</Alert>}
+              {validationErrorMessage && <Alert severity="error">{validationErrorMessage}</Alert>}
             </DialogContent>
         </Dialog>
         <div className={classes.root}>
@@ -854,6 +961,14 @@ export default function MultimediaTable(props: any) {
                         </TableCell>
                         <TableCell align="right">{row.description}</TableCell>
                         <TableCell align="right">{row.type}</TableCell>
+                        <TableCell align="right">
+                          <IconButton 
+                            size="small" 
+                            color="primary" 
+                            onClick={() => {handleOpenPreviewMultimediaDialog(row)}}>
+                              <VisibilityIcon/>&nbsp;
+                          </IconButton>
+                        </TableCell>
                         <TableCell align="right">
                           <IconButton 
                             disabled={props.isEnrollmentActive} 

@@ -1,34 +1,40 @@
 import React, { useState } from 'react';
-import { Button } from "../../../values/ButtonElements";
-import { Typography } from '@material-ui/core';
-import { login, reactivateAccount } from '../../../apis/Account/AccountApis';
+
 import { useHistory } from "react-router-dom";
+
+import { Typography, Input, InputLabel, InputAdornment, } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
-import TextField from '@material-ui/core/TextField';
-import {
-    LoginForm,
-    LoginPaper,
-    LoginPaperWrapper
-} from "./LoginElements";
+import CloseIcon from '@material-ui/icons/Close';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
+import TextField from '@material-ui/core/TextField';
+
+import { Account } from '../../../apis/Entities/Account';
+
+import { DeactivateAccountResponse } from '../../../apis/Entities/Deactivate';
+import { login, reactivateAccount } from '../../../apis/Account/AccountApis';
+
+import { Button } from "../../../values/ButtonElements";
+import Visibility from '@material-ui/icons/Visibility';
+import VisibilityOff from '@material-ui/icons/VisibilityOff';
+
 import {
+    LoginForm,
+    LoginPaper,
+    LoginPaperWrapper,
     LoginSettingField
 } from "./LoginElements";
-import { Account } from '../../../apis/Entities/Account';
-import { DeactivateAccountResponse } from '../../../apis/Entities/Deactivate';
+
 
 interface IErrors<TValue> {
     [id: string]: TValue;
 }
 
-// function Login({ isOpen }) {
-function Login() {
+function Login(props: any) {
 
     const [auth, setAuth] = useState(true);
     const [username, setUsername] = useState('');
@@ -40,6 +46,7 @@ function Login() {
     const [loginFailed, setLoginFailed] = useState('');
     const [reactivateFailed, setReactivateFailed] = useState('');
     const [open, setOpen] = React.useState(false);
+    const [showPassword, setShowPassword] = useState<Boolean>(false);
 
     let history = useHistory()
 
@@ -52,7 +59,7 @@ function Login() {
         let formIsValid = true;
         errors = {};
 
-        //Email
+        // Email
         if (email === "") {
             formIsValid = false;
             errors["email"] = true;
@@ -66,7 +73,7 @@ function Login() {
             }
         }
 
-        //Confirm Email
+        // Confirm Email
         if (confirmEmail === "") {
             formIsValid = false;
             errors["confirmEmail"] = true;
@@ -105,7 +112,9 @@ function Login() {
             {
                 if (accountEmail === email)
                 {
-                    reactivateAccount(accountId, accountId).then((res: DeactivateAccountResponse) => {
+                    reactivateAccount(accountId, accountId)
+                    .then((res: DeactivateAccountResponse) => {
+                        props.callOpenSnackBar("Account successfully reactivated", "success")
                         loginCallback(username, password, accountId);
                     })
                     .catch(err => setLoginFailed("Reactivation Failed!"));
@@ -119,13 +128,17 @@ function Login() {
             {
                 setReactivateFailed("Email and confirmation does not match");
             }
-        }        
+        }
+        else        
+        {
+            setReactivateFailed("Email or confirmation is not an email");
+        }
     }
 
     const loginBtnClick = (e: any) => {
         setAuth(!auth);
         e.preventDefault();
-        // @ts-ignore: Unreachable code error
+
         login(username, password).then((res: Account) => {
             if (res.isActive)
             {
@@ -141,11 +154,11 @@ function Login() {
         .catch(err => setLoginFailed("Login Failed! Please use valid credentials!"));
     }
 
-    // @ts-ignore: Unreachable code error
-    const loginCallback = (username, password, accountId) => {
+    const loginCallback = (username: string, password: string, accountId: number) => {
+
         // res is the last param (though not shown in the callback) since its a binded function
         // Set to local storage
-        window.sessionStorage.setItem("loggedInAccountId", accountId);
+        window.sessionStorage.setItem("loggedInAccountId", JSON.stringify(accountId));
         window.sessionStorage.setItem("loggedInAccountUsername", username);
         window.sessionStorage.setItem("loggedInAccountPassword", password);
         history.push('/');
@@ -156,7 +169,7 @@ function Login() {
     const showReactivateErrors = () => {
         if (reactivateFailed)
         {
-            return(<Alert variant="filled" severity="error">{reactivateFailed}</Alert>);
+            return(<Alert severity="error">{reactivateFailed}</Alert>);
         }
         else
         {
@@ -167,7 +180,7 @@ function Login() {
     const showLoginErrors = () => {
         if (loginFailed)
         {
-            return(<Alert variant="filled" severity="error">{loginFailed}</Alert>);
+            return(<Alert severity="error">{loginFailed}</Alert>);
         }
         else
         {
@@ -175,10 +188,17 @@ function Login() {
         }
     }
 
+    const handleClickShowPassword = () => {
+        setShowPassword(!showPassword)
+    };
+
+    const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault();
+    };
+
     return (
         <>
             <div
-                // isOpen={isOpen}
                 style={{
                     display: "flex",
                     justifyContent: "center",
@@ -197,9 +217,36 @@ function Login() {
                         <br/>
                         <form noValidate autoComplete="off" onSubmit={loginBtnClick}>
                             <LoginForm>
-                                <TextField id="filled-basic" label="Username" variant="filled" type="text" value={username} onChange={e => setUsername(e.target.value)} />
+                                <InputLabel
+                                htmlFor="standard-adornment--username">Username</InputLabel>
+                                <Input
+                                autoComplete="off"
+                                id="standard-adornment-username"
+                                value={username}
+                                style={{ margin: "0 0 10px 0", width: "100%" }}
+                                onChange={e => setUsername(e.target.value)}/>
                                 <br/>
-                                <TextField id="filled-basic" label="Password" variant="filled" type="password" value={password} onChange={e => setPassword(e.target.value)} />
+                                <InputLabel
+                                htmlFor="standard-adornment--password">Old Password</InputLabel>
+                                <Input
+                                autoComplete="off"
+                                id="standard-adornment-password"
+                                type={showPassword ? 'text' : 'password'}
+                                value={password}
+                                style={{ margin: "0 0 10px 0", width: "100%" }}
+                                onChange={e => setPassword(e.target.value)}
+                                endAdornment={
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                            aria-label="toggle password visibility"
+                                            onClick={handleClickShowPassword}
+                                            onMouseDown={handleMouseDownPassword}
+                                        >
+                                            {showPassword ? <Visibility /> : <VisibilityOff />}
+                                        </IconButton>
+                                </InputAdornment>
+                            }
+                        />
                             </LoginForm>
                         
                             <br />

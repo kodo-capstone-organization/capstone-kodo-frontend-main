@@ -1,31 +1,31 @@
 import React, { useState, useEffect } from 'react';
-import { Quiz } from '../../../apis/Entities/Quiz';
+
+import DeleteIcon from '@material-ui/icons/Delete';
+import {
+    Box, 
+    FormControl, 
+    IconButton,
+    InputLabel, 
+} from "@material-ui/core";
+
 import { QuizQuestion } from "../../../apis/Entities/QuizQuestion";
 import { QuizQuestionOption } from '../../../apis/Entities/QuizQuestionOption';
+
 import QuizQuestionOptionsList from "./QuizQuestionOptionsList"
-import {
-    Box, FormControl, InputLabel, Divider, IconButton
-} from "@material-ui/core";
-import DeleteIcon from '@material-ui/icons/Delete';
-import { QuizBuilderTextInput, QuizSelectMenu } from "../QuizBuilderElements";
-
-
-const questionTypes = [
-    'MCQ',
-    'TF',
-    'MATCHING'
-];
+import { 
+    QuizBuilderTextInput, 
+    QuizSelectMenu 
+} from "../QuizBuilderElements";
 
 
 function QuizQuestionComponent(props: any) {
 
-    const [quiz, setQuiz] = useState<Quiz>();
     const [questionType, setQuestionType] = useState<string>();
     const [marks, setMarks] = useState<number>();
     const [question, setQuestion] = useState<QuizQuestion>();
     // const [updatedQuestion, setUpdatedQuestion] = useState<QuizQuestion>();
     const [isDisabled, setIsDisabled] = useState<boolean>(false);
-    const [content, setContent] = useState<string>();
+    const [content, setContent] = useState<string>("");
     const [questionIndex, setQuestionIndex] = useState<number>();
 
     useEffect(() => {
@@ -38,14 +38,10 @@ function QuizQuestionComponent(props: any) {
         setQuestionType(props.question.questionType)
     }, [props.question])
 
-    // useEffect(() => {
-    //     console.log("handleTYpechange", updatedQuestion)
-
-    // }, [updatedQuestion])
-
     const handleTypeChange = (event: React.ChangeEvent<{ value: unknown }>) => {
         setQuestionType(event.target.value as string);
-        const newlyUpdatedQuestion = Object.assign(question, { questionType: event.target.value })
+        const newlyUpdatedQuestion = Object.assign(question, { questionType: event.target.value, quizQuestionOptions: [] })
+        console.log("newlyUpdatedQuestion", newlyUpdatedQuestion);
         // setUpdatedQuestion(newlyUpdatedQuestion)
         props.onUpdateQuestion(newlyUpdatedQuestion, questionIndex)
     };
@@ -72,17 +68,18 @@ function QuizQuestionComponent(props: any) {
 
     const deleteQuestion = () => {
         props.onUpdateQuestion(null, questionIndex)
+    }
 
+    const handleCallSnackbar = (msg : string) => {
+        props.onCallSnackbar(msg);
     }
 
     return (
         <>
-
             <div id="questioncomponent" style={{ width: "inherit" }}>
                 <div id="typeAndMark" style={{ display: "flex", justifyContent: "center" }}>
-
                     {
-                        questionType != undefined &&
+                        questionType !== undefined &&
                         <Box sx={{ minWidth: 120 }} style={{ margin: "6px" }}>
                             <FormControl fullWidth>
                                 <InputLabel variant="standard" htmlFor="uncontrolled-native">
@@ -100,16 +97,16 @@ function QuizQuestionComponent(props: any) {
                             </FormControl>
                         </Box>
                     }
-
+                    &nbsp;&nbsp;&nbsp;
                     {
-                        marks != undefined &&
+                        marks !== undefined &&
                         <Box sx={{ minWidth: 120 }} style={{ margin: "6px" }}>
                             <FormControl fullWidth>
                                 <InputLabel variant="standard" htmlFor="uncontrolled-native">
                                     Marks
-                    </InputLabel>
+                                </InputLabel>
                                 <QuizSelectMenu
-                                disabled={isDisabled} 
+                                    disabled={isDisabled}
                                     value={marks}
                                     onChange={handleMarkChange}
                                 >
@@ -127,13 +124,19 @@ function QuizQuestionComponent(props: any) {
                     </IconButton>
                 </div>
 
-                {
-                    content != undefined &&
-                    <QuizBuilderTextInput disabled={isDisabled}  id="standard-basic" label="Question" variant="standard" value={content} onChange={handleContentChange} />
+                <br/>
 
-                }
+                <div>
+                    {
+                        content !== undefined &&
+                        <QuizBuilderTextInput disabled={isDisabled}  id="question-input" label="Question" variant="standard" value={content} onChange={handleContentChange} />
+                    }
+                </div>
 
-                <QuizQuestionOptionsList disabled={isDisabled}  questionIndex={questionIndex} question={question} questionType={questionType} onHandleQuizQuestionOptionUpdate={handleQuizQuestionOptionUpdate} />
+                <br/>
+
+                <QuizQuestionOptionsList disabled={isDisabled} questionIndex={questionIndex} question={question} questionType={questionType} 
+                onHandleQuizQuestionOptionUpdate={handleQuizQuestionOptionUpdate} onCallSnackbar={handleCallSnackbar}/>
             </div>
 
         </>

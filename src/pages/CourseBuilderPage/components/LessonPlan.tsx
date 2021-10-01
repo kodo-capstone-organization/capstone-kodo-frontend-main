@@ -1,14 +1,47 @@
 import React, { useState, useEffect } from 'react';
-import { Lesson } from './../../../apis/Entities/Lesson';
-import { Dialog, DialogContent, DialogContentText, DialogTitle, InputLabel, Input, FormControl, DialogActions, AppBar, Tabs, Tab, Grid, IconButton, TextField, Typography, Box } from "@material-ui/core";
+
 import AddIcon from '@material-ui/icons/Add';
-import { CourseBuilderCardHeader, CourseBuilderContent } from "./../CourseBuilderElements";
-import { tabProps, TabPanel }from './TabPanel';
+import { 
+    AppBar, 
+    Box, 
+    Dialog, 
+    DialogActions, 
+    DialogContent, 
+    DialogContentText, 
+    DialogTitle, 
+    FormControl, 
+    Grid, 
+    IconButton, 
+    Input, 
+    InputLabel, 
+    Tab, 
+    Tabs, 
+    TextField, 
+    Typography, 
+} from "@material-ui/core";
+
+import { Lesson } from './../../../apis/Entities/Lesson';
+
+import { 
+    createNewLesson, 
+    deleteLesson, 
+    updateLesson 
+} from '../../../apis/Lesson/LessonApis';
+
+import { BlankStateContainer } from '../../MyProfilePage/ProfileElements';
+
 import QuizTable from './QuizTable';
 import MultimediaTable from './MultimediaTable';
+import { 
+    CourseBuilderCardHeader, 
+    CourseBuilderContent 
+} from "./../CourseBuilderElements";
+import { 
+    tabProps, 
+    TabPanel 
+}from './TabPanel';
+
 import { Button } from "../../../values/ButtonElements";
-import { BlankStateContainer } from '../../MyProfilePage/ProfileElements';
-import { createNewLesson, deleteLesson, updateLesson } from '../../../apis/Lesson/LessonApis';
 
 interface IErrors<TValue> {
     [id: string]: TValue;

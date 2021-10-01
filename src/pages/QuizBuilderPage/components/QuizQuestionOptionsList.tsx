@@ -1,79 +1,76 @@
 import React, { useState, useEffect } from 'react';
-import { QuizQuestion } from '../../../apis/Entities/QuizQuestion';
-import { QuizQuestionOption } from '../../../apis/Entities/QuizQuestionOption';
+
 import DeleteIcon from '@material-ui/icons/Delete';
 import {
-    Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Checkbox, Paper, IconButton, TextField,
-    Radio
+    Checkbox,
+    IconButton,
+    Paper,
+    Radio,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    TextField,
 } from "@material-ui/core";
+
+import { QuizQuestionOption } from '../../../apis/Entities/QuizQuestionOption';
+
 import { AddQuizOptionButton } from "../QuizBuilderElements";
-import { Button } from "../../../values/ButtonElements";
-
-
-interface IQuestionOption {
-    leftContent: string,
-    rightContent: (string | null),
-    correct: boolean,
-    quizQuestionOptionId: number,
-}
 
 function QuizQuestionOptionsList(props: any) {
 
     const [questionType, setQuestionType] = useState<string>();
-    const [question, setQuestion] = useState<QuizQuestion>();
     const [quizQuestionOptions, setQuizQuestionOptions] = useState<QuizQuestionOption[]>();
-    const [correctAnswer, setCorrectAnswer] = React.useState<number>();
+    // const [correctAnswer, setCorrectAnswer] = React.useState<number>();
     const [questionIndex, setQuestionIndex] = useState<number>();
     const [isDisabled, setIsDisabled] = useState<boolean>(false);
 
     useEffect(() => {
         if (props.question !== undefined) {
-            setQuestion(props.question);
             setQuestionType(props.questionType);
             setQuestionIndex(props.questionIndex);
             setQuizQuestionOptions(props.question.quizQuestionOptions);
             setIsDisabled(props.disabled);
-            //@ts-ignore
-            props.question.quizQuestionOptions.map((x, index) => {
-                return (x.correct ? setCorrectAnswer(index) : null);
-            })
-            if (props.questionType === "TF") {
-                //check if options are TF, if not repopulate options
-                if (props.question.quizQuestionOptions.length >= 0) {
-                    if (props.question.quizQuestionOptions.length[0] !== "true" || props.question.quizQuestionOptions.length[0] !== "false") {
-                        const trueOption: QuizQuestionOption = {
-                            quizQuestionOptionId: null,
-                            leftContent: "true",
-                            rightContent: null,
-                            correct: true
-                        };
-                        const falseOption: QuizQuestionOption = {
-                            quizQuestionOptionId: null,
-                            leftContent: "false",
-                            rightContent: null,
-                            correct: false
-                        };
-                        const newQuizQuestionOptions: QuizQuestionOption[] = [trueOption, falseOption];
-                        setQuizQuestionOptions(newQuizQuestionOptions);
-                    }
+            if (props.question.quizQuestionOptions.length === 0) {
+                if (props.questionType === "TF") {
+                    const trueOption: QuizQuestionOption = {
+                        quizQuestionOptionId: null,
+                        leftContent: "true",
+                        rightContent: null,
+                        correct: true
+                    };
+                    const falseOption: QuizQuestionOption = {
+                        quizQuestionOptionId: null,
+                        leftContent: "false",
+                        rightContent: null,
+                        correct: false
+                    };
+                    const newQuizQuestionOptions: QuizQuestionOption[] = [trueOption, falseOption];
+                    setQuizQuestionOptions(newQuizQuestionOptions);
+                } else if (props.questionType === "MCQ") {
+                    const defaultOption: QuizQuestionOption = {
+                        quizQuestionOptionId: null,
+                        leftContent: "MCQ OPTION",
+                        rightContent: null,
+                        correct: true
+                    };
+                    const newQuizQuestionOptions: QuizQuestionOption[] = [defaultOption];
+                    setQuizQuestionOptions(newQuizQuestionOptions);
+                } else if (props.questionType === "MATCHING") {
+                    const defaultOption: QuizQuestionOption = {
+                        quizQuestionOptionId: null,
+                        leftContent: "MATCHING OPTION A",
+                        rightContent: "MATCHING OPTION B",
+                        correct: true
+                    };
+                    const newQuizQuestionOptions: QuizQuestionOption[] = [defaultOption];
+                    setQuizQuestionOptions(newQuizQuestionOptions);
                 }
             }
-            // else { // add question prompt
-            //     const adderOption: QuizQuestionOption = {
-            //         quizQuestionOptionId: null,
-            //         leftContent: "",
-            //         rightContent: "",
-            //         correct: false
-            //     };
-            //     const newQuizQuestionOptions: QuizQuestionOption[] = props.question.quizQuestionOptions.concat([adderOption]);
-            //     setQuizQuestionOptions(newQuizQuestionOptions);
-            // }
         }
-    }, [props.question, props.questionType])
-
-    // useEffect(() => {
-    //     props.onHandleQuizQuestionOptionUpdate(quizQuestionOptions, questionIndex)
-    // }, [quizQuestionOptions])
+    }, [props.question, props.questionType, props.disabled, props.questionIndex])
 
     const handleCorrectAnswerChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newQuizQuestionOptions = quizQuestionOptions?.map((x, index) => {
@@ -84,32 +81,41 @@ function QuizQuestionOptionsList(props: any) {
         props.onHandleQuizQuestionOptionUpdate(newQuizQuestionOptions, event.target.value)
     };
 
-    const handleMatchingCorrectAnswerChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const newQuizQuestionOptions = quizQuestionOptions?.map((x, index) => {
-            return (index === parseInt(event.target.value) ? Object.assign(x, { correct: !x.correct })
-                : x);
-        });
-        setQuizQuestionOptions(newQuizQuestionOptions);
-        props.onHandleQuizQuestionOptionUpdate(newQuizQuestionOptions, event.target.value)
-    };
-
     const handleLeftContentChange = (event: any) => {
-        const newQuizQuestionOptions = quizQuestionOptions?.map((x, index) => {
-            return (index === parseInt(event.index) ? Object.assign(x, { leftContent: event.target.value })
-                : x)
-        });
-        setQuizQuestionOptions(newQuizQuestionOptions);
-        console.log("option to update", event.target.value)
-        if (event.target.value != "") {
+        if (event.target.value !== "") {
+            const newQuizQuestionOptions = quizQuestionOptions?.map((x, index) => {
+                return (index === parseInt(event.index) ? Object.assign(x, { leftContent: event.target.value })
+                    : x)
+            });
+            setQuizQuestionOptions(newQuizQuestionOptions);
             console.log("non-empty option to update", event.target.value)
             props.onHandleQuizQuestionOptionUpdate(newQuizQuestionOptions, questionIndex)
+        } else {
+            handleCallSnackbar("Options must be non-empty");
+        }
+    }
+
+    const handleRightContentChange = (event: any) => {
+        if (event.target.value !== "") {
+            const newQuizQuestionOptions = quizQuestionOptions?.map((x, index) => {
+                return (index === parseInt(event.index) ? Object.assign(x, { rightContent: event.target.value })
+                    : x)
+            });
+            setQuizQuestionOptions(newQuizQuestionOptions);
+            props.onHandleQuizQuestionOptionUpdate(newQuizQuestionOptions, questionIndex)
+        } else {
+            handleCallSnackbar("Options must be non-empty");
         }
     }
 
     const handleDeleteOption = (event: React.MouseEvent<unknown>, optionIndex: number) => {
-        const newQuizQuestionOptions = quizQuestionOptions?.filter((option, index) => index !== optionIndex);
-        setQuizQuestionOptions(newQuizQuestionOptions);
-        props.onHandleQuizQuestionOptionUpdate(newQuizQuestionOptions, questionIndex)
+        if (quizQuestionOptions.length > 1) {
+            const newQuizQuestionOptions = quizQuestionOptions?.filter((option, index) => index !== optionIndex);
+            setQuizQuestionOptions(newQuizQuestionOptions);
+            props.onHandleQuizQuestionOptionUpdate(newQuizQuestionOptions, questionIndex)
+        } else {
+            handleCallSnackbar("Each Question Must Have At Least 1 Option");
+        }
     }
 
     const handleAddOption = (event: React.MouseEvent<unknown>) => {
@@ -117,14 +123,14 @@ function QuizQuestionOptionsList(props: any) {
         if (questionType === "MATCHING") {
             newQuizQuestionOption = {
                 quizQuestionOptionId: null,
-                leftContent: "",
-                rightContent: "",
-                correct: false
+                leftContent: "MATCHING OPTION A",
+                rightContent: "MATCHING OPTION B",
+                correct: true
             };
         } else {
             newQuizQuestionOption = {
                 quizQuestionOptionId: null,
-                leftContent: "",
+                leftContent: "NEW MCQ OPTION",
                 rightContent: null,
                 correct: false
             };
@@ -135,10 +141,9 @@ function QuizQuestionOptionsList(props: any) {
 
     }
 
-    const handleCorrectMatchingChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-
+    const handleCallSnackbar = (msg: string) => {
+        props.onCallSnackbar(msg)
     }
-
 
     return (
         <>
@@ -160,7 +165,6 @@ function QuizQuestionOptionsList(props: any) {
                                 <>
                                     <TableCell>LEFT</TableCell>
                                     <TableCell>RIGHT</TableCell>
-                                    <TableCell align="right">Answer</TableCell>
                                     <TableCell align="right">Actions</TableCell>
                                 </>
 
@@ -225,18 +229,10 @@ function QuizQuestionOptionsList(props: any) {
                                     key={index}
                                 >
                                     <TableCell component="th" scope="row">
-                                        <TextField disabled={isDisabled} key={index} value={quizQuestionOptions[index].leftContent} onChange={handleLeftContentChange} />
+                                        <TextField disabled={isDisabled} key={index} value={quizQuestionOptions[index].leftContent} onChange={e => { Object.assign(e, { index }); handleLeftContentChange(e); }} />
                                     </TableCell>
                                     <TableCell component="th" scope="row">
-                                        <TextField disabled={isDisabled} key={index} value={quizQuestionOptions[index].rightContent} />
-                                    </TableCell>
-                                    <TableCell align="right">
-                                        <Checkbox
-                                            disabled={isDisabled}
-                                            checked={row.correct}
-                                            onChange={handleMatchingCorrectAnswerChange}
-                                            value={index}
-                                        />
+                                        <TextField disabled={isDisabled} key={index} value={quizQuestionOptions[index].rightContent} onChange={e => { Object.assign(e, { index }); handleRightContentChange(e); }} />
                                     </TableCell>
                                     <TableCell align="right">
                                         <IconButton disabled={isDisabled} onClick={(event) => handleDeleteOption(event, index)}>
@@ -250,8 +246,11 @@ function QuizQuestionOptionsList(props: any) {
                 </Table>
             </TableContainer>
             {
-                (questionType === "MCQ" || questionType === "MATCHING") &&
-                <AddQuizOptionButton disabled={isDisabled} onClick={handleAddOption}>Add Option</AddQuizOptionButton>
+                !isDisabled && (questionType === "MCQ" || questionType === "MATCHING") &&
+                <>
+                    <br />
+                    <AddQuizOptionButton disabled={isDisabled} onClick={handleAddOption}>Add Option</AddQuizOptionButton>
+                </>
             }
         </>
     )
