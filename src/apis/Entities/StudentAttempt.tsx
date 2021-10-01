@@ -16,5 +16,5 @@ export interface GetNumberOfStudentAttemptsLeftReq {
 
 export interface CreateNewStudentAttemptReq {
     enrolledContentId: number,
-    quizQuestionOptionIdLists: number[][]
+    quizQuestionOptionIdLists: number[][][]
 }

@@ -156,13 +156,18 @@ function LessonViewer(props: any) {
   let lessonMultimedias = currentLesson?.multimedias;
 
   function checkCompleted(contentId: number): boolean {
-    let enrolledContent = enrolledLesson?.enrolledContents.find(
-      i => i.parentContent?.contentId === contentId
-    );
-    if (enrolledContent?.dateTimeOfCompletion !== null || isCourseTutor) {
-      return true;
+
+    if (contentId) {
+      let enrolledContent = enrolledLesson?.enrolledContents.find(
+          i => i.parentContent?.contentId === contentId
+      );
+      if (enrolledContent?.dateTimeOfCompletion !== null ) {
+        return true;
+      }
+      return false;
+    } else {
+      return false;
     }
-    return false;
   }
 
   return (
@@ -208,9 +213,7 @@ function LessonViewer(props: any) {
                   {m.multimediaType === "VIDEO" && "Video: " + m.name }
                   {m.multimediaType === "ZIP" && "Zip: " + m.name }  
                                   
-                  {checkCompleted(m.contentId) &&
-                    <CheckIcon />
-                  }
+                  { checkCompleted(m.contentId) && <CheckIcon /> }
                 </ContentLink>                
               );
             })}
