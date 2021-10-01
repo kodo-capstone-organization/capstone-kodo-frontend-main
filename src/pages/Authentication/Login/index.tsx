@@ -111,7 +111,7 @@ function Login(props: any) {
                 {
                     reactivateAccount(accountId, accountId)
                     .then((res: DeactivateAccountResponse) => {
-                        props.callOpenSnackBar("Account successfully activated", "success")
+                        props.callOpenSnackBar("Account successfully reactivated", "success")
                         loginCallback(username, password, accountId);
                     })
                     .catch(err => setLoginFailed("Reactivation Failed!"));
