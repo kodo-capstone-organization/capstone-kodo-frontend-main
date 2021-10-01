@@ -136,7 +136,7 @@ function MultimediaModal(props: any) {
                     <InfoIcon />
                 </IconButton>
                 <Dialog open={open} onClose={handleClose} maxWidth={false} classes={{ paper : classes.dialogPaper}}>
-                    <DialogTitle id="form-dialog-title">View Lesson Multimedia</DialogTitle>
+                    <DialogTitle id="form-dialog-title">View Lesson Content</DialogTitle>
                     <Tabs
                         value={tab}
                         indicatorColor="primary"
