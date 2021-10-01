@@ -127,7 +127,7 @@ function MultimediaViewer(props: any) {
             />
           }
         </ImageCard>
-
+        
         {/* <DocViewer pluginRenderers={DocViewerRenderers} documents={docs} /> */}
 
         {/* <DocumentViewer
