@@ -25,6 +25,7 @@ import { Button } from "../../../values/ButtonElements";
 import { addNewMultimediaToLesson, deleteMultimediasFromLesson, updateMultimedia } from '../../../apis/Multimedia/MultimediaApis';
 import EditIcon from '@material-ui/icons/Edit';
 import Alert from '@material-ui/lab/Alert';
+import VisibilityIcon from '@material-ui/icons/Visibility';
 
 interface IErrors<TValue> {
   [id: string]: TValue;
@@ -91,7 +92,8 @@ const headCells: HeadCell[] = [
   { id: 'name', numeric: false, disablePadding: true, label: 'Name' },
   { id: 'description', numeric: true, disablePadding: false, label: 'Description' },
   { id: 'type', numeric: true, disablePadding: false, label: 'File Type' },
-  { id: 'contentId', numeric: true, disablePadding: false, label: 'Update Multimedia' }
+  { id: 'contentId', numeric: true, disablePadding: false, label: 'Preview Multimedia' },
+  { id: 'contentId', numeric: true, disablePadding: false, label: 'Update Multimedia' },
 ];
 
 interface EnhancedTableProps {
@@ -511,6 +513,7 @@ export default function MultimediaTable(props: any) {
     const [lessons, setLessons] = useState<Lesson[]>(props.lessons);
     const rows = multimedias?.length > 0 ? multimedias.map((row: Multimedia, index: number) => createData(index, row.name, row.description, row.multimediaType, row.urlFilename, row.contentId)) : []
 
+    const [selectedPreviewFile, setSelectedPreviewFile] = useState<Data>();
     const [selectedMultimediaId, setSelectedMultimediaId] = useState<number>(0);
     const [newFile, setNewFile] = useState<Multimedia>({ contentId: -1, name: "", description: "", url: "", multimediaType: MultimediaType.EMPTY, urlFilename: "", file: new File([""], ""), type: "multimedia"});
     const [validationErrorMessage, setValidationErrorMessage] = useState<string>("");
@@ -519,17 +522,27 @@ export default function MultimediaTable(props: any) {
       description: false,
     });
 
-    const [showAddMultimediaDialog, setShowAddMultimediaDialog] = useState<boolean>(false); 
+    const [showUpdateMultimediaDialog, setShowUpdateMultimediaDialog] = useState<boolean>(false); 
+    const [showPreviewMultimediaDialog, setShowPreviewMultimediaDialog] = useState<boolean>(false); 
   
-    const openDialog = () => {
-      setShowAddMultimediaDialog(true);
+    const openUpdateMultimediaDialog = () => {
+      setShowUpdateMultimediaDialog(true);
+    }
+
+    const openPreviewMultimediaDialog = () => {
+      setShowPreviewMultimediaDialog(true);
     }
   
-    const handleClose = () => {
-      setShowAddMultimediaDialog(false);
+    const handleCloseUpdateMultimediaDialog = () => {
+      setSelectedMultimediaId(0)
+      setShowUpdateMultimediaDialog(false);
       setErrors({})
       setValidationErrorMessage("");
       setNewFile({ contentId: -1, name: "", description: "", url: "", multimediaType: MultimediaType.EMPTY, urlFilename: "", file: new File([""], ""), type: "multimedia"})
+    }
+
+    const handleClosePreviewMultimediaDialog = () => {
+      setShowPreviewMultimediaDialog(false);
     }
 
     const handleValidation = () => {
@@ -583,7 +596,7 @@ export default function MultimediaTable(props: any) {
 
               handleFormDataChange(wrapperEvent)
               setLessons(updatedLessons)
-              handleClose()
+              handleCloseUpdateMultimediaDialog()
               setNewFile({ contentId: -1, name: "", description: "", url: "", multimediaType: MultimediaType.EMPTY, urlFilename: "", file: new File([""], ""), type: "multimedia"})
             })
             .catch((error) => {
@@ -618,6 +631,12 @@ export default function MultimediaTable(props: any) {
       setNewFile({...updatedFile})
     }
 
+    const handleOpenPreviewMultimediaDialog = (selectedContent: Data) => {
+      setSelectedPreviewFile(selectedContent)
+
+      openPreviewMultimediaDialog()
+    }
+
     const handleOpenUpdateMultimediaDialog = (selectedContentId: number) => {
       setSelectedMultimediaId(selectedContentId)
 
@@ -638,7 +657,7 @@ export default function MultimediaTable(props: any) {
 
       setNewFile(fileToUpdate)
 
-      openDialog()
+      openUpdateMultimediaDialog()
     }
 
     // Used to trigger rerendering of MultimediaTable whenever lessons is updated in Table Header component
@@ -708,8 +727,49 @@ export default function MultimediaTable(props: any) {
         <>
         <Dialog 
           fullWidth
-          open={showAddMultimediaDialog}
-          onClose={handleClose}
+          open={showPreviewMultimediaDialog}
+          onClose={handleClosePreviewMultimediaDialog}
+          aria-labelledby="simple-modal-title"
+          aria-describedby="simple-modal-description"
+        >
+            <DialogTitle>Multimedia Preview</DialogTitle>
+            <DialogContent
+              style={{height: '300px'}}>
+              <FormControl fullWidth margin="normal">
+                <InputLabel htmlFor="multimedia-name">Multimedia Name</InputLabel>
+                <Input
+                  id="multimedia-name"
+                  name="name"
+                  type="text"
+                  autoFocus
+                  fullWidth
+                  value={selectedPreviewFile?.name}
+                  disabled
+                />
+                </FormControl>
+                <FormControl fullWidth margin="normal">
+                  <InputLabel htmlFor="multimedia-description">Description</InputLabel>
+                  <Input
+                    id="multimedia-description"
+                    name="description"
+                    type="text"
+                    fullWidth
+                    multiline
+                    value={selectedPreviewFile?.description}
+                    disabled
+                  />
+                </FormControl>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClosePreviewMultimediaDialog}>
+                Close
+              </Button>
+            </DialogActions>
+        </Dialog>
+        <Dialog 
+          fullWidth
+          open={showUpdateMultimediaDialog}
+          onClose={handleCloseUpdateMultimediaDialog}
           aria-labelledby="simple-modal-title"
           aria-describedby="simple-modal-description"
         >
@@ -784,7 +844,7 @@ export default function MultimediaTable(props: any) {
                 </FormControl>
             </DialogContent>
             <DialogActions>
-              <Button onClick={handleClose}>
+              <Button onClick={handleCloseUpdateMultimediaDialog}>
                 Cancel
               </Button>
               <Button primary onClick={handleClickUpdateMultimedia}>
@@ -855,6 +915,14 @@ export default function MultimediaTable(props: any) {
                         </TableCell>
                         <TableCell align="right">{row.description}</TableCell>
                         <TableCell align="right">{row.type}</TableCell>
+                        <TableCell align="right">
+                          <IconButton 
+                            size="small" 
+                            color="primary" 
+                            onClick={() => {handleOpenPreviewMultimediaDialog(row)}}>
+                              <VisibilityIcon/>&nbsp;
+                          </IconButton>
+                        </TableCell>
                         <TableCell align="right">
                           <IconButton 
                             disabled={props.isEnrollmentActive} 
