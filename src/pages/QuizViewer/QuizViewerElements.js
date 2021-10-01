@@ -1,6 +1,10 @@
 import styled from "styled-components";
-import { TextField, Avatar, Card, CardHeader, CardContent,
-     CardActions, Select, TableRow } from "@material-ui/core";
+import { 
+    Card, 
+    CardContent,
+    CardHeader, 
+    TableRow 
+} from "@material-ui/core";
 import { fontSizes } from "../../values/FontSizes";
 import { colours } from "../../values/Colours";
 

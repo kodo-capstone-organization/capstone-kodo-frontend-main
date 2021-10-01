@@ -1,26 +1,19 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { StudentAttempt } from "../../apis/Entities/StudentAttempt";
+
+import { createMuiTheme } from "@material-ui/core";
+
+import {
+    QuizContainer, 
+    QuizQuestionCard
+} from "./QuizViewerElements";
+
 import { StudentAttemptQuestion } from "../../apis/Entities/StudentAttemptQuestion";
 import { Quiz } from "../../apis/Entities/Quiz";
-import { QuizQuestion } from "../../apis/Entities/QuizQuestion";
-import { getStudentAttemptByStudentAttemptId } from "../../apis/StudentAttempt/StudentAttemptApis";
-import { getQuizByQuizId } from "../../apis/Quiz/QuizApis";
 
 import MarkedQuizComponent from "./components/MarkedQuizComponent";
 import AttemptQuizComponent from "./components/AttemptQuizComponent";
 
-
-import {
-    QuizContainer, QuizCard, QuizCardHeader, QuizCardContent, QuizQuestionCard,
-    QuizViewerCardContent
-} from "./QuizViewerElements";
-import {
-    Grid, Divider, makeStyles, createStyles, Theme,
-    createMuiTheme, ThemeProvider, Paper,
-    Table, TableBody, TableCell, TableContainer, TableHead,
-    TableRow,
-} from "@material-ui/core";
 
 const themeInstance = createMuiTheme({
     overrides: {
@@ -79,7 +72,7 @@ function QuizViewer(props: any) {
         <>
             <QuizContainer>
                 {viewMode && <MarkedQuizComponent studentAttemptId={studentAttemptId} />}
-                {attemptMode && <AttemptQuizComponent enrolledContentId={enrolledContentId} />}
+                {attemptMode && <AttemptQuizComponent enrolledContentId={enrolledContentId} callOpenSnackBar={props.callOpenSnackBar} />}
 
             </QuizContainer>
         </>

@@ -1,31 +1,39 @@
-import React, { useEffect, useState } from "react";
-import { StudentAttempt } from "../../../apis/Entities/StudentAttempt";
-import { StudentAttemptQuestion } from "../../../apis/Entities/StudentAttemptQuestion";
-import { QuizQuestion } from "../../../apis/Entities/QuizQuestion";
-import { Quiz } from "../../../apis/Entities/Quiz";
-import { StudentAttemptAnswer } from "../../../apis/Entities/StudentAttemptAnswer";
-import { CreateNewStudentAttemptReq } from "../../../apis/Entities/StudentAttempt";
+import { useEffect, useState } from "react";
 
+import { useHistory } from "react-router-dom";
 
-import { getQuizByQuizId } from "../../../apis/Quiz/QuizApis";
-import { getEnrolledContentByEnrolledContentId } from "../../../apis/EnrolledContent/EnrolledContentApis";
-import { getAllQuizQuestionsByQuizId, getQuizQuestionByQuizQuestionId } from "../../../apis/QuizQuestion/QuizQuestionApis";
-import { createNewStudentAttempt } from "../../../apis/StudentAttempt/StudentAttemptApis";
-
-import { Button } from "../../../values/ButtonElements";
 import {
-    QuizContainer, QuizCard, QuizCardHeader, QuizCardContent, QuizQuestionCard,
-    QuizViewerCardContent, MarkedQuizViewerTableRow
-} from "../QuizViewerElements";
-import {
-    Grid, Table, TableBody, TableCell, TableContainer, TableHead,
-    TableRow, Checkbox, Paper, TextField, Radio, Divider,
-    makeStyles, createStyles, Theme, createMuiTheme, ThemeProvider
+    Grid,
+    Divider
 } from "@material-ui/core";
-import CheckCircleIcon from '@material-ui/icons/CheckCircle';
-import CancelIcon from '@material-ui/icons/Cancel';
+
+import { Course } from "../../../apis/Entities/Course";
+import { CreateNewStudentAttemptReq } from "../../../apis/Entities/StudentAttempt";
+import { Lesson } from "../../../apis/Entities/Lesson";
+import { Quiz } from "../../../apis/Entities/Quiz";
+import { QuizQuestion } from "../../../apis/Entities/QuizQuestion";
+
+import { createNewStudentAttempt } from "../../../apis/StudentAttempt/StudentAttemptApis";
+import { getAllQuizQuestionsByQuizId } from "../../../apis/QuizQuestion/QuizQuestionApis";
+import { getCourseByEnrolledContentId } from "../../../apis/Course/CourseApis";
+import { getEnrolledContentByEnrolledContentId } from "../../../apis/EnrolledContent/EnrolledContentApis";
+import { getLessonByEnrolledContentId } from "../../../apis/Lesson/LessonApis";
+import { getQuizByQuizId } from "../../../apis/Quiz/QuizApis";
+
+
+import {
+    QuizCard, 
+    QuizCardContent, 
+    QuizCardHeader, 
+    QuizQuestionCard,
+    QuizViewerCardContent
+} from "../QuizViewerElements";
+
 import AttemptQuizOptionsComponent from "./AttemptQuizOptionsComponent";
 import QuizAttemptTimer from "./QuizAttemptTimer";
+
+import { Button } from "../../../values/ButtonElements";
+
 
 function AttemptQuizComponent(props: any) {
 
@@ -35,11 +43,10 @@ function AttemptQuizComponent(props: any) {
     const [initialSeconds, setInitalSeconds] = useState<number>();
     const [initialMinutes, setInitialMinutes] = useState<number>();
 
-
-
+    const history = useHistory();
 
     useEffect(() => {
-        if (props.enrolledContentId != undefined) {
+        if (props.enrolledContentId !== undefined) {
             console.log(props.enrolledContentId)
             getEnrolledContentByEnrolledContentId(props.enrolledContentId)
                 .then(res => {
@@ -65,11 +72,6 @@ function AttemptQuizComponent(props: any) {
         }
     }, [props.enrolledContentId]);
 
-    const formatDate = (date: Date) => {
-        var d = new Date(date);
-        return d.toDateString() + ', ' + d.toLocaleTimeString();
-    }
-
     const handleAttemptAnswer = (optionArray: number[], questionIndex: number) => {
         var newQuizQuestionOptionIdList = quizQuestionOptionIdList;
         newQuizQuestionOptionIdList[questionIndex] = optionArray;
@@ -86,13 +88,28 @@ function AttemptQuizComponent(props: any) {
             console.log("createNewStudentAttemptReq, quizQuestionOptionIdList", quizQuestionOptionIdList[2]);
             createNewStudentAttempt(createNewStudentAttemptReq)
             .then(res => {
-                console.log("Attempt quiz success:", res);
+                props.callOpenSnackBar("Quiz Submitted Successfully", "success")
+
+                getCourseByEnrolledContentId(props.enrolledContentId).then((course: Course) => {
+                    getLessonByEnrolledContentId(props.enrolledContentId).then((lesson: Lesson) => {
+                        history.push(`/overview/lesson/${course.courseId}/${lesson.lessonId}`);
+                        // console.log("Attempt quiz success:", res);
+                    })
+                    .catch(err => {
+                        console.log(err.response.data.message)
+                    })
+                })
+                .catch(err => {
+                    console.log(err.response.data.message)
+                })                
             })
             .catch(err => {
-                console.log("Attempt quiz failed:", err);
+                props.callOpenSnackBar("There was an error in submitting the quiz", "error")
+                // console.log("Attempt quiz failed:", err);
             });
         } else {
-            console.log("Hey! complete the damn quiz!");
+            props.callOpenSnackBar("Please complete the quiz", "error")
+            // console.log("Hey! complete the damn quiz!");
             //send error
         }
 
@@ -143,7 +160,7 @@ function AttemptQuizComponent(props: any) {
 
     return (
         <>
-            {initialSeconds != undefined && <QuizAttemptTimer initialSeconds={initialSeconds} initialMinutes={initialMinutes} onTimeOut={handleTimeOut}/>}
+            {initialSeconds !== undefined && <QuizAttemptTimer initialSeconds={initialSeconds} initialMinutes={initialMinutes} onTimeOut={handleTimeOut}/>}
             <QuizCard>
                 <QuizCardHeader
                     title="Quiz Information"
@@ -151,24 +168,24 @@ function AttemptQuizComponent(props: any) {
                 <QuizCardContent>
                     <Grid container spacing={3}>
                         <Grid item xs={12}>
-                            Name: {quiz != undefined && quiz.name}
+                            Name: {quiz !== undefined && quiz.name}
                         </Grid>
                         <Divider style={{ width: '-webkit-fill-available' }} variant="middle" />
                         <Grid item xs={12}>
-                            Description: {quiz != undefined && quiz.description}
+                            Description: {quiz !== undefined && quiz.description}
                         </Grid>
                     </Grid>
                 </QuizCardContent>
             </QuizCard>
             <QuizCard>
                 <QuizCardHeader
-                    title={quiz != undefined ? quiz.name : ""}
+                    title={quiz !== undefined ? quiz.name : ""}
                     action={
                         <Button primary onClick={handleSubmit}>Submit Quiz</Button>
                     }
                 />
                 <QuizViewerCardContent>
-                    {quizQuestionArray != undefined && mapQuestionArray(quizQuestionArray)}
+                    {quizQuestionArray !== undefined && mapQuestionArray(quizQuestionArray)}
                 </QuizViewerCardContent>
             </QuizCard>
         </>

@@ -1,41 +1,42 @@
 import React, { useState, useEffect } from 'react';
-import { QuizQuestion } from '../../../apis/Entities/QuizQuestion';
-import { QuizQuestionOption } from '../../../apis/Entities/QuizQuestionOption';
+
 import DeleteIcon from '@material-ui/icons/Delete';
 import {
-    Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Checkbox, Paper, IconButton, TextField,
-    Radio
+    Checkbox, 
+    IconButton, 
+    Paper, 
+    Radio,
+    Table, 
+    TableBody, 
+    TableCell, 
+    TableContainer, 
+    TableHead, 
+    TableRow, 
+    TextField,
 } from "@material-ui/core";
+
+import { QuizQuestionOption } from '../../../apis/Entities/QuizQuestionOption';
+
 import { AddQuizOptionButton } from "../QuizBuilderElements";
-
-
-interface IQuestionOption {
-    leftContent: string,
-    rightContent: (string | null),
-    correct: boolean,
-    quizQuestionOptionId: number,
-}
 
 function QuizQuestionOptionsList(props: any) {
 
     const [questionType, setQuestionType] = useState<string>();
-    const [question, setQuestion] = useState<QuizQuestion>();
     const [quizQuestionOptions, setQuizQuestionOptions] = useState<QuizQuestionOption[]>();
-    const [correctAnswer, setCorrectAnswer] = React.useState<number>();
+    // const [correctAnswer, setCorrectAnswer] = React.useState<number>();
     const [questionIndex, setQuestionIndex] = useState<number>();
     const [isDisabled, setIsDisabled] = useState<boolean>(false);
 
     useEffect(() => {
         if (props.question !== undefined) {
-            setQuestion(props.question);
             setQuestionType(props.questionType);
             setQuestionIndex(props.questionIndex);
             setQuizQuestionOptions(props.question.quizQuestionOptions);
             setIsDisabled(props.disabled);
             //@ts-ignore
-            props.question.quizQuestionOptions.map((x, index) => {
-                return (x.correct ? setCorrectAnswer(index) : null);
-            })
+            // props.question.quizQuestionOptions.map((x, index) => {
+            //     return (x.correct ? setCorrectAnswer(index) : null);
+            // })
             if (props.questionType === "TF") {
                 //check if options are TF, if not repopulate options
                 if (props.question.quizQuestionOptions.length >= 0) {
@@ -68,7 +69,7 @@ function QuizQuestionOptionsList(props: any) {
             //     setQuizQuestionOptions(newQuizQuestionOptions);
             // }
         }
-    }, [props.question, props.questionType])
+    }, [props.question, props.questionType, props.disabled, props.questionIndex])
 
     // useEffect(() => {
     //     props.onHandleQuizQuestionOptionUpdate(quizQuestionOptions, questionIndex)
@@ -133,11 +134,6 @@ function QuizQuestionOptionsList(props: any) {
         // props.onHandleQuizQuestionOptionUpdate(newQuizQuestionOptions, questionIndex)
 
     }
-
-    const handleCorrectMatchingChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-
-    }
-
 
     return (
         <>

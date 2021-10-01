@@ -1,23 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
-import { makeStyles, Theme, createStyles, withStyles, lighten } from '@material-ui/core/styles';
-import { getAllQuizQuestionsByTutorId } from "../../../apis/QuizQuestion/QuizQuestionApis";
-import { QuizQuestionOption } from '../../../apis/Entities/QuizQuestionOption';
-import { Button } from "../../../values/ButtonElements";
-import {
-    Dialog, DialogTitle, DialogActions, DialogContent, DialogContentText
-} from "@material-ui/core";
-import { Quiz } from '../../../apis/Entities/Quiz';
-import { DataGrid, GridColDef, GridValueGetterParams } from '@material-ui/data-grid';
+import { useEffect, useState } from 'react';
 
-interface Data {
-    content: string;
-    marks: number;
-    questionType: string;
-    quiz: Quiz;
-    quizQuestionId: number;
-    quizQuestionOptions: QuizQuestionOption[];
-}
+import {
+    Dialog, 
+    DialogActions, 
+    DialogContent, 
+    DialogContentText,
+    DialogTitle, 
+} from "@material-ui/core";
+import { 
+    DataGrid, 
+    GridColDef, 
+    GridValueGetterParams 
+} from '@material-ui/data-grid';
+
+import { getAllQuizQuestionsByTutorId } from "../../../apis/QuizQuestion/QuizQuestionApis";
+
+import { Button } from "../../../values/ButtonElements";
 
 const columns: GridColDef[] = [
     {
@@ -57,36 +55,6 @@ const columns: GridColDef[] = [
     }
 ];
 
-const useStyles = makeStyles((theme: Theme) =>
-    createStyles({
-        root: {
-            width: '100%',
-        },
-        paper: {
-            width: '100%',
-            marginBottom: theme.spacing(2),
-        },
-        table: {
-            minWidth: 750,
-        },
-        visuallyHidden: {
-            border: 0,
-            clip: 'rect(0 0 0 0)',
-            height: 1,
-            margin: -1,
-            overflow: 'hidden',
-            padding: 0,
-            position: 'absolute',
-            top: 20,
-            width: 1,
-        },
-        dialogPaper: {
-            height: "400px",
-            width: 1000,
-        },
-    }),
-);
-
 function QuestionBankModal(props: any) {
 
     const [open, setOpen] = useState<boolean>(false);
@@ -94,15 +62,15 @@ function QuestionBankModal(props: any) {
     const [selectedQuestions, setSelectedQuestions] = useState<any>([]);
     const [isDisabled, setIsDisabled] = useState<boolean>(false);
     const accountId = window.sessionStorage.getItem("loggedInAccountId");
-    const classes = useStyles();
-    const history = useHistory();
-
 
     useEffect(() => {
         if (accountId !== null) {
             getAllQuizQuestionsByTutorId(parseInt(accountId))
                 .then(res => {
-                    res.map((q) => { Object.assign(q, { id: q.quizQuestionId, quizQuestionsLength: q.quizQuestionOptions.length }) });
+                    res.map((q) => { 
+                        Object.assign(q, { id: q.quizQuestionId, quizQuestionsLength: q.quizQuestionOptions.length }) 
+                        return q;
+                    });
                     console.log("Question Bank Success", res);
                     setQuestionList(res);
                 })
@@ -162,7 +130,6 @@ function QuestionBankModal(props: any) {
                         <Button onClick={handleConfirm}>Confirm</Button>
                     </DialogActions>
                 </Dialog>
-
             </div>
         </>
     )

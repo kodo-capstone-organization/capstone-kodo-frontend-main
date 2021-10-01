@@ -1,13 +1,15 @@
-import { useEffect } from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
 import { Course } from "../../../../apis/Entities/Course";
+
 import CourseCard from "../../../../components/CourseCard";
+
 import { CourseWrapper } from "../BrowseCourseElements";
 
 
 function BrowseCourseTabPanel (props: any) {
     const [curTabIdx, setCurTabIdx] = useState<number>(0);
-    const [curMyName, setMyTabName] = useState<string>("");
+    // const [curMyName, setMyTabName] = useState<string>("");
     const [myTabIdx, setMyTabIdx] = useState<number>(0);
     const [textSearchTerm, setTextSearchTerm] = useState<string>("");
     const [tagSearchTerms, setTagSearchTerms] = useState<string[]>([]);
@@ -16,7 +18,7 @@ function BrowseCourseTabPanel (props: any) {
     
     useEffect(() => {
         setCurTabIdx(props.curTabIdx);
-        setMyTabName(props.myTabName);
+        // setMyTabName(props.myTabName);
         setMyTabIdx(props.myTabIdx);
         setTextSearchTerm(props.textSearchTerm);
         setTagSearchTerms(props.tagSearchTerms);
@@ -52,6 +54,7 @@ function BrowseCourseTabPanel (props: any) {
                                 if (textSearchTerm === "" && tagSearchTerms.length === 0) { return course; }
                                 else if (tagSearchTerms.length > 0 && areTagsMatched(course)) { return course; }
                                 else if (textSearchTerm !== "" && isTextMatched(course)) { return course; }
+                                else { return null; }
                             })
                             .map(course => <CourseCard course={course} key={course.courseId} myCourseView={false} redirectUrlBase="/browsecourse/preview" /> )
                         }

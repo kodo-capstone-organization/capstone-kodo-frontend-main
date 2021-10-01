@@ -1,6 +1,21 @@
 import React, { useState, useEffect } from 'react';
+
 import clsx from 'clsx';
-import { createStyles, lighten, makeStyles, Theme } from '@material-ui/core/styles';
+
+import { 
+  Theme,
+  createStyles, 
+  lighten, 
+  makeStyles
+} from '@material-ui/core/styles';
+
+import AddIcon from '@material-ui/icons/Add';
+import Alert from '@material-ui/lab/Alert';
+import Checkbox from '@material-ui/core/Checkbox';
+import DeleteIcon from '@material-ui/icons/Delete';
+import EditIcon from '@material-ui/icons/Edit';
+import IconButton from '@material-ui/core/IconButton';
+import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -10,22 +25,38 @@ import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import Paper from '@material-ui/core/Paper';
-import Checkbox from '@material-ui/core/Checkbox';
-import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
-import DeleteIcon from '@material-ui/icons/Delete';
-import AddIcon from '@material-ui/icons/Add';
-import { Multimedia, MultimediaType } from '../../../apis/Entities/Multimedia';
-import { Lesson } from '../../../apis/Entities/Lesson';
-import { Dialog, DialogContent, DialogContentText, DialogTitle, InputLabel, Input, FormControl, DialogActions} from '@material-ui/core';
-import { ACCEPTABLE_FILE_TYPE, getFileType } from '../../../utils/GetFileType';
-import { Button } from "../../../values/ButtonElements";
-import { addNewMultimediaToLesson, deleteMultimediasFromLesson, updateMultimedia } from '../../../apis/Multimedia/MultimediaApis';
-import EditIcon from '@material-ui/icons/Edit';
-import Alert from '@material-ui/lab/Alert';
+import Typography from '@material-ui/core/Typography';
 import VisibilityIcon from '@material-ui/icons/Visibility';
+import { 
+  Dialog, 
+  DialogActions,
+  DialogContent,
+  DialogContentText, 
+  DialogTitle, 
+  FormControl, 
+  Input, 
+  InputLabel, 
+} from '@material-ui/core';
+
+import { 
+  Multimedia, 
+  MultimediaType 
+} from '../../../apis/Entities/Multimedia';
+
+import { Lesson } from '../../../apis/Entities/Lesson';
+import { 
+  addNewMultimediaToLesson,   
+  deleteMultimediasFromLesson,
+  updateMultimedia 
+} from '../../../apis/Multimedia/MultimediaApis';
+
+import { 
+  ACCEPTABLE_FILE_TYPE, 
+  getFileType 
+} from '../../../utils/GetFileType';
+
+import { Button } from "../../../values/ButtonElements";
 
 interface IErrors<TValue> {
   [id: string]: TValue;

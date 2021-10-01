@@ -1,28 +1,29 @@
-import React, { useState, useEffect } from "react";
-import {
-  getEnrolledCoursesWithStudentCompletion
-} from "../../../apis/EnrolledCourse/EnrolledCourseApis";
-import { EnrolledCourseWithStudentResp } from "../../../apis/Entities/EnrolledCourse";
-import { Course } from "../../../apis/Entities/Course";
-import { EnrolledLesson } from "../../../apis/Entities/EnrolledLesson";
-import { Button } from "../../../values/ButtonElements";
+import { useState, useEffect } from "react";
 
-
-import {
-  TutorContainer,
-  PageHeadingAndButton,
-  PageHeading,
-  CourseTitle,
-  TutorTitle,
-  StudentProgressCard,
-  CardTitle,
-  StudentProgressWrapper
-} from "./TutorViewElements";
+import Box from "@material-ui/core/Box";
+import Typography from "@material-ui/core/Typography";
 import LinearProgress, {
   LinearProgressProps
 } from "@material-ui/core/LinearProgress";
-import Typography from "@material-ui/core/Typography";
-import Box from "@material-ui/core/Box";
+
+import { Course } from "../../../apis/Entities/Course";
+import { EnrolledCourseWithStudentResp } from "../../../apis/Entities/EnrolledCourse";
+
+import { getEnrolledCoursesWithStudentCompletion } from "../../../apis/EnrolledCourse/EnrolledCourseApis";
+
+import {
+  CardTitle,
+  CourseTitle,
+  PageHeading,
+  PageHeadingAndButton,
+  StudentProgressCard,
+  StudentProgressWrapper,
+  TutorContainer,
+  TutorTitle,
+} from "./TutorViewElements";
+
+import { Button } from "../../../values/ButtonElements";
+
 
 function LinearProgressWithLabel(
   props: LinearProgressProps & { value: number }
@@ -47,26 +48,10 @@ function TutorView(props: any) {
   
   useEffect(() => {
     setCourse(props.course);
-  }, []);
-
-  useEffect(() => {
     getEnrolledCoursesWithStudentCompletion(currentCourse.courseId).then(receivedList => {
       setEnrolledStudentsAndCompletion(receivedList);
     });
-  }, []);
-
-  let courseEnrollment = currentCourse.enrollment;
-
-  function getPercentage(enrolledLessons: EnrolledLesson[]) {
-    var total = enrolledLessons.length;
-    var completed = 0;
-    for (var ec of enrolledLessons) {
-      if (ec.dateTimeOfCompletion != null) {
-        completed = completed + 1;
-      }
-    }
-    return (completed / total) * 100;
-  }
+  }, [props.course, currentCourse.courseId]);
 
   return (
     <TutorContainer>
@@ -99,7 +84,7 @@ function TutorView(props: any) {
         </StudentProgressCard>
       }
 
-      { !enrolledStudentsAndCompletion || enrolledStudentsAndCompletion?.length == 0 &&
+      { (!enrolledStudentsAndCompletion || enrolledStudentsAndCompletion?.length === 0) &&
           <div style={{ textAlign: "center", fontSize: "2em" }}>
             There are no students who are enrolled in this course!
           </div>

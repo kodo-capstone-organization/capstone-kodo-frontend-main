@@ -1,13 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { QuizQuestion } from '../../../apis/Entities/QuizQuestion';
-import { QuizQuestionOption } from '../../../apis/Entities/QuizQuestionOption';
-import DeleteIcon from '@material-ui/icons/Delete';
+
 import {
-    Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Checkbox, Paper, IconButton, TextField,
-    Radio, Select, MenuItem
+    MenuItem,
+    Paper,     
+    Radio, 
+    Select, 
+    Table, 
+    TableBody, 
+    TableCell, 
+    TableContainer, 
+    TableHead, 
+    TableRow, 
 } from "@material-ui/core";
-import { AddQuizOptionButton } from "../QuizBuilderElements";
-import { Button } from "../../../values/ButtonElements";
+
+import { QuizQuestion } from '../../../apis/Entities/QuizQuestion';
 
 
 function AttemptQuizOptionsComponent(props: any) {
@@ -41,7 +47,7 @@ function AttemptQuizOptionsComponent(props: any) {
             if (!selectedOptionArray.includes(value)) {
                 newOptionArray = selectedOptionArray.concat([value]);
             } else {
-                newOptionArray = selectedOptionArray.filter(x => x != value);
+                newOptionArray = selectedOptionArray.filter(x => x !== value);
             }
         }
         setSelectedOptionArray(newOptionArray);
@@ -57,7 +63,7 @@ function AttemptQuizOptionsComponent(props: any) {
         console.log("combinedOption", combinedOption)
 
         console.log("1", selectedOptionArray)
-        newOptionArray = selectedOptionArray.filter((selectedOption) => selectedOption[0] != leftOptionId);
+        newOptionArray = selectedOptionArray.filter((selectedOption) => selectedOption[0] !== leftOptionId);
         console.log("2", newOptionArray)
         newOptionArray = newOptionArray.concat([combinedOption]);
         console.log("3", newOptionArray)

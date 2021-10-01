@@ -1,25 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { Quiz } from '../../../apis/Entities/Quiz';
+
+import DeleteIcon from '@material-ui/icons/Delete';
+import {
+    Box, 
+    FormControl, 
+    IconButton,
+    InputLabel, 
+} from "@material-ui/core";
+
 import { QuizQuestion } from "../../../apis/Entities/QuizQuestion";
 import { QuizQuestionOption } from '../../../apis/Entities/QuizQuestionOption';
+
 import QuizQuestionOptionsList from "./QuizQuestionOptionsList"
-import {
-    Box, FormControl, InputLabel, IconButton
-} from "@material-ui/core";
-import DeleteIcon from '@material-ui/icons/Delete';
-import { QuizBuilderTextInput, QuizSelectMenu } from "../QuizBuilderElements";
-
-
-const questionTypes = [
-    'MCQ',
-    'TF',
-    'MATCHING'
-];
+import { 
+    QuizBuilderTextInput, 
+    QuizSelectMenu 
+} from "../QuizBuilderElements";
 
 
 function QuizQuestionComponent(props: any) {
 
-    const [quiz, setQuiz] = useState<Quiz>();
     const [questionType, setQuestionType] = useState<string>();
     const [marks, setMarks] = useState<number>();
     const [question, setQuestion] = useState<QuizQuestion>();
@@ -36,7 +36,7 @@ function QuizQuestionComponent(props: any) {
         setContent(props.question.content)
         setMarks(props.question.marks)
         setQuestionType(props.question.questionType)
-    }, [props.question])
+    }, [props.question, props.disabled, props.questionIndex])
 
     // useEffect(() => {
     //     console.log("handleTYpechange", updatedQuestion)
@@ -72,7 +72,6 @@ function QuizQuestionComponent(props: any) {
 
     const deleteQuestion = () => {
         props.onUpdateQuestion(null, questionIndex)
-
     }
 
     return (
@@ -80,8 +79,8 @@ function QuizQuestionComponent(props: any) {
             <div id="questioncomponent" style={{ width: "inherit" }}>
                 <div id="typeAndMark" style={{ display: "flex", justifyContent: "center" }}>
                     {
-                        questionType &&
-                        <Box sx={{ minWidth: 120 }}>
+                        questionType !== undefined &&
+                        <Box sx={{ minWidth: 120 }} style={{ margin: "6px" }}>
                             <FormControl fullWidth>
                                 <InputLabel variant="standard" htmlFor="uncontrolled-native">
                                     Question Type
@@ -100,8 +99,8 @@ function QuizQuestionComponent(props: any) {
                     }
                     &nbsp;&nbsp;&nbsp;
                     {
-                        marks &&
-                        <Box sx={{ minWidth: 120 }}>
+                        marks !== undefined &&
+                        <Box sx={{ minWidth: 120 }} style={{ margin: "6px" }}>
                             <FormControl fullWidth>
                                 <InputLabel variant="standard" htmlFor="uncontrolled-native">
                                     Marks
@@ -125,15 +124,10 @@ function QuizQuestionComponent(props: any) {
                     </IconButton>
                 </div>
 
-                <br/>
-
-                <div>
-                    {
-                        content &&
-                        <QuizBuilderTextInput disabled={isDisabled}  id="question-input" label="Question" variant="standard" value={content} onChange={handleContentChange} />
-                    }
-                </div>
-
+                {
+                    content !== undefined &&
+                    <QuizBuilderTextInput disabled={isDisabled}  id="standard-basic" label="Question" variant="standard" value={content} onChange={handleContentChange} />
+                }
                 <br/>
 
                 <QuizQuestionOptionsList disabled={isDisabled} questionIndex={questionIndex} question={question} questionType={questionType} onHandleQuizQuestionOptionUpdate={handleQuizQuestionOptionUpdate} />

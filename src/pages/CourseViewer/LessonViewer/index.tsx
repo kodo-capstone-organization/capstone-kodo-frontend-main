@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { withRouter } from "react-router";
 import { getCourseByCourseId } from "../../../apis/Course/CourseApis";
 import { getLessonByLessonId } from "../../../apis/Lesson/LessonApis";
@@ -37,7 +37,6 @@ import {
   PlayIcon,
   QuizWrapper,
   QuizRow,
-  QuizHeading,
   QuizSubheader,
   QuizDescription,
   QuizDescriptionTwo,
@@ -78,16 +77,13 @@ function LessonViewer(props: any) {
     getEnrolledLesson(accountId, lessonId).then(receivedEnrolledLesson => {
       setEnrolledLesson(receivedEnrolledLesson);
     });
-  }, []);
-
-  useEffect(() => {
     if (accountId !== null && courseId !== null) {
       getEnrolledCourseByStudentIdAndCourseId(accountId, courseId).then(receivedEnrolledCourse => {
         setEnrolledCourse(receivedEnrolledCourse);
         setLoading(false)
       });
     }
-  }, []);
+  }, [accountId, courseId, lessonId]);
 
   function formatDate(date: Date): string {
     var d = new Date(date);
@@ -245,9 +241,8 @@ function LessonViewer(props: any) {
                   </QuizRow>
                   <QuizRow>
                     <BtnWrapper>
-                    <ViewQuizAttemptsModal isButtonDisabled={!previousLessonCompleted()} studentAttempts={q.studentAttempts}/>
+                      <ViewQuizAttemptsModal isButtonDisabled={!previousLessonCompleted()} studentAttempts={q.studentAttempts}/>
                     </BtnWrapper>
-
                   </QuizRow>
                 </>
               );
