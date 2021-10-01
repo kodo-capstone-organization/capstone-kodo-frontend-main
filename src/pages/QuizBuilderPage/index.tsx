@@ -222,18 +222,18 @@ function QuizBuilderPage(props: any) {
     }
 
     const handleChangeFromQuestionBank = (questionBankQuestionIds: number[]) => {
+        console.log("handleChangeFromQuestionBank", questionBankQuestionIds);
         var i;
+        var mapDraggable = draggableId + 1 ;
         for (i = 0; i < questionBankQuestionIds.length; i++) {
             getQuizQuestionByQuizQuestionId(questionBankQuestionIds[i]).then((res) => {
                 console.log("Success in handleChangeFromQuestionBank", res);
-                const newDraggableId = draggableId + 1;
-                console.log("newDraggableId", newDraggableId);
-                setDraggableId(newDraggableId);
-                const newQuestionFromBank = Object.assign(res, { quizQuestionId: null, draggableId: newDraggableId });
-                const newQuestionArray = quizQuestionArray.concat([newQuestionFromBank]);
-                setQuizQuestionArray(newQuestionArray);
+                const newQuestionFromBank = Object.assign(res, { quizQuestionId: null, draggableId: mapDraggable });
+                mapDraggable++;
+                quizQuestionArray.push(newQuestionFromBank);
             }).catch((err) => { console.log("Error in handleChangeFromQuestionBank", err); })
         }
+        setDraggableId(mapDraggable);
     }
 
     const handleOnDragEnd = (result) => {

@@ -96,7 +96,6 @@ function AttemptQuizComponent(props: any) {
     }
 
     const handleTimeOut = (isTimedOut : boolean) => {
-        //complete the quiz
         console.log("timeout")
         var newQuizQuestionOptionIdList = quizQuestionOptionIdList;
         quizQuestionArray?.map((q, qId) => {
