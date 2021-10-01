@@ -111,7 +111,7 @@ function QuizQuestionOptionsList(props: any) {
         });
         setQuizQuestionOptions(newQuizQuestionOptions);
         console.log("option to update", event.target.value)
-        if (event.target.value != "") {
+        if (event.target.value !== "") {
             console.log("non-empty option to update", event.target.value)
             props.onHandleQuizQuestionOptionUpdate(newQuizQuestionOptions, questionIndex)
         }
@@ -145,11 +145,6 @@ function QuizQuestionOptionsList(props: any) {
         // props.onHandleQuizQuestionOptionUpdate(newQuizQuestionOptions, questionIndex)
 
     }
-
-    const handleCorrectMatchingChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-
-    }
-
 
     return (
         <>

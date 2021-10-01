@@ -40,15 +40,11 @@ function CoursePreviewPage(props: any) {
   useEffect(() => {
     getCourseByCourseId(courseId).then(receivedCourse => {
       setCourse(receivedCourse);
-      console.log(receivedCourse.name);
     });
-  }, []);
-
-  useEffect(() => {
     getMyAccount(accountId).then(receivedAccount => {
       setUser(receivedAccount);
     });
-  }, []);
+  }, [courseId, accountId]);
 
   const invokeStripeSessionCreation = () => {
     if (currentCourse !== undefined && currentUser !== undefined) {

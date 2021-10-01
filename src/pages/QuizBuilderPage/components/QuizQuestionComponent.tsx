@@ -19,13 +19,6 @@ import {
 } from "../QuizBuilderElements";
 
 
-const questionTypes = [
-    'MCQ',
-    'TF',
-    'MATCHING'
-];
-
-
 function QuizQuestionComponent(props: any) {
 
     const [quiz, setQuiz] = useState<Quiz>();
@@ -81,7 +74,6 @@ function QuizQuestionComponent(props: any) {
 
     const deleteQuestion = () => {
         props.onUpdateQuestion(null, questionIndex)
-
     }
 
     return (
@@ -91,7 +83,7 @@ function QuizQuestionComponent(props: any) {
                 <div id="typeAndMark" style={{ display: "flex", justifyContent: "center" }}>
 
                     {
-                        questionType != undefined &&
+                        questionType !== undefined &&
                         <Box sx={{ minWidth: 120 }} style={{ margin: "6px" }}>
                             <FormControl fullWidth>
                                 <InputLabel variant="standard" htmlFor="uncontrolled-native">
@@ -111,7 +103,7 @@ function QuizQuestionComponent(props: any) {
                     }
 
                     {
-                        marks != undefined &&
+                        marks !== undefined &&
                         <Box sx={{ minWidth: 120 }} style={{ margin: "6px" }}>
                             <FormControl fullWidth>
                                 <InputLabel variant="standard" htmlFor="uncontrolled-native">
@@ -137,7 +129,7 @@ function QuizQuestionComponent(props: any) {
                 </div>
 
                 {
-                    content != undefined &&
+                    content !== undefined &&
                     <QuizBuilderTextInput disabled={isDisabled}  id="standard-basic" label="Question" variant="standard" value={content} onChange={handleContentChange} />
 
                 }

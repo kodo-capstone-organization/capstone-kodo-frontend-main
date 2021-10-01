@@ -6,9 +6,10 @@ import CourseCard from "../../../../components/CourseCard";
 
 import { CourseWrapper } from "../BrowseCourseElements";
 
+
 function BrowseCourseTabPanel (props: any) {
     const [curTabIdx, setCurTabIdx] = useState<number>(0);
-    const [curMyName, setMyTabName] = useState<string>("");
+    // const [curMyName, setMyTabName] = useState<string>("");
     const [myTabIdx, setMyTabIdx] = useState<number>(0);
     const [textSearchTerm, setTextSearchTerm] = useState<string>("");
     const [tagSearchTerms, setTagSearchTerms] = useState<string[]>([]);
@@ -17,7 +18,7 @@ function BrowseCourseTabPanel (props: any) {
     
     useEffect(() => {
         setCurTabIdx(props.curTabIdx);
-        setMyTabName(props.myTabName);
+        // setMyTabName(props.myTabName);
         setMyTabIdx(props.myTabIdx);
         setTextSearchTerm(props.textSearchTerm);
         setTagSearchTerms(props.tagSearchTerms);

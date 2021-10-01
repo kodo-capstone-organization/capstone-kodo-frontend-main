@@ -1,31 +1,37 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+import CancelIcon from '@material-ui/icons/Cancel';
+import {
+    Checkbox, 
+    Divider, 
+    Grid, 
+    Paper, 
+    Radio,
+    Table,
+    TableBody, 
+    TableCell, 
+    TableContainer, 
+    TableHead,
+    TableRow, 
+    ThemeProvider,
+    createMuiTheme, 
+} from "@material-ui/core";
+
+import { Quiz } from "../../../apis/Entities/Quiz";
 import { StudentAttempt } from "../../../apis/Entities/StudentAttempt";
 import { StudentAttemptQuestion } from "../../../apis/Entities/StudentAttemptQuestion";
-import { Quiz } from "../../../apis/Entities/Quiz";
 
 import { getStudentAttemptByStudentAttemptId } from "../../../apis/StudentAttempt/StudentAttemptApis";
 
 import {
-    QuizCard, QuizCardHeader, QuizCardContent, QuizQuestionCard,
-    QuizViewerCardContent, MarkedQuizViewerTableRow
+    MarkedQuizViewerTableRow,
+    QuizCard, 
+    QuizCardContent, 
+    QuizCardHeader, 
+    QuizQuestionCard,
+    QuizViewerCardContent, 
 } from "../QuizViewerElements";
-import {
-    Grid, Table, TableBody, TableCell, TableContainer, TableHead,
-    TableRow, Checkbox, Paper, Divider, Radio,
-    makeStyles, createStyles, Theme, createMuiTheme, ThemeProvider
-} from "@material-ui/core";
-import CheckCircleIcon from '@material-ui/icons/CheckCircle';
-import CancelIcon from '@material-ui/icons/Cancel';
-
-
-
-const useStyles = makeStyles((theme: Theme) =>
-    createStyles({
-        table: {
-            // backgroundColor: "green"
-        }
-    }),
-);
 
 const themeInstance = createMuiTheme({
     overrides: {
@@ -232,15 +238,15 @@ function MarkedQuizComponent(props: any) {
                 <QuizCardContent>
                     <Grid container spacing={3}>
                         <Grid item xs={12}>
-                            Name: {quiz != undefined && quiz.name}
+                            Name: {quiz !== undefined && quiz.name}
                         </Grid>
                         <Divider style={{ width: '-webkit-fill-available' }} variant="middle" />
                         <Grid item xs={12}>
-                            Description: {quiz != undefined && quiz.description}
+                            Description: {quiz !== undefined && quiz.description}
                         </Grid>
                         <Divider style={{ width: '-webkit-fill-available' }} variant="middle" />
                         <Grid item xs={12}>
-                            Completed On: {studentAttempt != undefined && formatDate(studentAttempt.dateTimeOfAttempt)}
+                            Completed On: {studentAttempt !== undefined && formatDate(studentAttempt.dateTimeOfAttempt)}
                         </Grid>
                         <Divider style={{ width: '-webkit-fill-available' }} variant="middle" />
                         <Grid item xs={12}>
@@ -251,7 +257,7 @@ function MarkedQuizComponent(props: any) {
             </QuizCard>
             <QuizCard>
                 <QuizCardHeader
-                    title={quiz != undefined ? quiz.name : ""}
+                    title={quiz !== undefined ? quiz.name : ""}
                 />
                 <QuizViewerCardContent>
                     {mapQuestionArray(studentAttemptQuestions)}
