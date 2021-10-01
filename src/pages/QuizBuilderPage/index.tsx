@@ -25,12 +25,15 @@ import { getAccountByQuizId } from "../../apis/Account/AccountApis";
 
 import {
     getQuizByQuizId,
-    updateQuizWithQuizQuestionsAndQuizQuestionOptions
+    updateQuizWithQuizQuestionsAndQuizQuestionOptions,
 } from "../../apis/Quiz/QuizApis";
 import {
     getAllQuizQuestionsByQuizId,
     getQuizQuestionByQuizQuestionId
 } from "../../apis/QuizQuestion/QuizQuestionApis";
+import {
+    getCourseByContentId
+} from "../../apis/Course/CourseApis";
 
 import {
     QuizBuilderCardContent,
@@ -74,10 +77,15 @@ function QuizBuilderPage(props: any) {
         }).catch((err) => {
             props.callOpenSnackBar(`Error in initialising Quiz: ${err}`, "error")
         });
-
-        if (history.location.state) {
-            history.location.state.mode === "VIEW" ? setIsDisabled(true) : setIsDisabled(false);
-        }
+        getCourseByContentId(contentId).then((res) => {
+            console.log("Success: getCourseByContentId", res);
+            setIsDisabled(res.isEnrollmentActive);
+        }).catch((err) => {
+            console.log("Error: getCourseByContentId", err);
+        });
+        // if (history.location.state) {
+        //     history.location.state.mode === "VIEW" ? setIsDisabled(true) : setIsDisabled(false);
+        // }
 
         getQuizByQuizId(contentId).then((res) => {
             setQuiz(res);
