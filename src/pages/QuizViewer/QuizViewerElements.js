@@ -114,3 +114,23 @@ export const BackBtnWrapper = styled.div`
   align-items: center;
   margin-right: auto;
 `
+export const EmptyStateText = styled.h1`
+  font-size: ${fontSizes.SUBTEXT};
+  color: ${colours.GRAY3};
+  font-family: "Roboto", sans-serif;
+  text-align: center;
+  padding: 5px;
+`;
+
+export const EmptyStateContainer = styled.div`
+  display: ${({ coursesExist }) =>
+  coursesExist ? "none" : "flex"};
+  font-size: ${fontSizes.SUBTEXT};
+  color: ${colours.GRAY4};
+  font-family: "Roboto", sans-serif;
+  flex-direction: column;
+  justify-content: center; 
+  text-align: center; 
+  align-items: center;
+  padding: 5px;
+`;

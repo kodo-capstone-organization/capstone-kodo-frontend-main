@@ -32,6 +32,8 @@ import { getCourseByStudentAttemptId } from "../../../apis/Course/CourseApis";
 import {
     ArrowBackward,
     BackBtnWrapper,
+    EmptyStateContainer,
+    EmptyStateText,
     MarkedQuizViewerTableRow,
     QuizCard, 
     QuizCardContent, 
@@ -201,36 +203,71 @@ function MarkedQuizComponent(props: any) {
             <TableContainer component={Paper} style={{ margin: "16px 0px 16px 0px" }}>
                                     <Table size="small">
                                         <TableBody>
+
                                             {
                                                 (studentAttempt.quizQuestion.questionType === "TF" || studentAttempt.quizQuestion.questionType === "MCQ") &&
-                                                studentAttempt.studentAttemptAnswers?.map((row, index) => (
-                                                    <MarkedQuizViewerTableRow>
-                                                        <TableCell component="th" scope="row">
-                                                            {row.leftContent}
-                                                        </TableCell>
-                                                        <TableCell align="right">
-                                                            {row.correct ? <CheckCircleIcon style={{ color: "green", padding: "10px" }} /> : <CancelIcon color={"error"} style={{ padding: "10px" }} />}
-                                                        </TableCell>
-                                                    </MarkedQuizViewerTableRow>
+                                                    <>
+                                                    {
+                                                        (studentAttempt.studentAttemptAnswers.length === 0) && 
+                                                            <EmptyStateContainer>    
+                                                                <EmptyStateText>
+                                                                    Question unanswered
+                                                                </EmptyStateText>
+                                                            </EmptyStateContainer>
+                                                    }
+                                                    {
+                                                        (studentAttempt.studentAttemptAnswers.length > 0) && 
+                                                            studentAttempt.studentAttemptAnswers?.map((row, index) => (
+                                                                <MarkedQuizViewerTableRow>
+                                                                    <TableCell component="th" scope="row">
+                                                                        {row.leftContent}
+                                                                    </TableCell>
+                                                                    <TableCell align="right">
+                                                                        {row.correct ? <CheckCircleIcon style={{ color: "green", padding: "10px" }} /> : <CancelIcon color={"error"} style={{ padding: "10px" }} />}
+                                                                    </TableCell>
+                                                                </MarkedQuizViewerTableRow>
 
-                                                ))
+                                                            ))
+                                                    }
+                                                    </>
                                             }
                                             {
                                                 studentAttempt.quizQuestion.questionType === "MATCHING" &&
-                                                studentAttempt.studentAttemptAnswers?.map((row, index) => (
-                                                    <MarkedQuizViewerTableRow>
-                                                        <TableCell component="th" scope="row">
-                                                            {row.leftContent}
-                                                        </TableCell>
-                                                        <TableCell component="th" scope="row">
-                                                            {row.rightContent}
-                                                        </TableCell>
-                                                        <TableCell align="right">
-                                                            {row.correct ? <CheckCircleIcon style={{ color: "green", padding: "10px" }} /> : <CancelIcon color={"error"} style={{ padding: "10px" }} />}
-                                                        </TableCell>
-                                                    </MarkedQuizViewerTableRow>
+                                                    <>
+                                                        {
+                                                            (studentAttempt.studentAttemptAnswers.length === 0) && 
+                                                                <EmptyStateContainer>    
+                                                                    <EmptyStateText>
+                                                                        Question unanswered
+                                                                    </EmptyStateText>
+                                                                </EmptyStateContainer>
+                                                        }
+                                                        {
+                                                            (studentAttempt.studentAttemptAnswers.length > 0) && 
+                                                                studentAttempt.studentAttemptAnswers?.map((row, index) => (
+                                                                    <MarkedQuizViewerTableRow>
+                                                                        <TableCell component="th" scope="row">
+                                                                            {row.leftContent}
+                                                                        </TableCell>
+                                                                        <TableCell component="th" scope="row">
+                                                                            {row.rightContent}
+                                                                        </TableCell>
+                                                                        <TableCell align="right">
+                                                                            {row.correct ? <CheckCircleIcon style={{ color: "green", padding: "10px" }} /> : <CancelIcon color={"error"} style={{ padding: "10px" }} />}
+                                                                        </TableCell>
+                                                                    </MarkedQuizViewerTableRow>
 
-                                                ))
+                                                                ))
+                                                        }
+                                                        {
+                                                            ((studentAttempt.studentAttemptAnswers.length > 0) && (studentAttempt.studentAttemptAnswers.length < studentAttempt.quizQuestion.quizQuestionOptions.length)) && 
+                                                                <EmptyStateContainer style={{alignItems: "flex-end"}}>    
+                                                                    <EmptyStateText>
+                                                                        { studentAttempt.quizQuestion.quizQuestionOptions.length - studentAttempt.studentAttemptAnswers.length } Set of Matching Not Answered
+                                                                    </EmptyStateText>
+                                                                </EmptyStateContainer>
+                                                        }
+                                                    </>
                                             }
 
                                         </TableBody>
