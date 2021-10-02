@@ -29,7 +29,7 @@ function AttemptQuizOptionsComponent(props: any) {
         if (props.question) {
             setQuestion(props.question);
             setQuestionIndex(props.index);
-            setQuestionIndex(props.index);
+            console.log(props.question);
         }
     }, [props.question])
 

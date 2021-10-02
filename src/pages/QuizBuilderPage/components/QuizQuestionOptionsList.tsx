@@ -34,6 +34,7 @@ function QuizQuestionOptionsList(props: any) {
             setQuizQuestionOptions(props.question.quizQuestionOptions);
             setIsDisabled(props.disabled);
             if (props.question.quizQuestionOptions.length === 0) {
+                var newQuizQuestionOptions: QuizQuestionOption[];
                 if (props.questionType === "TF") {
                     const trueOption: QuizQuestionOption = {
                         quizQuestionOptionId: null,
@@ -47,7 +48,8 @@ function QuizQuestionOptionsList(props: any) {
                         rightContent: null,
                         correct: false
                     };
-                    const newQuizQuestionOptions: QuizQuestionOption[] = [trueOption, falseOption];
+                    newQuizQuestionOptions = [trueOption, falseOption];
+                    console.log('tf', newQuizQuestionOptions);
                     setQuizQuestionOptions(newQuizQuestionOptions);
                 } else if (props.questionType === "MCQ") {
                     const defaultOption: QuizQuestionOption = {
@@ -56,7 +58,8 @@ function QuizQuestionOptionsList(props: any) {
                         rightContent: null,
                         correct: true
                     };
-                    const newQuizQuestionOptions: QuizQuestionOption[] = [defaultOption];
+                    newQuizQuestionOptions = [defaultOption];
+                    console.log('mcq', newQuizQuestionOptions);
                     setQuizQuestionOptions(newQuizQuestionOptions);
                 } else if (props.questionType === "MATCHING") {
                     const defaultOption: QuizQuestionOption = {
@@ -65,9 +68,11 @@ function QuizQuestionOptionsList(props: any) {
                         rightContent: "MATCHING OPTION B",
                         correct: true
                     };
-                    const newQuizQuestionOptions: QuizQuestionOption[] = [defaultOption];
+                    newQuizQuestionOptions = [defaultOption];
+                    console.log('match', newQuizQuestionOptions);
                     setQuizQuestionOptions(newQuizQuestionOptions);
                 }
+                props.onHandleQuizQuestionOptionUpdate(newQuizQuestionOptions, props.questionIndex)
             }
         }
     }, [props.question, props.questionType, props.disabled, props.questionIndex])
@@ -82,35 +87,34 @@ function QuizQuestionOptionsList(props: any) {
     };
 
     const handleLeftContentChange = (event: any) => {
+        const newQuizQuestionOptions = quizQuestionOptions?.map((x, index) => {
+            return (index === parseInt(event.index) ? Object.assign(x, { leftContent: event.target.value })
+                : x)
+        });
+        setQuizQuestionOptions(newQuizQuestionOptions);
         if (event.target.value !== "") {
-            const newQuizQuestionOptions = quizQuestionOptions?.map((x, index) => {
-                return (index === parseInt(event.index) ? Object.assign(x, { leftContent: event.target.value })
-                    : x)
-            });
-            setQuizQuestionOptions(newQuizQuestionOptions);
-            console.log("non-empty option to update", event.target.value)
             props.onHandleQuizQuestionOptionUpdate(newQuizQuestionOptions, questionIndex)
-        } else {
-            handleCallSnackbar("Options must be non-empty");
         }
     }
 
     const handleRightContentChange = (event: any) => {
+        const newQuizQuestionOptions = quizQuestionOptions?.map((x, index) => {
+            return (index === parseInt(event.index) ? Object.assign(x, { rightContent: event.target.value })
+                : x)
+        });
+        setQuizQuestionOptions(newQuizQuestionOptions);
         if (event.target.value !== "") {
-            const newQuizQuestionOptions = quizQuestionOptions?.map((x, index) => {
-                return (index === parseInt(event.index) ? Object.assign(x, { rightContent: event.target.value })
-                    : x)
-            });
-            setQuizQuestionOptions(newQuizQuestionOptions);
+
             props.onHandleQuizQuestionOptionUpdate(newQuizQuestionOptions, questionIndex)
-        } else {
-            handleCallSnackbar("Options must be non-empty");
         }
     }
 
     const handleDeleteOption = (event: React.MouseEvent<unknown>, optionIndex: number) => {
         if (quizQuestionOptions.length > 1) {
-            const newQuizQuestionOptions = quizQuestionOptions?.filter((option, index) => index !== optionIndex);
+            var newQuizQuestionOptions = quizQuestionOptions?.filter((option, index) => index !== optionIndex);
+            if (newQuizQuestionOptions.length === 1) {
+                newQuizQuestionOptions = newQuizQuestionOptions?.map((option) => Object.assign(option, { correct: true }));
+            }
             setQuizQuestionOptions(newQuizQuestionOptions);
             props.onHandleQuizQuestionOptionUpdate(newQuizQuestionOptions, questionIndex)
         } else {
@@ -137,8 +141,6 @@ function QuizQuestionOptionsList(props: any) {
         }
         const newQuizQuestionOptions = quizQuestionOptions?.concat([newQuizQuestionOption]);
         setQuizQuestionOptions(newQuizQuestionOptions);
-        // props.onHandleQuizQuestionOptionUpdate(newQuizQuestionOptions, questionIndex)
-
     }
 
     const handleCallSnackbar = (msg: string) => {
