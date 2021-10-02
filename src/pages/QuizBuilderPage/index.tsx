@@ -403,7 +403,7 @@ function QuizBuilderPage(props: any) {
                                     fullWidth
                                     value={maxAttempts}
                                     onChange={handleAttemptChange}
-                                    inputProps={{ min: 0, max: 100 }}
+                                    inputProps={{ min: 1, max: 100 }}
                                 />
                             </Grid>
                             <Grid item xs={12}>

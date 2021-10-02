@@ -110,7 +110,10 @@ function QuizQuestionOptionsList(props: any) {
     }
 
     const handleDeleteOption = (event: React.MouseEvent<unknown>, optionIndex: number) => {
-        if (quizQuestionOptions.length > 1) {
+        const optionToDelete = quizQuestionOptions[optionIndex];
+        if(optionToDelete.correct === true && questionType === "MCQ"){
+            handleCallSnackbar("Cannot delete correct option");
+        } else if (quizQuestionOptions.length > 1) {
             var newQuizQuestionOptions = quizQuestionOptions?.filter((option, index) => index !== optionIndex);
             if (newQuizQuestionOptions.length === 1) {
                 newQuizQuestionOptions = newQuizQuestionOptions?.map((option) => Object.assign(option, { correct: true }));
