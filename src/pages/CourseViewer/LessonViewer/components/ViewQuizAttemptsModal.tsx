@@ -1,17 +1,23 @@
 import React, { useState, useEffect } from "react";
 
-import { Button } from "../../../../values/ButtonElements";
-import { colours } from "../../../../values/Colours";
+import { useHistory } from "react-router-dom";
+
 import {
   Dialog, DialogActions, DialogContent, Table,
   DialogTitle, TableBody, TableCell, TableContainer,
   TableHead, TableRow, Paper
 } from "@material-ui/core";
-import { makeStyles, Theme, createStyles, withStyles } from '@material-ui/core/styles';
-import InfoIcon from '@material-ui/icons/Info';
+import { 
+  Theme, 
+  createStyles, 
+  makeStyles, 
+} from '@material-ui/core/styles';
 
-import { useHistory } from "react-router-dom";
 import { StudentAttempt } from "../../../../apis/Entities/StudentAttempt";
+import { StudentAttemptQuestion } from "../../../../apis/Entities/StudentAttemptQuestion";
+import { StudentAttemptAnswer } from "../../../../apis/Entities/StudentAttemptAnswer";
+
+import { Button } from "../../../../values/ButtonElements";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -68,11 +74,11 @@ function ViewQuizAttemptsModal(props: any) {
       totalMarks = totalMarks + q.quizQuestion.marks;
       const studentAttemptAnswerList = q.studentAttemptAnswers;
       let correct = true;
-      studentAttemptAnswerList.map((studentAnswer) => {
+      studentAttemptAnswerList.map((studentAnswer: StudentAttemptAnswer) => {
         return(studentAnswer.correct ? score = score + studentAnswer.marks: correct=false);
       })
     })
-    return `${score}/${totalMarks}`;
+    return `${score.toFixed(2)}/${totalMarks}`;
   }
 
   return (
