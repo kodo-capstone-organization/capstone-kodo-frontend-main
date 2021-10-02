@@ -212,8 +212,8 @@ function QuizBuilderPage(props: any) {
         var value = parseInt(e.target.value);
         if (value > 100) {
             value = 100;
-        } else if (value < 0) {
-            value = 0;
+        } else if (value < 1) {
+            value = 1;
         }
         setMaxAttempts(value);
         const newQuiz = Object.assign(updatedQuiz, { maxAttemptsPerStudent: value });
@@ -246,7 +246,7 @@ function QuizBuilderPage(props: any) {
                     setQuiz(res)
                 })
                 .catch((err) => {
-                    props.callOpenSnackBar(`Error in updating Quiz`, "error")
+                    props.callOpenSnackBar(`Error in updating Quiz: ${err.response.data.message}`, "error")
                 });
         }
     }
