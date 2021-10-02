@@ -89,7 +89,7 @@ function TutorView(props: any) {
       }
 
       { (!enrolledStudentsAndCompletion || enrolledStudentsAndCompletion?.length === 0) &&
-          <div style={{ textAlign: "center", fontSize: "2em" }}>
+          <div style={{ display: "flex", justifyContent: "center", alignItems: "center", fontSize: "2em", color: "#767C83" }}>
             There are no students who are enrolled in this course!
           </div>
       }

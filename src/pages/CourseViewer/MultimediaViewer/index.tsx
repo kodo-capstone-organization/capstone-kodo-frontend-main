@@ -3,6 +3,7 @@ import { withRouter } from "react-router";
 import { getCourseByCourseId } from "../../../apis/Course/CourseApis";
 import { getLessonByLessonId } from "../../../apis/Lesson/LessonApis";
 import { getMultimediaByMultimediaId } from "../../../apis/Multimedia/MultimediaApis";
+import { getEnrolledContentByAccountIdAndContentId } from "../../../apis/EnrolledContent/EnrolledContentApis"
 import { Multimedia } from "../../../apis/Entities/Multimedia";
 import { Course } from "../../../apis/Entities/Course";
 import { Lesson } from "../../../apis/Entities/Lesson";
@@ -48,6 +49,8 @@ function MultimediaViewer(props: any) {
   const [currentMultimedia, setMultimedia] = useState<Multimedia>();
   const [currentLesson, setLesson] = useState<Lesson>();
   const [currentCourse, setCourse] = useState<Course>();
+  const [currentEnrolledContent, setEnrolledContent] = useState<EnrolledContent>();
+
 
   let history = useHistory();
 
@@ -61,6 +64,9 @@ function MultimediaViewer(props: any) {
     getCourseByCourseId(courseId).then(receivedCourse => {
       setCourse(receivedCourse);
     });
+    getEnrolledContentByAccountIdAndContentId(accountId, contentId).then(receivedContent => {
+      setEnrolledContent(receivedContent);
+    })
   }, [contentId, lessonId, courseId]);
 
 
@@ -98,9 +104,11 @@ function MultimediaViewer(props: any) {
         <div id="action-row" style={{ display: "flex", flexDirection: "row", justifyContent: "flex-end" }}>
           <DownloadFile multimediaName={currentMultimedia?.name} multimediaUrl={currentMultimedia?.url} />
           &nbsp;&nbsp;
+          {currentEnrolledContent?.dateTimeOfCompletion === null &&
           <Button primary onClick={completeMultimedia}>
             Mark as Done
           </Button>
+          }
         </div>
 
         {currentMultimedia && currentMultimedia.multimediaType === "VIDEO" &&
