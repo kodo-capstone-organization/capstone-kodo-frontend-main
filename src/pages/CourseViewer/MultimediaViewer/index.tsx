@@ -3,6 +3,7 @@ import { withRouter } from "react-router";
 import { getCourseByCourseId } from "../../../apis/Course/CourseApis";
 import { getLessonByLessonId } from "../../../apis/Lesson/LessonApis";
 import { getMultimediaByMultimediaId } from "../../../apis/Multimedia/MultimediaApis";
+import  { getEnrolledContentByEnrolledContentId } from "../../../apis/EnrolledContent/EnrolledContentApis"
 import { Multimedia } from "../../../apis/Entities/Multimedia";
 import { Course } from "../../../apis/Entities/Course";
 import { Lesson } from "../../../apis/Entities/Lesson";

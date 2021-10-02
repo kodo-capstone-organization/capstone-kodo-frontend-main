@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { withRouter } from "react-router";
+import { withRouter, useHistory } from "react-router";
 import { getCourseByCourseId } from "../../../apis/Course/CourseApis";
 import { getLessonByLessonId } from "../../../apis/Lesson/LessonApis";
 import { getMyAccount } from "../../../apis/Account/AccountApis";
@@ -18,8 +18,6 @@ import ViewQuizAttemptsModal from './components/ViewQuizAttemptsModal';
 
 import { Button } from "../../../values/ButtonElements";
 import { colours } from "../../../values/Colours";
-
-import { useHistory } from "react-router-dom";
 
 import {
   LessonContainer,
@@ -92,7 +90,7 @@ function LessonViewer(props: any) {
         setLoading(false)
       });
     }
-  }, []);
+  }, [courseId, lessonId, accountId]);
 
   function formatDate(date: Date): string {
     var d = new Date(date);
@@ -147,6 +145,16 @@ function LessonViewer(props: any) {
     return true;
   }
 
+  //if it is not the last lesson, returns next lesson's id, if it is the last lesson then it returns null
+  function nextLessonId(): number | null {
+    let allEnrolledLessons = enrolledCourse?.enrolledLessons;
+    let numberLessons = allEnrolledLessons?.length
+    if (allEnrolledLessons && enrolledLesson && enrolledLesson?.parentLesson.sequence !== numberLessons) {
+      return enrolledLesson?.parentLesson.lessonId + 1;
+    }
+    return null;
+  }
+
   let isCourseTutor =
     currentCourse?.tutor.accountId === currentUser?.accountId ? true : false;
 
@@ -163,6 +171,10 @@ function LessonViewer(props: any) {
       return true;
     }
     return false;
+  }
+
+  const handleNextLesson = () => {
+    history.push(`/overview/lesson/${courseId}/${nextLessonId()}`);
   }
 
   return (
@@ -193,7 +205,6 @@ function LessonViewer(props: any) {
               return (
                 <ContentLink
                   key={m.contentId} 
-                  isCompleted={checkCompleted(m.contentId)}
                   previousCompleted={previousLessonCompleted()}
                   to={`/overview/lesson/${courseId}/${lessonId}/${m.contentId}`}
                 >
@@ -266,8 +277,10 @@ function LessonViewer(props: any) {
           </QuizWrapper>
         </LessonCard>
         <NextBtnWrapper lessonCompleted={lessonCompleted}>
-          <Button to='#' onMouseEnter={onHover} onMouseLeave={onHover}>Next {hover ? <ArrowForward /> : <ArrowRight />}</Button>
-        </NextBtnWrapper>
+          { nextLessonId() !== null &&
+          <Button onClick={handleNextLesson} onMouseEnter={onHover} onMouseLeave={onHover}>Next {hover ? <ArrowForward /> : <ArrowRight />}</Button>
+          }
+          </NextBtnWrapper>
       </LessonContainer>}
     </>
   );
