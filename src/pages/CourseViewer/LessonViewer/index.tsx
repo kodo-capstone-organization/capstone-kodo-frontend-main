@@ -103,7 +103,7 @@ function LessonViewer(props: any) {
   }
 
   const getLessonIdToNavigateTo = (lessonSequence: number) => {
-    const enrolledLessonObj = enrolledCourse.enrolledLessons.find((enrolledLesson: EnrolledLesson) => enrolledLesson.parentLesson.sequence === lessonSequence)
+    const enrolledLessonObj = enrolledCourse?.enrolledLessons.find((enrolledLesson: EnrolledLesson) => enrolledLesson.parentLesson.sequence === lessonSequence)
     return enrolledLessonObj?.parentLesson?.lessonId || lessonId;
   }
 
@@ -288,7 +288,7 @@ function LessonViewer(props: any) {
           }
 
           {/* Conditionally render next button */}
-          { currentLesson && currentLesson.sequence !== enrolledCourse.enrolledLessons.length &&
+          { currentLesson && currentLesson.sequence !== enrolledCourse?.enrolledLessons.length &&
             <NextBtnWrapper lessonCompleted={lessonCompleted}>
               <Link
                   type="button"
