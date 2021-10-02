@@ -86,69 +86,55 @@ function AttemptQuizComponent(props: any) {
     }
 
     const handleSubmit = () => {
-        setHasSubmitted(true);
-        if (quizQuestionOptionIdList.length === quizQuestionArray?.length) {
-            const createNewStudentAttemptReq: CreateNewStudentAttemptReq = {
-                enrolledContentId: parseInt(props.enrolledContentId),
-                quizQuestionOptionIdLists: quizQuestionOptionIdList
-            };
+        var newQuizQuestionOptionIdList = quizQuestionOptionIdList;
+        quizQuestionArray?.map((q, qId) => {
+            if (qId in quizQuestionOptionIdList) {
+            } else {
+                newQuizQuestionOptionIdList[qId] = [[]];
+            }
+        })
+        const createNewStudentAttemptReq: CreateNewStudentAttemptReq = {
+            enrolledContentId: parseInt(props.enrolledContentId),
+            quizQuestionOptionIdLists: newQuizQuestionOptionIdList
+        };
+        createNewStudentAttempt(createNewStudentAttemptReq)
+            .then(res => {
+                props.callOpenSnackBar("Quiz Submitted Successfully", "success")
 
-            console.log("Submit Method createNewStudentAttemptReq", createNewStudentAttemptReq);
-            createNewStudentAttempt(createNewStudentAttemptReq)
-                .then(res => {
-                    props.callOpenSnackBar("Quiz Submitted Successfully", "success")
-
-                    getCourseByEnrolledContentId(props.enrolledContentId).then((course: Course) => {
-                        getLessonByEnrolledContentId(props.enrolledContentId).then((lesson: Lesson) => {
-                            history.push(`/overview/lesson/${course.courseId}/${lesson.lessonId}`);
-                            // console.log("Attempt quiz success:", res);
-                        })
-                            .catch(err => {
-                                console.log(err.response.data.message)
-                            })
+                getCourseByEnrolledContentId(props.enrolledContentId).then((course: Course) => {
+                    getLessonByEnrolledContentId(props.enrolledContentId).then((lesson: Lesson) => {
+                        history.push(`/overview/lesson/${course.courseId}/${lesson.lessonId}`);
+                        // console.log("Attempt quiz success:", res);
                     })
                         .catch(err => {
                             console.log(err.response.data.message)
                         })
                 })
-                .catch(err => {
-                    props.callOpenSnackBar("There was an error in submitting the quiz", "error")
-                    // console.log("Attempt quiz failed:", err);
-                });
-        } else {
-            props.callOpenSnackBar("Please complete the quiz", "error")
-            // console.log("Hey! complete the damn quiz!");
-            //send error
-        }
+                    .catch(err => {
+                        console.log(err.response.data.message)
+                    })
+            })
+            .catch(err => {
+                props.callOpenSnackBar("There was an error in submitting the quiz", "error")
+            });
 
     }
 
     const handleTimeOut = (isTimedOut: boolean) => {
         var newQuizQuestionOptionIdList = quizQuestionOptionIdList;
         quizQuestionArray?.map((q, qId) => {
-            if(qId in quizQuestionOptionIdList){
-                // console.log(`${qId} in ${quizQuestionOptionIdList}`)
-            }else{
-                // console.log(`${qId} not in ${quizQuestionOptionIdList}`)
+            if (qId in quizQuestionOptionIdList) {
+            } else {
                 newQuizQuestionOptionIdList[qId] = [[]];
             }
         })
-        
+
         const tmpCreateNewStudentAttemptReq: CreateNewStudentAttemptReq = {
             enrolledContentId: props.enrolledContentId,
             quizQuestionOptionIdLists: newQuizQuestionOptionIdList
         };
 
         setCreateNewStudentAttemptReq(tmpCreateNewStudentAttemptReq);
-
-        // console.log("Time Out Auto Submit Method createNewStudentAttemptReq", createNewStudentAttemptReq);
-        // createNewStudentAttempt(createNewStudentAttemptReq)
-        // .then(res => {
-        //     console.log("Attempt quiz success:", res);
-        // })
-        // .catch(err => {
-        //     console.log("Attempt quiz failed:", err);
-        // });
         setTimeout(true);
     }
 
@@ -169,22 +155,9 @@ function AttemptQuizComponent(props: any) {
         );
     };
 
-    // const checkPrompt = () => {
-    //     //check when hasSubmit and or timeout is false
-    //     console.log("hasSubmitted", hasSubmitted);
-    //     console.log("timeout", timeout);
-    //     if (hasSubmitted) {
-    //         return false;
-    //     } else if (timeout) {
-    //         return false;
-    //     } else {
-    //         return true;
-    //     }
-    // }
-
     return (
         <>
-            {initialSeconds != undefined && <QuizAttemptTimer initialSeconds={initialSeconds} initialMinutes={initialMinutes} onTimeOut={handleTimeOut}/>}
+            {initialSeconds != undefined && <QuizAttemptTimer initialSeconds={initialSeconds} initialMinutes={initialMinutes} onTimeOut={handleTimeOut} />}
             <QuizTimedOutModal open={timeout} enrolledContentId={props.enrolledContentId} callOpenSnackBar={props.callOpenSnackBar} createNewStudentAttemptReq={createNewStudentAttemptReq} />
             <QuizCard>
                 <QuizCardHeader
