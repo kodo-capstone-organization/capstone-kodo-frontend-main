@@ -246,7 +246,7 @@ function QuizBuilderPage(props: any) {
                     setQuiz(res)
                 })
                 .catch((err) => {
-                    props.callOpenSnackBar(`Error in updating Quiz: ${err.response.data.message}`, "error")
+                    props.callOpenSnackBar(`Error in updating Quiz: ${err?.response.data.message}`, "error")
                 });
         }
     }
