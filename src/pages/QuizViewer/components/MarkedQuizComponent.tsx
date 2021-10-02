@@ -261,7 +261,7 @@ function MarkedQuizComponent(props: any) {
                                                         }
                                                         {
                                                             ((studentAttempt.studentAttemptAnswers.length > 0) && (studentAttempt.studentAttemptAnswers.length < studentAttempt.quizQuestion.quizQuestionOptions.length)) && 
-                                                                <EmptyStateContainer>    
+                                                                <EmptyStateContainer style={{alignItems: "flex-end"}}>    
                                                                     <EmptyStateText>
                                                                         { studentAttempt.quizQuestion.quizQuestionOptions.length - studentAttempt.studentAttemptAnswers.length } Set of Matching Not Answered
                                                                     </EmptyStateText>

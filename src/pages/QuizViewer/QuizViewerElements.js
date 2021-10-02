@@ -133,5 +133,4 @@ export const EmptyStateContainer = styled.div`
   text-align: center; 
   align-items: center;
   padding: 5px;
-  align-items: flex-end;
 `;
