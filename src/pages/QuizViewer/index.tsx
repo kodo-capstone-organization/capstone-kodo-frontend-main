@@ -4,7 +4,7 @@ import { useHistory } from "react-router-dom";
 import { createMuiTheme } from "@material-ui/core";
 
 import {
-    QuizContainer, 
+    QuizContainer,
     QuizQuestionCard
 } from "./QuizViewerElements";
 
@@ -39,9 +39,9 @@ function QuizViewer(props: any) {
 
     useEffect(() => {
         setLoading(true);
-        if(props.match.params.studentAttemptId){
+        if (props.match.params.studentAttemptId) {
             setViewMode(true);
-        }else if (props.match.params.enrolledContentId){
+        } else if (props.match.params.enrolledContentId) {
             setAttemptMode(true);
         }
         setLoading(false);

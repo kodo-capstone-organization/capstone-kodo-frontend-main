@@ -7,6 +7,7 @@ import {
 } from "@material-ui/core";
 import { fontSizes } from "../../values/FontSizes";
 import { colours } from "../../values/Colours";
+import { MdArrowBack } from "react-icons/md";
 
 export const QuizContainer = styled.div`
     padding: 2rem;
@@ -22,6 +23,29 @@ export const QuizCard = styled(Card)`
 `;
 
 export const QuizCardHeader = styled(CardHeader)`
+    display: flex;
+    flex-direction: row;
+    background-color: ${colours.GRAYHALF6};
+    color: ${colours.GRAY3};
+    height: 1.5rem;
+    
+    > .MuiCardHeader-content > span {
+        font-size: ${fontSizes.CONTENT};
+        font-weight: bold;
+    }
+    
+    > .MuiCardHeader-action {
+        margin: initial;
+        align-self: center;
+        color: ${colours.GRAY2};
+        
+        >.MuiIconButton-root >.MuiIconButton-label {
+           font-size: ${fontSizes.SUBTEXT} !important;
+        }
+    }
+`;
+
+export const QuizCardFooter = styled(CardHeader)`
     display: flex;
     flex-direction: row;
     background-color: ${colours.GRAYHALF6};
@@ -78,4 +102,15 @@ export const MarkedQuizViewerTableRow = styled(TableRow)`
     .MuiTableRow-root.Mui-selected, .MuiTableRow-root.Mui-selected:hover {
         background-color: ${colours.GREEN};
     }
+`
+export const ArrowBackward = styled(MdArrowBack)`
+  vertical-align: middle;
+  font-size: ${fontSizes.CONTENT};
+`;
+
+export const BackBtnWrapper = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-right: auto;
 `

@@ -47,7 +47,7 @@ function ProgressPage() {
                 hidden={tab !== index}
             >
                 {tab === index && (
-                    <CourseList account={myAccount} courses={data} />
+                    <CourseList account={myAccount} curTabIdx={tab} courses={data} />
                 )}
             </div>
         );

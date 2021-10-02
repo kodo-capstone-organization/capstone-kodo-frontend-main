@@ -30,7 +30,7 @@ function QuizQuestionComponent(props: any) {
 
     useEffect(() => {
         setQuestion(props.question)
-        // setUpdatedQuestion(props.question)
+        console.log(props.question);
         setIsDisabled(props.disabled)
         setQuestionIndex(props.questionIndex)
         setContent(props.question.content)

@@ -7,8 +7,11 @@ import {
     Grid,
     TextField,
     Input,
-    InputLabel
+    InputLabel,
+    Breadcrumbs,
+    Link
 } from "@material-ui/core";
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 import {
     DragDropContext,
@@ -25,12 +28,15 @@ import { getAccountByQuizId } from "../../apis/Account/AccountApis";
 
 import {
     getQuizByQuizId,
-    updateQuizWithQuizQuestionsAndQuizQuestionOptions
+    updateQuizWithQuizQuestionsAndQuizQuestionOptions,
 } from "../../apis/Quiz/QuizApis";
 import {
     getAllQuizQuestionsByQuizId,
     getQuizQuestionByQuizQuestionId
 } from "../../apis/QuizQuestion/QuizQuestionApis";
+import {
+    getCourseByContentId
+} from "../../apis/Course/CourseApis";
 
 import {
     QuizBuilderCardContent,
@@ -50,6 +56,8 @@ import { Button } from "../../values/ButtonElements";
 function QuizBuilderPage(props: any) {
 
     const contentId = props.match.params.contentId;
+    const [courseId, setCourseId] = useState<number>(); // for backwards navigation to course builder
+
     const [name, setName] = useState<string>("");
     const [description, setDescription] = useState<string>("");
     const [maxAttempts, setMaxAttempts] = useState<number>();
@@ -74,10 +82,17 @@ function QuizBuilderPage(props: any) {
         }).catch((err) => {
             props.callOpenSnackBar(`Error in initialising Quiz: ${err}`, "error")
         });
-
-        if (history.location.state) {
-            history.location.state.mode === "VIEW" ? setIsDisabled(true) : setIsDisabled(false);
-        }
+        getCourseByContentId(contentId).then((res: Course) => {
+            console.log("Success: getCourseByContentId", res);
+            setIsDisabled(res.isEnrollmentActive);
+            setCourseId(res.courseId)
+        }).catch((err) => {
+            console.log(contentId)
+            console.log("Error: getCourseByContentId", err);
+        });
+        // if (history.location.state) {
+        //     history.location.state.mode === "VIEW" ? setIsDisabled(true) : setIsDisabled(false);
+        // }
 
         getQuizByQuizId(contentId).then((res) => {
             setQuiz(res);
@@ -149,8 +164,8 @@ function QuizBuilderPage(props: any) {
     const handleTimeLimitHoursChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         var value: any = parseInt(e.target.value);
         var resetMinutes = timeLimitMinutes;
-        if (value > 24) {
-            value = "24";
+        if (value > 23) {
+            value = "23";
         } else if (value <= 0) {
             value = "00";
             resetMinutes = "15";
@@ -231,7 +246,7 @@ function QuizBuilderPage(props: any) {
                     setQuiz(res)
                 })
                 .catch((err) => {
-                    props.callOpenSnackBar(`Error in updating Quiz: ${err}`, "error")
+                    props.callOpenSnackBar(`Error in updating Quiz`, "error")
                 });
         }
     }
@@ -262,19 +277,17 @@ function QuizBuilderPage(props: any) {
 
     }
 
-    const handleChangeFromQuestionBank = (questionBankQuestionIds: number[]) => {
+    const handleChangeFromQuestionBank = (questionBankQuestions: any[]) => {
+        console.log("questionBankQuestionIds", questionBankQuestions);
+        let arrayWtihDraggableId: any = quizQuestionArray;
         var mapDraggable = draggableId + 1;
-        questionBankQuestionIds.map((id) => {
-            getQuizQuestionByQuizQuestionId(id).then((res) => {
-                props.callOpenSnackBar("Successfully updated Quiz", "success")
-                const withDraggableId = Object.assign(res, { draggableId: mapDraggable });
-                mapDraggable++;
-                quizQuestionArray.push(withDraggableId);
-            }).catch((err) => {
-                props.callOpenSnackBar(`Error in updating Quiz: ${err}`, "error")
-            })
+        questionBankQuestions.map((question) => {
+            const withDraggableId = Object.assign(question, { draggableId: mapDraggable });
+            arrayWtihDraggableId = arrayWtihDraggableId.concat([withDraggableId]);
+            mapDraggable++;
         })
         setDraggableId(mapDraggable);
+        setQuizQuestionArray(arrayWtihDraggableId);
     }
 
     const handleOnDragEnd = (result) => {
@@ -329,6 +342,13 @@ function QuizBuilderPage(props: any) {
     return (
         <>
             <QuizContainer>
+                <Breadcrumbs aria-label="quizbuilder-breadcrumb" style={{ marginBottom: "1rem"}}>
+                    <Link color="primary" href={`/builder/${courseId}`}>
+                        <ArrowBackIcon style={{ verticalAlign: "middle"}}/>&nbsp;
+                        <span style={{ verticalAlign: "bottom"}}>Back To Coursebuilder</span>
+                    </Link>
+                </Breadcrumbs>
+
                 <QuizCard id="quiz-information-card">
                     <QuizCardHeader
                         title="Quiz Information"
@@ -355,7 +375,7 @@ function QuizBuilderPage(props: any) {
                                     autoFocus
                                     value={timeLimitHours}
                                     onChange={handleTimeLimitHoursChange}
-                                    inputProps={{ min: 0, max: 24 }}
+                                    inputProps={{ min: 0, max: 23 }}
                                 />
                             </Grid>
                             <Grid item xs={6}>

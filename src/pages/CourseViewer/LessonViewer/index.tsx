@@ -1,54 +1,59 @@
 import { useState, useEffect } from "react";
-import { withRouter, useHistory } from "react-router";
+import { withRouter } from "react-router";
+
+import { useHistory } from "react-router-dom";
+
+import { Link } from '@material-ui/core';
+import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
+
+import { Account } from "../../../apis/Entities/Account";
+import { Course } from "../../../apis/Entities/Course";
+import { EnrolledCourse } from "../../../apis/Entities/EnrolledCourse";
+import { EnrolledLesson } from "../../../apis/Entities/EnrolledLesson";
+import { Lesson } from "../../../apis/Entities/Lesson";
+import { Quiz } from "../../../apis/Entities/Quiz";
+import { QuizWithStudentAttemptCountResp } from "../../../apis/Entities/Quiz";
+
 import { getCourseByCourseId } from "../../../apis/Course/CourseApis";
+import { getEnrolledCourseByStudentIdAndCourseId } from "../../../apis/EnrolledCourse/EnrolledCourseApis";
+import { getEnrolledLesson } from "../../../apis/EnrolledLesson/EnrolledLessonApis";
 import { getLessonByLessonId } from "../../../apis/Lesson/LessonApis";
 import { getMyAccount } from "../../../apis/Account/AccountApis";
-import { getEnrolledLesson } from "../../../apis/EnrolledLesson/EnrolledLessonApis";
-import { getEnrolledCourseByStudentIdAndCourseId } from "../../../apis/EnrolledCourse/EnrolledCourseApis";
 
-import { Course } from "../../../apis/Entities/Course";
-import { Lesson } from "../../../apis/Entities/Lesson";
-import { Account } from "../../../apis/Entities/Account";
-import { Quiz } from "../../../apis/Entities/Quiz";
-import { EnrolledLesson } from "../../../apis/Entities/EnrolledLesson";
-import { EnrolledCourse } from "../../../apis/Entities/EnrolledCourse";
-import { QuizWithStudentAttemptCountResp } from "../../../apis/Entities/Quiz";
+import {
+  ArrowBackward,
+  ArrowForward, 
+  BtnWrapper,
+  CheckIcon,
+  ContentLink,
+  ContentMenu,
+  CourseTitle,
+  ExitWrapper,
+  HeadingDescription,
+  Image,
+  LessonCard,
+  LessonContainer,
+  LessonDescription,
+  LessonHeader,
+  LessonTitle,
+  NextBtnWrapper,
+  PageHeading,
+  PageHeadingAndButton,
+  PlayIcon,
+  PrevBtnWrapper,
+  QuizDescription,
+  QuizDescriptionTwo,
+  QuizRow,
+  QuizSubheader,
+  QuizWrapper,
+  ReadingIcon,
+  ZipIcon,
+} from "./LessonViewerElements";
 
 import ViewQuizAttemptsModal from './components/ViewQuizAttemptsModal';
 
 import { Button } from "../../../values/ButtonElements";
 import { colours } from "../../../values/Colours";
-
-import {
-  LessonContainer,
-  PageHeadingAndButton,
-  PageHeading,
-  HeadingDescription,
-  LessonTitle,
-  CourseTitle,
-  LessonCard,
-  LessonDescription,
-  LessonHeader,
-  ContentMenu,
-  ContentLink,
-  ReadingIcon,
-  PlayIcon,
-  QuizWrapper,
-  QuizRow,
-  QuizSubheader,
-  QuizDescription,
-  QuizDescriptionTwo,
-  CheckIcon,
-  BtnWrapper,
-  ExitWrapper,
-  ZipIcon,
-  Image,
-  NextBtnWrapper,
-  ArrowForward,
-  ArrowRight,
-} from "./LessonViewerElements";
-
-import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
 
 
 function LessonViewer(props: any) {
@@ -64,10 +69,6 @@ function LessonViewer(props: any) {
     window.sessionStorage.getItem("loggedInAccountId") || "{}"
   );
   const [loading, setLoading] = useState<boolean>(true);
-
-  const onHover = () => {
-    setHover(!hover);
-  };
 
   const history = useHistory();
 
@@ -92,13 +93,18 @@ function LessonViewer(props: any) {
     }
   }, [courseId, lessonId, accountId]);
 
-  function formatDate(date: Date): string {
-    var d = new Date(date);
-    return d.toDateString() + ', ' + d.toLocaleTimeString();
-  }
+  // function formatDate(date: Date): string {
+  //   var d = new Date(date);
+  //   return d.toDateString() + ', ' + d.toLocaleTimeString();
+  // }
 
   const attemptQuiz = (enrolledContentId: number) => {
     history.push({ pathname: `/attemptquizviewer/${enrolledContentId}`, state: { mode: 'ATTEMPT' } });
+  }
+
+  const getLessonIdToNavigateTo = (lessonSequence: number) => {
+    const enrolledLessonObj = enrolledCourse?.enrolledLessons.find((enrolledLesson: EnrolledLesson) => enrolledLesson.parentLesson.sequence === lessonSequence)
+    return enrolledLessonObj?.parentLesson?.lessonId || lessonId;
   }
 
   function getQuizAttempts(): QuizWithStudentAttemptCountResp[] {
@@ -124,12 +130,10 @@ function LessonViewer(props: any) {
             studentAttempts: enrolledContent.studentAttempts
           }
         );
-        console.log("enrolledContent.enrolledContentId", enrolledContent.enrolledContentId);
       }
     });
     return quizAttemptsTemp;
   }
-
 
   function previousLessonCompleted(): boolean {
     let allEnrolledLessons = enrolledCourse?.enrolledLessons;
@@ -164,13 +168,18 @@ function LessonViewer(props: any) {
   let lessonMultimedias = currentLesson?.multimedias;
 
   function checkCompleted(contentId: number): boolean {
-    let enrolledContent = enrolledLesson?.enrolledContents.find(
-      i => i.parentContent?.contentId === contentId
-    );
-    if (enrolledContent?.dateTimeOfCompletion !== null || isCourseTutor) {
-      return true;
+
+    if (contentId) {
+      let enrolledContent = enrolledLesson?.enrolledContents.find(
+          i => i.parentContent?.contentId === contentId
+      );
+      if (enrolledContent?.dateTimeOfCompletion !== null ) {
+        return true;
+      }
+      return false;
+    } else {
+      return false;
     }
-    return false;
   }
 
   const handleNextLesson = () => {
@@ -219,9 +228,7 @@ function LessonViewer(props: any) {
                   {m.multimediaType === "VIDEO" && "Video: " + m.name }
                   {m.multimediaType === "ZIP" && "Zip: " + m.name }  
                                   
-                  {checkCompleted(m.contentId) &&
-                    <CheckIcon />
-                  }
+                  { checkCompleted(m.contentId) && <CheckIcon /> }
                 </ContentLink>                
               );
             })}
@@ -266,7 +273,7 @@ function LessonViewer(props: any) {
                     <QuizDescriptionTwo>[To Finish]</QuizDescriptionTwo>
                     */}
                   </QuizRow>
-                  <QuizRow>
+                  <QuizRow style={{ borderBottom: "none" }}>
                     <BtnWrapper>
                       <ViewQuizAttemptsModal isButtonDisabled={!previousLessonCompleted()} studentAttempts={q.studentAttempts}/>
                     </BtnWrapper>
@@ -276,11 +283,38 @@ function LessonViewer(props: any) {
             })}
           </QuizWrapper>
         </LessonCard>
-        <NextBtnWrapper lessonCompleted={lessonCompleted}>
-          { nextLessonId() !== null &&
-          <Button onClick={handleNextLesson} onMouseEnter={onHover} onMouseLeave={onHover}>Next {hover ? <ArrowForward /> : <ArrowRight />}</Button>
+
+
+        <div style={{ display: "flex", flexDirection: "row" }}>
+
+          {/* Conditionally render prev button */}
+          { currentLesson && currentLesson.sequence !== 1 &&
+            <PrevBtnWrapper>
+              <Link
+                  type="button"
+                  color="primary"
+                  href={`/overview/lesson/${courseId}/${getLessonIdToNavigateTo(currentLesson.sequence - 1)}`}
+              >
+                <ArrowBackward/> Previous Lesson
+              </Link>
+            </PrevBtnWrapper>
           }
-          </NextBtnWrapper>
+
+          {/* Conditionally render next button */}
+          { currentLesson && currentLesson.sequence !== enrolledCourse?.enrolledLessons.length &&
+            <NextBtnWrapper lessonCompleted={lessonCompleted}>
+              <Link
+                  type="button"
+                  color="primary"
+                  href={`/overview/lesson/${courseId}/${getLessonIdToNavigateTo(currentLesson.sequence + 1)}`}
+              >
+                Next Lesson <ArrowForward />
+              </Link>
+            </NextBtnWrapper>
+          }
+        </div>
+
+
       </LessonContainer>}
     </>
   );

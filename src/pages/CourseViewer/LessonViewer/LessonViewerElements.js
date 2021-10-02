@@ -7,7 +7,7 @@ import { fontSizes } from "../../../values/FontSizes";
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
 import ImageIcon from '@material-ui/icons/Image';
-import { MdKeyboardArrowRight, MdArrowForward } from "react-icons/md";
+import { MdArrowForward, MdArrowBack } from "react-icons/md";
 import * as FaIcons from 'react-icons/fa'
 
 export const LessonContainer = styled.div`
@@ -192,6 +192,14 @@ export const NextBtnWrapper = styled.div`
   (lessonCompleted) ? "flex" : "none"};;
   justify-content: flex-end;
   align-items: center;
+  margin-left: auto;
+`
+
+export const PrevBtnWrapper = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-right: auto;
 `
 
 export const ZipIcon = styled(FaIcons.FaFileArchive)`
@@ -200,12 +208,14 @@ export const ZipIcon = styled(FaIcons.FaFileArchive)`
   width: auto;
 
 `
-export const ArrowForward = styled(MdArrowForward)`
-  margin-left: 8px;
-  font-size: 20px;
+
+export const ArrowBackward = styled(MdArrowBack)`
+  vertical-align: middle;
+  font-size: ${fontSizes.CONTENT};
 `;
-export const ArrowRight = styled(MdKeyboardArrowRight)`
-  margin-left: 8px;
-  font-size: 20px;
+
+export const ArrowForward = styled(MdArrowForward)`
+    vertical-align: middle;
+    font-size: ${fontSizes.CONTENT};
 `;
 

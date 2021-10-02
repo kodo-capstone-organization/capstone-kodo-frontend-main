@@ -17,7 +17,8 @@ import {
     Tab, 
     Tabs, 
     TextField, 
-    Typography, 
+    Typography,
+    Chip
 } from "@material-ui/core";
 
 import { Lesson } from './../../../apis/Entities/Lesson';
@@ -289,7 +290,9 @@ function LessonPlan(props: any) {
         </Dialog>
         <CourseBuilderCardHeader
             title="Lesson Plan"
-            action={
+            action={ props.isEnrollmentActive ?
+                <Chip variant="outlined" size="small" label="View Mode" style={{ color: "blue", border: "1px solid blue" }} disabled />
+                :
                 <IconButton disabled={props.isEnrollmentActive} color="primary" onClick={openDialog}>
                     <AddIcon/>&nbsp; Add Lesson
                 </IconButton>
@@ -367,25 +370,27 @@ function LessonPlan(props: any) {
                                                 callOpenSnackBar={props.callOpenSnackBar}
                                             />
                                         </Grid>
-                                        <Grid container spacing={3} justifyContent="flex-end">
-                                            <Box m={1} pt={2}>
-                                                <Button
-                                                    disabled={props.isEnrollmentActive}
-                                                    primary={!props.isEnrollmentActive}
-                                                    big
-                                                    onClick={() => handleUpdateLesson(lesson.lessonId)}>
-                                                    Update Lesson
-                                                </Button>
-                                            </Box>
-                                            <Box m={1} pt={2}>
-                                                <Button
-                                                    disabled={props.isEnrollmentActive}
-                                                    big
-                                                    onClick={() => handleDeleteLesson(lesson.lessonId)}>
-                                                    Delete Lesson
-                                                </Button>
-                                            </Box>
-                                        </Grid>
+                                        { !props.isEnrollmentActive &&
+                                            <Grid container spacing={3} justifyContent="flex-end">
+                                                <Box m={1} pt={2}>
+                                                    <Button
+                                                        disabled={props.isEnrollmentActive}
+                                                        primary={!props.isEnrollmentActive}
+                                                        big
+                                                        onClick={() => handleUpdateLesson(lesson.lessonId)}>
+                                                        Update Lesson
+                                                    </Button>
+                                                </Box>
+                                                <Box m={1} pt={2}>
+                                                    <Button
+                                                        disabled={props.isEnrollmentActive}
+                                                        big
+                                                        onClick={() => handleDeleteLesson(lesson.lessonId)}>
+                                                        Delete Lesson
+                                                    </Button>
+                                                </Box>
+                                            </Grid>
+                                        }
                                     </Grid>
                                 </CourseBuilderContent>
                             </TabPanel>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-
+import { Prompt } from 'react-router';
 import { useHistory } from "react-router-dom";
 
 import {
@@ -20,11 +20,11 @@ import { getEnrolledContentByEnrolledContentId } from "../../../apis/EnrolledCon
 import { getLessonByEnrolledContentId } from "../../../apis/Lesson/LessonApis";
 import { getQuizByQuizId } from "../../../apis/Quiz/QuizApis";
 
-
 import {
-    QuizCard, 
-    QuizCardContent, 
-    QuizCardHeader, 
+    QuizCard,
+    QuizCardContent,
+    QuizCardFooter,
+    QuizCardHeader,
     QuizQuestionCard,
     QuizViewerCardContent
 } from "../QuizViewerElements";
@@ -44,8 +44,12 @@ function AttemptQuizComponent(props: any) {
     const [initialSeconds, setInitalSeconds] = useState<number>();
     const [initialMinutes, setInitialMinutes] = useState<number>();
 
+    const [createNewStudentAttemptReq, setCreateNewStudentAttemptReq] = useState<CreateNewStudentAttemptReq>();
+
     const history = useHistory();
     const [timeout, setTimeout] = useState<boolean>(false);
+    const [hasSubmitted, setHasSubmitted] = useState<boolean>(false);
+
 
     useEffect(() => {
         if (props.enrolledContentId !== undefined) {
@@ -74,7 +78,7 @@ function AttemptQuizComponent(props: any) {
         }
     }, [props.enrolledContentId]);
 
-    const handleAttemptAnswer = (optionArray: number[], questionIndex: number) => {
+    const handleAttemptAnswer = (optionArray: number[][], questionIndex: number) => {
         var newQuizQuestionOptionIdList = quizQuestionOptionIdList;
         newQuizQuestionOptionIdList[questionIndex] = optionArray;
         console.log("handleAttemptAnswer", newQuizQuestionOptionIdList);
@@ -82,13 +86,18 @@ function AttemptQuizComponent(props: any) {
     }
 
     const handleSubmit = () => {
-        if (quizQuestionOptionIdList.length === quizQuestionArray?.length) {
-            const createNewStudentAttemptReq: CreateNewStudentAttemptReq = {
-                enrolledContentId: parseInt(props.enrolledContentId),
-                quizQuestionOptionIdLists: quizQuestionOptionIdList
-            };
-            console.log("createNewStudentAttemptReq, quizQuestionOptionIdList", quizQuestionOptionIdList[2]);
-            createNewStudentAttempt(createNewStudentAttemptReq)
+        var newQuizQuestionOptionIdList = quizQuestionOptionIdList;
+        quizQuestionArray?.map((q, qId) => {
+            if (qId in quizQuestionOptionIdList) {
+            } else {
+                newQuizQuestionOptionIdList[qId] = [[]];
+            }
+        })
+        const createNewStudentAttemptReq: CreateNewStudentAttemptReq = {
+            enrolledContentId: parseInt(props.enrolledContentId),
+            quizQuestionOptionIdLists: newQuizQuestionOptionIdList
+        };
+        createNewStudentAttempt(createNewStudentAttemptReq)
             .then(res => {
                 props.callOpenSnackBar("Quiz Submitted Successfully", "success")
 
@@ -97,51 +106,37 @@ function AttemptQuizComponent(props: any) {
                         history.push(`/overview/lesson/${course.courseId}/${lesson.lessonId}`);
                         // console.log("Attempt quiz success:", res);
                     })
+                        .catch(err => {
+                            console.log(err.response.data.message)
+                        })
+                })
                     .catch(err => {
                         console.log(err.response.data.message)
                     })
-                })
-                .catch(err => {
-                    console.log(err.response.data.message)
-                })                
             })
             .catch(err => {
                 props.callOpenSnackBar("There was an error in submitting the quiz", "error")
-                // console.log("Attempt quiz failed:", err);
             });
-        } else {
-            props.callOpenSnackBar("Please complete the quiz", "error")
-            // console.log("Hey! complete the damn quiz!");
-            //send error
-        }
 
     }
 
-    const handleTimeOut = (isTimedOut : boolean) => {
-        console.log("timeout")
+    const handleTimeOut = (isTimedOut: boolean) => {
         var newQuizQuestionOptionIdList = quizQuestionOptionIdList;
         quizQuestionArray?.map((q, qId) => {
-            if(qId in quizQuestionOptionIdList){
-                console.log(`${qId} in ${quizQuestionOptionIdList}`)
-            }else{
-                console.log(`${qId} not in ${quizQuestionOptionIdList}`)
+            if (qId in quizQuestionOptionIdList) {
+            } else {
                 newQuizQuestionOptionIdList[qId] = [[]];
             }
         })
-        const createNewStudentAttemptReq: CreateNewStudentAttemptReq = {
+
+        const tmpCreateNewStudentAttemptReq: CreateNewStudentAttemptReq = {
             enrolledContentId: props.enrolledContentId,
             quizQuestionOptionIdLists: newQuizQuestionOptionIdList
         };
-        console.log("createNewStudentAttemptReq", createNewStudentAttemptReq);
-        createNewStudentAttempt(createNewStudentAttemptReq)
-        .then(res => {
-            console.log("Attempt quiz success:", res);
-        })
-        .catch(err => {
-            console.log("Attempt quiz failed:", err);
-        });
+
+        setCreateNewStudentAttemptReq(tmpCreateNewStudentAttemptReq);
         setTimeout(true);
-    } 
+    }
 
     const mapQuestionArray = (questionArray: QuizQuestion[]) => {
         return (
@@ -162,8 +157,8 @@ function AttemptQuizComponent(props: any) {
 
     return (
         <>
-            {initialSeconds != undefined && <QuizAttemptTimer initialSeconds={initialSeconds} initialMinutes={initialMinutes} onTimeOut={handleTimeOut}/>}
-            <QuizTimedOutModal open={timeout}/>
+            {initialSeconds != undefined && <QuizAttemptTimer initialSeconds={initialSeconds} initialMinutes={initialMinutes} onTimeOut={handleTimeOut} />}
+            <QuizTimedOutModal open={timeout} enrolledContentId={props.enrolledContentId} callOpenSnackBar={props.callOpenSnackBar} createNewStudentAttemptReq={createNewStudentAttemptReq} />
             <QuizCard>
                 <QuizCardHeader
                     title="Quiz Information"
@@ -190,6 +185,11 @@ function AttemptQuizComponent(props: any) {
                 <QuizViewerCardContent>
                     {quizQuestionArray !== undefined && mapQuestionArray(quizQuestionArray)}
                 </QuizViewerCardContent>
+                <QuizCardFooter
+                    action={
+                        <Button primary onClick={handleSubmit}>Submit Quiz</Button>
+                    }
+                />
             </QuizCard>
         </>
     );

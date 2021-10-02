@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import CancelIcon from '@material-ui/icons/Cancel';
+import { Link } from '@material-ui/core';
 import {
     Checkbox, 
     Divider, 
@@ -18,13 +19,19 @@ import {
     createMuiTheme, 
 } from "@material-ui/core";
 
+import { Course } from "../../../apis/Entities/Course";
+import { Lesson } from "../../../apis/Entities/Lesson";
 import { Quiz } from "../../../apis/Entities/Quiz";
 import { StudentAttempt } from "../../../apis/Entities/StudentAttempt";
 import { StudentAttemptQuestion } from "../../../apis/Entities/StudentAttemptQuestion";
 
 import { getStudentAttemptByStudentAttemptId } from "../../../apis/StudentAttempt/StudentAttemptApis";
+import { getLessonByStudentAttemptId } from "../../../apis/Lesson/LessonApis";
+import { getCourseByStudentAttemptId } from "../../../apis/Course/CourseApis";
 
 import {
+    ArrowBackward,
+    BackBtnWrapper,
     MarkedQuizViewerTableRow,
     QuizCard, 
     QuizCardContent, 
@@ -48,6 +55,9 @@ const themeInstance = createMuiTheme({
 function MarkedQuizComponent(props: any) {
     const [studentAttempt, setStudentAttempt] = useState<StudentAttempt>();
     const [studentAttemptQuestions, setStudentAttemptQuestions] = useState<StudentAttemptQuestion[]>([]);
+    const [courseId, setCourseId] = useState<number>();
+    const [lessonId, setLessonId] = useState<number>();
+    
     const [quiz, setQuiz] = useState<Quiz>();
 
     useEffect(() => {
@@ -56,6 +66,14 @@ function MarkedQuizComponent(props: any) {
             setQuiz(studentAttempt.quiz);
             setStudentAttemptQuestions(studentAttempt.studentAttemptQuestions);
         }).catch((err) => { console.log("error:getStudentAttemptByStudentAttemptId", err) });
+        getLessonByStudentAttemptId(props.studentAttemptId).then((lesson: Lesson) => {
+            setLessonId(lesson.lessonId);
+        })        
+        .catch((err) => { console.log(err.response.data.message) });
+        getCourseByStudentAttemptId(props.studentAttemptId).then((course: Course) => {
+            setCourseId(course.courseId);
+        })        
+        .catch((err) => { console.log(err.response.data.message) });      
     }, [props.studentAttemptId]);
 
     const formatDate = (date: Date) => {
@@ -71,11 +89,9 @@ function MarkedQuizComponent(props: any) {
             const studentAttemptAnswerList = q.studentAttemptAnswers;
             var correct = true;
             studentAttemptAnswerList.map((studentAnswer) => {
-                return(studentAnswer.correct ? null: correct=false);
+                console.log(studentAnswer);
+                return(studentAnswer.correct ? score = score + studentAnswer.marks: correct=false);
             })
-            if(correct){
-                score= score + q.quizQuestion.marks
-            }
         })
         return `${score}/${totalMarks}`;
     }
@@ -112,7 +128,6 @@ function MarkedQuizComponent(props: any) {
                                                     }
                                                 </TableRow>
                                             </TableHead>
-
 
                                             <TableBody>
                                                 {
@@ -263,6 +278,17 @@ function MarkedQuizComponent(props: any) {
                     {mapQuestionArray(studentAttemptQuestions)}
                 </QuizViewerCardContent>
             </QuizCard>
+            { (courseId !== undefined && lessonId !== undefined) &&
+                <BackBtnWrapper>
+                    <Link
+                        type="button"
+                        color="primary"
+                        href={`/overview/lesson/${courseId}/${lessonId}`}
+                    >
+                        <ArrowBackward/> Back to Lesson Overview
+                    </Link>
+                </BackBtnWrapper>
+            }
         </>
     );
 }
