@@ -23,6 +23,7 @@ import { getQuizByQuizId } from "../../../apis/Quiz/QuizApis";
 import {
     QuizCard,
     QuizCardContent,
+    QuizCardFooter,
     QuizCardHeader,
     QuizQuestionCard,
     QuizViewerCardContent
@@ -211,6 +212,11 @@ function AttemptQuizComponent(props: any) {
                 <QuizViewerCardContent>
                     {quizQuestionArray !== undefined && mapQuestionArray(quizQuestionArray)}
                 </QuizViewerCardContent>
+                <QuizCardFooter
+                    action={
+                        <Button primary onClick={handleSubmit}>Submit Quiz</Button>
+                    }
+                />
             </QuizCard>
         </>
     );

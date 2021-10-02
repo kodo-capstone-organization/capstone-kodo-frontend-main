@@ -44,6 +44,29 @@ export const QuizCardHeader = styled(CardHeader)`
     }
 `;
 
+export const QuizCardFooter = styled(CardHeader)`
+    display: flex;
+    flex-direction: row;
+    background-color: ${colours.GRAYHALF6};
+    color: ${colours.GRAY3};
+    height: 1.5rem;
+    
+    > .MuiCardHeader-content > span {
+        font-size: ${fontSizes.CONTENT};
+        font-weight: bold;
+    }
+    
+    > .MuiCardHeader-action {
+        margin: initial;
+        align-self: center;
+        color: ${colours.GRAY2};
+        
+        >.MuiIconButton-root >.MuiIconButton-label {
+           font-size: ${fontSizes.SUBTEXT} !important;
+        }
+    }
+`;
+
 export const QuizCardContent = styled(CardContent)`
     display: flex;
     flex-direction: row;
