@@ -1,58 +1,60 @@
 import { useState, useEffect } from "react";
 import { withRouter } from "react-router";
+
+import { useHistory } from "react-router-dom";
+
+import { Link } from '@material-ui/core';
+import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
+
+import { Account } from "../../../apis/Entities/Account";
+import { Course } from "../../../apis/Entities/Course";
+import { EnrolledCourse } from "../../../apis/Entities/EnrolledCourse";
+import { EnrolledLesson } from "../../../apis/Entities/EnrolledLesson";
+import { Lesson } from "../../../apis/Entities/Lesson";
+import { Quiz } from "../../../apis/Entities/Quiz";
+import { QuizWithStudentAttemptCountResp } from "../../../apis/Entities/Quiz";
+
 import { getCourseByCourseId } from "../../../apis/Course/CourseApis";
+import { getEnrolledCourseByStudentIdAndCourseId } from "../../../apis/EnrolledCourse/EnrolledCourseApis";
+import { getEnrolledLesson } from "../../../apis/EnrolledLesson/EnrolledLessonApis";
 import { getLessonByLessonId } from "../../../apis/Lesson/LessonApis";
 import { getMyAccount } from "../../../apis/Account/AccountApis";
-import { getEnrolledLesson } from "../../../apis/EnrolledLesson/EnrolledLessonApis";
-import { getEnrolledCourseByStudentIdAndCourseId } from "../../../apis/EnrolledCourse/EnrolledCourseApis";
 
-import { Course } from "../../../apis/Entities/Course";
-import { Lesson } from "../../../apis/Entities/Lesson";
-import { Account } from "../../../apis/Entities/Account";
-import { Quiz } from "../../../apis/Entities/Quiz";
-import { EnrolledLesson } from "../../../apis/Entities/EnrolledLesson";
-import { EnrolledCourse } from "../../../apis/Entities/EnrolledCourse";
-import { QuizWithStudentAttemptCountResp } from "../../../apis/Entities/Quiz";
+import {
+  ArrowBackward,
+  ArrowForward, 
+  BtnWrapper,
+  CheckIcon,
+  ContentLink,
+  ContentMenu,
+  CourseTitle,
+  ExitWrapper,
+  HeadingDescription,
+  Image,
+  LessonCard,
+  LessonContainer,
+  LessonDescription,
+  LessonHeader,
+  LessonTitle,
+  NextBtnWrapper,
+  PageHeading,
+  PageHeadingAndButton,
+  PlayIcon,
+  PrevBtnWrapper,
+  QuizDescription,
+  QuizDescriptionTwo,
+  QuizRow,
+  QuizSubheader,
+  QuizWrapper,
+  ReadingIcon,
+  ZipIcon,
+} from "./LessonViewerElements";
 
 import ViewQuizAttemptsModal from './components/ViewQuizAttemptsModal';
 
 import { Button } from "../../../values/ButtonElements";
 import { colours } from "../../../values/Colours";
 
-import { useHistory } from "react-router-dom";
-
-import {
-  LessonContainer,
-  PageHeadingAndButton,
-  PageHeading,
-  HeadingDescription,
-  LessonTitle,
-  CourseTitle,
-  LessonCard,
-  LessonDescription,
-  LessonHeader,
-  ContentMenu,
-  ContentLink,
-  ReadingIcon,
-  PlayIcon,
-  QuizWrapper,
-  QuizRow,
-  QuizSubheader,
-  QuizDescription,
-  QuizDescriptionTwo,
-  CheckIcon,
-  BtnWrapper,
-  ExitWrapper,
-  ZipIcon,
-  Image,
-  NextBtnWrapper,
-  PrevBtnWrapper,
-  ArrowForward, 
-  ArrowBackward
-} from "./LessonViewerElements";
-
-import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
-import { Link } from '@material-ui/core';
 
 function LessonViewer(props: any) {
   const lessonId = props.match.params.lessonId;
@@ -258,7 +260,7 @@ function LessonViewer(props: any) {
                     <QuizDescriptionTwo>[To Finish]</QuizDescriptionTwo>
                     */}
                   </QuizRow>
-                  <QuizRow>
+                  <QuizRow style={{ borderBottom: "none" }}>
                     <BtnWrapper>
                       <ViewQuizAttemptsModal isButtonDisabled={!previousLessonCompleted()} studentAttempts={q.studentAttempts}/>
                     </BtnWrapper>

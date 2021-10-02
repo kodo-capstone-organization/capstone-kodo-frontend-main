@@ -7,6 +7,7 @@ import {
 } from "@material-ui/core";
 import { fontSizes } from "../../values/FontSizes";
 import { colours } from "../../values/Colours";
+import { MdArrowBack } from "react-icons/md";
 
 export const QuizContainer = styled.div`
     padding: 2rem;
@@ -101,4 +102,15 @@ export const MarkedQuizViewerTableRow = styled(TableRow)`
     .MuiTableRow-root.Mui-selected, .MuiTableRow-root.Mui-selected:hover {
         background-color: ${colours.GREEN};
     }
+`
+export const ArrowBackward = styled(MdArrowBack)`
+  vertical-align: middle;
+  font-size: ${fontSizes.CONTENT};
+`;
+
+export const BackBtnWrapper = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-right: auto;
 `
