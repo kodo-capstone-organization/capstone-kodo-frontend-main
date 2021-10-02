@@ -61,6 +61,19 @@ function ViewQuizAttemptsModal(props: any) {
 
   }
 
+  const getScore = (studentAttemptQuestions: StudentAttemptQuestion[]) => {
+    let score = 0;
+    let totalMarks = 0;
+    studentAttemptQuestions.map((q) => {
+      totalMarks = totalMarks + q.quizQuestion.marks;
+      const studentAttemptAnswerList = q.studentAttemptAnswers;
+      let correct = true;
+      studentAttemptAnswerList.map((studentAnswer) => {
+        return(studentAnswer.correct ? score = score + studentAnswer.marks: correct=false);
+      })
+    })
+    return `${score}/${totalMarks}`;
+  }
 
   return (
     <>
@@ -76,18 +89,22 @@ function ViewQuizAttemptsModal(props: any) {
                 <TableRow>
                   <TableCell>Name</TableCell>
                   <TableCell >Date Of Attempt</TableCell>
+                  <TableCell> Score </TableCell>
                   <TableCell align="center">Action</TableCell>
                 </TableRow>
               </TableHead>
 
               <TableBody>
-                {studentAttempts != undefined && studentAttempts.map((row: any) => (
+                {studentAttempts != undefined && studentAttempts.map((row: StudentAttempt) => (
                   <TableRow key={row.studentAttemptId}>
                     <TableCell component="th" scope="row">
                       {row.quiz.name}
                     </TableCell>
                     <TableCell component="th" scope="row">
                       {formatDate(row.dateTimeOfAttempt)}
+                    </TableCell>
+                    <TableCell>
+                      { getScore(row.studentAttemptQuestions) }
                     </TableCell>
                     <TableCell>
                       <Button onClick={() =>navigateToMarkedQuizView(row.studentAttemptId)}>

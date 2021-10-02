@@ -58,6 +58,16 @@ import {
 
 import { Button } from "../../../values/ButtonElements";
 
+import {
+  VideoCard,
+  PDFCard,
+  DocumentCard,
+  ImageCard,
+} from "./../../CourseViewer/MultimediaViewer/MultimediaViewerElements";
+
+import ReactPlayer from "react-player";
+import PDFViewer from "./../../CourseViewer/MultimediaViewer/PDFViewer";
+
 interface IErrors<TValue> {
   [id: string]: TValue;
 }
@@ -67,7 +77,8 @@ interface Data {
   description: string,
   type: string,
   urlFilename: string,
-  contentId: number
+  contentId: number,
+  url: string
 }
 
 function createData(
@@ -76,9 +87,10 @@ function createData(
   description: string,
   type: string,
   urlFilename: string,
-  contentId: number
+  contentId: number,
+  url: string
 ): Data {
-  return { id, name, description, type, urlFilename, contentId };
+  return { id, name, description, type, urlFilename, contentId, url };
 }
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
@@ -548,7 +560,7 @@ export default function MultimediaTable(props: any) {
     const handleFormDataChange = props.handleFormDataChange;
     const [multimedias, setMultimedias] = useState<Multimedia[]>(props.multimedias);
     const [lessons, setLessons] = useState<Lesson[]>(props.lessons);
-    const rows = multimedias?.length > 0 ? multimedias.map((row: Multimedia, index: number) => createData(index, row.name, row.description, row.multimediaType, row.urlFilename, row.contentId)) : []
+    const rows = multimedias?.length > 0 ? multimedias.map((row: Multimedia, index: number) => createData(index, row.name, row.description, row.multimediaType, row.urlFilename, row.contentId, row.url)) : []
 
     const [selectedPreviewFile, setSelectedPreviewFile] = useState<Data>();
     const [selectedMultimediaId, setSelectedMultimediaId] = useState<number>(0);
@@ -766,6 +778,10 @@ export default function MultimediaTable(props: any) {
 
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
 
+    function getUrlForDocument(urlFilename: string) {
+      return `https://docs.google.com/gview?url=https://storage.googleapis.com/capstone-kodo-bucket/${urlFilename}&embedded=true`
+    }
+
     return (
         <>
         <Dialog 
@@ -802,6 +818,43 @@ export default function MultimediaTable(props: any) {
                     disabled
                   />
                 </FormControl>
+
+                <br/>
+                <br/>
+
+
+                {selectedPreviewFile?.type === "VIDEO" &&
+                  <VideoCard>
+                    <ReactPlayer
+                      url={selectedPreviewFile?.url}
+                      controls={true}
+                    />
+                  </VideoCard>
+                }
+
+                {selectedPreviewFile?.type === "PDF" &&
+                  <PDFCard>
+                    <PDFViewer doc={selectedPreviewFile?.url} />
+                  </PDFCard>
+                }
+
+                {selectedPreviewFile?.type === "IMAGE" &&
+                  <div style={{ display: 'flex', justifyContent: 'center', flexDirection: 'row' }} >
+                    <ImageCard>
+                      <img
+                        src={selectedPreviewFile?.url}
+                        width="600"
+                      />
+                    </ImageCard>
+                  </div>
+                }
+
+                {selectedPreviewFile?.type === "DOCUMENT" &&
+                  <DocumentCard>
+                    <iframe title="docx-view" width="560" height="600" src={getUrlForDocument(selectedPreviewFile.urlFilename)}>
+                    </iframe>
+                  </DocumentCard>
+                }
             </DialogContent>
             <DialogActions>
               <Button onClick={handleClosePreviewMultimediaDialog}>
@@ -963,6 +1016,7 @@ export default function MultimediaTable(props: any) {
                         <TableCell align="right">{row.type}</TableCell>
                         <TableCell align="right">
                           <IconButton 
+                            disabled={row.type === "ZIP"}
                             size="small" 
                             color="primary" 
                             onClick={() => {handleOpenPreviewMultimediaDialog(row)}}>

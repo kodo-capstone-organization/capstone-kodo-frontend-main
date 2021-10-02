@@ -30,6 +30,7 @@ function CourseList(props: any) {
   const [myAccount, setMyAccount] = useState<Account>();
   const [showMultimedia, setShowMultimedia] = useState<Boolean>(false);
   const [loading, setLoading] = useState<Boolean>(true);
+  const [curTabIdx, setCurTabIdx] = useState<number>(0);
   const history = useHistory();
 
   useEffect(() => {
@@ -37,6 +38,7 @@ function CourseList(props: any) {
     setMyAccount(props.account);
     setMyCourses(props.courses);
     setLoading(false);
+    setCurTabIdx(props.curTabIdx)
   }, [props]);
 
   const displayBannerUrl = (course: EnrolledCourse) => {
@@ -124,15 +126,20 @@ function CourseList(props: any) {
 
   if (myAccount && myCourses && !coursesExist()) return (
     <EmptyStateContainer coursesExist={coursesExist()}>
-      <Typography>No courses here! 😢</Typography>
-      <br />
-      <Button
-        onClick={navigateToBrowseCoursePage}
-        style={{ width: "10%" }}
-        big
-      >
-        Browse Courses
+      { curTabIdx === 0 && 
+        <>
+          <Typography>You are not enrolled in any courses 🥺</Typography>
+          <br/>
+          <Button
+              onClick={navigateToBrowseCoursePage}
+              style={{ width: "10%" }}
+              big
+          >
+            Browse Courses
           </Button>
+        </>
+      }
+      { curTabIdx === 1 && <Typography>You have not completed any courses 🥸</Typography>}
     </EmptyStateContainer>
   );
 

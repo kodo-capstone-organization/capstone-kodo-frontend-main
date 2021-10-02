@@ -8,7 +8,7 @@ import { Course } from "../../../apis/Entities/Course";
 import { Lesson } from "../../../apis/Entities/Lesson";
 import { colours } from "../../../values/Colours";
 import ReactPlayer from "react-player";
-import PDFViewer from "./PDFViewer";
+
 import DownloadFile from "./DownloadFile";
 import { pdfjs } from "react-pdf";
 
@@ -26,7 +26,6 @@ import {
   MultimediaName,
   MultimediaDescription,
   MultimediaHeader,
-  MultimediaDoneButtonWrapper,
   ExitWrapper
 } from "./MultimediaViewerElements";
 
@@ -35,6 +34,7 @@ import { EnrolledContent } from "../../../apis/Entities/EnrolledContent";
 import { useHistory } from "react-router-dom";
 import { Button } from "../../../values/ButtonElements";
 import { setDateTimeOfCompletionOfEnrolledContentByAccountIdAndContentId } from "../../../apis/EnrolledContent/EnrolledContentApis";
+import PDFViewer from "./PDFViewer";
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
 function MultimediaViewer(props: any) {
@@ -48,8 +48,6 @@ function MultimediaViewer(props: any) {
   const [currentMultimedia, setMultimedia] = useState<Multimedia>();
   const [currentLesson, setLesson] = useState<Lesson>();
   const [currentCourse, setCourse] = useState<Course>();
-  const [numPages, setNumPages] = useState<number>();
-  const [pageNumber, setPageNumber] = useState<number>(1);
 
   let history = useHistory();
 
@@ -65,9 +63,6 @@ function MultimediaViewer(props: any) {
     });
   }, [contentId, lessonId, courseId]);
 
-  function onDocumentLoadSuccess({ numPages }: any) {
-    setNumPages(numPages);
-  }
 
   function getUrlForDocument() {
     return `https://docs.google.com/gview?url=https://storage.googleapis.com/capstone-kodo-bucket/${currentMultimedia?.urlFilename}&embedded=true`
@@ -96,8 +91,8 @@ function MultimediaViewer(props: any) {
         </PageHeadingAndButton>
         <MultimediaCard>
           <MultimediaHeader>Multimedia Overview</MultimediaHeader>
-          <MultimediaName> Name: {currentMultimedia?.name}</MultimediaName>
-          <MultimediaDescription> Description: {currentMultimedia?.description}</MultimediaDescription>
+          <MultimediaName> <strong>Name: </strong> {currentMultimedia?.name}</MultimediaName>
+          <MultimediaDescription> <strong>Description: </strong> <p style={{ whiteSpace: 'pre'}}>{currentMultimedia?.description}</p></MultimediaDescription>
         </MultimediaCard>
 
         <div id="action-row" style={{ display: "flex", flexDirection: "row", justifyContent: "flex-end" }}>
@@ -126,7 +121,7 @@ function MultimediaViewer(props: any) {
         {currentMultimedia?.multimediaType === "IMAGE" &&
           <div style={{ display: 'flex', justifyContent: 'center', flexDirection: 'row' }} >
             <ImageCard>
-              <img
+              <img alt={currentMultimedia?.name}
                 src={currentMultimedia.url}
                 width="600"
               />
