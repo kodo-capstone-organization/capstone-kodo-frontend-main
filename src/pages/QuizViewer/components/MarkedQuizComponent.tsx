@@ -95,7 +95,7 @@ function MarkedQuizComponent(props: any) {
                 return(studentAnswer.correct ? score = score + studentAnswer.marks: correct=false);
             })
         })
-        return `${score}/${totalMarks}`;
+        return `${score.toFixed(2)}/${totalMarks}`;
     }
 
     const mapQuestionArray = (attemptArray: StudentAttemptQuestion[]) => {
