@@ -264,7 +264,7 @@ function CourseBuilderPage(props: any) {
                                     <TextField {...params} id="standard-basic" label="Tags"/>
                                 )}/>
                         </Grid>
-                        <Grid item xs={10}>
+                        <Grid item xs={courseFormData.isEnrollmentActive ? 12 : 10}>
                             <TextField id="standard-basic" fullWidth disabled value={courseFormData.bannerPictureFileName} label="Banner Image"></TextField>
                         </Grid>
                         { !courseFormData.isEnrollmentActive &&
