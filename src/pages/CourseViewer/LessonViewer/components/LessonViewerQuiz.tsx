@@ -55,13 +55,13 @@ function LessonViewerQuiz(props: any) {
 
     function formatTime(time: string): string {
         let arr: string[] = time.split(':');
-        let hours = arr[0];
-        let minutes = arr[1];
-        let seconds = arr[2];
+        let hours: number = parseInt(arr[0]);
+        let minutes: number = parseInt(arr[1]);
+        let seconds: number = parseInt(arr[2]);
 
-        return (hours === "00" ? "" : hours + "h")
-            + (minutes === "00" ? "" : minutes + "m ")
-            + (seconds === "00" ? "" : seconds + "s ");
+        return (hours === 0 ? "" : hours + "h")
+            + (minutes === 0 ? "" : minutes + "m ")
+            + (seconds === 0 ? "" : seconds + "s ");
     }
 
     const attemptQuiz = (enrolledContentId: number) => {
@@ -90,7 +90,9 @@ function LessonViewerQuiz(props: any) {
         return (
             <>
                 { showName(enrolledContent, quiz) }
+                <br/>
                 { showTimeLimit(quiz) }
+                <br/>
                 { showStudentAttemptsLeft(enrolledContent, quiz) }
                 { showPreviousStudentAttempts(enrolledContent) }
             </>
