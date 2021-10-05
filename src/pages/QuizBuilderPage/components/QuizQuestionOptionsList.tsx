@@ -58,7 +58,13 @@ function QuizQuestionOptionsList(props: any) {
                         rightContent: null,
                         correct: true
                     };
-                    newQuizQuestionOptions = [defaultOption];
+                    const defaultOptionTwo : QuizQuestionOption = {
+                        quizQuestionOptionId: null,
+                        leftContent: "MCQ OPTION",
+                        rightContent: null,
+                        correct: false
+                    };
+                    newQuizQuestionOptions = [defaultOption, defaultOptionTwo];
                     console.log('mcq', newQuizQuestionOptions);
                     setQuizQuestionOptions(newQuizQuestionOptions);
                 } else if (props.questionType === "MATCHING") {
@@ -68,7 +74,7 @@ function QuizQuestionOptionsList(props: any) {
                         rightContent: "MATCHING OPTION B",
                         correct: true
                     };
-                    newQuizQuestionOptions = [defaultOption];
+                    newQuizQuestionOptions = [defaultOption, defaultOption];
                     console.log('match', newQuizQuestionOptions);
                     setQuizQuestionOptions(newQuizQuestionOptions);
                 }
@@ -113,7 +119,7 @@ function QuizQuestionOptionsList(props: any) {
         const optionToDelete = quizQuestionOptions[optionIndex];
         if(optionToDelete.correct === true && questionType === "MCQ"){
             handleCallSnackbar("Cannot delete correct option");
-        } else if (quizQuestionOptions.length > 1) {
+        } else if (quizQuestionOptions.length > 2) {
             var newQuizQuestionOptions = quizQuestionOptions?.filter((option, index) => index !== optionIndex);
             if (newQuizQuestionOptions.length === 1) {
                 newQuizQuestionOptions = newQuizQuestionOptions?.map((option) => Object.assign(option, { correct: true }));
@@ -144,6 +150,7 @@ function QuizQuestionOptionsList(props: any) {
         }
         const newQuizQuestionOptions = quizQuestionOptions?.concat([newQuizQuestionOption]);
         setQuizQuestionOptions(newQuizQuestionOptions);
+        props.onHandleQuizQuestionOptionUpdate(newQuizQuestionOptions, questionIndex)
     }
 
     const handleCallSnackbar = (msg: string) => {

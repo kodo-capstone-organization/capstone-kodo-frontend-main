@@ -132,17 +132,22 @@ function QuizBuilderPage(props: any) {
             setDraggableId(newDraggableId);
             const newQuizQuestionOption: QuizQuestionOption = {
                 quizQuestionOptionId: null,
-                leftContent: "OPTION 1",
+                leftContent: "MCQ OPTION",
                 rightContent: null,
                 correct: true
             };
-            const newQuizQuestion: any = {
+            const defaultOptionTwo : QuizQuestionOption = {
+                quizQuestionOptionId: null,
+                leftContent: "MCQ OPTION",
+                rightContent: null,
+                correct: false
+            };            const newQuizQuestion: any = {
                 quizQuestionId: null,
                 content: "",
                 questionType: "MCQ",
                 marks: 1,
                 quiz: quiz,
-                quizQuestionOptions: [newQuizQuestionOption],
+                quizQuestionOptions: [newQuizQuestionOption, defaultOptionTwo],
                 draggableId: newDraggableId
             }
             quizQuestionArray.push(newQuizQuestion);
@@ -342,10 +347,10 @@ function QuizBuilderPage(props: any) {
     return (
         <>
             <QuizContainer>
-                <Breadcrumbs aria-label="quizbuilder-breadcrumb" style={{ marginBottom: "1rem"}}>
+                <Breadcrumbs aria-label="quizbuilder-breadcrumb" style={{ marginBottom: "1rem" }}>
                     <Link color="primary" href={`/builder/${courseId}`}>
-                        <ArrowBackIcon style={{ verticalAlign: "middle"}}/>&nbsp;
-                        <span style={{ verticalAlign: "bottom"}}>Back To Coursebuilder</span>
+                        <ArrowBackIcon style={{ verticalAlign: "middle" }} />&nbsp;
+                        <span style={{ verticalAlign: "bottom" }}>Back To Coursebuilder</span>
                     </Link>
                 </Breadcrumbs>
 
