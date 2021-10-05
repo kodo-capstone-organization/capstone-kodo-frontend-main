@@ -30,6 +30,8 @@ import {
   ExitWrapper
 } from "./MultimediaViewerElements";
 
+import { getEnrolledCourseByEnrolledCourseId } from "../../../apis/EnrolledCourse/EnrolledCourseApis";
+import { getEnrolledLessonByEnrolledLessonId } from "../../../apis/EnrolledLesson/EnrolledLessonApis";
 import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
 import { EnrolledContent } from "../../../apis/Entities/EnrolledContent";
 import { useHistory } from "react-router-dom";
@@ -39,9 +41,11 @@ import PDFViewer from "./PDFViewer";
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
 function MultimediaViewer(props: any) {
+
+  const enrolledCourseId = props.match.params.enrolledCourseId;
+  const enrolledLessonId = props.match.params.enrolledLessonId;
   const contentId = props.match.params.contentId;
-  const lessonId = props.match.params.lessonId;
-  const courseId = props.match.params.courseId;
+  
   const accountId = JSON.parse(
     window.sessionStorage.getItem("loggedInAccountId") || "{}"
   );
@@ -58,16 +62,22 @@ function MultimediaViewer(props: any) {
     getMultimediaByMultimediaId(contentId).then(receivedMultimedia => {
       setMultimedia(receivedMultimedia);
     });
-    getLessonByLessonId(lessonId).then(receivedLesson => {
-      setLesson(receivedLesson);
-    });
-    getCourseByCourseId(courseId).then(receivedCourse => {
-      setCourse(receivedCourse);
-    });
+    // getLessonByLessonId(lessonId).then(receivedLesson => {
+    //   setLesson(receivedLesson);
+    // });
+    // getCourseByCourseId(courseId).then(receivedCourse => {
+    //   setCourse(receivedCourse);
+    // });
     getEnrolledContentByAccountIdAndContentId(accountId, contentId).then(receivedContent => {
       setEnrolledContent(receivedContent);
     })
-  }, [contentId, lessonId, courseId]);
+    getEnrolledLessonByEnrolledLessonId(enrolledLessonId).then(enrolledLesson => {
+      setLesson(enrolledLesson.parentLesson);
+    })
+    getEnrolledCourseByEnrolledCourseId(enrolledCourseId).then(enrolledCourse => {
+      setCourse(enrolledCourse.parentCourse);
+    })
+  }, [enrolledCourseId, enrolledLessonId, contentId]);
 
 
   function getUrlForDocument() {
@@ -78,7 +88,7 @@ function MultimediaViewer(props: any) {
     setDateTimeOfCompletionOfEnrolledContentByAccountIdAndContentId(true, accountId, contentId)
       .then((res: EnrolledContent) => {
         props.callOpenSnackBar("Multimedia completed", "success");
-        history.push(`/overview/lesson/${courseId}/${lessonId}`);
+        history.push(`/overview/lesson/${enrolledCourseId}/${enrolledLessonId}`);
       })
       .catch(err => props.callOpenSnackBar(err.response.data.message, "error"))
   }
@@ -91,7 +101,7 @@ function MultimediaViewer(props: any) {
             <LessonTitle>Week {currentLesson?.sequence}</LessonTitle>
             <CourseTitle>{currentCourse?.name}</CourseTitle>
           </PageHeading>
-          <ExitWrapper to={`/overview/lesson/${currentCourse?.courseId}/${currentLesson?.lessonId}`}>
+          <ExitWrapper to={`/overview/lesson/${enrolledCourseId}/${enrolledLessonId}`}>
             <CancelOutlinedIcon fontSize="large" style={{ color: colours.BLUE2, padding: 20 }} />
           </ExitWrapper>
         </PageHeadingAndButton>

@@ -41,9 +41,9 @@ function CourseList(props: any) {
     setCurTabIdx(props.curTabIdx)
   }, [props]);
 
-  const displayBannerUrl = (course: EnrolledCourse) => {
-    if (course.parentCourse.bannerUrl.length > 0) {
-      return course.parentCourse.bannerUrl;
+  const displayBannerUrl = (enrolledCourse: EnrolledCourse) => {
+    if (enrolledCourse.parentCourse.bannerUrl.length > 0) {
+      return enrolledCourse.parentCourse.bannerUrl;
     } else {
       return "/chessplaceholder.png";
     }
@@ -54,43 +54,43 @@ function CourseList(props: any) {
   };
 
   const getLatestLessonToResume = (enrolledLessons: EnrolledLesson[]) => {
-    var lessonIndex = 1;
-    enrolledLessons.map(lesson => {
-      if (lesson.dateTimeOfCompletion !== null) {
-        lessonIndex++;
+    var enrolledLessonIndex = 1;
+    enrolledLessons.map(enrolledLesson => {
+      if (enrolledLesson.dateTimeOfCompletion !== null) {
+        enrolledLessonIndex++;
       }
-      return lesson;
+      return enrolledLesson;
     })
-    return lessonIndex
+    return enrolledLessonIndex;
   }
 
-  const getCourseLessons = (course: EnrolledCourse) => {
+  const getCourseLessons = (enrolledCourse: EnrolledCourse) => {
     return (
       <div>
-        {course.enrolledLessons.map(function (lesson, lessonId) {
+        {enrolledCourse.enrolledLessons.map(function (enrolledLesson, lessonId) {
           return (
             <>
               <CourseElement key={lessonId}>
                 <LessonAvatar
-                  src={displayBannerUrl(course)}
-                  alt={course.parentCourse.name}
+                  src={displayBannerUrl(enrolledCourse)}
+                  alt={enrolledCourse.parentCourse.name}
                 />
                 <SubjectContainer>
-                  <Subject>{lesson?.parentLesson.name}</Subject>
+                  <Subject>{enrolledLesson?.parentLesson.name}</Subject>
                 </SubjectContainer>
                 <MultimediaModal
                   show={showMultimedia}
                   account={myAccount}
-                  lesson={lesson.parentLesson}
+                  lesson={enrolledLesson.parentLesson}
                 />
                 <div style={{ width: "100px" }}>
-                  {course.dateTimeOfCompletion === null ? (
-                    lesson.dateTimeOfCompletion !== null ||
-                      lessonId < getLatestLessonToResume(course.enrolledLessons) ? (
+                  {enrolledCourse.dateTimeOfCompletion === null ? (
+                    enrolledLesson.dateTimeOfCompletion !== null ||
+                      lessonId < getLatestLessonToResume(enrolledCourse.enrolledLessons) ? (
                         <Button
                           variant="outlined"
                           primary={true}
-                          to={`/overview/lesson/${course.parentCourse.courseId}/${lesson.parentLesson.lessonId}`}
+                          to={`/overview/lesson/${enrolledCourse.enrolledCourseId}/${enrolledLesson.enrolledLessonId}`}
                         >
                           Resume
                         </Button>
@@ -102,7 +102,7 @@ function CourseList(props: any) {
                   ) : (
                       <Button
                         primary={true}
-                        to={`/overview/lesson/${course.parentCourse.courseId}/${lesson.parentLesson.lessonId}`}
+                        to={`/overview/lesson/${enrolledCourse.enrolledCourseId}/${enrolledLesson.enrolledLessonId}`}
                       >
                         View
                       </Button>

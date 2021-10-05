@@ -320,7 +320,7 @@ function MarkedQuizComponent(props: any) {
                     <Link
                         type="button"
                         color="primary"
-                        href={`/overview/lesson/${courseId}/${lessonId}`}
+                        href={`/overview/lesson/${props.enrolledCourseId}/${props.enrolledLessonId}`}
                     >
                         <ArrowBackward/> Back to Lesson Overview
                     </Link>

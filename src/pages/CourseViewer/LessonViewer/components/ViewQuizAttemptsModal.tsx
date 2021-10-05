@@ -37,6 +37,9 @@ const useStyles = makeStyles((theme: Theme) =>
 
 function ViewQuizAttemptsModal(props: any) {
 
+  const enrolledCourseId = props.enrolledCourseId;
+  const enrolledLessonId = props.enrolledLessonId;
+
   let history = useHistory();
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
@@ -62,9 +65,7 @@ function ViewQuizAttemptsModal(props: any) {
   }
 
   const navigateToMarkedQuizView = (studentAttemptId : number) => {
-    console.log("studentAttemptId", studentAttemptId);
-    history.push({ pathname: `/markedquizviewer/${studentAttemptId}`, state: { mode: 'VIEW' } });
-
+    history.push({ pathname: `/markedquizviewer/${enrolledCourseId}/${enrolledLessonId}/${studentAttemptId}`, state: { mode: 'VIEW' } });
   }
 
   const getScore = (studentAttemptQuestions: StudentAttemptQuestion[]) => {

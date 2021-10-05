@@ -91,18 +91,18 @@ function Routes() {
                             <Route path="/overview/:courseId" render={props => <CourseOverview {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
                             : <Redirect to="/" />}
                         {window.sessionStorage.getItem("loggedInAccountId") ?
-                            <Route path="/overview/lesson/:courseId/:lessonId" render={props => <LessonViewerWithRouter {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
+                            <Route path="/overview/lesson/:enrolledCourseId/:enrolledLessonId" render={props => <LessonViewerWithRouter {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
                             : <Redirect to="/" />}
                         {window.sessionStorage.getItem("loggedInAccountId") ?
-                            <Route path="/overview/lesson/:courseId/:lessonId/:contentId" render={props => <MultimediaViewerWithRouter {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
+                            <Route path="/overview/lesson/:enrolledCourseId/:enrolledLessonId/:contentId" render={props => <MultimediaViewerWithRouter {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
                             : <Redirect to="/" />}
 
                         {/* Need to change the path namings here, we have 2 types of content, talk to chandya */}
                         {window.sessionStorage.getItem("loggedInAccountId") ?
-                            <Route path="/markedquizviewer/:studentAttemptId" render={props => <QuizViewer {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
+                            <Route path="/markedquizviewer/:enrolledCourseId/:enrolledLessonId/:studentAttemptId" render={props => <QuizViewer {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
                             : <Redirect to="/" />}
                         {window.sessionStorage.getItem("loggedInAccountId") ?
-                            <Route path="/attemptquizviewer/:enrolledContentId" render={props => <QuizViewer {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
+                            <Route path="/attemptquizviewer/:enrolledCourseId/:enrolledLessonId/:enrolledContentId" render={props => <QuizViewer {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
                             : <Redirect to="/" />}
 
                         {

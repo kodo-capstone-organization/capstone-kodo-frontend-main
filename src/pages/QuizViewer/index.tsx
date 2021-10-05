@@ -29,6 +29,8 @@ const themeInstance = createMuiTheme({
 
 function QuizViewer(props: any) {
     const studentAttemptId = props.match.params.studentAttemptId;
+    const enrolledCourseId = props.match.params.enrolledCourseId;
+    const enrolledLessonId = props.match.params.enrolledLessonId;
     const enrolledContentId = props.match.params.enrolledContentId;
     const [loading, setLoading] = useState<Boolean>(true);
     const [quiz, setQuiz] = useState<Quiz>();
@@ -71,9 +73,8 @@ function QuizViewer(props: any) {
     return (
         <>
             <QuizContainer>
-                {viewMode && <MarkedQuizComponent studentAttemptId={studentAttemptId} />}
-                {attemptMode && <AttemptQuizComponent enrolledContentId={enrolledContentId} callOpenSnackBar={props.callOpenSnackBar} />}
-
+                {viewMode && <MarkedQuizComponent enrolledCourseId={enrolledCourseId} enrolledLessonId={enrolledLessonId} studentAttemptId={studentAttemptId} />}
+                {attemptMode && <AttemptQuizComponent enrolledCourseId={enrolledCourseId} enrolledLessonId={enrolledLessonId} enrolledContentId={enrolledContentId} callOpenSnackBar={props.callOpenSnackBar} />}
             </QuizContainer>
         </>
     );
