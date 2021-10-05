@@ -34,10 +34,15 @@ function Layout(props) {
         // Determine if sidepadding is shown
         if (RouteItemsWithoutSidePadding.find(item => {
             if (item.isDynamic) {
-                // Get index of last occurring "/" in both item path and current path
-                const lastIdxItem = item.path.lastIndexOf("/")
-                const lastIdxCur = location.pathname.lastIndexOf("/")
-                return item.path.substring(0, lastIdxItem+1) === location.pathname.substring(0, lastIdxCur+1)
+                let lastIdxItem = 0;
+                for (let i = 0; i < item.path.length; i++) {
+                    // Find index of first instance of "/:"
+                    if (i !== item.path.length-1 && item.path.charAt(i) === "/" && item.path.charAt(i+1) === ":") {
+                        lastIdxItem = i+1;
+                        break;
+                    }
+                }
+                return item.path.substring(0, lastIdxItem) === location.pathname.substring(0, lastIdxItem)
             } else {
                 return item.path === location.pathname
             }

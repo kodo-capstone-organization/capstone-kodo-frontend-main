@@ -17,7 +17,7 @@ import CourseOverview from "./pages/CourseViewer";
 import LessonViewerWithRouter from "./pages/CourseViewer/LessonViewer";
 import MultimediaViewerWithRouter from "./pages/CourseViewer/MultimediaViewer";
 import QuizViewer from "./pages/QuizViewer";
-
+import LiveKodoSessionPage from "./pages/Sessions/LiveKodoSessionPage";
 
 import Snackbar from '@material-ui/core/Snackbar';
 import Slide from '@material-ui/core/Slide';
@@ -95,6 +95,9 @@ function Routes() {
                             : <Redirect to="/" />}
                         {window.sessionStorage.getItem("loggedInAccountId") ?
                             <Route path="/overview/lesson/:enrolledCourseId/:enrolledLessonId/:contentId" render={props => <MultimediaViewerWithRouter {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
+                            : <Redirect to="/" />}
+                        {window.sessionStorage.getItem("loggedInAccountId") ?
+                            <Route path="/session/:initAction/:sessionId" render={props => <LiveKodoSessionPage {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
                             : <Redirect to="/" />}
 
                         {/* Need to change the path namings here, we have 2 types of content, talk to chandya */}
