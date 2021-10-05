@@ -14,6 +14,7 @@ function SessionPage(props: any) {
 
     const handleSessionIDChange = (event: any) => {
         setShowJoinButton(true);
+        // TODO: Link Handling
         setInputSessionID(event?.target?.value);
     }
 
@@ -46,7 +47,7 @@ function SessionPage(props: any) {
                         <Grid item xs={8} md={8} lg={5}>
                             <TextField
                                 id="session-id-input"
-                                label="Enter Session ID"
+                                label="Enter Session ID or Join Link"
                                 variant="outlined"
                                 fullWidth
                                 size="medium"
