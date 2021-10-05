@@ -24,6 +24,7 @@ import { Lesson } from "../../../apis/Entities/Lesson";
 import { Quiz } from "../../../apis/Entities/Quiz";
 import { StudentAttempt } from "../../../apis/Entities/StudentAttempt";
 import { StudentAttemptQuestion } from "../../../apis/Entities/StudentAttemptQuestion";
+import { StudentAttemptAnswer } from "../../../apis/Entities/StudentAttemptAnswer";
 
 import { getStudentAttemptByStudentAttemptId } from "../../../apis/StudentAttempt/StudentAttemptApis";
 import { getLessonByStudentAttemptId } from "../../../apis/Lesson/LessonApis";
@@ -96,6 +97,16 @@ function MarkedQuizComponent(props: any) {
             })
         })
         return `${score}/${totalMarks}`;
+    } 
+
+    const getScoreOfStudentAttemptQuestion = (studentAttemptQuestion: StudentAttemptQuestion) => {
+        var score: number = 0;
+
+        studentAttemptQuestion.studentAttemptAnswers.forEach((studentAttemptAnswer: StudentAttemptAnswer) => {
+            score += studentAttemptAnswer.marks;
+        });
+
+        return score;
     }
 
     const mapQuestionArray = (attemptArray: StudentAttemptQuestion[]) => {
@@ -105,7 +116,7 @@ function MarkedQuizComponent(props: any) {
                     return (
                         <>
                             <QuizQuestionCard key={qId}>
-                                {qId + 1}. {studentAttempt.quizQuestion.content}
+                                {qId + 1}. {studentAttempt.quizQuestion.content} ({getScoreOfStudentAttemptQuestion(studentAttempt)}/{studentAttempt.quizQuestion.marks} mark{studentAttempt.quizQuestion.marks === 1 ? "" : "s" })
                                 <ThemeProvider theme={themeInstance}>
                                     <TableContainer component={Paper} style={{ margin: "16px 0px 16px 0px" }}>
                                         <Table size="small" aria-label="a dense table">

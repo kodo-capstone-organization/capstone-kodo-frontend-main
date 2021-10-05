@@ -156,7 +156,7 @@ function AttemptQuizComponent(props: any)
                     return (
                         <>
                             <QuizQuestionCard key={qId}>
-                                {qId + 1}. {question.content}
+                                {qId + 1}. {question.content} ({question.marks} mark{question.marks === 1 ? "" : "s" })
                                 <AttemptQuizOptionsComponent question={question} index={qId} onHandleAttemptAnswer={handleAttemptAnswer} />
                             </QuizQuestionCard>
                         </>
