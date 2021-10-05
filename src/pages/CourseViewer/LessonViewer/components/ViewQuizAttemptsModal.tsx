@@ -65,9 +65,7 @@ function ViewQuizAttemptsModal(props: any) {
   }
 
   const navigateToMarkedQuizView = (studentAttemptId : number) => {
-    console.log("studentAttemptId", studentAttemptId);
     history.push({ pathname: `/markedquizviewer/${enrolledCourseId}/${enrolledLessonId}/${studentAttemptId}`, state: { mode: 'VIEW' } });
-
   }
 
   const getScore = (studentAttemptQuestions: StudentAttemptQuestion[]) => {
