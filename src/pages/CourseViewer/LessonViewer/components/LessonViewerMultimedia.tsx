@@ -43,28 +43,36 @@ function LessonViewerMultimedia(props: any) {
         }
     }, [enrolledLesson]);
 
-    function previousLessonCompleted(): boolean {
-        let allEnrolledLessons = enrolledCourse?.enrolledLessons;
-        if (allEnrolledLessons 
-            && enrolledLesson 
-            && enrolledLesson?.parentLesson.sequence > 1) {
-            let sequence = enrolledLesson.parentLesson.sequence
-            let pLesson = allEnrolledLessons[sequence - 2];
-            if (pLesson.dateTimeOfCompletion !== null) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-        return true;
-    }
-
+    
     function isCompleted(enrolledContent: EnrolledContent): boolean {
         return enrolledContent.dateTimeOfCompletion !== null;
     }
 
     function isMultimedia(content: Content): boolean {
         return content.type === "multimedia";
+    }
+
+
+    const showMultimedias = (enrolledContents: EnrolledContent[]) => {
+        return (
+            enrolledContents.map((enrolledContent: EnrolledContent) => {
+                if (isMultimedia(enrolledContent.parentContent))
+                {
+                    let multimedia: Multimedia = enrolledContent.parentContent as Multimedia;
+                    return (
+                        <ContentLink
+                            key={multimedia.contentId} 
+                            isCompleted={ isCompleted(enrolledContent) }
+                            previousCompleted={ props.previousLessonCompleted() }
+                            to={`/overview/lesson/${enrolledCourseId}/${enrolledLessonId}/${multimedia.contentId}`}
+                        >
+                            { showContentLink(multimedia) }
+                            { showCompleted(enrolledContent) }
+                        </ContentLink>   
+                    );
+                }
+            })      
+        );
     }
 
     const showContentLink = (multimedia: Multimedia) => {
@@ -90,32 +98,15 @@ function LessonViewerMultimedia(props: any) {
         );
     }
 
+
     return (      
         <>
             { (enrolledContents) &&  
                 <LessonViewerCardElement>                    
-                    <LessonViewerHeaderElement title="Multimedia"/>
+                    <LessonViewerHeaderElement title="Multimedias"/>
                     <LessonViewerContentElement>
                         <ContentMenu>
-                            { 
-                                enrolledContents.map((enrolledContent: EnrolledContent) => {
-                                    if (isMultimedia(enrolledContent.parentContent))
-                                    {
-                                        let multimedia: Multimedia = enrolledContent.parentContent as Multimedia;
-                                        return (
-                                            <ContentLink
-                                                key={multimedia.contentId} 
-                                                isCompleted={ isCompleted(enrolledContent) }
-                                                previousCompleted={ previousLessonCompleted() }
-                                                to={`/overview/lesson/${enrolledCourseId}/${enrolledLessonId}/${multimedia.contentId}`}
-                                            >
-                                                { showContentLink(multimedia) }
-                                                { showCompleted(enrolledContent) }
-                                            </ContentLink>   
-                                        );
-                                    }
-                                })                              
-                            }
+                            { showMultimedias(enrolledContents) }
                         </ContentMenu>
                     </LessonViewerContentElement>
                 </LessonViewerCardElement>

@@ -143,7 +143,7 @@ export const QuizRow = styled.div`
     margin-right: 20px;
     margin-left: 20px;
     border-bottom: 1px solid ${colours.GRAY6};
-
+    height: 3em;
 `
 
 export const QuizSubheader = styled.div`

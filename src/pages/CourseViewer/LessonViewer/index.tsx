@@ -256,9 +256,22 @@ function LessonViewer(props: any) {
           <ExitWrapper to={`/overview/${enrolledCourse?.parentCourse.courseId}`}>
             <CancelOutlinedIcon fontSize="large" style={{ color: colours.BLUE2, padding: 20 }} />
           </ExitWrapper>
-          <LessonViewerHeader enrolledCourse={enrolledCourse} enrolledLesson={enrolledLesson} />
-          <LessonViewerMultimedia enrolledCourse={enrolledCourse} enrolledLesson={enrolledLesson} enrolledContents={enrolledContents} />
-          <LessonViewerQuiz enrolledLesson={enrolledLesson} />
+          <LessonViewerHeader 
+            enrolledCourse={enrolledCourse} 
+            enrolledLesson={enrolledLesson} 
+          />
+          <LessonViewerMultimedia 
+            enrolledCourse={enrolledCourse} 
+            enrolledLesson={enrolledLesson} 
+            enrolledContents={enrolledContents} 
+            previousLessonCompleted={previousLessonCompleted}
+          />
+          <LessonViewerQuiz 
+            enrolledCourse={enrolledCourse} 
+            enrolledLesson={enrolledLesson} 
+            enrolledContents={enrolledContents} 
+            previousLessonCompleted={previousLessonCompleted}
+          />
         </LessonViewerContainerElement>    
         // !loading &&
         // <LessonContainer>
