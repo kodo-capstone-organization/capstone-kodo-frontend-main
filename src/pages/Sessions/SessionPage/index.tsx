@@ -1,9 +1,8 @@
 import React, {useState} from 'react'
 import { SessionPageContainer, SessionPageBreadcrumbs, SessionPageDescription, SessionPageCreateOrJoinContainer, SessionPageTypography, SessionPageInvitedSessions } from './SessionPageElements';
-import { Breadcrumbs, Link, Typography, Grid, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@material-ui/core';
+import { Link, Grid, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@material-ui/core';
 import MUIButton from '@material-ui/core/Button';
 import { Button } from '../../../values/ButtonElements';
-import InputAdornment from '@material-ui/core/InputAdornment';
 import TextField from '@material-ui/core/TextField';
 import PermPhoneMsgIcon from '@material-ui/icons/PermPhoneMsg';
 

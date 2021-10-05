@@ -1,11 +1,11 @@
 import { ArgumentAxis, Chart, Legend, PieSeries, Title, ValueAxis } from "@devexpress/dx-react-chart-material-ui";
 import { Animation, LineSeries, Palette } from '@devexpress/dx-react-chart';
-import { Container, FormControl, Grid, MenuItem, Paper, Toolbar } from "@material-ui/core";
+import {CircularProgress, Container, FormControl, Grid, MenuItem, Paper, Table, TableBody, TableCell, TableContainer, TableRow, Toolbar } from "@material-ui/core";
 import { useEffect } from "react";
 import { useState } from "react";
-import { NestedCourseStats, TutorCourseEarningsResp } from "../../../../apis/Entities/Transaction";
-import { getCourseEarningsPageData } from "../../../../apis/Transaction/TransactionApis";
-import {BigStatCaptionDiv, BigStatNumberDiv, ProfileCard, ProfileCardContent, ProfileCardHeader } from "../../ProfileElements";
+import { NestedCourseStats, Transaction, TutorCourseEarningsResp } from "../../../../apis/Entities/Transaction";
+import {getAllEarningsByAccountId, getCourseEarningsPageData } from "../../../../apis/Transaction/TransactionApis";
+import {BigStatCaptionDiv, BigStatNumberDiv, BlankStateContainer, ProfileCard, ProfileCardContent, ProfileCardHeader } from "../../ProfileElements";
 import { colours, paletteColours } from "../../../../values/Colours";
 import { fontSizes } from "../../../../values/FontSizes";
 import { MONTHS } from "../../../../values/DateTime";
@@ -27,6 +27,8 @@ function CourseEarningsTabPanel(props: any) {
 
     const [accountId, setAccountId] = useState<string>("");
     const [myEarnings, setMyEarnings] = useState<TutorCourseEarningsResp>();
+    const [isTELoading, setIsTELoading] = useState<boolean>(true);
+    const [myTransactionEarnings, setMyTransactionEarnings] = useState<Transaction[]>([]);
     const [selectedCourseId, setSelectedCourseId] = useState<string>("");
     const [selectedCourseItem, setSelectedCourseItem] = useState<NestedCourseStats>();
 
@@ -48,6 +50,20 @@ function CourseEarningsTabPanel(props: any) {
     }, [accountId])
 
     useEffect(() => {
+        if (accountId) {
+            getAllEarningsByAccountId(parseInt(accountId))
+                .then(myTransactionEarnings => {
+                    setMyTransactionEarnings([...myTransactionEarnings])
+                    setIsTELoading(false)
+                })
+                .catch(error => {
+                    console.log("Error retrieving my transaction earnings")
+                    setIsTELoading(false)
+                })
+        }
+    }, [accountId])
+
+    useEffect(() => {
         if (myEarnings && myEarnings.courseStatsByMonthForLastYear.length > 0)
         {
             const selectedCourse = myEarnings.courseStatsByMonthForLastYear.find(item => item.courseId === selectedCourseId)
@@ -60,6 +76,7 @@ function CourseEarningsTabPanel(props: any) {
             setSelectedCourseItem(selectedCourse);
         }
     }, [selectedCourseId, myEarnings])
+
 
     const getCurrentMonthYear = () => {
         const curDate = new Date();
@@ -120,58 +137,93 @@ function CourseEarningsTabPanel(props: any) {
                 </ProfileCardContent>
                 }
             </ProfileCard>
-            <br/>
-            <br/>
+
             { myEarnings && selectedCourseId && selectedCourseItem && selectedCourseItem?.data.length > 0 &&
-                <ProfileCard id="course-stats">
-                    <ProfileCardHeader style={{ padding: "0.75rem 1rem"}} title="Course Statistics"/>
+                <>
+                    <br/>
+                    <br/>
+                    <ProfileCard id="course-stats">
+                        <ProfileCardHeader style={{ padding: "0.75rem 1rem"}} title="Course Statistics"/>
+                        <ProfileCardContent>
+                            <Grid container spacing={3}>
+                                <Grid item xs={8}>
+                                    <Paper elevation={2}>
+                                        <Chart data={selectedCourseItem?.data}>
+                                            <Palette scheme={paletteColours}/>
+                                            <ArgumentAxis />
+                                            <ValueAxis />
 
-                    <ProfileCardContent>
-                        <Grid container spacing={3}>
-                            <Grid item xs={8}>
-                                <Paper elevation={2}>
-                                    <Chart data={selectedCourseItem?.data}>
-                                        <Palette scheme={paletteColours}/>
-                                        <ArgumentAxis />
-                                        <ValueAxis />
-
-                                        <LineSeries
-                                            name="Earnings"
-                                            valueField="earnings"
-                                            argumentField="monthyear"
-                                        />
-                                        <Title text={`Course Earnings for ${selectedCourseItem.courseName}`} textComponent={SummaryChartTitleComponent}/>
-                                    </Chart>
-                                </Paper>
+                                            <LineSeries
+                                                name="Earnings"
+                                                valueField="earnings"
+                                                argumentField="monthyear"
+                                            />
+                                            <Title text={`Course Earnings for ${selectedCourseItem.courseName}`} textComponent={SummaryChartTitleComponent}/>
+                                        </Chart>
+                                    </Paper>
+                                </Grid>
+                                <Grid item xs={4}>
+                                    <Paper elevation={2} style={{ height: "100%"}}>
+                                        <Toolbar style={{ background: colours.GRAY7 }}>
+                                            <span style={{ color: colours.GRAY3 }}>My Course</span>: &nbsp;&nbsp;
+                                            <FormControl variant="outlined" size="small">
+                                                <Select id="course-select" value={selectedCourseId} onChange={handleChangeCourse}>
+                                                    { myEarnings?.courseStatsByMonthForLastYear.map(item => (
+                                                        <MenuItem value={item.courseId}>{item.courseName}</MenuItem>
+                                                    ))}
+                                                </Select>
+                                            </FormControl>
+                                        </Toolbar>
+                                        <Container style={{ paddingTop: "1rem", color: colours.GRAY3 }}>
+                                            <br/>
+                                            Lifetime Earnings: <strong style={{ color: colours.DARKBLUE1 }}>${selectedCourseItem.lifetimeEarnings}</strong>
+                                            <br/>
+                                            <br/>
+                                            This Month's Earnings: <strong style={{ color: colours.DARKBLUE1 }}>${selectedCourseItem.currentMonthEarnings}</strong>
+                                            <br/>
+                                            <br/>
+                                            Highest Earning Month: <strong style={{ color: colours.DARKBLUE1 }}>{selectedCourseItem.highestEarningMonthWithValue}</strong>
+                                            <br/>
+                                            <br/>
+                                            Monthly Average Earnings: <strong style={{ color: colours.DARKBLUE1 }}>${selectedCourseItem.monthlyAverageEarnings}</strong>
+                                        </Container>
+                                    </Paper>
+                                </Grid>
                             </Grid>
-                            <Grid item xs={4}>
-                                <Paper elevation={2} style={{ height: "100%"}}>
-                                    <Toolbar style={{ background: colours.GRAY7 }}>
-                                        <span style={{ color: colours.GRAY3 }}>My Course</span>: &nbsp;&nbsp;
-                                        <FormControl variant="outlined" size="small">
-                                            <Select id="course-select" value={selectedCourseId} onChange={handleChangeCourse}>
-                                                { myEarnings?.courseStatsByMonthForLastYear.map(item => (
-                                                    <MenuItem value={item.courseId}>{item.courseName}</MenuItem>
-                                                ))}
-                                            </Select>
-                                        </FormControl>
-                                    </Toolbar>
-                                    <Container style={{ paddingTop: "1rem", color: colours.GRAY3 }}>
-                                        <br/>
-                                        Lifetime Earnings: <strong style={{ color: colours.DARKBLUE1 }}>${selectedCourseItem.lifetimeEarnings}</strong>
-                                        <br/>
-                                        <br/>
-                                        This Month's Earnings: <strong style={{ color: colours.DARKBLUE1 }}>${selectedCourseItem.currentMonthEarnings}</strong>
-                                        <br/>
-                                        <br/>
-                                        Highest Earning Month: <strong style={{ color: colours.DARKBLUE1 }}>{selectedCourseItem.highestEarningMonthWithValue}</strong>
-                                        <br/>
-                                        <br/>
-                                        Monthly Average Earnings: <strong style={{ color: colours.DARKBLUE1 }}>${selectedCourseItem.monthlyAverageEarnings}</strong>
-                                    </Container>
-                                </Paper>
-                            </Grid>
-                        </Grid>
+                        </ProfileCardContent>
+                    </ProfileCard>
+                </>
+            }
+            <br/>
+            <br/>
+            { myTransactionEarnings &&
+                <ProfileCard id="earnings-history">
+                    <ProfileCardHeader style={{ padding: "0.75rem 1rem"}} title="Earnings History"/>
+                    <ProfileCardContent style={{ justifyContent: "center" }}>
+                        { isTELoading && <CircularProgress /> }
+                        { !isTELoading && myTransactionEarnings.length > 0 &&
+                            <TableContainer style={{ maxHeight: "20rem"}}>
+                                <Table>
+                                    <TableBody>
+                                        { myTransactionEarnings.map((transaction: Transaction) => (
+                                            <TableRow hover key={transaction?.transactionId}>
+                                                <TableCell component="th" scope="row" width="30%">
+                                                    {transaction?.course.name}
+                                                </TableCell>
+                                                <TableCell align="right" width="20%">{transaction?.payer.name}</TableCell>
+                                                <TableCell align="right" width="30%">{new Date(transaction?.dateTimeOfTransaction).toDateString()}</TableCell>
+                                                <TableCell align="right" width="20%"><strong>+{transaction?.coursePrice}</strong></TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+                        }
+                        { !isTELoading && myTransactionEarnings.length === 0 &&
+                            <BlankStateContainer>
+                                No transaction records found 💰
+                            </BlankStateContainer>
+                        }
                     </ProfileCardContent>
                 </ProfileCard>
             }

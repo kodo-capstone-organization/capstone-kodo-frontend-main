@@ -1,5 +1,4 @@
 import React from 'react';
-import { BtnWrapper } from './MultimediaViewerElements';
 import { Button } from "../../../values/ButtonElements";
 
 function DownloadFile(props: any) {

@@ -9,6 +9,13 @@ export async function getAllPaymentsByAccountId(accountId: number): Promise<Tran
     return httpClient.get<undefined, Transaction[]>(getParameters)
 }
 
+export async function getAllEarningsByAccountId(accountId: number): Promise<Transaction[]> {
+    const getParameters: IHttpClientRequestParameters<undefined> = {
+        url: `/transaction/getAllEarningsByAccountId/${accountId}`
+    }
+    return httpClient.get<undefined, Transaction[]>(getParameters)
+}
+
 export async function getCourseEarningsPageData(accountId: number): Promise<TutorCourseEarningsResp> {
     const getParameters: IHttpClientRequestParameters<undefined> = {
         url: `/transaction/getCourseEarningsPageDataByAccountId/${accountId}`
