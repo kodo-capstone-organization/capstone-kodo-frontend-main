@@ -92,7 +92,7 @@ function CourseList(props: any) {
                           primary={true}
                           to={`/overview/lesson/${enrolledCourse.enrolledCourseId}/${enrolledLesson.enrolledLessonId}`}
                         >
-                          Resume
+                          { enrolledLesson.dateTimeOfCompletion ? "View" : "Resume" }
                         </Button>
                       ) : (
                         <Button variant="outlined" primary={false} disabled>
