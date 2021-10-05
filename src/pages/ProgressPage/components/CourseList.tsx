@@ -90,7 +90,7 @@ function CourseList(props: any) {
                         <Button
                           variant="outlined"
                           primary={true}
-                          to={`/overview/lesson/${enrolledCourse.parentCourse.courseId}/${enrolledLesson.parentLesson.lessonId}`}
+                          to={`/overview/lesson/${enrolledCourse.enrolledCourseId}/${enrolledLesson.enrolledLessonId}`}
                         >
                           Resume
                         </Button>
@@ -102,7 +102,7 @@ function CourseList(props: any) {
                   ) : (
                       <Button
                         primary={true}
-                        to={`/overview/lesson/${enrolledCourse.parentCourse.courseId}/${enrolledLesson.parentLesson.lessonId}`}
+                        to={`/overview/lesson/${enrolledCourse.enrolledCourseId}/${enrolledLesson.enrolledLessonId}`}
                       >
                         View
                       </Button>

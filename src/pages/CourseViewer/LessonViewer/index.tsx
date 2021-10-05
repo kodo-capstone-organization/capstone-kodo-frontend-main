@@ -55,8 +55,75 @@ import ViewQuizAttemptsModal from './components/ViewQuizAttemptsModal';
 import { Button } from "../../../values/ButtonElements";
 import { colours } from "../../../values/Colours";
 
+import { getAccountByEnrolledLessonId } from "../../../apis/Account/AccountApis";
+import { getAccountByEnrolledCourseId } from "../../../apis/Account/AccountApis";
+import { getEnrolledCourseByEnrolledCourseId } from "../../../apis/EnrolledCourse/EnrolledCourseApis";
+import { getEnrolledLessonByEnrolledLessonId } from "../../../apis/EnrolledLesson/EnrolledLessonApis";
+
+import {
+  LessonViewerContainerElement
+} from "./LessonViewerElements"
+
+import LessonViewerHeader from "./components/LessonViewerHeader";
+import LessonViewerMultimedia from "./components/LessonViewerMultimedia";
+import LessonViewerQuiz from "./components/LessonViewerQuiz";
+
 
 function LessonViewer(props: any) {
+
+  const enrolledCourseId = props.match.params.enrolledCourseId;
+  const enrolledLessonId = props.match.params.enrolledLessonId;
+  
+  const accountId = JSON.parse(
+    window.sessionStorage.getItem("loggedInAccountId") || "{}"
+  );
+
+  const [loading, setLoading] = useState<boolean>(true);
+  const [enrolledLesson, setEnrolledLesson] = useState<EnrolledLesson>();
+  const [enrolledCourse, setEnrolledCourse] = useState<EnrolledCourse>();
+
+  const history = useHistory();
+
+  useEffect(() => {
+    if (accountId !== null 
+        && enrolledCourseId !== null 
+        && enrolledLessonId !== null)
+    {
+      getAccountByEnrolledCourseId(enrolledCourseId).then((account: Account) => {
+        if (account.accountId !== accountId)
+        {
+          history.push('/progresspage');  
+        }
+      })
+      .catch((err) => {
+        history.push('/progresspage');
+      });
+      getEnrolledCourseByEnrolledCourseId(enrolledCourseId).then((enrolledCourse: EnrolledCourse) => {
+        setEnrolledCourse(enrolledCourse);
+      });
+      setLoading(false);
+    }
+    else
+    {
+      history.push('/progresspage');
+    }
+  }, [enrolledCourseId]);
+
+  useEffect(() => {
+    getAccountByEnrolledLessonId(enrolledLessonId).then((account: Account) => {
+      if (account.accountId !== accountId)
+      {
+        history.push('/progresspage');  
+      }
+    })
+    .catch((err) => {
+      history.push('/progresspage');
+    });
+    getEnrolledLessonByEnrolledLessonId(enrolledLessonId).then((enrolledLesson: EnrolledLesson) => {
+      setEnrolledLesson(enrolledLesson);
+    });
+  }, [enrolledLessonId]);
+
   // const lessonId = props.match.params.lessonId;
   // const courseId = props.match.params.courseId;
   // const [currentCourse, setCourse] = useState<Course>();
@@ -135,19 +202,19 @@ function LessonViewer(props: any) {
   //   return quizAttemptsTemp;
   // }
 
-  // function previousLessonCompleted(): boolean {
-  //   let allEnrolledLessons = enrolledCourse?.enrolledLessons;
-  //   if (allEnrolledLessons && enrolledLesson && enrolledLesson?.parentLesson.sequence > 1) {
-  //     let sequence = enrolledLesson.parentLesson.sequence
-  //     let pLesson = allEnrolledLessons[sequence - 2];
-  //     if (pLesson.dateTimeOfCompletion !== null) {
-  //       return true;
-  //     } else {
-  //       return false;
-  //     }
-  //   }
-  //   return true;
-  // }
+  function previousLessonCompleted(): boolean {
+    let allEnrolledLessons = enrolledCourse?.enrolledLessons;
+    if (allEnrolledLessons && enrolledLesson && enrolledLesson?.parentLesson.sequence > 1) {
+      let sequence = enrolledLesson.parentLesson.sequence
+      let pLesson = allEnrolledLessons[sequence - 2];
+      if (pLesson.dateTimeOfCompletion !== null) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+    return true;
+  }
 
   // let isCourseTutor =
   //   currentCourse?.tutor.accountId === currentUser?.accountId ? true : false;
@@ -174,7 +241,15 @@ function LessonViewer(props: any) {
 
   return (
     <>
-      { 
+      {      
+        <LessonViewerContainerElement>
+          <ExitWrapper to={`/overview/${enrolledCourse?.parentCourse.courseId}`}>
+            <CancelOutlinedIcon fontSize="large" style={{ color: colours.BLUE2, padding: 20 }} />
+          </ExitWrapper>
+          <LessonViewerHeader enrolledCourse={enrolledCourse} enrolledLesson={enrolledLesson} />
+          <LessonViewerMultimedia/>
+          <LessonViewerQuiz/>
+        </LessonViewerContainerElement>    
         // !loading &&
         // <LessonContainer>
         //   <PageHeadingAndButton>
@@ -305,7 +380,7 @@ function LessonViewer(props: any) {
 
 
         //   </LessonContainer>
-        }
+      }
     </>
   );
 }

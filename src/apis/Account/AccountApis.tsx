@@ -82,6 +82,14 @@ export async function getAccountByEnrolledCourseId(enrolledCourseId: number): Pr
     return httpClient.get<undefined, Account>(getParameters);
 }
 
+export async function getAccountByEnrolledLessonId(enrolledLessonId: number): Promise<Account> {
+    const getParameters: IHttpClientRequestParameters<undefined> = {
+        url: `/account/getAccountByEnrolledLessonId/${enrolledLessonId}`
+    }
+
+    return httpClient.get<undefined, Account>(getParameters);
+}
+
 export async function updateAccount(updateAccountReq: UpdateAccountReq, displayPictureFile: File): Promise<Account> {
     const formData = new FormData();
 

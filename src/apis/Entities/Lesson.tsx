@@ -1,4 +1,3 @@
-import { Course } from "./Course";
 import { Content } from "./Content";
 import { Quiz } from "./Quiz";
 import { Multimedia, MultimediaReq} from "./Multimedia";
