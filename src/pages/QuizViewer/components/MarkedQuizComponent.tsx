@@ -4,19 +4,19 @@ import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import CancelIcon from '@material-ui/icons/Cancel';
 import { Link } from '@material-ui/core';
 import {
-    Checkbox, 
-    Divider, 
-    Grid, 
-    Paper, 
+    Checkbox,
+    Divider,
+    Grid,
+    Paper,
     Radio,
     Table,
-    TableBody, 
-    TableCell, 
-    TableContainer, 
+    TableBody,
+    TableCell,
+    TableContainer,
     TableHead,
-    TableRow, 
+    TableRow,
     ThemeProvider,
-    createMuiTheme, 
+    createMuiTheme,
 } from "@material-ui/core";
 
 import { Course } from "../../../apis/Entities/Course";
@@ -35,11 +35,11 @@ import {
     EmptyStateContainer,
     EmptyStateText,
     MarkedQuizViewerTableRow,
-    QuizCard, 
-    QuizCardContent, 
-    QuizCardHeader, 
+    QuizCard,
+    QuizCardContent,
+    QuizCardHeader,
     QuizQuestionCard,
-    QuizViewerCardContent, 
+    QuizViewerCardContent,
 } from "../QuizViewerElements";
 
 const themeInstance = createMuiTheme({
@@ -50,8 +50,34 @@ const themeInstance = createMuiTheme({
                     backgroundColor: "#C8E6C9 ! important"
                 }
             }
-        }
+        },
+        MuiRadio: {
+            // root: {
+            //     color: 'green',
+            // },
+            colorSecondary: {
+                '&$checked': {
+                    color: 'green',
+                },
+            },
+        },
+        MuiCheckbox: {
+            colorSecondary: {
+                '&$checked': {
+                    color: 'green',
+                },
+            },
+        },
     }
+});
+
+const styles = theme => ({
+    radio: {
+        '&$checked': {
+            color: '#C8E6C9 ! important'
+        }
+    },
+    checked: {}
 });
 
 function MarkedQuizComponent(props: any) {
@@ -59,7 +85,7 @@ function MarkedQuizComponent(props: any) {
     const [studentAttemptQuestions, setStudentAttemptQuestions] = useState<StudentAttemptQuestion[]>([]);
     const [courseId, setCourseId] = useState<number>();
     const [lessonId, setLessonId] = useState<number>();
-    
+
     const [quiz, setQuiz] = useState<Quiz>();
 
     useEffect(() => {
@@ -70,12 +96,12 @@ function MarkedQuizComponent(props: any) {
         }).catch((err) => { console.log("error:getStudentAttemptByStudentAttemptId", err) });
         getLessonByStudentAttemptId(props.studentAttemptId).then((lesson: Lesson) => {
             setLessonId(lesson.lessonId);
-        })        
-        .catch((err) => { console.log(err.response.data.message) });
+        })
+            .catch((err) => { console.log(err.response.data.message) });
         getCourseByStudentAttemptId(props.studentAttemptId).then((course: Course) => {
             setCourseId(course.courseId);
-        })        
-        .catch((err) => { console.log(err.response.data.message) });      
+        })
+            .catch((err) => { console.log(err.response.data.message) });
     }, [props.studentAttemptId]);
 
     const formatDate = (date: Date) => {
@@ -92,7 +118,7 @@ function MarkedQuizComponent(props: any) {
             var correct = true;
             studentAttemptAnswerList.map((studentAnswer) => {
                 console.log(studentAnswer);
-                return(studentAnswer.correct ? score = score + studentAnswer.marks: correct=false);
+                return (studentAnswer.correct ? score = score + studentAnswer.marks : correct = false);
             })
         })
         return `${score}/${totalMarks}`;
@@ -101,7 +127,7 @@ function MarkedQuizComponent(props: any) {
     const mapQuestionArray = (attemptArray: StudentAttemptQuestion[]) => {
         return (
             <div>
-                {attemptArray.map( (studentAttempt, qId) => {
+                {attemptArray.map((studentAttempt, qId) => {
                     return (
                         <>
                             <QuizQuestionCard key={qId}>
@@ -206,68 +232,68 @@ function MarkedQuizComponent(props: any) {
 
                                             {
                                                 (studentAttempt.quizQuestion.questionType === "TF" || studentAttempt.quizQuestion.questionType === "MCQ") &&
-                                                    <>
+                                                <>
                                                     {
-                                                        (studentAttempt.studentAttemptAnswers.length === 0) && 
-                                                            <EmptyStateContainer>    
-                                                                <EmptyStateText>
-                                                                    Question unanswered
+                                                        (studentAttempt.studentAttemptAnswers.length === 0) &&
+                                                        <EmptyStateContainer>
+                                                            <EmptyStateText>
+                                                                Question unanswered
                                                                 </EmptyStateText>
-                                                            </EmptyStateContainer>
+                                                        </EmptyStateContainer>
                                                     }
                                                     {
-                                                        (studentAttempt.studentAttemptAnswers.length > 0) && 
-                                                            studentAttempt.studentAttemptAnswers?.map((row, index) => (
-                                                                <MarkedQuizViewerTableRow>
-                                                                    <TableCell component="th" scope="row">
-                                                                        {row.leftContent}
-                                                                    </TableCell>
-                                                                    <TableCell align="right">
-                                                                        {row.correct ? <CheckCircleIcon style={{ color: "green", padding: "10px" }} /> : <CancelIcon color={"error"} style={{ padding: "10px" }} />}
-                                                                    </TableCell>
-                                                                </MarkedQuizViewerTableRow>
+                                                        (studentAttempt.studentAttemptAnswers.length > 0) &&
+                                                        studentAttempt.studentAttemptAnswers?.map((row, index) => (
+                                                            <MarkedQuizViewerTableRow>
+                                                                <TableCell component="th" scope="row">
+                                                                    {row.leftContent}
+                                                                </TableCell>
+                                                                <TableCell align="right">
+                                                                    {row.correct ? <CheckCircleIcon style={{ color: "green", padding: "10px" }} /> : <CancelIcon color={"error"} style={{ padding: "10px" }} />}
+                                                                </TableCell>
+                                                            </MarkedQuizViewerTableRow>
 
-                                                            ))
+                                                        ))
                                                     }
-                                                    </>
+                                                </>
                                             }
                                             {
                                                 studentAttempt.quizQuestion.questionType === "MATCHING" &&
-                                                    <>
-                                                        {
-                                                            (studentAttempt.studentAttemptAnswers.length === 0) && 
-                                                                <EmptyStateContainer>    
-                                                                    <EmptyStateText>
-                                                                        Question unanswered
+                                                <>
+                                                    {
+                                                        (studentAttempt.studentAttemptAnswers.length === 0) &&
+                                                        <EmptyStateContainer>
+                                                            <EmptyStateText>
+                                                                Question unanswered
                                                                     </EmptyStateText>
-                                                                </EmptyStateContainer>
-                                                        }
-                                                        {
-                                                            (studentAttempt.studentAttemptAnswers.length > 0) && 
-                                                                studentAttempt.studentAttemptAnswers?.map((row, index) => (
-                                                                    <MarkedQuizViewerTableRow>
-                                                                        <TableCell component="th" scope="row">
-                                                                            {row.leftContent}
-                                                                        </TableCell>
-                                                                        <TableCell component="th" scope="row">
-                                                                            {row.rightContent}
-                                                                        </TableCell>
-                                                                        <TableCell align="right">
-                                                                            {row.correct ? <CheckCircleIcon style={{ color: "green", padding: "10px" }} /> : <CancelIcon color={"error"} style={{ padding: "10px" }} />}
-                                                                        </TableCell>
-                                                                    </MarkedQuizViewerTableRow>
+                                                        </EmptyStateContainer>
+                                                    }
+                                                    {
+                                                        (studentAttempt.studentAttemptAnswers.length > 0) &&
+                                                        studentAttempt.studentAttemptAnswers?.map((row, index) => (
+                                                            <MarkedQuizViewerTableRow>
+                                                                <TableCell component="th" scope="row">
+                                                                    {row.leftContent}
+                                                                </TableCell>
+                                                                <TableCell component="th" scope="row">
+                                                                    {row.rightContent}
+                                                                </TableCell>
+                                                                <TableCell align="right">
+                                                                    {row.correct ? <CheckCircleIcon style={{ color: "green", padding: "10px" }} /> : <CancelIcon color={"error"} style={{ padding: "10px" }} />}
+                                                                </TableCell>
+                                                            </MarkedQuizViewerTableRow>
 
-                                                                ))
-                                                        }
-                                                        {
-                                                            ((studentAttempt.studentAttemptAnswers.length > 0) && (studentAttempt.studentAttemptAnswers.length < studentAttempt.quizQuestion.quizQuestionOptions.length)) && 
-                                                                <EmptyStateContainer style={{alignItems: "flex-end"}}>    
-                                                                    <EmptyStateText>
-                                                                        { studentAttempt.quizQuestion.quizQuestionOptions.length - studentAttempt.studentAttemptAnswers.length } Set of Matching Not Answered
+                                                        ))
+                                                    }
+                                                    {
+                                                        ((studentAttempt.studentAttemptAnswers.length > 0) && (studentAttempt.studentAttemptAnswers.length < studentAttempt.quizQuestion.quizQuestionOptions.length)) &&
+                                                        <EmptyStateContainer style={{ alignItems: "flex-end" }}>
+                                                            <EmptyStateText>
+                                                                {studentAttempt.quizQuestion.quizQuestionOptions.length - studentAttempt.studentAttemptAnswers.length} Set of Matching Not Answered
                                                                     </EmptyStateText>
-                                                                </EmptyStateContainer>
-                                                        }
-                                                    </>
+                                                        </EmptyStateContainer>
+                                                    }
+                                                </>
                                             }
 
                                         </TableBody>
@@ -315,14 +341,14 @@ function MarkedQuizComponent(props: any) {
                     {mapQuestionArray(studentAttemptQuestions)}
                 </QuizViewerCardContent>
             </QuizCard>
-            { (courseId !== undefined && lessonId !== undefined) &&
+            {(courseId !== undefined && lessonId !== undefined) &&
                 <BackBtnWrapper>
                     <Link
                         type="button"
                         color="primary"
                         href={`/overview/lesson/${props.enrolledCourseId}/${props.enrolledLessonId}`}
                     >
-                        <ArrowBackward/> Back to Lesson Overview
+                        <ArrowBackward /> Back to Lesson Overview
                     </Link>
                 </BackBtnWrapper>
             }

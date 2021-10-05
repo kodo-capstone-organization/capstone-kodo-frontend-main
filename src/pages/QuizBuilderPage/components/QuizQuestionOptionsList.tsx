@@ -127,7 +127,7 @@ function QuizQuestionOptionsList(props: any) {
             setQuizQuestionOptions(newQuizQuestionOptions);
             props.onHandleQuizQuestionOptionUpdate(newQuizQuestionOptions, questionIndex)
         } else {
-            handleCallSnackbar("Each Question Must Have At Least 1 Option");
+            handleCallSnackbar("Each Question Must Have At Least 2 Options");
         }
     }
 
