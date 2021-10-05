@@ -67,6 +67,7 @@ import {
 import LessonViewerHeader from "./components/LessonViewerHeader";
 import LessonViewerMultimedia from "./components/LessonViewerMultimedia";
 import LessonViewerQuiz from "./components/LessonViewerQuiz";
+import { EnrolledContent } from "../../../apis/Entities/EnrolledContent";
 
 
 function LessonViewer(props: any) {
@@ -79,15 +80,15 @@ function LessonViewer(props: any) {
   );
 
   const [loading, setLoading] = useState<boolean>(true);
-  const [enrolledLesson, setEnrolledLesson] = useState<EnrolledLesson>();
   const [enrolledCourse, setEnrolledCourse] = useState<EnrolledCourse>();
+  const [enrolledLesson, setEnrolledLesson] = useState<EnrolledLesson>();  
+  const [enrolledContents, setEnrolledContents] = useState<EnrolledContent[]>();
 
   const history = useHistory();
 
   useEffect(() => {
     if (accountId !== null 
-        && enrolledCourseId !== null 
-        && enrolledLessonId !== null)
+        && enrolledCourseId !== null)
     {
       getAccountByEnrolledCourseId(enrolledCourseId).then((account: Account) => {
         if (account.accountId !== accountId)
@@ -110,18 +111,27 @@ function LessonViewer(props: any) {
   }, [enrolledCourseId]);
 
   useEffect(() => {
-    getAccountByEnrolledLessonId(enrolledLessonId).then((account: Account) => {
-      if (account.accountId !== accountId)
-      {
-        history.push('/progresspage');  
-      }
-    })
-    .catch((err) => {
+    if (accountId !== null 
+      && enrolledLessonId !== null)
+    {
+      getAccountByEnrolledLessonId(enrolledLessonId).then((account: Account) => {
+        if (account.accountId !== accountId)
+        {
+          history.push('/progresspage');  
+        }
+      })
+      .catch((err) => {
+        history.push('/progresspage');
+      });
+      getEnrolledLessonByEnrolledLessonId(enrolledLessonId).then((enrolledLesson: EnrolledLesson) => {
+        setEnrolledLesson(enrolledLesson);
+        setEnrolledContents(enrolledLesson.enrolledContents);
+      });
+    }
+    else
+    {
       history.push('/progresspage');
-    });
-    getEnrolledLessonByEnrolledLessonId(enrolledLessonId).then((enrolledLesson: EnrolledLesson) => {
-      setEnrolledLesson(enrolledLesson);
-    });
+    }
   }, [enrolledLessonId]);
 
   // const lessonId = props.match.params.lessonId;
@@ -247,8 +257,8 @@ function LessonViewer(props: any) {
             <CancelOutlinedIcon fontSize="large" style={{ color: colours.BLUE2, padding: 20 }} />
           </ExitWrapper>
           <LessonViewerHeader enrolledCourse={enrolledCourse} enrolledLesson={enrolledLesson} />
-          <LessonViewerMultimedia/>
-          <LessonViewerQuiz/>
+          <LessonViewerMultimedia enrolledCourse={enrolledCourse} enrolledLesson={enrolledLesson} enrolledContents={enrolledContents} />
+          <LessonViewerQuiz enrolledLesson={enrolledLesson} />
         </LessonViewerContainerElement>    
         // !loading &&
         // <LessonContainer>

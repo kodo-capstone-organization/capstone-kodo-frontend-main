@@ -1,17 +1,18 @@
 import { useState, useEffect } from "react";
 
 import { Course } from "../../../../apis/Entities/Course";
-import { Lesson } from "../../../../apis/Entities/Lesson";
 import { EnrolledCourse } from "../../../../apis/Entities/EnrolledCourse";
 import { EnrolledLesson } from "../../../../apis/Entities/EnrolledLesson";
+import { Lesson } from "../../../../apis/Entities/Lesson";
 
 import { 
-    LessonViewerCardElement, 
-    LessonViewerHeaderElement, 
-    LessonViewerContentElement,
+    CourseTitle,
     LessonTitle,
-    CourseTitle
+    LessonViewerCardElement, 
+    LessonViewerContentElement,
+    LessonViewerHeaderElement, 
 } from "../LessonViewerElements";
+
 
 function LessonViewerHeader(props: any) {
 

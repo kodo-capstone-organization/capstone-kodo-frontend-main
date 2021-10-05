@@ -94,7 +94,7 @@ function Routes() {
                             <Route path="/overview/lesson/:enrolledCourseId/:enrolledLessonId" render={props => <LessonViewerWithRouter {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
                             : <Redirect to="/" />}
                         {window.sessionStorage.getItem("loggedInAccountId") ?
-                            <Route path="/overview/lesson/:courseId/:lessonId/:contentId" render={props => <MultimediaViewerWithRouter {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
+                            <Route path="/overview/lesson/:enrolledCourseId/:enrolledLessonId/:contentId" render={props => <MultimediaViewerWithRouter {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
                             : <Redirect to="/" />}
 
                         {/* Need to change the path namings here, we have 2 types of content, talk to chandya */}
