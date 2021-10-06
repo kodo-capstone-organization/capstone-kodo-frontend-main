@@ -5,6 +5,7 @@ import MyProfilePage from "./pages/MyProfilePage";
 import CourseOverview from "./pages/CourseViewer";
 import SessionPage from "./pages/Sessions/SessionPage";
 import LiveKodoSessionPage from "./pages/Sessions/LiveKodoSessionPage";
+import ForumPage from "./pages/ForumPage";
 
 export const RouteItemsWithSidebar = [
     {
@@ -54,5 +55,15 @@ export const RouteItemsWithoutSidePadding = [
         path: "/session/:initAction/:sessionId",
         isDynamic: true,
         component: LiveKodoSessionPage
-    }
+    },
+    {
+        path: "/forum/:courseId",
+        isDynamic: false,
+        component: ForumPage
+    },
+    {
+        path: "/forum/:courseId/category/:forumCategoryId",
+        isDynamic: false,
+        component: ForumPage // nested page
+    },
 ]

@@ -57,14 +57,12 @@ function QuizBuilderPage(props: any) {
 
     const contentId = props.match.params.contentId;
     const [courseId, setCourseId] = useState<number>(); // for backwards navigation to course builder
-
     const [name, setName] = useState<string>("");
     const [description, setDescription] = useState<string>("");
     const [maxAttempts, setMaxAttempts] = useState<number>();
     const [timeLimitSeconds, setTimeLimitSeconds] = useState<string>("00");
     const [timeLimitHours, setTimeLimitHours] = useState<string>("00");
     const [timeLimitMinutes, setTimeLimitMinutes] = useState<string>("00");
-    // const [quizQuestionArray, setQuizQuestionArray] = useState<QuizQuestion[]>([]); //updated at first render and question & option updates BEFORE DRAGGABLE
     const [quizQuestionArray, setQuizQuestionArray] = useState<any[]>([]); //updated at first render and question & option updates, incl draggableId
     const [quiz, setQuiz] = useState<Quiz>(); //only updated at first render & after submit
     const [updatedQuiz, setUpdatedQuiz] = useState<Quiz>(); // updated with every field change

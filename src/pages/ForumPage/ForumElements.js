@@ -8,6 +8,20 @@ import {
 import { fontSizes } from "../../values/FontSizes";
 import { colours } from "../../values/Colours";
 
+
+export const ForumBreadcrumbItems = [
+    {
+        name: "Forum",
+        subpath: "/forum",
+        fullpath: "/forum"
+    },
+    {
+        name: "Category",
+        subpath: "/category",
+        fullpath: "/forum/category"
+    }
+]
+
 export const ForumContainer = styled.div`
     padding: 2rem;
     font-family: "Roboto", sans-serif;
