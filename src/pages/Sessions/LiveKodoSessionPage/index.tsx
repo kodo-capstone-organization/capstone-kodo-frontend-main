@@ -5,16 +5,17 @@ import ParticipantsPanel from './components/ParticipantsPanel';
 import Stage from './components/Stage';
 import { LiveKodoSessionContainer, MainSessionWrapper, TopSessionBar } from './LiveKodoSessionPageElements';
 
+let conn = new WebSocket('ws://capstone-kodo-webrtc.herokuapp.com/socket');
+let peerConn: RTCPeerConnection;
+let dataChannel: RTCDataChannel;
+
 // URL: /session/<CREATE_OR_JOIN>/<SESSION_ID>
 // To consider: Adding ?pwd=<PASSWORD> as a query param
 function LiveKodoSessionPage(props: any) {
-
-    var peerConn: RTCPeerConnection;
-    var dataChannel: RTCDataChannel;
     
     const [initAction, setInitAction] = useState<string>(); // "create" or "join" only
     const [sessionId, setSessionId] = useState<string>();
-    const [wsConn, setWsConn] = useState<WebSocket>();
+    // const [wsConn, setWsConn] = useState<WebSocket>();
     // const [peerConn, setPeerConn] = useState<RTCPeerConnection>();
     // const [dataChannel, setDataChannel] = useState<RTCDataChannel>();
 
@@ -23,7 +24,7 @@ function LiveKodoSessionPage(props: any) {
         // Cleanup: Runs only during ComponentWillUnmount
         return () => {
             console.log("Closing websocket");
-            wsConn?.close();
+            conn.close();
             // TODO: Send API to backend to close the session if user is the last one in the call
         }
 
@@ -33,9 +34,6 @@ function LiveKodoSessionPage(props: any) {
         if (props.match.params.initAction.toLowerCase() === "create" || props.match.params.initAction.toLowerCase() === "join") {
             setInitAction(props.match.params.initAction.toLowerCase())
             setSessionId(props.match.params.sessionId)
-
-            // Setup ws connection to signalling server
-            const conn = new WebSocket('ws://capstone-kodo-webrtc.herokuapp.com/socket');
 
             conn.onmessage = function(msg) {
                 console.log("conn.onmessage: ", msg.data);
@@ -64,7 +62,7 @@ function LiveKodoSessionPage(props: any) {
                 initialize();
             };
 
-            setWsConn(conn);
+            // setWsConn(conn);
         } else {
             props.history.push('/invalidsession') // redirects to 404 (for now)
         }
@@ -178,7 +176,7 @@ function LiveKodoSessionPage(props: any) {
     const send = (receivedMessage: any) => {
         console.log("in sendMessage with receivedMessage: ")
         console.log(receivedMessage)
-        wsConn?.send(JSON.stringify(receivedMessage));
+        conn.send(JSON.stringify(receivedMessage));
     }
 
     // function sendMessage() {
