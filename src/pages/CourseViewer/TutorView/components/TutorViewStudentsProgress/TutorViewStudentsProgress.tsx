@@ -32,7 +32,7 @@ import {
   Column,
   getColumns,
   getRows,
-} from "./components/StudentProgressData"
+} from "./StudentProgressData"
 
 function LinearProgressWithLabel(props: LinearProgressProps & { value: number }) {
   return (
@@ -109,38 +109,38 @@ function TutorViewStudentsProgress(props: any) {
                 </TableHead>
                 <TableBody>
                   {
-                      rows
-                        .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                        .map((row) => {
-                          return (
-                            <TableRow hover role="checkbox" tabIndex={-1} key={row.name}>
-                              {columns.map((column) => {
-                                const value = row[column.id];
-                                return (
-                                  <TableCell key={column.id} align={column.align}>
-                                    { column.id !== "progress" && 
-                                      <>
-                                        { value }
-                                      </>
-                                    }
-                                    { column.label === "Progress" && typeof value === "number" &&
-                                      <LinearProgressWithLabel
-                                        value={value * 100}
-                                      />
-                                    }                                           
-                                  </TableCell>
-                                );
-                              })}
-                            </TableRow>
-                          );
-                        })
-                    }
+                    rows
+                      .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                      .map((row) => {
+                        return (
+                          <TableRow hover role="checkbox" tabIndex={-1} key={row.name}>
+                            {columns.map((column) => {
+                              const value = row[column.id];
+                              return (
+                                <TableCell key={column.id} align={column.align}>
+                                  { column.id !== "progress" && 
+                                    <>
+                                      { value }
+                                    </>
+                                  }
+                                  { column.label === "Progress" && typeof value === "number" &&
+                                    <LinearProgressWithLabel
+                                      value={value * 100}
+                                    />
+                                  }                                           
+                                </TableCell>
+                              );
+                            })}
+                          </TableRow>
+                        );
+                      })
+                  }
                 </TableBody>
                 <TableFooter>
                   <TableRow>
                     <TablePagination
                       rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
-                      colSpan={3}
+                      colSpan={columns.length}
                       count={enrolledStudentsAndCompletion?.length}
                       rowsPerPage={rowsPerPage}
                       page={page}

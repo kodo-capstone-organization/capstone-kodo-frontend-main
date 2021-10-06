@@ -279,4 +279,3 @@ export const LessonViewerContentElement = styled(CardContent)`
   padding: 2rem !important;
   padding: ${({ removePadTop }) => (removePadTop ? "0 2rem 2rem 2rem !important" : "2rem !important")};
 `;
-

@@ -20,6 +20,7 @@ import { Account } from "../../../apis/Entities/Account";
 function Sidebar(props: any) {
 
   const [course, setCourse] = useState<Course>();
+  const [lessons, setLessons] = useState<Lesson[]>();
   const [account, setAccount] = useState<Account>();
 
   const [enrolledCourse, setEnrolledCourse] = useState<EnrolledCourse>();
@@ -27,6 +28,7 @@ function Sidebar(props: any) {
 
   useEffect(() => {
     setCourse(props.course);
+    setLessons(props.course.lessons);
     setAccount(props.account);
     getEnrolledCourseByStudentIdAndCourseId(props.account.accountId, props.course.courseId)
     .then((enrolledCourse: EnrolledCourse) => {
@@ -71,6 +73,16 @@ function Sidebar(props: any) {
                 );
               })
             }
+
+            { (props.isTutorView && lessons) && 
+              lessons.map(lesson => {
+                return (
+                  <LessonLink key={lesson.lessonId}>
+                    <SidebarLink to={`/overview/lessonstatistics/${course.courseId}/${lesson.lessonId}`}>Week {lesson.sequence}</SidebarLink>
+                  </LessonLink>
+                );
+              })
+            }   
               
             {/* Discussion Forum Link */}
             <SidebarLink>

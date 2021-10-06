@@ -26,7 +26,7 @@ function TutorViewHeader(props: any) {
     const [courseRating, setCourseRating] = useState<number>(0);
 
     useEffect(() => {
-        getCourseRatingByCourseId(course.courseId).then((res) => {
+        getCourseRatingByCourseId(course.courseId).then((res: number) => {
             setCourseRating(res);
         })
         .catch((err) => {
@@ -44,7 +44,7 @@ function TutorViewHeader(props: any) {
                         <TutorViewRow>
                             <Rating value={courseRating} precision={0.1} readOnly /> 
                             <TutorCourseRatingBox>
-                                {courseRating}
+                                { courseRating.toFixed(2) }
                             </TutorCourseRatingBox>
                         </TutorViewRow>
                     </TutorViewColumn>
