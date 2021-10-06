@@ -5,7 +5,7 @@ import ParticipantsPanel from './components/ParticipantsPanel';
 import Stage from './components/Stage';
 import { LiveKodoSessionContainer, MainSessionWrapper, TopSessionBar } from './LiveKodoSessionPageElements';
 
-let conn = new WebSocket('ws://capstone-kodo-webrtc.herokuapp.com/socket');
+let conn: WebSocket;
 let peerConn: RTCPeerConnection;
 let dataChannel: RTCDataChannel;
 
@@ -17,7 +17,6 @@ function LiveKodoSessionPage(props: any) {
     const [sessionId, setSessionId] = useState<string>();
 
     useEffect(() => {
-
         // Cleanup: Runs only during ComponentWillUnmount
         return () => {
             console.log("Closing websocket");
@@ -31,11 +30,13 @@ function LiveKodoSessionPage(props: any) {
         if (props.match.params.initAction.toLowerCase() === "create" || props.match.params.initAction.toLowerCase() === "join") {
             setInitAction(props.match.params.initAction.toLowerCase())
             setSessionId(props.match.params.sessionId)
+            conn = new WebSocket(`ws://capstone-kodo-webrtc.herokuapp.com/socket/${props.match.params.sessionId}`);
 
             conn.onmessage = function(msg) {
-                console.log("conn.onmessage: ", msg.data);
                 const content = JSON.parse(msg.data);
                 const data = content.data;
+                console.log("conn.onmessage: ", content.event);
+
                 switch (content.event) {
                     // when somebody wants to call us
                     case "offer":
@@ -58,6 +59,7 @@ function LiveKodoSessionPage(props: any) {
                 console.log("Connected to the signaling server");
                 initialize();
             };
+
         } else {
             props.history.push('/invalidsession') // redirects to 404 (for now)
         }
@@ -68,7 +70,23 @@ function LiveKodoSessionPage(props: any) {
         const configuration = undefined; // TODO: set to null for now
         peerConn =  new RTCPeerConnection(configuration);
 
+        // Add this client's media stream to peer conn
+        const mediaConstraints = { audio : true };
+        navigator.mediaDevices.getUserMedia(mediaConstraints).then((localStream) => {
+            for (const track of localStream.getTracks()) {
+                peerConn.addTrack(track,  localStream);
+            }
+        })
+
         // Setup peer conn listeners
+        peerConn.ontrack = function(event) {
+            console.log("AUDIO / VIDEO STREAM RECEIVED:", event);
+            const remoteStream = new MediaStream();
+            peerConn.addTrack(event.track, remoteStream)
+            console.log("ADDED STREAM TO PEERCONN:", peerConn)
+            // TODO: enable some sort of state in the html
+        };
+
         peerConn.onicecandidate = function(event) {
             if (event.candidate) {
                 console.log("peer.onicecandidate");
@@ -93,19 +111,10 @@ function LiveKodoSessionPage(props: any) {
             console.log("datachannel onmessage:", event.data);
         };
 
-        // Set
+        // Peer conn ondatachannel listener
         peerConn.ondatachannel = function (event) {
             dataChannel = event.channel;
         };
-
-        // Receiving a track / stream
-        peerConn.ontrack = function(event) {
-            console.log("AUDIO / VIDEO STREAM RECEIVED:", event);
-            // TODO: enable some sort of state in the html
-        };
-
-        // setPeerConn(peerConn);
-        // setDataChannel(dataChannel);
     }
 
     // If "create", initialise a new active session
@@ -140,17 +149,9 @@ function LiveKodoSessionPage(props: any) {
         try {
             await peerConn?.setRemoteDescription(new RTCSessionDescription(offer));
 
-            // Add this client's media stream to remote peer
-            const mediaConstraints = { audio : true };
-            const mediaStream = await navigator.mediaDevices.getUserMedia(mediaConstraints)
-            for (const track of mediaStream.getTracks()) {
-                console.log(track)
-                peerConn.addTrack(track,  mediaStream);
-            }
-
             // Create answer to offer
             const answer = await peerConn?.createAnswer(answerOptions);
-            console.log(answer); // for some reason this returns answer=undefined
+            console.log(answer);
 
             await peerConn?.setLocalDescription(answer);
             send({ event : "answer", data : answer });
@@ -161,26 +162,19 @@ function LiveKodoSessionPage(props: any) {
     };
 
     function handleCandidate(candidate: any) {
-        console.log("in handleCandidate -> add Ice Candidate to peer conn: ", peerConn)
+        console.log("in handleCandidate -> add Ice Candidate to peer conn");
         peerConn?.addIceCandidate(new RTCIceCandidate(candidate));
     };
 
     async function handleAnswer(answer: any) {
         console.log("in handleAnswer -> connection established successfully!!");
         await peerConn?.setRemoteDescription(new RTCSessionDescription(answer));
-
-        // After this client has received an answer, add his media input as well
-        const mediaConstraints = { audio : true };
-        const mediaStream = await navigator.mediaDevices.getUserMedia(mediaConstraints)
-        for (const track of mediaStream.getTracks()) {
-            console.log(track)
-            peerConn.addTrack(track,  mediaStream);
-        }
     };
 
     // Sending a message to websocket server
     const send = (receivedMessage: any) => {
-        console.log("in sendMessage with receivedMessage: ")
+        console.log("in sendMessage");
+        // receivedMessage['sessionId'] = sessionId; // Append sessionId to message
         console.log(receivedMessage)
         conn.send(JSON.stringify(receivedMessage));
     }
@@ -194,7 +188,7 @@ function LiveKodoSessionPage(props: any) {
         <LiveKodoSessionContainer>
             <TopSessionBar><strong>Session_Name ({sessionId}) · Time_Elapsed</strong></TopSessionBar>
             <Button onClick={createOffer}>Create Offer</Button>
-            <Button onClick={() => send("helloworld")}>SEND</Button>
+            <Button onClick={() => send({event: null, data: "helloWord"})}>SEND</Button>
             <MainSessionWrapper>
                 <ParticipantsPanel />
                 <Stage />
