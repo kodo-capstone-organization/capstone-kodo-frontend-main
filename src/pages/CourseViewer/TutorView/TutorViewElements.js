@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { colours } from "../../../values/Colours";
 import { fontSizes } from "../../../values/FontSizes";
 import { Card, CardContent, CardHeader } from "@material-ui/core";
+import Box from "@material-ui/core/Box";
 
 
 export const TutorContainer = styled.div`
@@ -100,4 +101,9 @@ export const TutorViewRow = styled.div`
 export const TutorViewColumn = styled.div`
   display: flex;
   flex-direction: column;
+`;
+
+export const TutorCourseRatingBox = styled(Box)`
+  padding: 5px 0px 0px 5px;
+  color: ${colours.GRAY4};
 `;

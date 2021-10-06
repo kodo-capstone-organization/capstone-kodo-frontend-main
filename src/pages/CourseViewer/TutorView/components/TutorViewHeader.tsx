@@ -1,14 +1,20 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
 import { Course } from "../../../../apis/Entities/Course";
 
+import Rating from '@material-ui/lab/Rating';
+
+import { getCourseRatingByCourseId } from "../../../../apis/Course/CourseApis";
+
 import {
+    CourseTitle,
+    TutorCourseRatingBox,
+    TutorTitle,
     TutorViewCard,
     TutorViewCardContent,
-    CourseTitle,
-    TutorTitle,
+    TutorViewColumn,
     TutorViewRow,
-    TutorViewColumn
-  } from "../TutorViewElements";
+} from "../TutorViewElements";
 
 import { Button } from "../../../../values/ButtonElements";
 
@@ -17,6 +23,17 @@ function TutorViewHeader(props: any) {
 
     const course: Course = props.course;
 
+    const [courseRating, setCourseRating] = useState<number>(0);
+
+    useEffect(() => {
+        getCourseRatingByCourseId(course.courseId).then((res) => {
+            setCourseRating(res);
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+    }, [course]);
+
     return (
         <>             
             <TutorViewCard>
@@ -24,6 +41,12 @@ function TutorViewHeader(props: any) {
                     <TutorViewColumn>
                         <CourseTitle>{course?.name}</CourseTitle>
                         <TutorTitle>by {course?.tutor.name}</TutorTitle>
+                        <TutorViewRow>
+                            <Rating value={courseRating} precision={0.1} readOnly /> 
+                            <TutorCourseRatingBox>
+                                {courseRating}
+                            </TutorCourseRatingBox>
+                        </TutorViewRow>
                     </TutorViewColumn>
                     <TutorViewColumn>
                         <Button primary to={`/builder/${course?.courseId}`}>
