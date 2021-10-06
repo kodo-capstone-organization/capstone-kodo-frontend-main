@@ -1,6 +1,6 @@
 import { Course } from "./Course";
-import {Lesson} from "./Lesson";
-import {EnrolledLesson} from "./EnrolledLesson";
+import { RawAccount } from "./Account";
+import { EnrolledLesson } from "./EnrolledLesson";
 
 
 export interface EnrolledCourse {
@@ -12,8 +12,15 @@ export interface EnrolledCourse {
 }
 
 export interface EnrolledCourseWithStudentResp {
-    studentId: number,
+    accountId: number;
+    username: string;
+    name: string;
+    bio: string;
+    email: string;
+    displayPictureUrl: string;
+    isAdmin: boolean;
+    isActive: boolean;
+    stripeAccountId: string;
     enrolledCourseId: number,
-    studentName: string,
     completionPercentage: number
 }

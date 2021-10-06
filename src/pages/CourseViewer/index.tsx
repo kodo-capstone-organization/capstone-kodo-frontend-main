@@ -5,9 +5,6 @@ import { Account } from "../../apis/Entities/Account";
 import { EnrolledCourse } from "../../apis/Entities/EnrolledCourse";
 import { getMyAccount } from "../../apis/Account/AccountApis";
 import { getCourseWithoutEnrollmentByCourseId } from "../../apis/Course/CourseApis";
-import {
-  getEnrolledCourseByStudentIdAndCourseId,
-} from "../../apis/EnrolledCourse/EnrolledCourseApis";
 import Sidebar from "./Sidebar/Sidebar";
 import TutorView from "./TutorView/TutorView";
 import StudentView from "./StudentView/StudentView";
@@ -21,7 +18,6 @@ function CourseOverview(props: any) {
   const courseId = props.match.params.courseId;
   const [currentUser, setUser] = useState<Account>();
   const [currentCourse, setCourse] = useState<Course>();
-  const [enrolledCourse, setEnrolledCourse] = useState<EnrolledCourse>();
   const [loading, setLoading] = useState<Boolean>(true);
 
   const accountId = JSON.parse(
@@ -37,11 +33,8 @@ function CourseOverview(props: any) {
     getCourseWithoutEnrollmentByCourseId(courseId).then(receivedCourse => {
       setCourse(receivedCourse);
     });
-    getEnrolledCourseByStudentIdAndCourseId(accountId, courseId).then(receivedEC => {
-      setEnrolledCourse(receivedEC)
-    })
     setLoading(false);
-  }, []);
+  }, [accountId, courseId]);
 
   //if current logged in user is enrolled in this course, returns true
   function courseIsEnrolled(): boolean {
@@ -85,10 +78,10 @@ function CourseOverview(props: any) {
       <LayoutContainer>
         { (courseIsEnrolled() || isCourseTutor()) &&
             <>
-              <Sidebar course={currentCourse} isTutorView={isCourseTutor()}/>
+              <Sidebar course={currentCourse} account={currentUser} isTutorView={isCourseTutor()}/>
               <LayoutContentPage showSideBar style={{ paddingRight: "10rem"}}>
                 { isCourseTutor() && <TutorView course={currentCourse}/>  }
-                { courseIsEnrolled() && <StudentView course={currentCourse} account={currentUser} enrolledCourse={enrolledCourse}/> }
+                { courseIsEnrolled() && <StudentView course={currentCourse} account={currentUser} /> }
               </LayoutContentPage>
             </>
         }

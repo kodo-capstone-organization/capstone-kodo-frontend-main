@@ -3,6 +3,8 @@ import { colours } from "../../../values/Colours";
 import { fontSizes } from "../../../values/FontSizes";
 import { Link } from "react-router-dom";
 
+import ForumIcon from '@material-ui/icons/Forum';
+import HomeIcon from '@material-ui/icons/Home';
 
 export const SidebarWrapper = styled.div`
   min-width: 240px;
@@ -74,4 +76,10 @@ export const LessonLink = styled(Link)`
   }
 `;
 
+export const Home = styled(HomeIcon)`
+  padding-right: 8px;
+`;
 
+export const Forum = styled(ForumIcon)`
+  padding-right: 8px;
+`;
