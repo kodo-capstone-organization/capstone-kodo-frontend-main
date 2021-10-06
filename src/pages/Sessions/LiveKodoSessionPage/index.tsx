@@ -15,9 +15,6 @@ function LiveKodoSessionPage(props: any) {
     
     const [initAction, setInitAction] = useState<string>(); // "create" or "join" only
     const [sessionId, setSessionId] = useState<string>();
-    // const [wsConn, setWsConn] = useState<WebSocket>();
-    // const [peerConn, setPeerConn] = useState<RTCPeerConnection>();
-    // const [dataChannel, setDataChannel] = useState<RTCDataChannel>();
 
     useEffect(() => {
 
@@ -61,8 +58,6 @@ function LiveKodoSessionPage(props: any) {
                 console.log("Connected to the signaling server");
                 initialize();
             };
-
-            // setWsConn(conn);
         } else {
             props.history.push('/invalidsession') // redirects to 404 (for now)
         }
@@ -72,6 +67,8 @@ function LiveKodoSessionPage(props: any) {
         // Setup peer conn
         const configuration = undefined; // TODO: set to null for now
         peerConn =  new RTCPeerConnection(configuration);
+
+        // Setup peer conn listeners
         peerConn.onicecandidate = function(event) {
             if (event.candidate) {
                 console.log("peer.onicecandidate");
@@ -106,15 +103,6 @@ function LiveKodoSessionPage(props: any) {
             console.log("AUDIO / VIDEO STREAM RECEIVED:", event);
             // TODO: enable some sort of state in the html
         };
-
-        const constraints = { audio : true };
-        navigator.mediaDevices.getUserMedia(constraints)
-            .then(function(stream) {
-                stream.getTracks().forEach(function(track) {
-                    peerConn.addTrack(track, stream);
-                });
-            })
-            .catch(function(err) { /* handle the error */ });
 
         // setPeerConn(peerConn);
         // setDataChannel(dataChannel);
@@ -151,6 +139,16 @@ function LiveKodoSessionPage(props: any) {
 
         try {
             await peerConn?.setRemoteDescription(new RTCSessionDescription(offer));
+
+            // Add this client's media stream to remote peer
+            const mediaConstraints = { audio : true };
+            const mediaStream = await navigator.mediaDevices.getUserMedia(mediaConstraints)
+            for (const track of mediaStream.getTracks()) {
+                console.log(track)
+                peerConn.addTrack(track,  mediaStream);
+            }
+
+            // Create answer to offer
             const answer = await peerConn?.createAnswer(answerOptions);
             console.log(answer); // for some reason this returns answer=undefined
 
@@ -167,9 +165,17 @@ function LiveKodoSessionPage(props: any) {
         peerConn?.addIceCandidate(new RTCIceCandidate(candidate));
     };
 
-    function handleAnswer(answer: any) {
+    async function handleAnswer(answer: any) {
         console.log("in handleAnswer -> connection established successfully!!");
-        peerConn?.setRemoteDescription(new RTCSessionDescription(answer));
+        await peerConn?.setRemoteDescription(new RTCSessionDescription(answer));
+
+        // After this client has received an answer, add his media input as well
+        const mediaConstraints = { audio : true };
+        const mediaStream = await navigator.mediaDevices.getUserMedia(mediaConstraints)
+        for (const track of mediaStream.getTracks()) {
+            console.log(track)
+            peerConn.addTrack(track,  mediaStream);
+        }
     };
 
     // Sending a message to websocket server
