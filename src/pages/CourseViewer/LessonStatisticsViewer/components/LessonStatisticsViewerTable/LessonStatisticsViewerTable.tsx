@@ -62,7 +62,7 @@ function LessonStatisticsViewerTable(props: any) {
     const showBreakdown = () => {
         return (
             <>
-            { (!loading && enrolledLessons && rows && columns) &&                    
+            { (!loading && enrolledLessons && rows && columns && enrolledLessons.length > 0) &&                    
                 <TableContainer style={{ maxHeight: "30em" }}>
                 <Table stickyHeader>
                     <TableHead>
