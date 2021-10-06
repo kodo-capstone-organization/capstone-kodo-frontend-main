@@ -105,14 +105,13 @@ function LiveKodoSessionPage(props: any) {
             console.log("Data channel is closed");
         };
 
-        // when we receive a message from the other peer, printing it on the console
-        dataChannel.onmessage = function(event) {
-            console.log("datachannel onmessage:", event.data);
-        };
-
         // Peer conn ondatachannel listener
         peerConn.ondatachannel = function (event) {
             dataChannel = event.channel;
+            // when we receive a message from the other peer
+            dataChannel.onmessage = function(event) {
+                console.log("datachannel onmessage:", event.data);
+            };
         };
 
         if (initAction === "join") {
