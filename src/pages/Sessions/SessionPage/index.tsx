@@ -14,6 +14,7 @@ function SessionPage(props: any) {
 
     const handleSessionIDChange = (event: any) => {
         setShowJoinButton(true);
+        // TODO: Link Handling
         setInputSessionID(event?.target?.value);
     }
 
@@ -38,15 +39,15 @@ function SessionPage(props: any) {
                 <SessionPageCreateOrJoinContainer>
                     <SessionPageTypography variant="h6">Create or Join a Kodo Session</SessionPageTypography>
                     <Grid container spacing={3} alignItems="stretch">
-                        <Grid item xs={2}>
+                        <Grid item xs={8} md={8} lg={3}>
                             <Button onClick={handleOpenCreateDialog} primary fontBig big style={{ height: "1.75rem", fontSize: "16px"}}>
                                 <PermPhoneMsgIcon/> &nbsp;&nbsp; New Session
                             </Button>
                         </Grid>
-                        <Grid item xs={4}>
+                        <Grid item xs={8} md={8} lg={5}>
                             <TextField
                                 id="session-id-input"
-                                label="Enter Session ID"
+                                label="Enter Session ID or Join Link"
                                 variant="outlined"
                                 fullWidth
                                 size="medium"
@@ -57,7 +58,7 @@ function SessionPage(props: any) {
                             />
                         </Grid>
                         { showJoinButton &&
-                            <Grid item xs={2} style={{ alignSelf: "center" }}>
+                            <Grid item xs={4} md={4} lg={2} style={{ alignSelf: "center" }}>
                                 <MUIButton color="primary" disabled={inputSessionID === ""} style={{ fontSize: "18px", textTransform: "none"}}>
                                     Join
                                 </MUIButton>

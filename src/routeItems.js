@@ -4,6 +4,7 @@ import ProgressPage from "./pages/ProgressPage";
 import MyProfilePage from "./pages/MyProfilePage";
 import CourseOverview from "./pages/CourseViewer";
 import SessionPage from "./pages/Sessions/SessionPage";
+import LiveKodoSessionPage from "./pages/Sessions/LiveKodoSessionPage";
 
 export const RouteItemsWithSidebar = [
     {
@@ -48,5 +49,10 @@ export const RouteItemsWithoutSidePadding = [
         path: "/overview/:courseId",
         isDynamic: true,
         component: CourseOverview
+    },
+    {
+        path: "/session/:initAction/:sessionId",
+        isDynamic: true,
+        component: LiveKodoSessionPage
     }
 ]

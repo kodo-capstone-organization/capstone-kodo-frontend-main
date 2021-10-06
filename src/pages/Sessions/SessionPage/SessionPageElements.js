@@ -10,7 +10,7 @@ export const SessionPageContainer = styled.div`
     > * {
         margin: 0 0 3rem 0;
     }
-`; // add bottom margin of 2rem to all direct children of SessionPageContainer
+`; // add bottom margin of 3rem to all direct children of SessionPageContainer
 
 export const SessionPageCreateOrJoinContainer = styled.div`
 `;

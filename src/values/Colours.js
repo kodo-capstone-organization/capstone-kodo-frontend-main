@@ -19,7 +19,8 @@ export const colours = {
     BLUE1: "#3B60E4",
     BLUE2: "#748DE7",
     RED: "#EC3B3B",
-    GREEN: "#628D40"
+    GREEN: "#628D40",
+    BLACK: "#000000"
 }
 
 // For charts
