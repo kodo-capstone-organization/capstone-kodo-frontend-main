@@ -21,6 +21,7 @@ function LiveKodoSessionPage(props: any) {
         return () => {
             console.log("Closing websocket");
             wsConn?.close();
+            // TODO: Send API to backend to close the session if user is the last one in the call
         }
 
     }, [])
@@ -33,15 +34,10 @@ function LiveKodoSessionPage(props: any) {
             // Setup ws connection to signalling server
             const conn = new WebSocket('ws://capstone-kodo-webrtc.herokuapp.com/socket');
 
-            conn.onopen = function() {
-                console.log("Connected to the signaling server");
-                initialize();
-            };
-
             conn.onmessage = function(msg) {
-                console.log("Got message", msg.data);
-                let content = JSON.parse(msg.data);
-                let data = content.data;
+                console.log("conn.onmessage: ", msg.data);
+                const content = JSON.parse(msg.data);
+                const data = content.data;
                 switch (content.event) {
                     // when somebody wants to call us
                     case "offer":
@@ -55,8 +51,14 @@ function LiveKodoSessionPage(props: any) {
                         handleCandidate(data);
                         break;
                     default:
+                        console.log("in default switch case")
                         break;
                 }
+            };
+
+            conn.onopen = function() {
+                console.log("Connected to the signaling server");
+                initialize();
             };
 
             setWsConn(conn);
@@ -71,7 +73,8 @@ function LiveKodoSessionPage(props: any) {
         const peerConn =  new RTCPeerConnection(configuration);
         peerConn.onicecandidate = function(event) {
             if (event.candidate) {
-                sendMessage({ event : "candidate", data : event.candidate });
+                console.log("peer.onicecandidate");
+                send({ event : "candidate", data : event.candidate });
             }
         };
 
@@ -89,7 +92,7 @@ function LiveKodoSessionPage(props: any) {
 
         // when we receive a message from the other peer, printing it on the console
         dataChannel.onmessage = function(event) {
-            console.log("message:", event.data);
+            console.log("datachannel onmessage:", event.data);
         };
 
         // Set
@@ -120,49 +123,71 @@ function LiveKodoSessionPage(props: any) {
 
     // If "join", it is a peer joining into an active session
 
-    function createOffer() {
-        peerConn?.createOffer(function(offer: any) {
-            sendMessage({ event : "offer", data : offer });
-            peerConn.setLocalDescription(offer);
-        }, // @ts-ignore
-        function(error) {
-            alert("Error creating an offer");
-        });
+    async function createOffer() {
+
+        const offerOptions: RTCOfferOptions = {
+            offerToReceiveAudio: true,
+            offerToReceiveVideo: false
+        };
+
+        try {
+            const offer = await peerConn?.createOffer(offerOptions);
+            console.log("in createOffer with offer: ")
+            console.log(offer);
+            await peerConn?.setLocalDescription(offer);
+            send({ event: 'offer', data: offer });
+        } catch (e) {
+            console.log("failed to create an offer: ", e);
+        }
     }
 
-    function handleOffer(offer: any) {
-        peerConn?.setRemoteDescription(new RTCSessionDescription(offer));
+    async function handleOffer(offer: any) {
+        console.log("in handleOffer")
 
-        // create and send an answer to an offer
-        peerConn?.createAnswer(function(answer: any) {
-            peerConn?.setLocalDescription(answer);
-            sendMessage({ event : "answer", data : answer });
-        }, // @ts-ignore
-        function(error) {
-            alert("Error creating an answer");
-        });
+        const answerOptions: RTCAnswerOptions = {
+            voiceActivityDetection: true
+        };
+
+        try {
+            await peerConn?.setRemoteDescription(new RTCSessionDescription(offer));
+            const answer = await peerConn?.createAnswer(answerOptions);
+            console.log(answer); // for some reason this returns answer=undefined
+
+            await peerConn?.setLocalDescription(answer);
+            send({ event : "answer", data : answer });
+        } catch (e) {
+            console.log("failed to create an answer: ", e)
+        }
+
     };
 
     function handleCandidate(candidate: any) {
+        console.log("in handleCandidate -> add Ice Candidate to peer conn: ", peerConn)
         peerConn?.addIceCandidate(new RTCIceCandidate(candidate));
     };
 
     function handleAnswer(answer: any) {
+        console.log("in handleAnswer -> connection established successfully!!");
         peerConn?.setRemoteDescription(new RTCSessionDescription(answer));
-        console.log("connection established successfully!!");
     };
 
-    // Sending a message
-    const sendMessage = (receivedMessage: any) => {
-        const message = "HELLO WORLD"
-        wsConn?.send(JSON.stringify(message));
+    // Sending a message to websocket server
+    const send = (receivedMessage: any) => {
+        console.log("in sendMessage with receivedMessage: ")
+        console.log(receivedMessage)
+        wsConn?.send(JSON.stringify(receivedMessage));
     }
+
+    // function sendMessage() {
+    //     dataChannel?.send(input.value);
+    //     input.value = "";
+    // }
 
     return (
         <LiveKodoSessionContainer>
             <TopSessionBar><strong>Session_Name ({sessionId}) · Time_Elapsed</strong></TopSessionBar>
             <Button onClick={createOffer}>Create Offer</Button>
-            <Button onClick={sendMessage}>SEND</Button>
+            <Button onClick={() => send("helloworld")}>SEND</Button>
             <MainSessionWrapper>
                 <ParticipantsPanel />
                 <Stage />
