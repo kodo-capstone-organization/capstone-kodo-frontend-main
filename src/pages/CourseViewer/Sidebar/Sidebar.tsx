@@ -45,7 +45,7 @@ function Sidebar(props: any) {
 
   return (
     <>
-      { (course && enrolledCourse && enrolledLessons) &&
+      { course &&
         <SidebarWrapper>
           <CourseBanner
               alt={course.name}
@@ -62,13 +62,15 @@ function Sidebar(props: any) {
             </SidebarLink>
               
             {/* Weekly Lesson Links */}
-            { !props.isTutorView && enrolledLessons?.map(enrolledLesson => {
-              return (
-                <LessonLink key={enrolledLesson.enrolledLessonId}>
-                  <SidebarLink to={`/overview/lesson/${enrolledCourse.enrolledCourseId}/${enrolledLesson.enrolledLessonId}`}>Week {enrolledLesson.parentLesson.sequence}</SidebarLink>
-                </LessonLink>
-              );
-            })}
+            { (!props.isTutorView && enrolledCourse && enrolledLessons) && 
+              enrolledLessons.map(enrolledLesson => {
+                return (
+                  <LessonLink key={enrolledLesson.enrolledLessonId}>
+                    <SidebarLink to={`/overview/lesson/${enrolledCourse.enrolledCourseId}/${enrolledLesson.enrolledLessonId}`}>Week {enrolledLesson.parentLesson.sequence}</SidebarLink>
+                  </LessonLink>
+                );
+              })
+            }
               
             {/* Discussion Forum Link */}
             <SidebarLink>

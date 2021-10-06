@@ -8,7 +8,6 @@ import TutorViewHeader from "./components/TutorViewHeader";
 import TutorViewStudentsProgress from "./components/TutorViewStudentsProgress/TutorViewStudentsProgress";
 
 
-
 function TutorView(props: any) {
   
   const course: Course = props.course;
