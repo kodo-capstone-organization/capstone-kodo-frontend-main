@@ -17,7 +17,8 @@ import { getEnrolledLessonByEnrolledLessonId } from "../../../apis/EnrolledLesso
 
 import { 
   ExitWrapper, 
-  LessonViewerContainerElement
+  LessonViewerContainerElement,
+  LessonViewerInnerContainerElement
 } from "./LessonViewerElements";
 
 import LessonViewerFooter from "./components/LessonViewerFooter";
@@ -111,29 +112,31 @@ function LessonViewer(props: any) {
     <>
       { (!loading) &&     
         <LessonViewerContainerElement>
-          <ExitWrapper to={`/overview/${enrolledCourse?.parentCourse.courseId}`}>
-            <CancelOutlinedIcon fontSize="large" style={{ color: colours.BLUE2, padding: 20 }} />
-          </ExitWrapper>
-          <LessonViewerHeader 
-            enrolledCourse={enrolledCourse} 
-            enrolledLesson={enrolledLesson} 
-          />
-          <LessonViewerMultimedia 
-            enrolledCourse={enrolledCourse} 
-            enrolledLesson={enrolledLesson} 
-            enrolledContents={enrolledContents} 
-            previousLessonCompleted={previousLessonCompleted}
-          />
-          <LessonViewerQuiz 
-            enrolledCourse={enrolledCourse} 
-            enrolledLesson={enrolledLesson} 
-            enrolledContents={enrolledContents} 
-            previousLessonCompleted={previousLessonCompleted}
-          />
-          <LessonViewerFooter 
-            enrolledCourse={enrolledCourse} 
-            enrolledLesson={enrolledLesson} 
-          />
+          <LessonViewerInnerContainerElement>
+            <ExitWrapper to={`/overview/${enrolledCourse?.parentCourse.courseId}`}>
+              <CancelOutlinedIcon fontSize="large" style={{ color: colours.BLUE2, padding: 20 }} />
+            </ExitWrapper>
+            <LessonViewerHeader 
+              enrolledCourse={enrolledCourse} 
+              enrolledLesson={enrolledLesson} 
+            />
+            <LessonViewerMultimedia 
+              enrolledCourse={enrolledCourse} 
+              enrolledLesson={enrolledLesson} 
+              enrolledContents={enrolledContents} 
+              previousLessonCompleted={previousLessonCompleted}
+            />
+            <LessonViewerQuiz 
+              enrolledCourse={enrolledCourse} 
+              enrolledLesson={enrolledLesson} 
+              enrolledContents={enrolledContents} 
+              previousLessonCompleted={previousLessonCompleted}
+            />
+            <LessonViewerFooter 
+              enrolledCourse={enrolledCourse} 
+              enrolledLesson={enrolledLesson} 
+            />
+          </LessonViewerInnerContainerElement>
         </LessonViewerContainerElement>            
       }
     </>
