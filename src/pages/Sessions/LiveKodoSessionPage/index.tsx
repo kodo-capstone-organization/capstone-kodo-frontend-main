@@ -8,12 +8,15 @@ import { LiveKodoSessionContainer, MainSessionWrapper, TopSessionBar } from './L
 // URL: /session/<CREATE_OR_JOIN>/<SESSION_ID>
 // To consider: Adding ?pwd=<PASSWORD> as a query param
 function LiveKodoSessionPage(props: any) {
+
+    var peerConn: RTCPeerConnection;
+    var dataChannel: RTCDataChannel;
     
     const [initAction, setInitAction] = useState<string>(); // "create" or "join" only
     const [sessionId, setSessionId] = useState<string>();
     const [wsConn, setWsConn] = useState<WebSocket>();
-    const [peerConn, setPeerConn] = useState<RTCPeerConnection>();
-    const [dataChannel, setDataChannel] = useState<RTCDataChannel>();
+    // const [peerConn, setPeerConn] = useState<RTCPeerConnection>();
+    // const [dataChannel, setDataChannel] = useState<RTCDataChannel>();
 
     useEffect(() => {
 
@@ -70,7 +73,7 @@ function LiveKodoSessionPage(props: any) {
     const initialize = () => {
         // Setup peer conn
         const configuration = undefined; // TODO: set to null for now
-        const peerConn =  new RTCPeerConnection(configuration);
+        peerConn =  new RTCPeerConnection(configuration);
         peerConn.onicecandidate = function(event) {
             if (event.candidate) {
                 console.log("peer.onicecandidate");
@@ -80,7 +83,7 @@ function LiveKodoSessionPage(props: any) {
 
         // Setup data channel & listeners
         // @ts-ignore
-        let dataChannel = peerConn.createDataChannel("dataChannel", { reliable: true });
+        dataChannel = peerConn.createDataChannel("dataChannel", { reliable: true });
 
         dataChannel.onerror = function(error) {
             console.log("Error:", error);
@@ -115,8 +118,8 @@ function LiveKodoSessionPage(props: any) {
             })
             .catch(function(err) { /* handle the error */ });
 
-        setPeerConn(peerConn);
-        setDataChannel(dataChannel);
+        // setPeerConn(peerConn);
+        // setDataChannel(dataChannel);
     }
 
     // If "create", initialise a new active session
