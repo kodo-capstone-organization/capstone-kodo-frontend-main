@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { colours } from "../../../values/Colours";
 import { fontSizes } from "../../../values/FontSizes";
-
+import { Card, CardContent, CardHeader } from "@material-ui/core";
 
 
 export const TutorContainer = styled.div`
@@ -36,19 +36,9 @@ export const TutorTitle = styled.div`
   color: ${colours.GRAY4};
 `;
 
-export const StudentProgressCard = styled.div`
-  height: 294px;
-  width: auto;
-  padding: 20px;
-  border: 1px solid ${colours.GRAY6};
+export const StudentProgressScroll = styled.div`
   overflow-x: hidden;
-
-`;
-
-export const CardTitle = styled.div`
-  font-size: ${fontSizes.SUBTEXT};
-  color: ${colours.GRAY1};
-  font-weight: bold !important;
+  height: 20em;
 `;
 
 export const StudentProgressWrapper = styled.div`
@@ -56,13 +46,48 @@ export const StudentProgressWrapper = styled.div`
   flex-wrap: wrap;
   > * {
     flex: 0 0 50%;
-  }
-
+  }    
+  margin: 1.75em;
 `
 
 export const ProgressBarWrapper = styled.div``
 
+/////////////
 
+export const TutorViewCard = styled(Card)`
+  width: 100%;
+`;
 
+export const TutorViewCardHeader = styled(CardHeader)`
+  display: flex;
+  flex-direction: row;
+  background-color: ${colours.GRAYHALF6};
+  color: ${colours.GRAY3};
+  height: 1.5rem;
 
+  > .MuiCardHeader-content > span {
+      font-size: ${fontSizes.CONTENT};
+      font-weight: bold;
+  }
 
+  > .MuiCardHeader-action {
+      margin: initial;
+      align-self: center;
+      color: ${colours.GRAY2};
+      
+      >.MuiIconButton-root >.MuiIconButton-label {
+        font-size: ${fontSizes.SUBTEXT} !important;
+      }
+  }
+`;
+
+export const TutorViewCardContent = styled(CardContent)`
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    background-color: ${colours.WHITE};
+    color: ${colours.GRAY2};
+    align-items: center;
+    padding: 2rem !important;
+    padding: ${({ removePadTop }) => (removePadTop ? "0 2rem 2rem 2rem !important" : "2rem !important")};
+`;

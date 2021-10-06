@@ -7,7 +7,9 @@ import {
   SidebarMenu,
   CourseBanner,
   SidebarLink,
-  LessonLink
+  LessonLink,
+  Home,
+  Forum
 } from "./SidebarElements";
 
 function Sidebar(props: any) {
@@ -33,7 +35,12 @@ function Sidebar(props: any) {
         />
         <SidebarMenu>
           {/* TODO: Conditional Active state of links */}
-          <SidebarLink className={"active"} to={`/overview/${currentCourse.courseId}`}>Overview</SidebarLink>
+          <SidebarLink 
+            className={"active"} 
+            to={`/overview/${currentCourse.courseId}`}
+          >
+            <Home/> Overview
+          </SidebarLink>
             
           {/* Weekly Lesson Links */}
           { !props.isTutorView && courseLessons?.map(lesson => {
@@ -45,7 +52,9 @@ function Sidebar(props: any) {
           })}
             
           {/* Discussion Forum Link */}
-          <SidebarLink>Discussion Forum</SidebarLink>
+          <SidebarLink>
+            <Forum/> Discussion Forum
+          </SidebarLink>
         </SidebarMenu>
       </SidebarWrapper>
   );
