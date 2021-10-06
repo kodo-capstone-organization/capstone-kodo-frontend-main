@@ -69,3 +69,46 @@ export const ForumCardContent = styled(CardContent)`
     padding: ${({ removePadTop }) => (removePadTop ? "0 2rem 2rem 2rem !important" : "2rem !important")};
     justify-content: center;
 `;
+
+export const ForumThreadCard = styled(Card)`
+    width: 1200px;
+    border-radius : 10px;
+    padding: 16px;
+    display: block;
+    margin: 10px;
+    display: flex;
+    flex-direction: row;
+`;
+
+export const ForumThreadCardContent = styled(CardContent)`
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    background-color: ${colours.WHITE};
+    color: ${colours.GRAY2};
+    align-items: center;
+    padding: 2rem !important;
+    padding: ${({ removePadTop }) => (removePadTop ? "0 2rem 2rem 2rem !important" : "2rem !important")};
+    justify-content: center;
+`;
+
+export const EmptyStateText = styled.h1`
+  font-size: ${fontSizes.SUBTEXT};
+  color: ${colours.GRAY4};
+  font-family: "Roboto", sans-serif;
+  text-align: center;
+  padding: 50px;
+`;
+
+export const EmptyStateContainer = styled.div`
+  display: ${({ threadsExist }) =>
+  threadsExist ? "none" : "flex"};
+  font-size: ${fontSizes.SUBTEXT};
+  color: ${colours.GRAY4};
+  font-family: "Roboto", sans-serif;
+  flex-direction: column;
+  justify-content: center; 
+  text-align: center; 
+  align-items: center;
+  padding: 50px;
+`;

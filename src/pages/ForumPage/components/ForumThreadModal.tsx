@@ -14,21 +14,19 @@ import AddIcon from '@material-ui/icons/Add';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { Button } from "../../../values/ButtonElements";
-import { ForumCategory, CreateNewForumCategoryReq, UpdateForumCategoryReq } from '../../../apis/Entities/ForumCategory';
-import { createNewForumCategory, updateForumCategory, deleteForumCategory } from "../../../apis/Forum/ForumApis";
+import { ForumThread, CreateNewForumThreadReq } from '../../../apis/Entities/ForumThread';
+import { createNewForumThread } from "../../../apis/Forum/ForumApis";
 
-function ForumCategoryModal(props: any) {
+function ForumThreadModal(props: any) {
 
     const [open, setOpen] = useState<boolean>(false);
     const [name, setName] = useState<string>("");
     const [description, setDescription] = useState<string>("");
-    const [courseId, setCourseId] = useState<number>();
     const [modalType, setModalType] = useState<string>("");
     const [forumCategoryToSubmit, setForumCategoryToSubmit] = useState<ForumCategory>();
     const [isDisabled, setIsDisabled] = useState<boolean>(false);
 
     useEffect(() => {
-        setCourseId(props.courseId);
         setModalType(props.modalType);
         if (props.modalType === "EDIT" || props.modalType === "DELETE") {
             setForumCategoryToSubmit(props.forumCategory);
@@ -122,6 +120,40 @@ function ForumCategoryModal(props: any) {
             }
 
             {
+                modalType === "EMPTY" &&
+                <>
+                    <Button onClick={handleOpen}>
+                        Create A Thread
+            </Button>
+                    <Dialog open={open} onClose={handleClose} maxWidth={"lg"}>
+                        <DialogTitle>Create Forum Thread</DialogTitle>
+                        <DialogContent>
+                            <TextField
+                                required
+                                fullWidth
+                                id="outlined-required"
+                                label="Name"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                            />
+                            <TextField
+                                required
+                                fullWidth
+                                id="outlined-required"
+                                label="Description"
+                                value={description}
+                                onChange={(e) => setDescription(e.target.value)}
+                            />
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={handleClose}>Cancel</Button>
+                            <Button primary onClick={handleCreateConfirm}>Confirm</Button>
+                        </DialogActions>
+                    </Dialog>
+                </>
+            }
+
+            {
                 modalType === "EDIT" &&
                 <>
                     <IconButton disabled={isDisabled} onClick={handleOpen}>
@@ -178,5 +210,5 @@ function ForumCategoryModal(props: any) {
     )
 }
 
-export default ForumCategoryModal
+export default ForumThreadModal
 

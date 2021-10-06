@@ -9,3 +9,10 @@ export interface ForumThread {
     account: Account,
     forumPosts: ForumPost[]
 }
+
+export interface CreateNewForumThreadReq {
+    name: string,
+    description: string,
+    timestamp: Date,
+    accountId: number
+}

@@ -1,17 +1,15 @@
 import { useEffect, useState } from 'react';
-import { useHistory } from "react-router-dom";
+// import { useHistory } from "react-router-dom";
 
-import { getCourseByCourseId } from "../../../apis/Course/CourseApis";
-import { getForumCategoryByCourseId, deleteForumCategory } from "../../../apis/Forum/ForumApis";
+import { getForumCategoryByCourseId } from "../../../apis/Forum/ForumApis";
 import { ForumCategory } from '../../../apis/Entities/ForumCategory';
 
 import {
-    ForumContainer, ForumCardHeader, ForumCardContent, ForumCard,
-} from "./../ForumElements";
+    ForumCardHeader, ForumCardContent, ForumCard,
+} from "../ForumElements";
 import {
     DataGrid,
-    GridColDef,
-    GridValueGetterParams
+    GridColDef
 } from '@material-ui/data-grid';
 import { Button } from "../../../values/ButtonElements";
 import {
@@ -19,15 +17,15 @@ import {
 
 import ForumCategoryModal from './ForumCategoryModal';
 
-function ForumPage(props: any) {
+function ForumCategoryList(props: any) {
 
     const [courseId, setCourseId] = useState<number>();
     const [forumCategories, setForumCategories] = useState<ForumCategory[]>([]);
-    const [isIndexPage, setIsIndexPage] = useState<Boolean>();
     // const [selectedQuestions, setSelectedQuestions] = useState<any>([]);
-    const history = useHistory();
+    // const history = useHistory();
 
     useEffect(() => {
+        setCourseId(props.courseId)
         getForumCategoryByCourseId(props.courseId).then((res) => {
             res.map((q) => {
                 Object.assign(q, { id: q.forumCategoryId })
@@ -62,11 +60,11 @@ function ForumPage(props: any) {
             renderCell: (params) => {
                 return (
                     <>
-                        <Button primary>
+                        <Button primary onClick={()=>navigateToIndividualCategory(params.row.forumCategoryId)}>
                             View
                         </Button>
                         {
-                            params.row != undefined &&
+                            params.row !== undefined &&
                             <ForumCategoryModal modalType={"EDIT"} courseId={props.courseId} onForumCategoryChange={handleCallSnackbar} forumCategory={params.row}/>
                         }
                         <ForumCategoryModal modalType={"DELETE"} courseId={props.courseId} onForumCategoryChange={handleCallSnackbar} forumCategory={params.row}/>
@@ -87,6 +85,10 @@ function ForumPage(props: any) {
             console.log("Failed", err);
         });
         props.onCallSnackbar(snackbarObject);
+    }
+
+    const navigateToIndividualCategory = (forumCategoryId:number) => {
+        props.history.push(`/forum/${courseId}/category/${forumCategoryId}`);
     }
 
     return (
@@ -115,4 +117,4 @@ function ForumPage(props: any) {
     );
 }
 
-export default ForumPage
+export default ForumCategoryList
