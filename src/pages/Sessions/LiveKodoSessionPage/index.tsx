@@ -16,6 +16,16 @@ function LiveKodoSessionPage(props: any) {
     const [dataChannel, setDataChannel] = useState<RTCDataChannel>();
 
     useEffect(() => {
+
+        // Cleanup: Runs only during ComponentWillUnmount
+        return () => {
+            console.log("Closing websocket");
+            wsConn?.close();
+        }
+
+    }, [])
+
+    useEffect(() => {
         if (props.match.params.initAction.toLowerCase() === "create" || props.match.params.initAction.toLowerCase() === "join") {
             setInitAction(props.match.params.initAction.toLowerCase())
             setSessionId(props.match.params.sessionId)
@@ -53,7 +63,7 @@ function LiveKodoSessionPage(props: any) {
         } else {
             props.history.push('/invalidsession') // redirects to 404 (for now)
         }
-    }, [props.match.params])
+    }, [props.match.params.sessionId])
 
     const initialize = () => {
         // Setup peer conn
