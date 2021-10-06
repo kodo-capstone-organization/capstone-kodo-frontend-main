@@ -1,3 +1,4 @@
+import { Input } from '@material-ui/core';
 import React, { useEffect, useState } from 'react'
 import { Button } from '../../../values/ButtonElements';
 import ActionsPanel from './components/ActionsPanel';
@@ -13,25 +14,13 @@ let dataChannel: RTCDataChannel;
 // To consider: Adding ?pwd=<PASSWORD> as a query param
 function LiveKodoSessionPage(props: any) {
     
-    const [initAction, setInitAction] = useState<string>(); // "create" or "join" only
-    const [sessionId, setSessionId] = useState<string>();
+    const [initAction, setInitAction] = useState<string>(props.match.params.initAction.toLowerCase()); // "create" or "join" only
+    const [sessionId, setSessionId] = useState<string>(props.match.params.sessionId);
 
     useEffect(() => {
-        // Cleanup: Runs only during ComponentWillUnmount
-        return () => {
-            console.log("Closing websocket");
-            conn.close();
-            // TODO: Send API to backend to close the session if user is the last one in the call
-        }
-
-    }, [])
-
-    useEffect(() => {
-        if (props.match.params.initAction.toLowerCase() === "create" || props.match.params.initAction.toLowerCase() === "join") {
-            setInitAction(props.match.params.initAction.toLowerCase())
-            setSessionId(props.match.params.sessionId)
+        // On init
+        if (initAction === "create" || initAction === "join") {
             conn = new WebSocket(`ws://capstone-kodo-webrtc.herokuapp.com/socket/${props.match.params.sessionId}`);
-
             conn.onmessage = function(msg) {
                 const content = JSON.parse(msg.data);
                 const data = content.data;
@@ -63,7 +52,15 @@ function LiveKodoSessionPage(props: any) {
         } else {
             props.history.push('/invalidsession') // redirects to 404 (for now)
         }
-    }, [props.match.params.sessionId])
+
+        // Cleanup: Runs only during ComponentWillUnmount
+        return () => {
+            console.log("Closing websocket");
+            conn.close();
+            // TODO: Send API to backend to close the session if user is the last one in the call
+        }
+
+    }, [])
 
     const initialize = () => {
         // Setup peer conn
@@ -115,6 +112,11 @@ function LiveKodoSessionPage(props: any) {
         peerConn.ondatachannel = function (event) {
             dataChannel = event.channel;
         };
+
+        if (initAction === "join") {
+            console.log("INITIALIZE FOR JOIN: CREATE OFFER")
+            createOffer();
+        }
     }
 
     // If "create", initialise a new active session
@@ -179,16 +181,16 @@ function LiveKodoSessionPage(props: any) {
         conn.send(JSON.stringify(receivedMessage));
     }
 
-    // function sendMessage() {
-    //     dataChannel?.send(input.value);
-    //     input.value = "";
-    // }
+    const sendMessage = (someInput: string) => {
+        dataChannel?.send(someInput);
+    }
 
     return (
         <LiveKodoSessionContainer>
             <TopSessionBar><strong>Session_Name ({sessionId}) · Time_Elapsed</strong></TopSessionBar>
-            <Button onClick={createOffer}>Create Offer</Button>
+            {/*<Button onClick={createOffer}>Create Offer</Button>*/}
             <Button onClick={() => send({event: null, data: "helloWord"})}>SEND</Button>
+            <Button onClick={() => sendMessage("hello from datachannel")}>SEND VIA DATACHANNEL</Button>
             <MainSessionWrapper>
                 <ParticipantsPanel />
                 <Stage />
