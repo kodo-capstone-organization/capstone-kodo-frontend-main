@@ -61,22 +61,22 @@ function LiveKodoSessionPage(props: any) {
         const peerConn =  new RTCPeerConnection(configuration);
         peerConn.onicecandidate = function(event) {
             if (event.candidate) {
-                sendMessage({
-                    event : "candidate",
-                    data : event.candidate
-                });
+                sendMessage({ event : "candidate", data : event.candidate });
             }
         };
 
         // Setup data channel & listeners
         // @ts-ignore
         let dataChannel = peerConn.createDataChannel("dataChannel", { reliable: true });
+
         dataChannel.onerror = function(error) {
             console.log("Error:", error);
         };
+
         dataChannel.onclose = function() {
             console.log("Data channel is closed");
         };
+
         // when we receive a message from the other peer, printing it on the console
         dataChannel.onmessage = function(event) {
             console.log("message:", event.data);
@@ -86,6 +86,21 @@ function LiveKodoSessionPage(props: any) {
         peerConn.ondatachannel = function (event) {
             dataChannel = event.channel;
         };
+
+        // Receiving a track / stream
+        peerConn.ontrack = function(event) {
+            console.log("AUDIO / VIDEO STREAM RECEIVED:", event);
+            // TODO: enable some sort of state in the html
+        };
+
+        const constraints = { audio : true };
+        navigator.mediaDevices.getUserMedia(constraints)
+            .then(function(stream) {
+                stream.getTracks().forEach(function(track) {
+                    peerConn.addTrack(track, stream);
+                });
+            })
+            .catch(function(err) { /* handle the error */ });
 
         setPeerConn(peerConn);
         setDataChannel(dataChannel);
@@ -97,10 +112,7 @@ function LiveKodoSessionPage(props: any) {
 
     function createOffer() {
         peerConn?.createOffer(function(offer: any) {
-            sendMessage({
-                event : "offer",
-                data : offer
-            });
+            sendMessage({ event : "offer", data : offer });
             peerConn.setLocalDescription(offer);
         }, // @ts-ignore
         function(error) {
@@ -114,10 +126,7 @@ function LiveKodoSessionPage(props: any) {
         // create and send an answer to an offer
         peerConn?.createAnswer(function(answer: any) {
             peerConn?.setLocalDescription(answer);
-            sendMessage({
-                event : "answer",
-                data : answer
-            });
+            sendMessage({ event : "answer", data : answer });
         }, // @ts-ignore
         function(error) {
             alert("Error creating an answer");
@@ -134,7 +143,7 @@ function LiveKodoSessionPage(props: any) {
     };
 
     // Sending a message
-    const sendMessage = () => {
+    const sendMessage = (receivedMessage: any) => {
         const message = "HELLO WORLD"
         wsConn?.send(JSON.stringify(message));
     }
