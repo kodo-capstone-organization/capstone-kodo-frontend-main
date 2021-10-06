@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { withRouter } from "react-router";
 import { Course } from "../../apis/Entities/Course";
 import { Account } from "../../apis/Entities/Account";
-import { EnrolledCourse } from "../../apis/Entities/EnrolledCourse";
 import { getMyAccount } from "../../apis/Account/AccountApis";
 import { getCourseWithoutEnrollmentByCourseId } from "../../apis/Course/CourseApis";
 import Sidebar from "./Sidebar/Sidebar";

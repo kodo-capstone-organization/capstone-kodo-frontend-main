@@ -15,6 +15,7 @@ import QuizBuidlerPage from "./pages/QuizBuilderPage";
 
 import CourseOverview from "./pages/CourseViewer";
 import LessonViewerWithRouter from "./pages/CourseViewer/LessonViewer";
+import LessonStatisticsViewerWithRouter from "./pages/CourseViewer/LessonStatisticsViewer";
 import MultimediaViewerWithRouter from "./pages/CourseViewer/MultimediaViewer";
 import QuizViewer from "./pages/QuizViewer";
 import LiveKodoSessionPage from "./pages/Sessions/LiveKodoSessionPage";
@@ -90,6 +91,9 @@ function Routes() {
                             : <Redirect to="/" />}
                         {window.sessionStorage.getItem("loggedInAccountId") ?
                             <Route path="/overview/:courseId" render={props => <CourseOverview {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
+                            : <Redirect to="/" />}
+                        {window.sessionStorage.getItem("loggedInAccountId") ?
+                            <Route path="/overview/lessonstatistics/:courseId/:lessonId" render={props => <LessonStatisticsViewerWithRouter {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
                             : <Redirect to="/" />}
                         {window.sessionStorage.getItem("loggedInAccountId") ?
                             <Route path="/overview/lesson/:enrolledCourseId/:enrolledLessonId" render={props => <LessonViewerWithRouter {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
