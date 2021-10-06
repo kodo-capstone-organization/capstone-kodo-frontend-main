@@ -16,15 +16,6 @@ export const TutorContainer = styled.div`
   }
 `;
 
-export const PageHeadingAndButton = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-`
-
-export const PageHeading = styled.div`
-
-`
 export const CourseTitle = styled.div`
   font-size: ${fontSizes.SUBHEADER};
   color: ${colours.GRAY3};
@@ -36,24 +27,6 @@ export const TutorTitle = styled.div`
   font-size: ${fontSizes.SUBTEXT};
   color: ${colours.GRAY4};
 `;
-
-export const StudentProgressScroll = styled.div`
-  overflow-x: hidden;
-  height: 20em;
-`;
-
-export const StudentProgressWrapper = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  > * {
-    flex: 0 0 50%;
-  }    
-  margin: 1.75em;
-`
-
-export const ProgressBarWrapper = styled.div``
-
-/////////////
 
 export const TutorViewCard = styled(Card)`
   width: 100%;
