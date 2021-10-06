@@ -101,6 +101,11 @@ function LiveKodoSessionPage(props: any) {
             console.log("Error:", error);
         };
 
+        // when we receive a message from the other peer, printing it on the console
+        dataChannel.onmessage = function(event) {
+            console.log("datachannel onmessage:", event.data);
+        };
+
         dataChannel.onclose = function() {
             console.log("Data channel is closed");
         };
@@ -108,15 +113,11 @@ function LiveKodoSessionPage(props: any) {
         // Peer conn ondatachannel listener
         peerConn.ondatachannel = function (event) {
             dataChannel = event.channel;
-            // when we receive a message from the other peer
-            dataChannel.onmessage = function(event) {
-                console.log("datachannel onmessage:", event.data);
-            };
         };
 
         if (initAction === "join") {
             console.log("INITIALIZE FOR JOIN: CREATE OFFER")
-            createOffer();
+            createOffer(peerConn);
         }
     }
 
@@ -124,7 +125,7 @@ function LiveKodoSessionPage(props: any) {
 
     // If "join", it is a peer joining into an active session
 
-    async function createOffer() {
+    async function createOffer(passedInPeerConn: RTCPeerConnection) {
 
         const offerOptions: RTCOfferOptions = {
             offerToReceiveAudio: true,
@@ -132,10 +133,10 @@ function LiveKodoSessionPage(props: any) {
         };
 
         try {
-            const offer = await peerConn?.createOffer(offerOptions);
+            const offer = await passedInPeerConn?.createOffer(offerOptions);
             console.log("in createOffer with offer: ")
             console.log(offer);
-            await peerConn?.setLocalDescription(offer);
+            await passedInPeerConn?.setLocalDescription(offer);
             send({ event: 'offer', data: offer });
         } catch (e) {
             console.log("failed to create an offer: ", e);
