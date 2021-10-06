@@ -19,6 +19,18 @@ export interface Account {
   stripeAccountId: string;
 }
 
+export interface RawAccount {
+  accountId: number;
+  username: string;
+  name: string;
+  bio: string;
+  email: string;
+  displayPictureUrl: string;
+  isAdmin: boolean;
+  isActive: boolean;
+  stripeAccountId: string;
+}
+
 export interface CreateNewAccountReq {
   username: string;
   password: string;

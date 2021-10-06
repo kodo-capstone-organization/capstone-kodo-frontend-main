@@ -14,7 +14,7 @@ import {
 } from "./TutorViewElements";
 
 import TutorViewHeader from "./components/TutorViewHeader";
-import TutorViewStudentsProgress from "./components/TutorViewStudentsProgress";
+import TutorViewStudentsProgress from "./components/TutorViewStudentsProgress/TutorViewStudentsProgress";
 
 import { Button } from "../../../values/ButtonElements";
 
@@ -38,13 +38,7 @@ function TutorView(props: any) {
     !loading &&
       <TutorContainer>
         <TutorViewHeader course={course} />
-        <TutorViewStudentsProgress course={course} />
-
-        { (!enrolledStudentsAndCompletion || enrolledStudentsAndCompletion?.length === 0) &&
-            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", fontSize: "2em", color: "#767C83" }}>
-              There are no students who are enrolled in this course!
-            </div>
-        }
+        <TutorViewStudentsProgress course={course} />        
       </TutorContainer>
   );
 }
