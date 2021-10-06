@@ -12,11 +12,11 @@ import { EnrolledCourseWithStudentResp } from "../../../../apis/Entities/Enrolle
 import { getEnrolledCoursesWithStudentCompletion } from "../../../../apis/EnrolledCourse/EnrolledCourseApis";
 
 import {
+  StudentProgressScroll,
   StudentProgressWrapper,
   TutorViewCard,
-  TutorViewCardHeader,
   TutorViewCardContent,
-  StudentProgressScroll,
+  TutorViewCardHeader,
 } from "../TutorViewElements";
 
 

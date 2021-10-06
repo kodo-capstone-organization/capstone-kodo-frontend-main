@@ -13,6 +13,7 @@ import {
   TutorTitle,
 } from "./TutorViewElements";
 
+import TutorViewHeader from "./components/TutorViewHeader";
 import TutorViewStudentsProgress from "./components/TutorViewStudentsProgress";
 
 import { Button } from "../../../values/ButtonElements";
@@ -35,26 +36,16 @@ function TutorView(props: any) {
 
   return (
     !loading &&
-    <TutorContainer>
-      <PageHeadingAndButton>
-        <PageHeading>
-          <CourseTitle>{course?.name}</CourseTitle>
-          <TutorTitle>by {course?.tutor.name}</TutorTitle>
-        </PageHeading>
-        <Button primary to={`/builder/${course?.courseId}`}>
-          Edit Course
-        </Button>
-      </PageHeadingAndButton>
+      <TutorContainer>
+        <TutorViewHeader course={course} />
+        <TutorViewStudentsProgress course={course} />
 
-      <TutorViewStudentsProgress course={course} />
-
-      { (!enrolledStudentsAndCompletion || enrolledStudentsAndCompletion?.length === 0) &&
-          <div style={{ display: "flex", justifyContent: "center", alignItems: "center", fontSize: "2em", color: "#767C83" }}>
-            There are no students who are enrolled in this course!
-          </div>
-      }
-
-    </TutorContainer>
+        { (!enrolledStudentsAndCompletion || enrolledStudentsAndCompletion?.length === 0) &&
+            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", fontSize: "2em", color: "#767C83" }}>
+              There are no students who are enrolled in this course!
+            </div>
+        }
+      </TutorContainer>
   );
 }
 

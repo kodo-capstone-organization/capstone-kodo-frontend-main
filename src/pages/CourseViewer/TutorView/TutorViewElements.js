@@ -82,12 +82,22 @@ export const TutorViewCardHeader = styled(CardHeader)`
 `;
 
 export const TutorViewCardContent = styled(CardContent)`
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    background-color: ${colours.WHITE};
-    color: ${colours.GRAY2};
-    align-items: center;
-    padding: 2rem !important;
-    padding: ${({ removePadTop }) => (removePadTop ? "0 2rem 2rem 2rem !important" : "2rem !important")};
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  background-color: ${colours.WHITE};
+  color: ${colours.GRAY2};
+  align-items: center;
+  padding: 2rem !important;
+  padding: ${({ removePadTop }) => (removePadTop ? "0 2rem 2rem 2rem !important" : "2rem !important")};
+`;
+
+export const TutorViewRow = styled.div`
+  display: flex;
+  flex-direction: row;
+`;
+
+export const TutorViewColumn = styled.div`
+  display: flex;
+  flex-direction: column;
 `;
