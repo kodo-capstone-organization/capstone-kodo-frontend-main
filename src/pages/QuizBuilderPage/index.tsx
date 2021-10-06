@@ -72,6 +72,7 @@ function QuizBuilderPage(props: any) {
     const [isDisabled, setIsDisabled] = useState<boolean>(false);
     const history = useHistory();
     const [draggableId, setDraggableId] = useState<number>(0);
+    const [selectedFromQuestionBank, setSelectedFromQuestionBank] = useState<any>([]);
 
 
     useEffect(() => {
@@ -90,10 +91,6 @@ function QuizBuilderPage(props: any) {
             console.log(contentId)
             console.log("Error: getCourseByContentId", err);
         });
-        // if (history.location.state) {
-        //     history.location.state.mode === "VIEW" ? setIsDisabled(true) : setIsDisabled(false);
-        // }
-
         getQuizByQuizId(contentId).then((res) => {
             setQuiz(res);
             setUpdatedQuiz(res);
@@ -116,15 +113,10 @@ function QuizBuilderPage(props: any) {
             })
             setDraggableId(mapDraggable);
             setQuizQuestionArray(arrayWtihDraggableId);
-            // setQuizQuestionArray(res)
         }).catch((err) => {
             props.callOpenSnackBar(`Error in initialising Quiz: ${err}`, "error")
         });
-    }, [contentId])
-
-    useEffect(() => {
-        console.log("qn array updted", quizQuestionArray)
-    }, [quizQuestionArray])
+    }, [contentId]);
 
     const addNewQuestion = () => {
         if (quiz) {
@@ -132,17 +124,22 @@ function QuizBuilderPage(props: any) {
             setDraggableId(newDraggableId);
             const newQuizQuestionOption: QuizQuestionOption = {
                 quizQuestionOptionId: null,
-                leftContent: "OPTION 1",
+                leftContent: "MCQ OPTION",
                 rightContent: null,
                 correct: true
             };
-            const newQuizQuestion: any = {
+            const defaultOptionTwo : QuizQuestionOption = {
+                quizQuestionOptionId: null,
+                leftContent: "MCQ OPTION",
+                rightContent: null,
+                correct: false
+            };            const newQuizQuestion: any = {
                 quizQuestionId: null,
                 content: "",
                 questionType: "MCQ",
                 marks: 1,
                 quiz: quiz,
-                quizQuestionOptions: [newQuizQuestionOption],
+                quizQuestionOptions: [newQuizQuestionOption, defaultOptionTwo],
                 draggableId: newDraggableId
             }
             quizQuestionArray.push(newQuizQuestion);
@@ -212,8 +209,8 @@ function QuizBuilderPage(props: any) {
         var value = parseInt(e.target.value);
         if (value > 100) {
             value = 100;
-        } else if (value < 0) {
-            value = 0;
+        } else if (value < 1) {
+            value = 1;
         }
         setMaxAttempts(value);
         const newQuiz = Object.assign(updatedQuiz, { maxAttemptsPerStudent: value });
@@ -246,7 +243,7 @@ function QuizBuilderPage(props: any) {
                     setQuiz(res)
                 })
                 .catch((err) => {
-                    props.callOpenSnackBar(`Error in updating Quiz`, "error")
+                    props.callOpenSnackBar(`Error in updating Quiz: ${err?.response.data.message}`, "error")
                 });
         }
     }
@@ -274,7 +271,6 @@ function QuizBuilderPage(props: any) {
             );
         });
         setQuizQuestionArray(updatedQuizQuestionArray);
-
     }
 
     const handleChangeFromQuestionBank = (questionBankQuestions: any[]) => {
@@ -287,6 +283,7 @@ function QuizBuilderPage(props: any) {
             mapDraggable++;
         })
         setDraggableId(mapDraggable);
+        setSelectedFromQuestionBank(questionBankQuestions);
         setQuizQuestionArray(arrayWtihDraggableId);
     }
 
@@ -326,12 +323,6 @@ function QuizBuilderPage(props: any) {
                                     </QuizQuestionCard>
                                 )}
                             </Draggable>
-                        // <>
-                        //     <QuizQuestionCard key={qId}>
-                        //         <QuizQuestionComponent disabled={isDisabled} question={q} questionIndex={qId}
-                        //             onUpdateQuestion={handleUpdateQuestion} onUpdateQuizQuestionOptions={handleQuizQuestionOptionUpdate} />
-                        //     </QuizQuestionCard>
-                        // </>
                     );
                 })}
             </div>
@@ -342,10 +333,10 @@ function QuizBuilderPage(props: any) {
     return (
         <>
             <QuizContainer>
-                <Breadcrumbs aria-label="quizbuilder-breadcrumb" style={{ marginBottom: "1rem"}}>
+                <Breadcrumbs aria-label="quizbuilder-breadcrumb" style={{ marginBottom: "1rem" }}>
                     <Link color="primary" href={`/builder/${courseId}`}>
-                        <ArrowBackIcon style={{ verticalAlign: "middle"}}/>&nbsp;
-                        <span style={{ verticalAlign: "bottom"}}>Back To Coursebuilder</span>
+                        <ArrowBackIcon style={{ verticalAlign: "middle" }} />&nbsp;
+                        <span style={{ verticalAlign: "bottom" }}>Back To Coursebuilder</span>
                     </Link>
                 </Breadcrumbs>
 
@@ -403,7 +394,7 @@ function QuizBuilderPage(props: any) {
                                     fullWidth
                                     value={maxAttempts}
                                     onChange={handleAttemptChange}
-                                    inputProps={{ min: 0, max: 100 }}
+                                    inputProps={{ min: 1, max: 100 }}
                                 />
                             </Grid>
                             <Grid item xs={12}>
@@ -411,7 +402,6 @@ function QuizBuilderPage(props: any) {
                                     label="Description" onChange={handleDescriptionChange} />
                             </Grid>
                         </Grid>
-                        {/* <Button disabled={isDisabled} primary={!isDisabled} onClick={handleSubmit}>Save</Button> */}
                     </QuizCardContent>
                 </QuizCard>
 
@@ -423,7 +413,7 @@ function QuizBuilderPage(props: any) {
                                 {
                                     isDisabled ? <Chip variant="outlined" size="small" label="View Mode" style={{ color: "blue", border: "1px solid blue" }} disabled /> :
                                         <>
-                                            <QuestionBankModal disabled={isDisabled} onChangeFromQuestionBank={handleChangeFromQuestionBank} />
+                                            <QuestionBankModal selectedFromQuestionBank={selectedFromQuestionBank} disabled={isDisabled} onChangeFromQuestionBank={handleChangeFromQuestionBank} />
                                           &nbsp;&nbsp;
                                           <Button primary disabled={isDisabled} onClick={addNewQuestion}>Add New Question</Button>
                                         </>
@@ -451,7 +441,6 @@ function QuizBuilderPage(props: any) {
                             </DragDropContext>
                         }
 
-                        {/* {mapQuestionArray(quizQuestionArray)} */}
                     </QuizBuilderCardContent>
                 </QuizCard>
             </QuizContainer>

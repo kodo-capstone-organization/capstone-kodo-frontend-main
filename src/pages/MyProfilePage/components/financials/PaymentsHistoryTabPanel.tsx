@@ -68,12 +68,12 @@ function PaymentsHistoryTabPanel(props: any) {
                             <TableBody>
                                 { getRegroupedPayments()[monthyear].map((payment: Transaction) => (
                                     <TableRow hover key={payment?.transactionId}>
-                                        <TableCell component="th" scope="row">
+                                        <TableCell component="th" scope="row" width="30%">
                                             {payment?.course.name}
                                         </TableCell>
-                                        <TableCell align="right">{payment?.payee.name}</TableCell>
-                                        <TableCell align="right">{new Date(payment?.dateTimeOfTransaction).toDateString()}</TableCell>
-                                        <TableCell align="right"><strong>-{payment?.coursePrice}</strong></TableCell>
+                                        <TableCell align="right" width="20%">{payment?.payee.name}</TableCell>
+                                        <TableCell align="right" width="30%">{new Date(payment?.dateTimeOfTransaction).toDateString()}</TableCell>
+                                        <TableCell align="right" width="20%"><strong>-{payment?.coursePrice}</strong></TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>

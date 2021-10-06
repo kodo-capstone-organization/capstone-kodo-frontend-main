@@ -10,3 +10,11 @@ export async function getEnrolledLesson(studentId: number, lessonId: number): Pr
 
     return httpClient.get<undefined, EnrolledLesson>(getParameters);
 }
+
+export async function getEnrolledLessonByEnrolledLessonId(enrolledLessonId: number): Promise<EnrolledLesson> {
+    const getParameters: IHttpClientRequestParameters<undefined> = {
+        url: `/enrolledLesson/getEnrolledLessonByEnrolledLessonId/${enrolledLessonId}`
+    }
+
+    return httpClient.get<undefined, EnrolledLesson>(getParameters);
+}

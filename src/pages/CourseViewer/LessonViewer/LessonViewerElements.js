@@ -10,6 +10,9 @@ import ImageIcon from '@material-ui/icons/Image';
 import { MdArrowForward, MdArrowBack } from "react-icons/md";
 import * as FaIcons from 'react-icons/fa'
 
+import { TextField, Card, CardHeader, CardContent, CardActions } from "@material-ui/core";
+
+
 export const LessonContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -87,7 +90,7 @@ export const ContentLink = styled(Link)`
   color: ${colours.GRAY5};
   cursor: pointer;
   pointer-events: ${({ previousCompleted }) =>
-  ( !previousCompleted) ? "none" : "auto"};
+  (!previousCompleted) ? "none" : "auto"};
   font-family: "Roboto", sans-serif;
   padding: 0 20px 0 20px;
 
@@ -140,7 +143,7 @@ export const QuizRow = styled.div`
     margin-right: 20px;
     margin-left: 20px;
     border-bottom: 1px solid ${colours.GRAY6};
-
+    height: 3em;
 `
 
 export const QuizSubheader = styled.div`
@@ -175,6 +178,7 @@ export const BtnWrapper = styled.div`
 
 export const ExitWrapper = styled(Link)`
   display: flex;
+  flex-direction: row-reverse;
 `
 
 export const ExitIcon = styled(CancelOutlinedIcon)`
@@ -193,6 +197,7 @@ export const NextBtnWrapper = styled.div`
   justify-content: flex-end;
   align-items: center;
   margin-left: auto;
+  margin-top: 2em;
 `
 
 export const PrevBtnWrapper = styled.div`
@@ -200,6 +205,7 @@ export const PrevBtnWrapper = styled.div`
   justify-content: flex-end;
   align-items: center;
   margin-right: auto;
+  margin-top: 2em;
 `
 
 export const ZipIcon = styled(FaIcons.FaFileArchive)`
@@ -217,5 +223,60 @@ export const ArrowBackward = styled(MdArrowBack)`
 export const ArrowForward = styled(MdArrowForward)`
     vertical-align: middle;
     font-size: ${fontSizes.CONTENT};
+`;
+
+///////////////////////////////////////////////////////
+
+export const LessonViewerContainerElement = styled.div`
+  padding: 2rem;
+  font-family: "Roboto", sans-serif;
+  font-size: ${fontSizes.CONTENT};
+  > * {
+      margin: 0 0 2rem 0;
+  }
+  display: flex;
+  justify-content: center;
+`;
+
+export const LessonViewerInnerContainerElement = styled.div`
+  width: 70%;
+`;
+
+export const LessonViewerCardElement = styled(Card)`
+  width: 100%;
+`;
+
+export const LessonViewerHeaderElement = styled(CardHeader)`
+  display: flex;
+  flex-direction: row;
+  background-color: ${colours.GRAYHALF6};
+  color: ${colours.GRAY3};
+  height: 1.5rem;
+  
+  > .MuiCardHeader-content > span {
+      font-size: ${fontSizes.CONTENT};
+      font-weight: bold;
+  }
+  
+  > .MuiCardHeader-action {
+      margin: initial;
+      align-self: center;
+      color: ${colours.GRAY2};
+      
+      >.MuiIconButton-root >.MuiIconButton-label {
+          font-size: ${fontSizes.SUBTEXT} !important;
+      }
+  }
+`;
+
+export const LessonViewerContentElement = styled(CardContent)`
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  background-color: ${colours.WHITE};
+  color: ${colours.GRAY2};
+  align-items: left;
+  padding: 2rem !important;
+  padding: ${({ removePadTop }) => (removePadTop ? "0 2rem 2rem 2rem !important" : "2rem !important")};
 `;
 

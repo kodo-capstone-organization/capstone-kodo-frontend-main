@@ -3,7 +3,7 @@ import { withRouter } from "react-router";
 import { getCourseByCourseId } from "../../../apis/Course/CourseApis";
 import { getLessonByLessonId } from "../../../apis/Lesson/LessonApis";
 import { getMultimediaByMultimediaId } from "../../../apis/Multimedia/MultimediaApis";
-import  { getEnrolledContentByEnrolledContentId } from "../../../apis/EnrolledContent/EnrolledContentApis"
+import { getEnrolledContentByAccountIdAndContentId } from "../../../apis/EnrolledContent/EnrolledContentApis"
 import { Multimedia } from "../../../apis/Entities/Multimedia";
 import { Course } from "../../../apis/Entities/Course";
 import { Lesson } from "../../../apis/Entities/Lesson";
@@ -30,6 +30,8 @@ import {
   ExitWrapper
 } from "./MultimediaViewerElements";
 
+import { getEnrolledCourseByEnrolledCourseId } from "../../../apis/EnrolledCourse/EnrolledCourseApis";
+import { getEnrolledLessonByEnrolledLessonId } from "../../../apis/EnrolledLesson/EnrolledLessonApis";
 import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
 import { EnrolledContent } from "../../../apis/Entities/EnrolledContent";
 import { useHistory } from "react-router-dom";
@@ -39,9 +41,11 @@ import PDFViewer from "./PDFViewer";
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
 function MultimediaViewer(props: any) {
+
+  const enrolledCourseId = props.match.params.enrolledCourseId;
+  const enrolledLessonId = props.match.params.enrolledLessonId;
   const contentId = props.match.params.contentId;
-  const lessonId = props.match.params.lessonId;
-  const courseId = props.match.params.courseId;
+  
   const accountId = JSON.parse(
     window.sessionStorage.getItem("loggedInAccountId") || "{}"
   );
@@ -49,6 +53,8 @@ function MultimediaViewer(props: any) {
   const [currentMultimedia, setMultimedia] = useState<Multimedia>();
   const [currentLesson, setLesson] = useState<Lesson>();
   const [currentCourse, setCourse] = useState<Course>();
+  const [currentEnrolledContent, setEnrolledContent] = useState<EnrolledContent>();
+
 
   let history = useHistory();
 
@@ -56,13 +62,22 @@ function MultimediaViewer(props: any) {
     getMultimediaByMultimediaId(contentId).then(receivedMultimedia => {
       setMultimedia(receivedMultimedia);
     });
-    getLessonByLessonId(lessonId).then(receivedLesson => {
-      setLesson(receivedLesson);
-    });
-    getCourseByCourseId(courseId).then(receivedCourse => {
-      setCourse(receivedCourse);
-    });
-  }, [contentId, lessonId, courseId]);
+    // getLessonByLessonId(lessonId).then(receivedLesson => {
+    //   setLesson(receivedLesson);
+    // });
+    // getCourseByCourseId(courseId).then(receivedCourse => {
+    //   setCourse(receivedCourse);
+    // });
+    getEnrolledContentByAccountIdAndContentId(accountId, contentId).then(receivedContent => {
+      setEnrolledContent(receivedContent);
+    })
+    getEnrolledLessonByEnrolledLessonId(enrolledLessonId).then(enrolledLesson => {
+      setLesson(enrolledLesson.parentLesson);
+    })
+    getEnrolledCourseByEnrolledCourseId(enrolledCourseId).then(enrolledCourse => {
+      setCourse(enrolledCourse.parentCourse);
+    })
+  }, [enrolledCourseId, enrolledLessonId, contentId]);
 
 
   function getUrlForDocument() {
@@ -73,7 +88,7 @@ function MultimediaViewer(props: any) {
     setDateTimeOfCompletionOfEnrolledContentByAccountIdAndContentId(true, accountId, contentId)
       .then((res: EnrolledContent) => {
         props.callOpenSnackBar("Multimedia completed", "success");
-        history.push(`/overview/lesson/${courseId}/${lessonId}`);
+        history.push(`/overview/lesson/${enrolledCourseId}/${enrolledLessonId}`);
       })
       .catch(err => props.callOpenSnackBar(err.response.data.message, "error"))
   }
@@ -86,7 +101,7 @@ function MultimediaViewer(props: any) {
             <LessonTitle>Week {currentLesson?.sequence}</LessonTitle>
             <CourseTitle>{currentCourse?.name}</CourseTitle>
           </PageHeading>
-          <ExitWrapper to={`/overview/lesson/${currentCourse?.courseId}/${currentLesson?.lessonId}`}>
+          <ExitWrapper to={`/overview/lesson/${enrolledCourseId}/${enrolledLessonId}`}>
             <CancelOutlinedIcon fontSize="large" style={{ color: colours.BLUE2, padding: 20 }} />
           </ExitWrapper>
         </PageHeadingAndButton>
@@ -99,9 +114,11 @@ function MultimediaViewer(props: any) {
         <div id="action-row" style={{ display: "flex", flexDirection: "row", justifyContent: "flex-end" }}>
           <DownloadFile multimediaName={currentMultimedia?.name} multimediaUrl={currentMultimedia?.url} />
           &nbsp;&nbsp;
+          {currentEnrolledContent?.dateTimeOfCompletion === null &&
           <Button primary onClick={completeMultimedia}>
             Mark as Done
           </Button>
+          }
         </div>
 
         {currentMultimedia && currentMultimedia.multimediaType === "VIDEO" &&

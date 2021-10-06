@@ -42,35 +42,57 @@ import {
   TutorTitle,
 } from "./StudentViewElements";
 
+import { Account } from "../../../apis/Entities/Account";
 import { Course } from "../../../apis/Entities/Course";
 import { EnrolledCourse } from "../../../apis/Entities/EnrolledCourse";
 import { EnrolledLesson } from '../../../apis/Entities/EnrolledLesson';
 
 import { setCourseRatingByEnrolledCourseId } from "../../../apis/EnrolledCourse/EnrolledCourseApis";
+import { getEnrolledCourseByStudentIdAndCourseId } from "../../../apis/EnrolledCourse/EnrolledCourseApis";
+import { getCourseRatingByCourseId } from "../../../apis/Course/CourseApis";
 
 import KodoAvatar from "../../../components/KodoAvatar/KodoAvatar";
 
 import { Button } from '../../../values/ButtonElements';
 
 function StudentView(props: any) {
-  const [currentCourse, setCourse] = useState<Course>({ ...props.course });
-  const [enrolledCourse, setEnrolledCourse] = useState<EnrolledCourse>({...props.enrolledCourse});
-  const [rating, setRating] = useState<number | undefined>(enrolledCourse.courseRating === 0 ? 1 : Math.round(enrolledCourse.courseRating));
-  const [activeStep, setActiveStep] = React.useState<number>();
-  const [latestLesson, setLatestLesson] = React.useState<EnrolledLesson>();
-  const [steps, setSteps] = React.useState<EnrolledLesson[]>([])
+  const [course, setCourse] = useState<Course>();
+  const [account, setAccount] = useState<Account>();
+
+  const [enrolledCourse, setEnrolledCourse] = useState<EnrolledCourse>();
+  const [steps, setSteps] = useState<EnrolledLesson[]>([]);
+  const [latestLesson, setLatestLesson] = useState<EnrolledLesson>();
+  const [courseRating, setCourseRating] = useState<number>(0);
+  const [studentRating, setStudentRating] = useState<number>(0);
+  const [activeStep, setActiveStep] = useState<number>(0);  
+  
+  const [loading, setLoading] = useState<Boolean>(true);
+
   const history = useHistory();
 
   useEffect(() => {
+    setLoading(true);
     setCourse(props.course);
-    setEnrolledCourse(props.enrolledCourse);
-    initialiseActiveStep(enrolledCourse);
-    // const test = receivedEnrolledCourse.enrolledLessons.concat(receivedEnrolledCourse.enrolledLessons).concat(receivedEnrolledCourse.enrolledLessons).concat(receivedEnrolledCourse.enrolledLessons)
-    //@ts-ignore
-    setSteps(enrolledCourse.enrolledLessons);
-    console.log(enrolledCourse.enrolledLessons)
-    // setSteps(test);
-  }, [props.course, props.enrolledCourse, enrolledCourse]);
+    setAccount(props.account);
+    getEnrolledCourseByStudentIdAndCourseId(props.account.accountId, props.course.courseId)
+    .then((enrolledCourse: EnrolledCourse) => {
+      setEnrolledCourse(enrolledCourse);
+      setStudentRating(enrolledCourse.courseRating)
+      setSteps(enrolledCourse.enrolledLessons);
+      initialiseActiveStep(enrolledCourse);
+    })
+    .catch((err: any) => {
+      console.log(err);
+    });
+    getCourseRatingByCourseId(props.course.courseId)
+    .then((courseRating: number) => {
+      setCourseRating(courseRating);
+    })
+    .catch((err: any) => {
+      console.log(err);
+    });    
+    setLoading(false);
+  }, [props.course, props.account]);
 
   const initialiseActiveStep = (receivedEnrolledCourse: EnrolledCourse) => {
     var proxyActiveStep = 0 // to set stepper
@@ -90,7 +112,6 @@ function StudentView(props: any) {
       }
       return enrolledLesson;
     })
-    console.log(proxyActiveStep)
   }
 
 
@@ -116,9 +137,12 @@ function StudentView(props: any) {
     }),
   );
 
-  const handleRatingChange = (newRating: any) => {
-    setRating(newRating);
-    setCourseRatingByEnrolledCourseId(enrolledCourse.enrolledCourseId, newRating);
+  const handleRatingChange = (newStudentRating: any) => {
+    setStudentRating(newStudentRating);
+    if (enrolledCourse)
+    {
+      setCourseRatingByEnrolledCourseId(enrolledCourse.enrolledCourseId, newStudentRating);
+    }
   };
 
   const StepIconStyles = makeStyles({
@@ -158,75 +182,81 @@ function StudentView(props: any) {
   }
 
   const navigateToLatestLesson = () => {
-    history.push(`/overview/lesson/${currentCourse?.courseId}/${latestLesson?.parentLesson.lessonId}`)
+    history.push(`/overview/lesson/${enrolledCourse?.enrolledCourseId}/${latestLesson?.enrolledLessonId}`)
   }
 
   const classes = useStyles();
 
   return (
-    <StudentContainer>
-      <PageHeading>
-        <CourseTitle>{currentCourse?.name}</CourseTitle>
-        <TutorTitle>by {currentCourse?.tutor.name}</TutorTitle>
-      </PageHeading>
+    <>
+      {
+        !loading &&    
+        <StudentContainer>
+          <PageHeading>
+            <CourseTitle>{course?.name}</CourseTitle>
+            <TutorTitle>by {course?.tutor.name}</TutorTitle>
+          </PageHeading>
 
-      <div className={classes.root}>
-        <Box component="div" my={2} overflow="auto" bgcolor="background.paper">
-          <Stepper alternativeLabel activeStep={activeStep}>
-            {steps.map((enrolledLesson) => (
-              <Step key={enrolledLesson.parentLesson.lessonId}>
-                
-                <StepLabel StepIconComponent={StepIcon}>
-                  <Link color="primary" href={`/overview/lesson/${currentCourse.courseId}/${enrolledLesson.parentLesson.lessonId}`}>
-                    Week {enrolledLesson.parentLesson.sequence}
-                  </Link>
-                </StepLabel>
-              </Step>
-            ))}
-          </Stepper>
-        </Box>
-      </div>
+          <div className={classes.root}>
+            <Box component="div" my={2} overflow="auto" bgcolor="background.paper">
+              <Stepper alternativeLabel activeStep={activeStep}>
+                {steps.map((enrolledLesson: EnrolledLesson) => {
+                  return(
+                    <Step key={enrolledLesson.parentLesson.lessonId}>                
+                      <StepLabel StepIconComponent={StepIcon}>
+                        <Link color="primary" href={`/overview/lesson/${enrolledCourse?.enrolledCourseId}/${enrolledLesson.enrolledLessonId}`}>
+                          Week {enrolledLesson.parentLesson.sequence}
+                        </Link>
+                      </StepLabel>
+                    </Step>
+                  )
+                })}
+              </Stepper>
+            </Box>
+          </div>
 
-      <StudentViewCard>
-        <StudentViewCardHeader title="Course Overview" />
-        <StudentViewCardContent>
-          <RatingTitle>{currentCourse.description}</RatingTitle>
-          <Button primary style={{ marginLeft: "auto" }} onClick={navigateToLatestLesson}>Continue Course</Button>
-        </StudentViewCardContent>
+          <StudentViewCard>
+            <StudentViewCardHeader title="Course Overview" />
+            <StudentViewCardContent>
+              <RatingTitle>{course?.description}</RatingTitle>
+              <Button primary style={{ marginLeft: "auto" }} onClick={navigateToLatestLesson}>Continue Course</Button>
+            </StudentViewCardContent>
 
-      </StudentViewCard>
-
-
-      <CardTitle>This course is taught by:</CardTitle>
-      <TutorDetails>
-        <KodoAvatar name={currentCourse?.tutor.name} displayPictureURL={currentCourse?.tutor.displayPictureUrl || ""}/>
-        <TutorText>
-          <TutorName>{currentCourse?.tutor.name}</TutorName>
-          <TutorName><i>@{currentCourse?.tutor.username}</i></TutorName>
-          <TutorDepartment>{currentCourse?.tutor.email}</TutorDepartment>
-        </TutorText>
-      </TutorDetails>
-      <RatingCard>
-        <RatingTitle>Passing Requirement</RatingTitle>
-        <RatingDescription>You need to pass all graded quizzes to complete this course</RatingDescription>
-        <RatingTitle>Course Rating</RatingTitle>
-        <Rating name="read-only" value={Math.round(currentCourse.courseRating)} readOnly />
-        <RatingTitle>Categories</RatingTitle>
-        <TagWrapper>
-          {currentCourse?.courseTags.map(tag => (
-            <TagChip label={tag.title} color='primary' variant='outlined' />
-          ))}
-        </TagWrapper>
-        <RatingTitle>Rate this course</RatingTitle>
-        <Rating
-          name="simple-controlled"
-          value={rating}
-          onChange={(event, newRating) => handleRatingChange(newRating)}
-        />
-      </RatingCard>
+          </StudentViewCard>
 
 
-    </StudentContainer>
+          <CardTitle>This course is taught by:</CardTitle>
+          <TutorDetails>
+            <KodoAvatar name={course?.tutor.name} displayPictureURL={course?.tutor.displayPictureUrl || ""}/>
+            <TutorText>
+              <TutorName>{course?.tutor.name}</TutorName>
+              <TutorName><i>@{course?.tutor.username}</i></TutorName>
+              <TutorDepartment>{course?.tutor.email}</TutorDepartment>
+            </TutorText>
+          </TutorDetails>
+          <RatingCard>
+            <RatingTitle>Passing Requirement</RatingTitle>
+            <RatingDescription>You need to pass all graded quizzes to complete this course</RatingDescription>
+            <RatingTitle>Course Rating</RatingTitle>
+            <Rating name="read-only" value={Math.round(courseRating)} readOnly />
+            <RatingTitle>Categories</RatingTitle>
+            <TagWrapper>
+              {course?.courseTags.map(tag => (
+                <TagChip label={tag.title} color='primary' variant='outlined' />
+              ))}
+            </TagWrapper>
+            <RatingTitle>Rate this course</RatingTitle>
+            <Rating
+              name="simple-controlled"
+              value={studentRating}
+              onChange={(event, newRating) => handleRatingChange(newRating)}
+            />
+          </RatingCard>
+
+
+        </StudentContainer>
+      }
+    </>
   );
 }
 

@@ -1,17 +1,23 @@
 import React, { useState, useEffect } from "react";
 
-import { Button } from "../../../../values/ButtonElements";
-import { colours } from "../../../../values/Colours";
+import { useHistory } from "react-router-dom";
+
 import {
   Dialog, DialogActions, DialogContent, Table,
   DialogTitle, TableBody, TableCell, TableContainer,
   TableHead, TableRow, Paper
 } from "@material-ui/core";
-import { makeStyles, Theme, createStyles, withStyles } from '@material-ui/core/styles';
-import InfoIcon from '@material-ui/icons/Info';
+import { 
+  Theme, 
+  createStyles, 
+  makeStyles, 
+} from '@material-ui/core/styles';
 
-import { useHistory } from "react-router-dom";
 import { StudentAttempt } from "../../../../apis/Entities/StudentAttempt";
+import { StudentAttemptQuestion } from "../../../../apis/Entities/StudentAttemptQuestion";
+import { StudentAttemptAnswer } from "../../../../apis/Entities/StudentAttemptAnswer";
+
+import { Button } from "../../../../values/ButtonElements";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -30,6 +36,9 @@ const useStyles = makeStyles((theme: Theme) =>
 
 
 function ViewQuizAttemptsModal(props: any) {
+
+  const enrolledCourseId = props.enrolledCourseId;
+  const enrolledLessonId = props.enrolledLessonId;
 
   let history = useHistory();
   const classes = useStyles();
@@ -56,9 +65,7 @@ function ViewQuizAttemptsModal(props: any) {
   }
 
   const navigateToMarkedQuizView = (studentAttemptId : number) => {
-    console.log("studentAttemptId", studentAttemptId);
-    history.push({ pathname: `/markedquizviewer/${studentAttemptId}`, state: { mode: 'VIEW' } });
-
+    history.push({ pathname: `/markedquizviewer/${enrolledCourseId}/${enrolledLessonId}/${studentAttemptId}`, state: { mode: 'VIEW' } });
   }
 
   const getScore = (studentAttemptQuestions: StudentAttemptQuestion[]) => {
@@ -68,7 +75,7 @@ function ViewQuizAttemptsModal(props: any) {
       totalMarks = totalMarks + q.quizQuestion.marks;
       const studentAttemptAnswerList = q.studentAttemptAnswers;
       let correct = true;
-      studentAttemptAnswerList.map((studentAnswer) => {
+      studentAttemptAnswerList.map((studentAnswer: StudentAttemptAnswer) => {
         return(studentAnswer.correct ? score = score + studentAnswer.marks: correct=false);
       })
     })

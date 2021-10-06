@@ -2,10 +2,11 @@ import { useEffect, useState } from "react";
 import { Prompt } from 'react-router';
 import { useHistory } from "react-router-dom";
 
-import {
-    Grid,
-    Divider
-} from "@material-ui/core";
+import
+    {
+        Grid,
+        Divider
+    } from "@material-ui/core";
 
 import { Course } from "../../../apis/Entities/Course";
 import { CreateNewStudentAttemptReq } from "../../../apis/Entities/StudentAttempt";
@@ -20,14 +21,15 @@ import { getEnrolledContentByEnrolledContentId } from "../../../apis/EnrolledCon
 import { getLessonByEnrolledContentId } from "../../../apis/Lesson/LessonApis";
 import { getQuizByQuizId } from "../../../apis/Quiz/QuizApis";
 
-import {
-    QuizCard,
-    QuizCardContent,
-    QuizCardFooter,
-    QuizCardHeader,
-    QuizQuestionCard,
-    QuizViewerCardContent
-} from "../QuizViewerElements";
+import
+    {
+        QuizCard,
+        QuizCardContent,
+        QuizCardFooter,
+        QuizCardHeader,
+        QuizQuestionCard,
+        QuizViewerCardContent
+    } from "../QuizViewerElements";
 
 import AttemptQuizOptionsComponent from "./AttemptQuizOptionsComponent";
 import QuizAttemptTimer from "./QuizAttemptTimer";
@@ -36,7 +38,8 @@ import QuizTimedOutModal from "./QuizTimedOutModal";
 import { Button } from "../../../values/ButtonElements";
 
 
-function AttemptQuizComponent(props: any) {
+function AttemptQuizComponent(props: any)
+{
 
     const [quiz, setQuiz] = useState<Quiz>();
     const [quizQuestionArray, setQuizQuestionArray] = useState<QuizQuestion[]>();
@@ -51,15 +54,19 @@ function AttemptQuizComponent(props: any) {
     const [hasSubmitted, setHasSubmitted] = useState<boolean>(false);
 
 
-    useEffect(() => {
-        if (props.enrolledContentId !== undefined) {
+    useEffect(() =>
+    {
+        if (props.enrolledContentId !== undefined)
+        {
             console.log(props.enrolledContentId)
             getEnrolledContentByEnrolledContentId(props.enrolledContentId)
-                .then(res => {
+                .then(res =>
+                {
                     console.log("Success in getEnrolledContentByEnrolledContentId", res);
                     const quizId = res.parentContent.contentId;
                     getQuizByQuizId(quizId)
-                        .then(res => {
+                        .then(res =>
+                        {
                             setQuiz(res);
                             console.log(res.timeLimit);
                             setInitialMinutes(parseInt(`${res.timeLimit.charAt(3)}${res.timeLimit.charAt(4)}`));
@@ -67,29 +74,36 @@ function AttemptQuizComponent(props: any) {
                             console.log("Success in getQuizByQuizId", res);
                         })
                         .catch(err => { console.log("Error in getQuizByQuizId", err); })
-                    getAllQuizQuestionsByQuizId(quizId).then((res) => {
+                    getAllQuizQuestionsByQuizId(quizId).then((res) =>
+                    {
                         setQuizQuestionArray(res)
                         console.log("Success in getAllQuizQuestionsByQuizId", res);
                     }).catch((err) => { console.log("error:getAllQuizQuestionsByQuizId", err) });
                 })
-                .catch(err => {
+                .catch(err =>
+                {
                     console.log("Error in getEnrolledContentByEnrolledContentId", err);
                 })
         }
     }, [props.enrolledContentId]);
 
-    const handleAttemptAnswer = (optionArray: number[][], questionIndex: number) => {
+    const handleAttemptAnswer = (optionArray: number[][], questionIndex: number) =>
+    {
         var newQuizQuestionOptionIdList = quizQuestionOptionIdList;
         newQuizQuestionOptionIdList[questionIndex] = optionArray;
         console.log("handleAttemptAnswer", newQuizQuestionOptionIdList);
         setQuizQuestionOptionIdList(newQuizQuestionOptionIdList);
     }
 
-    const handleSubmit = () => {
+    const handleSubmit = () =>
+    {
         var newQuizQuestionOptionIdList = quizQuestionOptionIdList;
-        quizQuestionArray?.map((q, qId) => {
-            if (qId in quizQuestionOptionIdList) {
-            } else {
+        quizQuestionArray?.map((q, qId) =>
+        {
+            if (qId in quizQuestionOptionIdList)
+            {
+            } else
+            {
                 newQuizQuestionOptionIdList[qId] = [[]];
             }
         })
@@ -98,33 +112,28 @@ function AttemptQuizComponent(props: any) {
             quizQuestionOptionIdLists: newQuizQuestionOptionIdList
         };
         createNewStudentAttempt(createNewStudentAttemptReq)
-            .then(res => {
+            .then(res =>
+            {
                 props.callOpenSnackBar("Quiz Submitted Successfully", "success")
 
-                getCourseByEnrolledContentId(props.enrolledContentId).then((course: Course) => {
-                    getLessonByEnrolledContentId(props.enrolledContentId).then((lesson: Lesson) => {
-                        history.push(`/overview/lesson/${course.courseId}/${lesson.lessonId}`);
-                        // console.log("Attempt quiz success:", res);
-                    })
-                        .catch(err => {
-                            console.log(err.response.data.message)
-                        })
-                })
-                    .catch(err => {
-                        console.log(err.response.data.message)
-                    })
+                history.push(`/overview/lesson/${props.enrolledCourseId}/${props.enrolledLessonId}`);
             })
-            .catch(err => {
+            .catch(err =>
+            {
                 props.callOpenSnackBar("There was an error in submitting the quiz", "error")
             });
 
     }
 
-    const handleTimeOut = (isTimedOut: boolean) => {
+    const handleTimeOut = (isTimedOut: boolean) =>
+    {
         var newQuizQuestionOptionIdList = quizQuestionOptionIdList;
-        quizQuestionArray?.map((q, qId) => {
-            if (qId in quizQuestionOptionIdList) {
-            } else {
+        quizQuestionArray?.map((q, qId) =>
+        {
+            if (qId in quizQuestionOptionIdList)
+            {
+            } else
+            {
                 newQuizQuestionOptionIdList[qId] = [[]];
             }
         })
@@ -138,14 +147,16 @@ function AttemptQuizComponent(props: any) {
         setTimeout(true);
     }
 
-    const mapQuestionArray = (questionArray: QuizQuestion[]) => {
+    const mapQuestionArray = (questionArray: QuizQuestion[]) =>
+    {
         return (
             <div>
-                {questionArray.map((question, qId) => {
+                {questionArray.map((question, qId) =>
+                {
                     return (
                         <>
                             <QuizQuestionCard key={qId}>
-                                {qId + 1}. {question.content}
+                                {qId + 1}. {question.content} ({question.marks} mark{question.marks === 1 ? "" : "s" })
                                 <AttemptQuizOptionsComponent question={question} index={qId} onHandleAttemptAnswer={handleAttemptAnswer} />
                             </QuizQuestionCard>
                         </>

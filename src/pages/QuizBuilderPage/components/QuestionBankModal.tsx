@@ -71,13 +71,16 @@ function QuestionBankModal(props: any) {
                         Object.assign(q, { id: q.quizQuestionId, quizQuestionsLength: q.quizQuestionOptions.length }) 
                         return q;
                     });
-                    console.log("Question Bank Success", res);
                     setQuestionList(res);
                 })
                 .catch(err => { console.log("Question Bank Failed", err) })
         }
         setIsDisabled(props.disabled);
-        console.log("props.disabled", props.disabled)
+        const newSelected = props.selectedFromQuestionBank.map(x => x.quizQuestionId);
+        console.log("props.selectedFromQuestionBank",props.selectedFromQuestionBank);
+        console.log("props.selectedFromQuestionBank",newSelected);
+
+        setSelectedQuestions(newSelected);
     }, [accountId, props.disabled])
 
     const handleOpen = () => {
@@ -120,6 +123,7 @@ function QuestionBankModal(props: any) {
                                 pageSize={5}
                                 checkboxSelection
                                 disableSelectionOnClick
+                                selectionModel={selectedQuestions}
                                 onSelectionModelChange={(newSelection) => {
                                     viewSelection(newSelection);
                                 }}
