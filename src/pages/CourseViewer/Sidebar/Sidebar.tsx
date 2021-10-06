@@ -45,7 +45,7 @@ function Sidebar(props: any) {
           })}
             
           {/* Discussion Forum Link */}
-          <SidebarLink>Discussion Forum</SidebarLink>
+          <SidebarLink to={`/forum/${currentCourse.courseId}`}>Discussion Forum</SidebarLink>
         </SidebarMenu>
       </SidebarWrapper>
   );
