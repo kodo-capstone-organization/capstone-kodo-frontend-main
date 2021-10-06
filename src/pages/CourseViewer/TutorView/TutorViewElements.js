@@ -1,7 +1,8 @@
 import styled from "styled-components";
 import { colours } from "../../../values/Colours";
 import { fontSizes } from "../../../values/FontSizes";
-
+import { Card, CardContent, CardHeader } from "@material-ui/core";
+import Box from "@material-ui/core/Box";
 
 
 export const TutorContainer = styled.div`
@@ -15,15 +16,6 @@ export const TutorContainer = styled.div`
   }
 `;
 
-export const PageHeadingAndButton = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-`
-
-export const PageHeading = styled.div`
-
-`
 export const CourseTitle = styled.div`
   font-size: ${fontSizes.SUBHEADER};
   color: ${colours.GRAY3};
@@ -36,33 +28,55 @@ export const TutorTitle = styled.div`
   color: ${colours.GRAY4};
 `;
 
-export const StudentProgressCard = styled.div`
-  height: 294px;
-  width: auto;
-  padding: 20px;
-  border: 1px solid ${colours.GRAY6};
-  overflow-x: hidden;
-
+export const TutorViewCard = styled(Card)`
+  width: 100%;
 `;
 
-export const CardTitle = styled.div`
-  font-size: ${fontSizes.SUBTEXT};
-  color: ${colours.GRAY1};
-  font-weight: bold !important;
-`;
-
-export const StudentProgressWrapper = styled.div`
+export const TutorViewCardHeader = styled(CardHeader)`
   display: flex;
-  flex-wrap: wrap;
-  > * {
-    flex: 0 0 50%;
+  flex-direction: row;
+  background-color: ${colours.GRAYHALF6};
+  color: ${colours.GRAY3};
+  height: 1.5rem;
+
+  > .MuiCardHeader-content > span {
+      font-size: ${fontSizes.CONTENT};
+      font-weight: bold;
   }
 
-`
+  > .MuiCardHeader-action {
+      margin: initial;
+      align-self: center;
+      color: ${colours.GRAY2};
+      
+      >.MuiIconButton-root >.MuiIconButton-label {
+        font-size: ${fontSizes.SUBTEXT} !important;
+      }
+  }
+`;
 
-export const ProgressBarWrapper = styled.div``
+export const TutorViewCardContent = styled(CardContent)`
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  background-color: ${colours.WHITE};
+  color: ${colours.GRAY2};
+  align-items: center;
+  padding: 2rem !important;
+  padding: ${({ removePadTop }) => (removePadTop ? "0 2rem 2rem 2rem !important" : "2rem !important")};
+`;
 
+export const TutorViewRow = styled.div`
+  display: flex;
+  flex-direction: row;
+`;
 
+export const TutorViewColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
 
-
-
+export const TutorCourseRatingBox = styled(Box)`
+  padding: 5px 0px 0px 5px;
+  color: ${colours.GRAY4};
+`;

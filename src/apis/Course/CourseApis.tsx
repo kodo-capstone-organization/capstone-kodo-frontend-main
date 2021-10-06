@@ -127,3 +127,12 @@ export async function getCourseWithoutEnrollmentByCourseId(courseId: number): Pr
 
     return httpClient.get<undefined, Course>(getParameters);
 }
+
+export async function getCourseRatingByCourseId(courseId: number): Promise<number> {
+    const getParameters: IHttpClientRequestParameters<undefined> = {
+        url: `/course/getCourseRatingByCourseId/${courseId}`
+    }
+
+    return httpClient.get<undefined, number>(getParameters);
+}
+
