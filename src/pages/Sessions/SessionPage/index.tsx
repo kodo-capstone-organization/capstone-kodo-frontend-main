@@ -1,6 +1,6 @@
 import React, {useEffect, useReducer, useState} from 'react'
 import { SessionPageContainer, SessionPageBreadcrumbs, SessionPageDescription, SessionPageCreateOrJoinContainer, SessionPageTypography, SessionPageInvitedSessions } from './SessionPageElements';
-import { Link, Grid, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, InputLabel, Input, Checkbox, FormControlLabel, Chip, Avatar, Box } from '@material-ui/core';
+import { Link, Grid, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, InputLabel, Input, Checkbox, FormControlLabel, Chip, Avatar, Box, FormHelperText } from '@material-ui/core';
 import MUIButton from '@material-ui/core/Button';
 import { Button } from '../../../values/ButtonElements';
 import TextField from '@material-ui/core/TextField';
@@ -120,8 +120,14 @@ function SessionPage(props: any) {
 
     const handleFormDataChange = (event: any) => {
         // Clear any existing errors on target field
-        handleFormErrorChange({ target: { name: event.target.name , value: "" }})
 
+        if (event.target.name === "isPublic" || event.target.name === "inviteeList") {
+            handleFormErrorChange({ target: { name: "isPublic" , value: "" }})
+            handleFormErrorChange({ target: { name: "inviteeList" , value: "" }})
+        } else {
+            handleFormErrorChange({ target: { name: event.target.name , value: "" }})
+        }
+        
         // Set to create form
         setCreateSessionForm({
             name: event.target.name,
@@ -142,6 +148,13 @@ function SessionPage(props: any) {
         if (createSessionForm.sessionName === "") {
             formIsValid = false
             handleFormErrorChange({ target: { name: "sessionName", value: "Session Name cannot be empty" }})
+        }
+
+        // When NOT public but inviteeList is empty
+        if (!createSessionForm.isPublic && createSessionForm.inviteeList.length === 0) {
+            formIsValid = false
+            handleFormErrorChange({ target: { name: "isPublic", value: "Session has to either be public or specifies at least one invitee" }})
+            handleFormErrorChange({ target: { name: "inviteeList", value: "Session has to either be public or specifies at least one invitee" }})
         }
 
         // Check if form is still valid
@@ -237,6 +250,8 @@ function SessionPage(props: any) {
                         <Input
                             id="session-name"
                             name="sessionName"
+                            error={createSessionFormErrors.sessionName}
+                            placeholder={createSessionFormErrors.sessionName}
                             value={createSessionForm.sessionName}
                             onChange={handleFormDataChange}
                             type="text"
@@ -250,7 +265,7 @@ function SessionPage(props: any) {
                         Allow anyone to join your session OR specify who you'd like to invite ✍️
                     </DialogContentText>
 
-                    <FormControl fullWidth>
+                    <FormControl fullWidth error={createSessionFormErrors.isPublic || createSessionFormErrors.inviteeList }>
                         <FormControlLabel
                             style={{ color: colours.GRAY3 }}
                             label="Anyone can join this session"
@@ -263,9 +278,7 @@ function SessionPage(props: any) {
                                 />
                             }
                         />
-                    </FormControl>
 
-                    <FormControl fullWidth>
                         <Autocomplete
                             multiple
                             options={userLibrary}
@@ -277,7 +290,7 @@ function SessionPage(props: any) {
                             renderOption={(userObj, props) => (
                                 <Box {...props}>
                                     <img width="30" src={userObj.displayPictureUrl || ""} alt={userObj.name}/>
-                                     &nbsp;&nbsp;&nbsp;
+                                    &nbsp;&nbsp;&nbsp;
                                     {userObj.username}
                                 </Box>
                             )}
@@ -302,6 +315,12 @@ function SessionPage(props: any) {
                             )}
                             disabled={createSessionForm.isPublic}
                         />
+
+                        <FormHelperText>{createSessionFormErrors.isPublic}</FormHelperText>
+                    </FormControl>
+
+                    <FormControl fullWidth>
+
                     </FormControl>
                 </DialogContent>
                 <DialogActions>
