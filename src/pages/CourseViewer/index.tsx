@@ -85,18 +85,6 @@ function CourseOverview(props: any) {
             </>
         }
       </LayoutContainer>)}
-      {/*{courseIsEnrolled() &&*/}
-      {/*<> */}
-      {/*  <Sidebar course={currentCourse}/>*/}
-      {/*  <StudentView course={currentCourse} account={currentUser} enrolledCourse={enrolledCourse}/> */}
-      {/*</>*/}
-      {/*}*/}
-      {/*{isCourseTutor() &&*/}
-      {/*<>*/}
-      {/*  <Sidebar course={currentCourse}/>*/}
-      {/*  <TutorView course={currentCourse}/>*/}
-      {/*</>*/}
-      {/*}*/}
     </>
   );
 }

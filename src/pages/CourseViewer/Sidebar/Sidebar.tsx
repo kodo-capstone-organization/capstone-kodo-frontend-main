@@ -13,7 +13,8 @@ import {
   SidebarLink,
   LessonLink,
   Home,
-  Forum
+  Forum,
+  RightArrow,
 } from "./SidebarElements";
 import { Account } from "../../../apis/Entities/Account";
 
@@ -45,6 +46,38 @@ function Sidebar(props: any) {
     e.target.src = "/chessplaceholder.png"
   }
 
+  const showStudentView = () => {
+    return (
+      (!props.isTutorView && enrolledCourse && enrolledLessons) && 
+        enrolledLessons.map(enrolledLesson => {
+          return (
+            <LessonLink 
+              to={`/overview/lesson/${enrolledCourse.enrolledCourseId}/${enrolledLesson.enrolledLessonId}`} 
+              key={enrolledLesson.enrolledLessonId}
+            >
+              <RightArrow/> Week {enrolledLesson.parentLesson.sequence}
+            </LessonLink>
+          );
+      })      
+    );
+  }
+
+  const showTutorView = () => {
+    return (
+      (props.isTutorView && course && lessons) && 
+        lessons.map(lesson => {
+          return (
+            <LessonLink 
+              to={`/overview/lessonstatistics/${course.courseId}/${lesson.lessonId}`} 
+              key={lesson.lessonId}
+            >
+              <RightArrow/> Week {lesson.sequence}
+            </LessonLink>
+          );
+        })
+    );
+  }
+
   return (
     <>
       { course &&
@@ -63,27 +96,9 @@ function Sidebar(props: any) {
               <Home/> Overview
             </SidebarLink>
               
-            {/* Weekly Lesson Links */}
-            { (!props.isTutorView && enrolledCourse && enrolledLessons) && 
-              enrolledLessons.map(enrolledLesson => {
-                return (
-                  <LessonLink key={enrolledLesson.enrolledLessonId}>
-                    <SidebarLink to={`/overview/lesson/${enrolledCourse.enrolledCourseId}/${enrolledLesson.enrolledLessonId}`}>Week {enrolledLesson.parentLesson.sequence}</SidebarLink>
-                  </LessonLink>
-                );
-              })
-            }
+            { showStudentView() }
+            { showTutorView() }
 
-            { (props.isTutorView && lessons) && 
-              lessons.map(lesson => {
-                return (
-                  <LessonLink key={lesson.lessonId}>
-                    <SidebarLink to={`/overview/lessonstatistics/${course.courseId}/${lesson.lessonId}`}>Week {lesson.sequence}</SidebarLink>
-                  </LessonLink>
-                );
-              })
-            }   
-              
             {/* Discussion Forum Link */}
             <SidebarLink>
               <Forum/> Discussion Forum

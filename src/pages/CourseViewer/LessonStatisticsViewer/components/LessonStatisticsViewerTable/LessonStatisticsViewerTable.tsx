@@ -70,7 +70,9 @@ function LessonStatisticsViewerTable(props: any) {
                     </Tooltip>
                 }
                 { (data[0] === '-') &&
-                    <CrossIcon/>
+                    <Tooltip title={<div style={{ fontSize: "1.5em", padding: "2px" }}>Student has not completed content</div>}>
+                        <CrossIcon/>
+                    </Tooltip>
                 }
                 { (data[0] !== 'Y' && data[0] !== '-') &&
                     <Tooltip title={<div style={{ fontSize: "1.5em", padding: "2px" }}>{data[1]}</div>}>
@@ -88,62 +90,62 @@ function LessonStatisticsViewerTable(props: any) {
             <>
             { (!loading && enrolledLessons && rows && columns && enrolledLessons.length > 0) &&                    
                 <TableContainer style={{ maxHeight: "30em" }}>
-                <Table stickyHeader>
-                    <TableHead>
-                    <TableRow>
-                        { 
-                        columns.map((column: Column) => (
-                            <TableCell
-                            key={column.id}
-                            align={column.align}
-                            style={{ minWidth: column.minWidth }}
-                            >
-                            {column.label}
-                            </TableCell>
-                        ))
-                        }
-                    </TableRow>
-                    </TableHead>
-                    <TableBody>
-                    {
-                        rows
-                        .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                        .map((row) => {
-                            return (
-                            <TableRow hover role="checkbox" tabIndex={-1}>
-                                {
-                                    row.data.map((data) => showData(data))
+                    <Table stickyHeader>
+                        <TableHead>
+                            <TableRow>
+                                { 
+                                columns.map((column: Column) => (
+                                    <TableCell
+                                    key={column.id}
+                                    align={column.align}
+                                    style={{ minWidth: column.minWidth }}
+                                    >
+                                    {column.label}
+                                    </TableCell>
+                                ))
                                 }
                             </TableRow>
-                            );
-                            return (
-                                <>
-                                </>
-                            );
-                        })
-                    }
-                    </TableBody>
-                    <TableFooter>
-                    <TableRow>
-                        <TablePagination
-                        rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
-                        colSpan={columns.length}
-                        count={rows.length}
-                        rowsPerPage={rowsPerPage}
-                        page={page}
-                        SelectProps={{
-                            inputProps: {
-                            'aria-label': 'rows per page',
-                            },
-                            native: true,
-                        }}
-                        onPageChange={handleChangePage}
-                        onRowsPerPageChange={handleChangeRowsPerPage}
-                        ActionsComponent={TablePaginationActions}
-                        />
-                    </TableRow>
-                    </TableFooter>
-                </Table>
+                        </TableHead>
+                        <TableBody>
+                            {
+                                rows
+                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                .map((row) => {
+                                    return (
+                                    <TableRow hover role="checkbox" tabIndex={-1}>
+                                        {
+                                            row.data.map((data) => showData(data))
+                                        }
+                                    </TableRow>
+                                    );
+                                    return (
+                                        <>
+                                        </>
+                                    );
+                                })
+                            }
+                        </TableBody>
+                        <TableFooter>
+                            <TableRow>
+                                <TablePagination
+                                rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
+                                colSpan={columns.length}
+                                count={rows.length}
+                                rowsPerPage={rowsPerPage}
+                                page={page}
+                                SelectProps={{
+                                    inputProps: {
+                                    'aria-label': 'rows per page',
+                                    },
+                                    native: true,
+                                }}
+                                onPageChange={handleChangePage}
+                                onRowsPerPageChange={handleChangeRowsPerPage}
+                                ActionsComponent={TablePaginationActions}
+                                />
+                            </TableRow>
+                        </TableFooter>
+                    </Table>
                 </TableContainer>    
             }
             </>
