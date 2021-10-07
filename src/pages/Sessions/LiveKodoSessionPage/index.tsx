@@ -107,9 +107,8 @@ function LiveKodoSessionPage(props: any) {
         }
 
         if (initAction === "join") {
-            // Setup data channel & listeners
-            // @ts-ignore
-            dataChannel = peerConn.createDataChannel("dataChannel", { reliable: true });
+           // Setup data channel & listeners
+           dataChannel = peerConn.createDataChannel("dataChannel");
 
            dataChannel.onopen = function(event) {
                console.log("dataChannel.onopen IN JOINER SIDE")
