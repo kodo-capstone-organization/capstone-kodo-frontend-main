@@ -96,9 +96,7 @@ function LiveKodoSessionPage(props: any) {
 
         // Peer conn ontrack event (to add remote streams to audio object)
         peerConn.ontrack = function(event) {
-            // console.log("AUDIO / VIDEO STREAM RECEIVED:", event);
             console.log('AUDIO / VIDEO STREAM RECEIVED:', event.track, event.streams[0]);
-            // TODO: enable some sort of state in the html
             // @ts-ignore
             remoteAudioRef.current.srcObject = event.streams[0]
         };
@@ -212,11 +210,10 @@ function LiveKodoSessionPage(props: any) {
 
     return (
         <LiveKodoSessionContainer>
+            <audio ref={remoteAudioRef} autoPlay />
             <TopSessionBar><strong>{props.location.state?.sessionName || "SESSION_NAME"} ({sessionId}) · Time_Elapsed</strong></TopSessionBar>
-            {/*<Button onClick={createOffer}>Create Offer</Button>*/}
             <Button onClick={() => send({event: null, data: "helloWord"})}>SEND</Button>
             <Button onClick={() => sendMessage("hello from datachannel")}>SEND VIA DATACHANNEL</Button>
-            Remote audio: <audio ref={remoteAudioRef} autoPlay />
             <MainSessionWrapper>
                 <ParticipantsPanel />
                 <Stage dataChannelConnected={dataChannelConnected} />
