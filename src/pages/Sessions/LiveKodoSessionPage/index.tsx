@@ -93,29 +93,31 @@ function LiveKodoSessionPage(props: any) {
             }
         };
 
-        // Setup data channel & listeners
-        // @ts-ignore
-        dataChannel = peerConn.createDataChannel("dataChannel", { reliable: true });
-
-        dataChannel.onerror = function(error) {
-            console.log("Error:", error);
-        };
-
-        // when we receive a message from the other peer, printing it on the console
-        dataChannel.onmessage = function(event) {
-            console.log("datachannel onmessage:", event.data);
-        };
-
-        dataChannel.onclose = function() {
-            console.log("Data channel is closed");
-        };
-
-        // Peer conn ondatachannel listener
-        peerConn.ondatachannel = function (event) {
-            dataChannel = event.channel;
-        };
+        if (initAction === "create") {
+            // Peer conn ondatachannel listener
+            peerConn.ondatachannel = function (event) {
+                dataChannel = event.channel;
+            };
+        }
 
         if (initAction === "join") {
+            // Setup data channel & listeners
+            // @ts-ignore
+            dataChannel = peerConn.createDataChannel("dataChannel", { reliable: true });
+
+            dataChannel.onerror = function(error) {
+                console.log("Error:", error);
+            };
+
+            // when we receive a message from the other peer, printing it on the console
+            dataChannel.onmessage = function(event) {
+                console.log("datachannel onmessage:", event.data);
+            };
+
+            dataChannel.onclose = function() {
+                console.log("Data channel is closed");
+            };
+
             console.log("INITIALIZE FOR JOIN: CREATE OFFER")
             createOffer(peerConn);
         }

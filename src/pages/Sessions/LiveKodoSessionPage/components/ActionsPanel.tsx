@@ -23,7 +23,6 @@ function ActionsPanel(props: any) {
                 </IconButton>
                 <span style={{ textAlign: "center", color: "blue" }}>Copy Join Link</span>
             </ActionItem>
-
         </ActionsPanelContainer>
     )
 }
