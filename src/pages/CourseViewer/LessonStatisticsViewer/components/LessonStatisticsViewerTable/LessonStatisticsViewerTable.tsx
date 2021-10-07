@@ -14,10 +14,10 @@ import Typography from '@material-ui/core/Typography';
 
 import { EnrolledLessonWithStudentName } from "../../../../../apis/Entities/EnrolledLesson";
 
-import { Row } from "./LessonStatisticsData";
 import { Column } from "./LessonStatisticsData";
-import { getRows } from "./LessonStatisticsData";
+import { Row } from "./LessonStatisticsData";
 import { getColumns } from "./LessonStatisticsData";
+import { getRows } from "./LessonStatisticsData";
 
 import { 
     CheckIcon,
@@ -65,7 +65,7 @@ function LessonStatisticsViewerTable(props: any) {
         return (
             <TableCell align="center">
                 { (data[0] === 'Y') &&
-                    <Tooltip title={data[1]}>
+                    <Tooltip title={<div style={{ fontSize: "1.5em", padding: "2px" }}>{data[1]}</div>}>
                         <CheckIcon/>
                     </Tooltip>
                 }
@@ -73,7 +73,7 @@ function LessonStatisticsViewerTable(props: any) {
                     <CrossIcon/>
                 }
                 { (data[0] !== 'Y' && data[0] !== '-') &&
-                    <Tooltip title={data[1]}>
+                    <Tooltip title={<div style={{ fontSize: "1.5em", padding: "2px" }}>{data[1]}</div>}>
                         <Typography>
                             { data[0] }
                         </Typography>
