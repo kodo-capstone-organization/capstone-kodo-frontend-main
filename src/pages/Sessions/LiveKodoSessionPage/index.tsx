@@ -67,7 +67,7 @@ function LiveKodoSessionPage(props: any) {
         const configuration: RTCConfiguration = {
             iceServers: [
                 {
-                    urls: "stun:stun2.1.google.com:19302"
+                    urls: "stun:stun1.l.google.com:19302"
                 }
             ]
         };
