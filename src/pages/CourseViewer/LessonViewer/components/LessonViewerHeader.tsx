@@ -63,10 +63,13 @@ function LessonViewerHeader(props: any) {
     }
 
     const showLessonProgress = () => {
-        return (
-            <LessonViewerProgress>
-                <LinearProgressWithLabel value={lessonCompletionPercentage} />
-            </LessonViewerProgress>
+        return (            
+            <>                
+                Completion Percentage:
+                <LessonViewerProgress>
+                    <LinearProgressWithLabel value={lessonCompletionPercentage} />
+                </LessonViewerProgress>
+            </>
         );
     }
 
@@ -100,16 +103,18 @@ function LessonViewerHeader(props: any) {
 
     return (      
         <>
-            { showBackToCourseOverviewIcon() }
-            { showLessonProgress() }
+            { showBackToCourseOverviewIcon() }            
             { (course && lesson) &&
                 <LessonViewerCardElement>
                     <LessonViewerHeaderElement title="Lesson Overview"/>
                     <LessonViewerContentElement>
                         <LessonTitle>Week {lesson?.sequence}</LessonTitle>
                         <br/>
-                        <CourseTitle>{course?.name}</CourseTitle>
+                        <CourseTitle>{course?.name}</CourseTitle>                        
                         { lesson.description }
+                        <br/>
+                        <br/>
+                        { showLessonProgress() }
                     </LessonViewerContentElement>
                 </LessonViewerCardElement>
             }          
