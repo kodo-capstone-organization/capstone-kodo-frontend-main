@@ -58,12 +58,12 @@ export const RouteItemsWithoutSidePadding = [
     },
     {
         path: "/forum/:courseId",
-        isDynamic: false,
+        isDynamic: true,
         component: ForumPage
     },
     {
         path: "/forum/:courseId/category/:forumCategoryId",
-        isDynamic: false,
+        isDynamic: true,
         component: ForumPage // nested page
     },
 ]

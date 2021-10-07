@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 
 import ForumIcon from '@material-ui/icons/Forum';
 import HomeIcon from '@material-ui/icons/Home';
+import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 
 export const SidebarWrapper = styled.div`
   min-width: 240px;
@@ -37,43 +38,45 @@ export const SidebarLink = styled(Link)`
 
   &.active {
     color: ${colours.BLUE1};
+    background: ${colours.GRAY6};
   }
   &:hover {
     color: ${colours.BLUE1};
+    background: ${colours.GRAY6};
     transition: 0.2s ease-in-out;
   }
-`;
-
-
-export const CourseBanner = styled.img`
-    height: 100px;
-    width: 100%;
-    filter: brightness(0.8);
 `;
 
 export const LessonLink = styled(Link)`
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  font-size: 20px;
+  font-size: ${fontSizes.ITEM};
   text-decoration: none;
   list-style: none;
   transition: 0.2s ease-in-out;
   color: ${colours.GRAY5};
   cursor: pointer;
-  font-family: "Roboto", sans-serif;
-  padding-left: 20px;
+  padding: 2rem 2rem 2rem 3rem;
 
 
   &.active {
     color: ${colours.BLUE1};
-    background: ${colours.GRAY7};
+    background: ${colours.GRAY6};
   }
   &:hover {
     color: ${colours.BLUE1};
-    background: ${colours.GRAY7};
+    background: ${colours.GRAY6};
     transition: 0.2s ease-in-out;
   }
+`;
+
+export const CourseBanner = styled.img`
+    height: 100px;
+    width: 100%;
+    object-fit: cover;
+    object-position: 50% 25%;
+    filter: brightness(0.8);
 `;
 
 export const Home = styled(HomeIcon)`
@@ -81,5 +84,9 @@ export const Home = styled(HomeIcon)`
 `;
 
 export const Forum = styled(ForumIcon)`
+  padding-right: 8px;
+`;
+
+export const RightArrow = styled(KeyboardArrowRightIcon)`
   padding-right: 8px;
 `;
