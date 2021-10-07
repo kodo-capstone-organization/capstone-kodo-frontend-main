@@ -94,3 +94,11 @@ export async function createNewForumPost(createNewForumPostReq: CreateNewForumPo
 
     return httpClient.post<FormData, ForumPost>(postParameters)
 }
+
+export async function deleteForumThread(forumThreadId: number): Promise<boolean> {
+    const deleteParameters: IHttpClientRequestParameters<undefined> = {
+        url: `/forumThread/deleteForumThread/${forumThreadId}`
+    }
+
+    return httpClient.delete<undefined, boolean>(deleteParameters);
+}

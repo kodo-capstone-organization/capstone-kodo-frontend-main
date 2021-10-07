@@ -23,9 +23,10 @@ function ForumCategoryList(props: any) {
 
     const [courseId, setCourseId] = useState<number>();
     const [forumCategories, setForumCategories] = useState<ForumCategory[]>([]);
-    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [actionsDisabled, setActionsDisabled] = useState<boolean>(true);
     const loggedInAccountId = parseInt(window.sessionStorage.getItem("loggedInAccountId"));
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
 
 
     const open = Boolean(anchorEl);
