@@ -65,7 +65,11 @@ function LiveKodoSessionPage(props: any) {
     const initialize = () => {
         // Setup peer conn
         const configuration: RTCConfiguration = {
-            "iceServers": [{ "urls": "stun:stun.1.google.com:19302" }]
+            iceServers: [
+                {
+                    urls: "stun:stun2.1.google.com:19302"
+                }
+            ]
         };
         peerConn =  new RTCPeerConnection(configuration);
 
