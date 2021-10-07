@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react';
-import { useHistory } from "react-router-dom";
+import { createMuiTheme } from "@material-ui/core";
+
 
 import {
     Dialog,
     DialogActions,
     DialogContent,
-    DialogContentText,
     DialogTitle,
     IconButton,
-    TextField
+    TextField,
+    ListItemIcon
 } from "@material-ui/core";
 import AddIcon from '@material-ui/icons/Add';
 import EditIcon from '@material-ui/icons/Edit';
@@ -16,6 +17,16 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import { Button } from "../../../values/ButtonElements";
 import { ForumCategory, CreateNewForumCategoryReq, UpdateForumCategoryReq } from '../../../apis/Entities/ForumCategory';
 import { createNewForumCategory, updateForumCategory, deleteForumCategory } from "../../../apis/Forum/ForumApis";
+
+const themeInstance = createMuiTheme({
+    overrides: {
+        MuiIconButton: {
+            root: {
+                fontSize: "unset ! important"
+            }
+        }
+    }
+});
 
 function ForumCategoryModal(props: any) {
 
@@ -30,8 +41,8 @@ function ForumCategoryModal(props: any) {
     useEffect(() => {
         setCourseId(props.courseId);
         setModalType(props.modalType);
+        setForumCategoryToSubmit(props.forumCategory);
         if (props.modalType === "EDIT" || props.modalType === "DELETE") {
-            setForumCategoryToSubmit(props.forumCategory);
             setName(props.forumCategory.name);
             setDescription(props.forumCategory.description);
         }
@@ -54,7 +65,6 @@ function ForumCategoryModal(props: any) {
         }
         createNewForumCategory(createNewForumCategoryReq).then((res) => {
             props.onForumCategoryChange({ message: "Forum Category Creation Succeeded", type: "success" });
-            console.log("Success", res);
         }).catch((err) => {
             props.onForumCategoryChange({ message: `Forum Category Creation Failed: ${err.response.data.message}`, type: "error" });
         })
@@ -66,10 +76,8 @@ function ForumCategoryModal(props: any) {
         const updateForumCategoryReq: UpdateForumCategoryReq = {
             forumCategory
         }
-        console.log("updateForumCategoryReq", updateForumCategoryReq);
         updateForumCategory(updateForumCategoryReq).then((res) => {
             props.onForumCategoryChange({ message: "Forum Category Update Succeeded", type: "success" });
-            console.log("Success", res);
         }).catch((err) => {
             props.onForumCategoryChange({ message: "Forum Category Update Failed", type: "error" });
         })
@@ -91,10 +99,44 @@ function ForumCategoryModal(props: any) {
                 modalType === "CREATE" &&
                 <>
                     <IconButton aria-label="settings" color="primary" onClick={handleOpen}>
-                        <AddIcon /> &nbsp; Add Thread
+                        <AddIcon /> &nbsp; Add Category
             </IconButton>
                     <Dialog open={open} onClose={handleClose} maxWidth={"lg"}>
-                        <DialogTitle>Create Forum Thread</DialogTitle>
+                        <DialogTitle>Create Forum Category</DialogTitle>
+                        <DialogContent>
+                            <TextField
+                                required
+                                fullWidth
+                                id="outlined-required"
+                                label="Name"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                            />
+                            <TextField
+                                required
+                                fullWidth
+                                id="outlined-required"
+                                label="Description"
+                                value={description}
+                                onChange={(e) => setDescription(e.target.value)}
+                            />
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={handleClose}>Cancel</Button>
+                            <Button primary onClick={handleCreateConfirm}>Confirm</Button>
+                        </DialogActions>
+                    </Dialog>
+                </>
+            }
+
+            {
+                modalType === "EMPTY" &&
+                <>
+                    <IconButton aria-label="settings" color="primary" onClick={handleOpen}>
+                        <AddIcon /> &nbsp; Start A Category
+            </IconButton>
+                    <Dialog open={open} onClose={handleClose} maxWidth={"lg"}>
+                        <DialogTitle>Create Forum Category</DialogTitle>
                         <DialogContent>
                             <TextField
                                 required
@@ -124,9 +166,9 @@ function ForumCategoryModal(props: any) {
             {
                 modalType === "EDIT" &&
                 <>
-                    <IconButton disabled={isDisabled} onClick={handleOpen}>
-                        <EditIcon />
-                    </IconButton>
+                    <ListItemIcon disabled={isDisabled} onClick={handleOpen} >
+                        <EditIcon /> Edit Category
+                    </ListItemIcon>
                     <Dialog open={open} onClose={handleClose} maxWidth={"lg"}>
                         <DialogTitle>Edit Forum Category</DialogTitle>
                         <DialogContent>
@@ -158,9 +200,9 @@ function ForumCategoryModal(props: any) {
             {
                 modalType === "DELETE" &&
                 <>
-                    <IconButton disabled={isDisabled} onClick={handleOpen}>
-                        <DeleteIcon />
-                    </IconButton>
+                    <ListItemIcon disabled={isDisabled} onClick={handleOpen} >
+                        <DeleteIcon /> Delete Category
+                    </ListItemIcon>
                     <Dialog open={open} onClose={handleClose} maxWidth={"lg"}>
                         <DialogTitle>Delete Forum Category</DialogTitle>
                         <DialogContent>

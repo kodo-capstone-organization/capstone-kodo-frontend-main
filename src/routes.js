@@ -111,6 +111,9 @@ function Routes() {
                         {window.sessionStorage.getItem("loggedInAccountId") ?
                             <Route path="/forum/:courseId/category/:forumCategoryId" render={props => <ForumPage {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
                             : <Redirect to="/" />}
+                        {window.sessionStorage.getItem("loggedInAccountId") ?
+                            <Route path="/forum/:courseId/category/:forumCategoryId/thread/:forumThreadId" render={props => <ForumPage {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
+                            : <Redirect to="/" />}
                         {/* Need to change the path namings here, we have 2 types of content, talk to chandya */}
                         {window.sessionStorage.getItem("loggedInAccountId") ?
                             <Route path="/markedquizviewer/:enrolledCourseId/:enrolledLessonId/:studentAttemptId" render={props => <QuizViewer {...props} callOpenSnackBar={callOpenSnackBar} />} exact />

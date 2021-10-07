@@ -3,7 +3,7 @@ import { httpClient } from "../HttpClient/HttpClient";
 import { transformToBlob } from "./../../utils/BlobCreator";
 import { ForumCategory, CreateNewForumCategoryReq, UpdateForumCategoryReq } from "../Entities/ForumCategory";
 import { ForumThread, CreateNewForumThreadReq } from "../Entities/ForumThread";
-
+import { ForumPost, CreateNewForumPostReq } from "../Entities/ForumPost";
 
 
 export async function getForumCategoryByCourseId(courseId: number): Promise<ForumCategory[]> {
@@ -66,4 +66,31 @@ export async function createNewForumThread(createNewForumThreadReq: CreateNewFor
     }
 
     return httpClient.post<FormData, ForumThread>(postParameters)
+}
+
+export async function getAllForumPostsOfAForumThread(forumThreadId: number): Promise<ForumPost[]> {
+    const getParameters: IHttpClientRequestParameters<undefined> = {
+        url: `/forumPost/getAllForumPostsOfAForumThread/${forumThreadId}`
+    }
+    return httpClient.get<undefined, ForumPost[]>(getParameters)
+}
+
+export async function getForumThreadByForumThreadId(forumThreadId: number): Promise<ForumThread> {
+    const getParameters: IHttpClientRequestParameters<undefined> = {
+        url: `/forumThread/getForumThreadByForumThreadId/${forumThreadId}`
+    }
+    return httpClient.get<undefined, ForumThread>(getParameters)
+}
+
+export async function createNewForumPost(createNewForumPostReq: CreateNewForumPostReq): Promise<ForumPost> {
+    const formData = new FormData();
+
+    formData.append('forumPost', transformToBlob(createNewForumPostReq));
+
+    const postParameters: IHttpClientRequestParameters<FormData> = {
+        url: '/forumPost/createNewForumPost',
+        payload: formData
+    }
+
+    return httpClient.post<FormData, ForumPost>(postParameters)
 }

@@ -13,6 +13,7 @@ export interface ForumThread {
 export interface CreateNewForumThreadReq {
     name: string,
     description: string,
-    timestamp: Date,
-    accountId: number
+    timeStamp: Date,
+    accountId: number,
+    forumCategoryId : number
 }

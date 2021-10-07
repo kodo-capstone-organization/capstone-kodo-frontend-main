@@ -1,11 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useHistory } from "react-router-dom";
 
-import { getCourseByCourseId } from "../../apis/Course/CourseApis";
-import { getForumCategoryByCourseId } from "../../apis/Forum/ForumApis";
-import { Course } from '../../apis/Entities/Course';
-import { ForumCategory } from '../../apis/Entities/ForumCategory';
-
 import {
     ForumContainer
 } from "./ForumElements";
@@ -15,25 +10,16 @@ import {
 
 import ForumCategoryList from './components/ForumCategoryList';
 import ForumThreadList from './components/ForumThreadList';
-
-
-
-
+import ForumPostList from './components/ForumPostList';
 
 function ForumPage(props: any) {
 
     const courseId = parseInt(props.match.params.courseId);
     const loggedInAccountId = window.sessionStorage.getItem("loggedInAccountId");
     const [isIndexPage, setIsIndexPage] = useState<Boolean>();
-    // const [selectedQuestions, setSelectedQuestions] = useState<any>([]);
     const history = useHistory();
 
     useEffect(() => {
-        getCourseByCourseId(courseId).then((res) => {
-            if (loggedInAccountId && res.tutor.accountId !== parseInt(loggedInAccountId)) {
-                history.push("/profile");
-            }
-        });
     }, []);
 
     // To update isIndexPage
@@ -51,26 +37,17 @@ function ForumPage(props: any) {
             name: "Category",
             subpath: "/category",
             fullpath: `/forum/${courseId}/category/:forumCategoryId`
+        },
+        {
+            name: "Thread",
+            subpath: "/thread",
+            fullpath: `/forum/${courseId}/category/:forumCategoryId/thread/:forumThreadId`
         }
     ]
 
     const handleCallSnackbar = (snackbarObject: any) => {
         props.callOpenSnackBar(snackbarObject.message, snackbarObject.type);
     }
-
-    // const checkForumThreadList = () => {
-    //     const checkIfIndex = !isIndexPage;
-    //     const checkPathname = history.location.pathname.includes("category");
-    //     var forumCategoryId = props.history.location.pathname;
-    //     forumCategoryId = parseInt(forumCategoryId.split('/category/')[1]);
-    //     const forumCategoryIdList = forumCategories.map(cat => parseInt(cat.forumCategoryId));
-    //     const isCategoryInCourse = forumCategoryIdList.includes(forumCategoryId);
-    //     console.log("check", checkIfIndex)
-    //     console.log("check", checkPathname)
-    //     console.log("check", isCategoryInCourse)
-
-    //     return checkIfIndex && checkPathname && isCategoryInCourse
-    // }
 
     return (
         <ForumContainer>
@@ -88,7 +65,8 @@ function ForumPage(props: any) {
                 }
             </Breadcrumbs>
             {isIndexPage && <ForumCategoryList history={history} courseId={courseId} onCallSnackbar={handleCallSnackbar} />}
-            {!isIndexPage && history.location.pathname.includes("category") && <ForumThreadList history={history} courseId={courseId} onCallSnackbar={handleCallSnackbar} />}
+            {!isIndexPage && history.location.pathname.includes("category") && !history.location.pathname.includes("thread") && <ForumThreadList history={history} courseId={courseId} onCallSnackbar={handleCallSnackbar} />}
+            {!isIndexPage && history.location.pathname.includes("thread") && <ForumPostList history={history} courseId={courseId} onCallSnackbar={handleCallSnackbar} />}
 
         </ForumContainer>
     );

@@ -43,31 +43,53 @@ function ForumThreadList(props: any) {
         }).catch((err) => {
             props.onCallSnackbar({ message: "Failure", type: "error" })
         })
-        console.log(forumCategoryId)
         setCourseId(props.courseId)
 
-    }, [props]);
+    }, [props.history.location.pathname]);
 
     const handleCallSnackbar = (snackbarObject: any) => {
-        getForumCategoryByCourseId(props.courseId).then((res) => {
-            res.map((q) => {
-                Object.assign(q, { id: q.forumCategoryId })
-                return q;
-            });
-            setForumCategories(res);
+        getForumCategoryByForumCategoryId(forumCategory.forumCategoryId).then((res) => {
+            setForumCategory(res);
+            setForumThreads(res.forumThreads);
+            console.log("new thread", res.forumThreads);
         }).catch((err) => {
             console.log("Failed", err);
         });
         props.onCallSnackbar(snackbarObject);
     }
 
-    const navigateToIndividualCategory = (forumCategoryId: number) => {
-        // props.history.push(`/forum/${courseId}/category/${forumCategoryId}`);
+    const navigateToThread = (forumThreadId: number) => {
+        props.history.push(`/forum/${courseId}/category/${forumCategory.forumCategoryId}/thread/${forumThreadId}`);
     }
 
     const formatDate = (date: Date) => {
         var d = new Date(date);
         return d.toDateString() + ', ' + d.toLocaleTimeString();
+    }
+
+    const sortAtoZ = () => {
+        const sorted = forumThreads
+            .sort((a, b) => a.name.localeCompare(b.name));
+        setForumThreads(sorted);
+    }
+
+    const sortZtoA = () => {
+        const sorted = forumThreads
+            .sort((a, b) => b.name.localeCompare(a.name));
+        setForumThreads(sorted);
+    }
+
+    const sortNewestFirst = () => {
+        const sorted = forumThreads
+        .sort((a, b) => new Date(b.timeStamp) - new Date(a.timeStamp));
+        setForumThreads(sorted);
+    }
+
+    const sortOldestFirst = () => {
+        const sorted = forumThreads
+        .sort((a, b) => new Date(a.timeStamp) - new Date(b.timeStamp));
+        console.log("Sorted", sorted);
+        setForumThreads(sorted);
     }
 
     const mapThreads = (forumThreads: ForumThread[]) => {
@@ -78,12 +100,12 @@ function ForumThreadList(props: any) {
                         <>
                             <ForumThreadCard key={threadId}>
                                 <Avatar alt="Remy Sharp" src={thread.account.displayPictureUrl} />
-                                <Typography variant="body1" component="div" style={{ marginLeft: "20px" }}>
-                                    <Link>{thread.name}</Link>
+                                <Typography variant="body1" component="div" style={{ marginLeft: "20px", width: "500px" }}>
+                                    <Link onClick={()=>navigateToThread(thread.forumThreadId)}>{thread.name}</Link>
                                     <br />
                                     {formatDate(thread.timeStamp)}  |  {thread.account.name}
                                 </Typography>
-                                <Typography variant="body1" component="div" style={{ marginLeft: "auto" }}>
+                                <Typography variant="body1" component="div" style={{ marginRight: "auto" }}>
                                     {thread.forumPosts.length} Replies
                                 <ForumIcon />
                                 </Typography>
@@ -102,19 +124,23 @@ function ForumThreadList(props: any) {
                 < ForumCardHeader
                     title={forumCategory.name}
                     action={
-                        <ForumThreadModal modalType={"CREATE"} courseId={props.courseId} onForumCategoryChange={handleCallSnackbar} />
+                        <>
+                            <Button onClick={sortAtoZ}>Sort A to Z</Button>
+                            <Button onClick={sortZtoA}>Sort Z to A</Button>
+                            <Button onClick={sortOldestFirst}>Sort Old to New</Button>
+                            <Button onClick={sortNewestFirst}>Sort New to Old</Button>
+                            <ForumThreadModal modalType={"CREATE"} courseId={props.courseId} forumCategory={forumCategory} onForumThreadChange={handleCallSnackbar} />
+                        </>
                     }
                 />
             }
 
             <ForumThreadCardContent>
                 {mapThreads(forumThreads)}
-                {
-                    <EmptyStateContainer threadsExist={forumThreads.length > 0}>
-                        <Typography>No threads currently 🥺</Typography>
-                        <ForumThreadModal modalType={"EMPTY"} courseId={props.courseId} onForumCategoryChange={handleCallSnackbar} />
-                    </EmptyStateContainer>
-                }
+                <EmptyStateContainer threadsExist={forumThreads.length > 0}>
+                    <Typography>No threads currently 🥺</Typography>
+                    <ForumThreadModal modalType={"EMPTY"} courseId={props.courseId} forumCategory={forumCategory} onForumThreadChange={handleCallSnackbar} />
+                </EmptyStateContainer>
             </ForumThreadCardContent>
         </ForumCard>
     );
