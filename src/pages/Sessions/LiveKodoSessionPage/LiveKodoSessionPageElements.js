@@ -56,3 +56,9 @@ export const ActionsPanelContainer = styled.div`
     align-items: center;
 `;
 
+export const ActionItem = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: ${fontSizes.SUBTEXT}
+`;

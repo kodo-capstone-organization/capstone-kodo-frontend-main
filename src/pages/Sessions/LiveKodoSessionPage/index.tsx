@@ -196,7 +196,7 @@ function LiveKodoSessionPage(props: any) {
             <MainSessionWrapper>
                 <ParticipantsPanel />
                 <Stage />
-                <ActionsPanel />
+                <ActionsPanel sessionId={sessionId} callOpenSnackBar={props.callOpenSnackBar}/>
             </MainSessionWrapper>
         </LiveKodoSessionContainer>
     )
