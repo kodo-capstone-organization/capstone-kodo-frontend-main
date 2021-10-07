@@ -1,5 +1,5 @@
 import { Input } from '@material-ui/core';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Button } from '../../../values/ButtonElements';
 import ActionsPanel from './components/ActionsPanel';
 import ParticipantsPanel from './components/ParticipantsPanel';
@@ -14,7 +14,8 @@ let localStream: MediaStream;
 // URL: /session/<CREATE_OR_JOIN>/<SESSION_ID>
 // To consider: Adding ?pwd=<PASSWORD> as a query param
 function LiveKodoSessionPage(props: any) {
-    
+
+    const remoteAudioRef = useRef(null);
     const [initAction, setInitAction] = useState<string>(props.match.params.initAction.toLowerCase()); // "create" or "join" only
     const [sessionId, setSessionId] = useState<string>(props.match.params.sessionId);
     const [dataChannelConnected, setDataChannelConnected] = useState<boolean>(false);
@@ -82,18 +83,21 @@ function LiveKodoSessionPage(props: any) {
         };
         peerConn =  new RTCPeerConnection(configuration);
 
-        // Setup peer conn listeners
-        peerConn.ontrack = function(event) {
-            // console.log("AUDIO / VIDEO STREAM RECEIVED:", event);
-            console.log('AUDIO / VIDEO STREAM RECEIVED:', event.track, event.streams[0]);
-            // TODO: enable some sort of state in the html
-        };
-
+        // Peer conn icecandidate event
         peerConn.onicecandidate = function(event) {
             if (event.candidate) {
                 console.log("peer.onicecandidate");
                 send({ event : "candidate", data : event.candidate });
             }
+        };
+
+        // Peer conn ontrack event
+        peerConn.ontrack = function(event) {
+            // console.log("AUDIO / VIDEO STREAM RECEIVED:", event);
+            console.log('AUDIO / VIDEO STREAM RECEIVED:', event.track, event.streams[0]);
+            // TODO: enable some sort of state in the html
+            // @ts-ignore
+            remoteAudioRef.current.srcObject = event.streams[0]
         };
 
         if (initAction === "create") {
@@ -212,6 +216,7 @@ function LiveKodoSessionPage(props: any) {
             {/*<Button onClick={createOffer}>Create Offer</Button>*/}
             <Button onClick={() => send({event: null, data: "helloWord"})}>SEND</Button>
             <Button onClick={() => sendMessage("hello from datachannel")}>SEND VIA DATACHANNEL</Button>
+            Remote audio: <audio ref={remoteAudioRef} autoPlay />
             <MainSessionWrapper>
                 <ParticipantsPanel />
                 <Stage dataChannelConnected={dataChannelConnected} />
