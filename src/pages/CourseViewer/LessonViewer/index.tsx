@@ -3,9 +3,6 @@ import { withRouter } from "react-router";
 
 import { useHistory } from "react-router-dom";
 
-import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
-import Tooltip from '@material-ui/core/Tooltip';
-
 import { Account } from "../../../apis/Entities/Account";
 import { EnrolledContent } from "../../../apis/Entities/EnrolledContent";
 import { EnrolledCourse } from "../../../apis/Entities/EnrolledCourse";
@@ -17,8 +14,6 @@ import { getEnrolledCourseByEnrolledCourseId } from "../../../apis/EnrolledCours
 import { getEnrolledLessonByEnrolledLessonId } from "../../../apis/EnrolledLesson/EnrolledLessonApis";
 
 import { 
-  ExitLink,
-  ExitWrapper,   
   LessonViewerContainerElement,
   LessonViewerInnerContainerElement
 } from "./LessonViewerElements";
@@ -27,8 +22,6 @@ import LessonViewerFooter from "./components/LessonViewerFooter";
 import LessonViewerHeader from "./components/LessonViewerHeader";
 import LessonViewerMultimedia from "./components/LessonViewerMultimedia";
 import LessonViewerQuiz from "./components/LessonViewerQuiz";
-
-import { colours } from "../../../values/Colours";
 
 
 function LessonViewer(props: any) {
@@ -110,24 +103,11 @@ function LessonViewer(props: any) {
     return true;
   }
 
-  const showBackToCourseOverviewIcon = () => {
-    return (
-      <ExitWrapper>
-        <ExitLink to={`/overview/${enrolledCourse?.parentCourse.courseId}`}>
-          <Tooltip title={<div style={{ fontSize: "1.5em", padding: "2px" }}>Back to Course Overview</div>}>
-            <CancelOutlinedIcon fontSize="large" style={{ color: colours.BLUE2, padding: 20 }} />
-          </Tooltip>
-        </ExitLink>
-      </ExitWrapper>
-    );
-  }
-
   return (
     <>
       { (!loading) &&     
         <LessonViewerContainerElement>
           <LessonViewerInnerContainerElement>
-            { showBackToCourseOverviewIcon() }
             <LessonViewerHeader 
               enrolledCourse={enrolledCourse} 
               enrolledLesson={enrolledLesson} 

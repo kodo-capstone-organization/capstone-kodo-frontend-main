@@ -9,6 +9,7 @@ import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
 import ImageIcon from '@material-ui/icons/Image';
 import { MdArrowForward, MdArrowBack } from "react-icons/md";
 import * as FaIcons from 'react-icons/fa'
+import Box from '@material-ui/core/Box';
 
 import { TextField, Card, CardHeader, CardContent, CardActions } from "@material-ui/core";
 
@@ -281,4 +282,8 @@ export const LessonViewerContentElement = styled(CardContent)`
   align-items: left;
   padding: 2rem !important;
   padding: ${({ removePadTop }) => (removePadTop ? "0 2rem 2rem 2rem !important" : "2rem !important")};
+`;
+
+export const LessonViewerProgress = styled(Box)`
+  margin: 0px 1em 1.5em 1em;
 `;
