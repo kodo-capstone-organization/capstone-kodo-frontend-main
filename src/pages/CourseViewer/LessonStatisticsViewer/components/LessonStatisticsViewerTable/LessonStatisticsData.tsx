@@ -11,7 +11,7 @@ function isQuiz(enrolledContent: EnrolledContent): boolean {
 }
 
 function createData(
-        data: string[]
+        data: string[][]
     ): Row {
     return { 
         data: data
@@ -55,25 +55,37 @@ function getScore(studentAttempt: StudentAttempt): number {
     return score;
 } 
 
+function formatDate(date: Date) {
+    var d = new Date(date);
+    return d.toDateString() + ', ' + d.toLocaleTimeString();
+}
+
 export interface Row {
-    data: string[];
+    data: string[][];
 }
 
 export function getRows(enrolledLessonWithStudentNames: EnrolledLessonWithStudentName[]): Row[] {
     let returnArr: Row[] = [];
 
     enrolledLessonWithStudentNames?.forEach((enrolledLessonWithStudentName: EnrolledLessonWithStudentName) => {
-        let tmpArr: string[] = [];
-        tmpArr.push(enrolledLessonWithStudentName.studentName);
-        console.log(tmpArr[0]);
+        let tmpArr: string[][] = [];
+        tmpArr.push([enrolledLessonWithStudentName.studentName, '']);
         enrolledLessonWithStudentName.enrolledLesson.enrolledContents.forEach((enrolledContent: EnrolledContent) => {
             if (isMultimedia(enrolledContent)) {
-                tmpArr.push(enrolledContent.dateTimeOfCompletion ? 'Y' : '-');
+                tmpArr.push(
+                    enrolledContent.dateTimeOfCompletion 
+                    ? ['Y', formatDate(enrolledContent.dateTimeOfCompletion)] 
+                    : ['-', '-']
+                );
             }
         });
         enrolledLessonWithStudentName.enrolledLesson.enrolledContents.forEach((enrolledContent: EnrolledContent) => {
             if (isQuiz(enrolledContent)) {
-                tmpArr.push(enrolledContent.dateTimeOfCompletion ? `${getHighestScore(enrolledContent)}` : '-');
+                tmpArr.push(
+                    enrolledContent.dateTimeOfCompletion 
+                    ? [`${getHighestScore(enrolledContent)}`, formatDate(enrolledContent.dateTimeOfCompletion)]
+                    : ['-', '-']
+                );
             }
         });
         returnArr.push(createData(tmpArr));

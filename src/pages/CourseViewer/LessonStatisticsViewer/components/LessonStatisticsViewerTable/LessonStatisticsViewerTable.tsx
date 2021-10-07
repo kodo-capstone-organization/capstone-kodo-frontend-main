@@ -9,6 +9,8 @@ import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TablePaginationActions from "@material-ui/core/TablePagination/TablePaginationActions";
 import TableRow from '@material-ui/core/TableRow';
+import Tooltip from '@material-ui/core/Tooltip';
+import Typography from '@material-ui/core/Typography';
 
 import { EnrolledLessonWithStudentName } from "../../../../../apis/Entities/EnrolledLesson";
 
@@ -59,6 +61,28 @@ function LessonStatisticsViewerTable(props: any) {
         setPage(0);
     };
 
+    const showData = (data: string[]) => {
+        return (
+            <TableCell align="center">
+                { (data[0] === 'Y') &&
+                    <Tooltip title={data[1]}>
+                        <CheckIcon/>
+                    </Tooltip>
+                }
+                { (data[0] === '-') &&
+                    <CrossIcon/>
+                }
+                { (data[0] !== 'Y' && data[0] !== '-') &&
+                    <Tooltip title={data[1]}>
+                        <Typography>
+                            { data[0] }
+                        </Typography>
+                    </Tooltip>
+                }
+            </TableCell>
+        );
+    }
+
     const showBreakdown = () => {
         return (
             <>
@@ -85,31 +109,11 @@ function LessonStatisticsViewerTable(props: any) {
                         rows
                         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                         .map((row) => {
-                            // return (
-                            // <TableRow hover role="checkbox" tabIndex={-1} key={row.name}>
-                            //     {columns.map((column) => {
-                            //     const value = row[column.id];
-                            //     return (
-                            //         <TableCell key={column.id} align={column.align}>
-                            //         { column.id !== "progress" && 
-                            //             <>
-                            //             { value }
-                            //             </>
-                            //         }                                     
-                            //         </TableCell>
-                            //     );
-                            //     })}
-                            // </TableRow>
-                            // );
                             return (
                             <TableRow hover role="checkbox" tabIndex={-1}>
-                                {row.data.map((data) => {
-                                return (
-                                    <TableCell align="center">
-                                        { data === 'Y' ? <CheckIcon/> : data === '-' ? <CrossIcon/> : data }
-                                    </TableCell>
-                                );
-                                })}
+                                {
+                                    row.data.map((data) => showData(data))
+                                }
                             </TableRow>
                             );
                             return (
