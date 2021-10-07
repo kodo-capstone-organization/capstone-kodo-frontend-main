@@ -176,10 +176,13 @@ export const BtnWrapper = styled.div`
   margin-top: -8px;
 `
 
-export const ExitWrapper = styled(Link)`
+export const ExitWrapper = styled.div`
   display: flex;
   flex-direction: row-reverse;
 `
+
+export const ExitLink = styled(Link)`
+`;
 
 export const ExitIcon = styled(CancelOutlinedIcon)`
   color: ${colours.BLUE2};
