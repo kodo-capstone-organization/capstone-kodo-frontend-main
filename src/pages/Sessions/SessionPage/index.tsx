@@ -1,17 +1,17 @@
 import React, {useEffect, useReducer, useState} from 'react'
 import { SessionPageContainer, SessionPageBreadcrumbs, SessionPageDescription, SessionPageCreateOrJoinContainer, SessionPageTypography, SessionPageInvitedSessions } from './SessionPageElements';
-import { Link, Grid, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, InputLabel, Input, Checkbox, FormControlLabel, Chip, Avatar, Box, FormHelperText } from '@material-ui/core';
+import { Link, Grid, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, InputLabel, Input, Checkbox, FormControlLabel, Chip, Avatar, Box, FormHelperText, Card, CardContent, Typography, CardActions } from '@material-ui/core';
 import MUIButton from '@material-ui/core/Button';
 import { Button } from '../../../values/ButtonElements';
 import TextField from '@material-ui/core/TextField';
 import PermPhoneMsgIcon from '@material-ui/icons/PermPhoneMsg';
-import { createSession } from '../../../apis/Session/SessionApis';
+import { createSession, getInvitedSessions } from '../../../apis/Session/SessionApis';
 import { Account, StrippedDownAccount } from '../../../apis/Entities/Account';
 import {getAllAccountsStrippedDown, getMyAccount } from '../../../apis/Account/AccountApis';
 import { Autocomplete } from '@material-ui/lab';
 import KodoAvatar from '../../../components/KodoAvatar/KodoAvatar';
 import { colours } from '../../../values/Colours';
-import { CreateSessionReq } from '../../../apis/Entities/Session';
+import { CreateSessionReq, InvitedSessionResp } from '../../../apis/Entities/Session';
 
 const formReducer = (state: any, event: any) => {
     if(event.reset) {
@@ -42,6 +42,7 @@ function SessionPage(props: any) {
 
     const accountId = parseInt(window.sessionStorage.getItem("loggedInAccountId") || "");
     const [myAccount, setMyAccount] = useState<Account>();
+    const [myInvitedSessions, setMyInvitedSessions] = useState<InvitedSessionResp[]>([]);
     const [showJoinButton, setShowJoinButton] = useState<boolean>(false);
     const [inputSessionID, setInputSessionID] = useState<string>("");
     const [isCreateDialogOpen, setIsCreateDialogOpen] = useState<boolean>(false);
@@ -55,6 +56,11 @@ function SessionPage(props: any) {
         // Get current account
         getMyAccount(accountId).then(receivedAccount => {
             setMyAccount(receivedAccount);
+        });
+
+        // Get invited sessions
+        getInvitedSessions(accountId).then((receivedSessions: InvitedSessionResp[]) => {
+            setMyInvitedSessions(receivedSessions)
         });
         
         // Get userlibrary
@@ -82,6 +88,11 @@ function SessionPage(props: any) {
         }
 
     }, [createSessionForm.isPublic])
+
+    const getUsernameById = (id: number): string => {
+        const foundUser = userLibrary.find(userObj => userObj.accountId === id)
+        return foundUser?.username || "";
+    }
 
     const handleSessionIDChange = (event: any) => {
         setShowJoinButton(true);
@@ -189,6 +200,13 @@ function SessionPage(props: any) {
         })
     }
 
+    const handleJoinSession = (sessionId: string, sessionName?: string) => {
+        if (sessionId) {
+            props.history.push({ pathname: `/session/join/${sessionId}`, state: { sessionName: sessionName || "" } })
+            props.callOpenSnackBar("Session joined successfully", "success")
+        }
+    }
+
     return (
         <>
             <SessionPageContainer>
@@ -232,8 +250,33 @@ function SessionPage(props: any) {
                 <SessionPageInvitedSessions>
                     <SessionPageTypography variant="h6">My Invited Sessions</SessionPageTypography>
                     <SessionPageDescription>
-                       To be confirmed
+                       These sessions are happening right now!
                     </SessionPageDescription>
+                    <br/>
+                    <Grid container spacing={3}>
+                        { // TODO: Cleanup & Beautify
+                            myInvitedSessions.map((invitedSession: InvitedSessionResp) => (
+                                <Grid item xs={4}>
+                                    <Card style={{ flexWrap: "wrap", wordWrap: "break-word"}}>
+                                        <CardContent>
+                                            <Typography variant="h5">
+                                                {invitedSession.sessionName}
+                                            </Typography>
+                                            <Typography color="textSecondary">
+                                                <strong>Host: </strong><i>@{getUsernameById(invitedSession.hostId)}</i>
+                                            </Typography>
+                                            <Typography color="textSecondary">
+                                                <strong>Session ID: </strong>{invitedSession.sessionId}
+                                            </Typography>
+                                        </CardContent>
+                                        <CardActions style={{ display: "flex", justifyContent: "flex-end"}}>
+                                            <Button onClick={() => handleJoinSession(invitedSession.sessionId, invitedSession.sessionName)}>Join Session</Button>
+                                        </CardActions>
+                                    </Card>
+                                </Grid>
+                            ))
+                        }
+                    </Grid>
                 </SessionPageInvitedSessions>
             </SessionPageContainer>
 
@@ -291,14 +334,14 @@ function SessionPage(props: any) {
                                 <Box {...props}>
                                     <img width="30" src={userObj.displayPictureUrl || ""} alt={userObj.name}/>
                                     &nbsp;&nbsp;&nbsp;
-                                    {userObj.username}
+                                    {userObj.name} · <i>@{userObj.username}</i>
                                 </Box>
                             )}
                             renderTags={(values: StrippedDownAccount[], getTagProps) =>
                                 values.map((userObj: StrippedDownAccount, index: number) => (
                                     <Chip
                                         variant="outlined"
-                                        label={userObj?.username}
+                                        label={<i>@{userObj?.username}</i>}
                                         avatar={<Avatar alt={userObj.name} src={userObj.displayPictureUrl || ""} />}
                                         {...getTagProps({ index })}
                                     />
