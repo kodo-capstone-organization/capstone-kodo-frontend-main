@@ -10,8 +10,7 @@ import { ForumPost } from '../../../apis/Entities/ForumPost';
 import {
     ForumContainer, ForumCardHeader, ForumCardContent, ForumCard,
     ForumThreadCard, ForumThreadCardContent, EmptyStateContainer,
-    EmptyStateText, ForumPostCard, ForumPostCardContent,
-    ForumAvatar
+    EmptyStateText, ForumPostCard, ForumPostCardContent
 } from "../ForumElements";
 import ReplyIcon from '@material-ui/icons/Reply';
 import { Button } from "../../../values/ButtonElements";
@@ -68,7 +67,7 @@ function ForumPostList(props: any) {
                         <>
                             <ForumPostCard key={postId}>
                                 <ForumPostCardContent>
-                                    <ForumAvatar alt="Remy Sharp" src={post.account.displayPictureUrl}/>
+                                    <Avatar alt="Remy Sharp" src={post.account.displayPictureUrl} />
                                     <Typography variant="body1" component="div" style={{ marginLeft: "20px" }}>
                                         <body style={{ color: "blue" }}>RE: {forumThread.name}</body>
                                         <br />
@@ -82,7 +81,7 @@ function ForumPostList(props: any) {
                                     </Typography>
                                 </ForumPostCardContent>
                                 <Divider />
-                                <ForumPostInputArea postType={"REPLY"} forumPost={post} onForumPostChange={handleCallSnackbar} />
+                                <ForumPostInputArea forumThread={forumThread} onForumPostChange={handleCallSnackbar} />
                             </ForumPostCard>
                         </>
                     );
@@ -105,7 +104,7 @@ function ForumPostList(props: any) {
                     forumThread != undefined &&
                     <ForumPostCard id="post-card">
                         <ForumPostCardContent>
-                            <ForumAvatar alt="Remy Sharp" src={forumThread.account.displayPictureUrl}/>
+                            <Avatar alt="Remy Sharp" src={forumThread.account.displayPictureUrl} />
                             <Typography variant="body1" component="div" style={{ marginLeft: "20px" }}>
                                 <body style={{ color: "blue" }}>{forumThread.name}</body>
                                 <br />
@@ -119,7 +118,7 @@ function ForumPostList(props: any) {
                             </Typography>
                         </ForumPostCardContent>
                         <Divider />
-                        <ForumPostInputArea postType={"POST"} forumThread={forumThread} onForumPostChange={handleCallSnackbar} />
+                        <ForumPostInputArea forumThread={forumThread} onForumPostChange={handleCallSnackbar} />
                     </ForumPostCard>
                 }
             </ForumCardContent>

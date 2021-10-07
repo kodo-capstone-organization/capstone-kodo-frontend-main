@@ -8,7 +8,7 @@ import { ForumCategory } from '../../../apis/Entities/ForumCategory';
 import {
     ForumContainer, ForumCardHeader, ForumCardContent, ForumCard,
     ForumThreadCard, ForumThreadCardContent, EmptyStateContainer,
-    EmptyStateText, ForumAvatar
+    EmptyStateText
 } from "../ForumElements";
 import {
     DataGrid,
@@ -85,13 +85,13 @@ function ForumThreadList(props: any) {
         setForumThreads(sorted);
     }
 
-    const sortOldestFirst = () => {
+    const sortNewestFirst = () => {
         const sorted = forumThreads
             .sort((a, b) => new Date(b.timeStamp) - new Date(a.timeStamp));
         setForumThreads(sorted);
     }
 
-    const sortNewestFirst = () => {
+    const sortOldestFirst = () => {
         const sorted = forumThreads
             .sort((a, b) => new Date(a.timeStamp) - new Date(b.timeStamp));
         console.log("Sorted", sorted);
@@ -124,7 +124,7 @@ function ForumThreadList(props: any) {
                     return (
                         <>
                             <ForumThreadCard key={threadId}>
-                                <ForumAvatar alt="Remy Sharp" src={thread.account.displayPictureUrl}/>
+                                <Avatar alt="Remy Sharp" src={thread.account.displayPictureUrl} />
                                 <Typography variant="body1" component="div" style={{ marginLeft: "20px", width: "500px" }}>
                                     <Link onClick={() => navigateToThread(thread.forumThreadId)}>{thread.name}</Link>
                                     <br />

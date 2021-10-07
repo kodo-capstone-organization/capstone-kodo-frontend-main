@@ -3,8 +3,7 @@ import {
     Card, 
     CardContent,
     CardHeader, 
-    TableRow ,
-    Avatar
+    TableRow 
 } from "@material-ui/core";
 import { fontSizes } from "../../values/FontSizes";
 import { colours } from "../../values/Colours";
@@ -67,7 +66,6 @@ export const ForumThreadCard = styled(Card)`
     margin: 10px;
     display: flex;
     flex-direction: row;
-    align-items: center;
 `;
 
 export const ForumThreadCardContent = styled(CardContent)`
@@ -106,7 +104,7 @@ export const EmptyStateContainer = styled.div`
 export const ForumPostCard = styled(Card)`
     width: 1200px;
     border-radius : 10px;
-    padding: 10px;
+    padding: 16px;
     margin: 10px;
     display: flex;
     flex-direction: column;
@@ -120,9 +118,4 @@ export const ForumPostCardContent = styled(CardContent)`
     color: ${colours.GRAY2};
     padding: 2rem !important;
     padding: ${({ removePadTop }) => (removePadTop ? "0 2rem 2rem 2rem !important" : "2rem !important")};
-`;
-
-export const ForumAvatar = styled(Avatar)`
-    width: 100px;
-    height: 100px;
 `;

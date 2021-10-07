@@ -3,7 +3,7 @@ import { httpClient } from "../HttpClient/HttpClient";
 import { transformToBlob } from "./../../utils/BlobCreator";
 import { ForumCategory, CreateNewForumCategoryReq, UpdateForumCategoryReq } from "../Entities/ForumCategory";
 import { ForumThread, CreateNewForumThreadReq } from "../Entities/ForumThread";
-import { ForumPost, CreateNewForumPostReq } from "../Entities/ForumPost";
+import { ForumPost, CreateNewForumPostReq, CreateNewForumPostReplyReq } from "../Entities/ForumPost";
 
 
 export async function getForumCategoryByCourseId(courseId: number): Promise<ForumCategory[]> {
@@ -101,4 +101,17 @@ export async function deleteForumThread(forumThreadId: number): Promise<boolean>
     }
 
     return httpClient.delete<undefined, boolean>(deleteParameters);
+}
+
+export async function createNewForumPostReply(createNewForumPostReplyReq: CreateNewForumPostReplyReq): Promise<ForumPost> {
+    const formData = new FormData();
+
+    formData.append('forumPostReply', transformToBlob(createNewForumPostReplyReq));
+
+    const postParameters: IHttpClientRequestParameters<FormData> = {
+        url: '/forumPost/createNewForumPostReply',
+        payload: formData
+    }
+
+    return httpClient.post<FormData, ForumPost>(postParameters)
 }

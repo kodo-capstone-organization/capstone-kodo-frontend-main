@@ -7,14 +7,13 @@ import {
     Typography
 } from "@material-ui/core";
 import {
-    ForumPostCardContent,
-    ForumAvatar
+    ForumPostCardContent
 } from "../ForumElements";
 import ReplyIcon from '@material-ui/icons/Reply';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { Button } from "../../../values/ButtonElements";
 import { ForumPost, CreateNewForumPostReq } from '../../../apis/Entities/ForumPost';
-import { createNewForumPost, createNewForumPostReply } from "../../../apis/Forum/ForumApis";
+import { createNewForumPost } from "../../../apis/Forum/ForumApis";
 import { Account } from "../../../apis/Entities/Account";
 import { getMyAccount } from "../../../apis/Account/AccountApis";
 
@@ -24,8 +23,6 @@ function ForumPostInputArea(props: any) {
 
     const [message, setMessage] = useState<string>("");
     const [forumThread, setForumThread] = useState<ForumThread>();
-    const [parentForumPost, setParentForumPost] = useState<ForumPost>();
-    const [postType, setPostType] = useState<string>();
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [myAccount, setMyAccount] = useState<Account>();
     const loggedInAccountId = parseInt(window.sessionStorage.getItem("loggedInAccountId"));
@@ -34,8 +31,6 @@ function ForumPostInputArea(props: any) {
 
     useEffect(() => {
         setForumThread(props.forumThread);
-        setParentForumPost(props.forumPost);
-        setPostType(props.postType);
         getMyAccount(loggedInAccountId).then((res) => {
             setMyAccount(res);
         }).catch((err) => {
@@ -48,58 +43,36 @@ function ForumPostInputArea(props: any) {
     }
 
     const handleCancel = () => {
-        setMessage("");
+        setMessage(""); 
         setIsOpen(false);
     }
 
     const handleCreateConfirm = () => {
         console.log("createNewForumPostReq", forumThread);
-        if (postType === "POST") {
-            const createNewForumPostReq: CreateNewForumPostReq = {
-                message,
-                timeStamp: new Date(),
-                accountId: loggedInAccountId,
-                forumThreadId: forumThread.forumThreadId
-            }
-            console.log("createNewForumPostReq", createNewForumPostReq);
-            createNewForumPost(createNewForumPostReq)
-                .then((res) => {
-                    props.onForumPostChange({ message: "Forum Thread Reply Succeeded", type: "success" });
-                }).catch((err) => {
-                    props.onForumPostChange({ message: err.response.data.message, type: "error" });
-                });
-        } else if (postType === "REPLY") {
-            const newForumPostReply: ForumPost = {
-                forumPostId: null,
-                message,
-                timeStamp: new Date(),
-                reply: null,
-                account: myAccount
-            }
-            const createNewForumPostReplyReq: CreateNewForumPostReplyReq = {
-                newForumPostReply,
-                accountId: loggedInAccountId,
-                parentForumPostId: parentForumPost.forumPostId
-            }
-            createNewForumPostReply(createNewForumPostReplyReq)
-            .then((res) => {
-                props.onForumPostChange({ message: "Forum Thread Reply Succeeded", type: "success" });
 
-            }).catch((err) => {
-                props.onForumPostChange({ message: err.response.data.message, type: "error" });
-            })
+        const createNewForumPostReq : CreateNewForumPostReq = {
+            message,
+            timeStamp : new Date(),
+            accountId : loggedInAccountId,
+            forumThreadId: forumThread.forumThreadId
         }
-
+        console.log("createNewForumPostReq", createNewForumPostReq);
+        createNewForumPost(createNewForumPostReq)
+        .then((res) => {
+            props.onForumPostChange({ message: "Forum Thread Reply Succeeded", type: "success" });
+        }).catch((err) => {
+            props.onForumPostChange({ message: "Forum Thread Reply Failed", type: "error" });
+            console.log(err.response.data.message);
+        });
         handleCancel();
     }
-
 
 
     return (
         <>
             {
                 !isOpen &&
-                <IconButton onClick={handleOpen} style={{ width: "fit-content", marginInlineStart: "auto", fontSize: "unset" }}>
+                <IconButton onClick={handleOpen} style={{ width: "fit-content", marginInlineStart: "auto", fontSize:"unset" }}>
                     <ReplyIcon /> Reply
                 </IconButton>
             }
@@ -108,7 +81,7 @@ function ForumPostInputArea(props: any) {
                 isOpen && myAccount != undefined &&
                 <>
                     <ForumPostCardContent>
-                        <ForumAvatar alt="Remy Sharp" src={myAccount.displayPictureUrl} />
+                        <Avatar alt="Remy Sharp" src={myAccount.displayPictureUrl} />
                         <Typography variant="body1" component="div" style={{ marginLeft: "20px" }}>
                             Posting as {myAccount.name}
                         </Typography>
@@ -124,7 +97,7 @@ function ForumPostInputArea(props: any) {
                             />
                         </div>
                     </ForumPostCardContent>
-                    <div style={{ marginLeft: "auto", display: "flex" }}>
+                    <div style={{ marginLeft: "auto", display:"flex" }}>
                         <Button onClick={handleCancel}>Cancel</Button>
                         <Button primary onClick={handleCreateConfirm}>Post Reply</Button>
                     </div>
