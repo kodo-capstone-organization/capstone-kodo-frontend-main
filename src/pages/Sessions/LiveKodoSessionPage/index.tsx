@@ -9,6 +9,7 @@ import { LiveKodoSessionContainer, MainSessionWrapper, TopSessionBar } from './L
 let conn: WebSocket;
 let peerConn: RTCPeerConnection;
 let dataChannel: RTCDataChannel;
+let localStream: MediaStream;
 
 // URL: /session/<CREATE_OR_JOIN>/<SESSION_ID>
 // To consider: Adding ?pwd=<PASSWORD> as a query param
@@ -16,6 +17,7 @@ function LiveKodoSessionPage(props: any) {
     
     const [initAction, setInitAction] = useState<string>(props.match.params.initAction.toLowerCase()); // "create" or "join" only
     const [sessionId, setSessionId] = useState<string>(props.match.params.sessionId);
+    const [dataChannelConnected, setDataChannelConnected] = useState<boolean>(false);
 
     useEffect(() => {
         // On init
@@ -73,20 +75,10 @@ function LiveKodoSessionPage(props: any) {
         };
         peerConn =  new RTCPeerConnection(configuration);
 
-        // Add this client's media stream to peer conn
-        const mediaConstraints = { audio : true };
-        navigator.mediaDevices.getUserMedia(mediaConstraints).then((localStream) => {
-            for (const track of localStream.getTracks()) {
-                peerConn.addTrack(track,  localStream);
-            }
-        })
-
         // Setup peer conn listeners
         peerConn.ontrack = function(event) {
-            console.log("AUDIO / VIDEO STREAM RECEIVED:", event);
-            const remoteStream = new MediaStream();
-            peerConn.addTrack(event.track, remoteStream)
-            console.log("ADDED STREAM TO PEERCONN:", peerConn)
+            // console.log("AUDIO / VIDEO STREAM RECEIVED:", event);
+            console.log('AUDIO / VIDEO STREAM RECEIVED:', event.track, event.streams[0]);
             // TODO: enable some sort of state in the html
         };
 
@@ -97,12 +89,19 @@ function LiveKodoSessionPage(props: any) {
             }
         };
 
+        // Get this user's audio stream
+        const mediaConstraints = { audio : true };
+        navigator.mediaDevices.getUserMedia(mediaConstraints).then(stream => {
+            localStream = stream;
+        })
+
         if (initAction === "create") {
             // Peer conn ondatachannel listener
             peerConn.ondatachannel = function (event) {
                 dataChannel = event.channel;
                 dataChannel.onopen = function(event) {
                     console.log("dataChannel.onopen in CREATOR SIDE")
+                    setDataChannelConnected(true);
                 }
                 dataChannel.onmessage = function(event) {
                     console.log("dataChannel.onmessage IN CREATOR SIDE")
@@ -116,6 +115,7 @@ function LiveKodoSessionPage(props: any) {
 
            dataChannel.onopen = function(event) {
                console.log("dataChannel.onopen IN JOINER SIDE")
+               setDataChannelConnected(true);
            }
 
             // when we receive a message from the other peer, printing it on the console
@@ -130,6 +130,9 @@ function LiveKodoSessionPage(props: any) {
             dataChannel.onerror = function(error) {
                 console.log("Error:", error);
             };
+
+            // Add localstream tracks to the peer connection
+            localStream.getTracks().forEach(track => peerConn.addTrack(track, localStream));
 
             console.log("INITIALIZE FOR JOIN: CREATE OFFER")
             createOffer(peerConn);
@@ -210,7 +213,7 @@ function LiveKodoSessionPage(props: any) {
             <Button onClick={() => sendMessage("hello from datachannel")}>SEND VIA DATACHANNEL</Button>
             <MainSessionWrapper>
                 <ParticipantsPanel />
-                <Stage />
+                <Stage dataChannelConnected={dataChannelConnected} />
                 <ActionsPanel sessionId={sessionId} callOpenSnackBar={props.callOpenSnackBar}/>
             </MainSessionWrapper>
         </LiveKodoSessionContainer>
