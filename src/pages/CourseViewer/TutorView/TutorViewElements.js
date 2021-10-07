@@ -75,8 +75,3 @@ export const TutorViewColumn = styled.div`
   display: flex;
   flex-direction: column;
 `;
-
-export const TutorCourseRatingBox = styled(Box)`
-  padding: 5px 0px 0px 5px;
-  color: ${colours.GRAY4};
-`;
