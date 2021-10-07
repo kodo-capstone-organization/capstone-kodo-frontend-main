@@ -22,7 +22,14 @@ function LiveKodoSessionPage(props: any) {
     useEffect(() => {
         // On init
         if (initAction === "create" || initAction === "join") {
+            // Get this user's audio stream
+            const mediaConstraints = { audio : true };
+            navigator.mediaDevices.getUserMedia(mediaConstraints).then(stream => {
+                localStream = stream;
+            })
+
             conn = new WebSocket(`ws://capstone-kodo-webrtc.herokuapp.com/socket/${props.match.params.sessionId}`);
+
             conn.onmessage = function(msg) {
                 const content = JSON.parse(msg.data);
                 const data = content.data;
@@ -88,12 +95,6 @@ function LiveKodoSessionPage(props: any) {
                 send({ event : "candidate", data : event.candidate });
             }
         };
-
-        // Get this user's audio stream
-        const mediaConstraints = { audio : true };
-        navigator.mediaDevices.getUserMedia(mediaConstraints).then(stream => {
-            localStream = stream;
-        })
 
         if (initAction === "create") {
             // Peer conn ondatachannel listener
