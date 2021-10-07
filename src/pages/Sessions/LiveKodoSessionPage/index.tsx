@@ -65,7 +65,7 @@ function LiveKodoSessionPage(props: any) {
     const initialize = () => {
         // Setup peer conn
         const configuration: RTCConfiguration = {
-            iceServers: [ { urls: "stun:stun2.1.google.com:19302" } ]
+            "iceServers": [{ "urls": "stun:stun.1.google.com:19302" }]
         };
         peerConn =  new RTCPeerConnection(configuration);
 
@@ -97,6 +97,12 @@ function LiveKodoSessionPage(props: any) {
             // Peer conn ondatachannel listener
             peerConn.ondatachannel = function (event) {
                 dataChannel = event.channel;
+                dataChannel.onopen = function(event) {
+                    console.log("dataChannel.onopen in CREATOR SIDE")
+                }
+                dataChannel.onmessage = function(event) {
+                    console.log("dataChannel.onmessage IN CREATOR SIDE")
+                }
             };
         }
 
@@ -105,17 +111,21 @@ function LiveKodoSessionPage(props: any) {
             // @ts-ignore
             dataChannel = peerConn.createDataChannel("dataChannel", { reliable: true });
 
-            dataChannel.onerror = function(error) {
-                console.log("Error:", error);
-            };
+           dataChannel.onopen = function(event) {
+               console.log("dataChannel.onopen IN JOINER SIDE")
+           }
 
             // when we receive a message from the other peer, printing it on the console
             dataChannel.onmessage = function(event) {
-                console.log("datachannel onmessage:", event.data);
+                console.log("datachannel onmessage IN JOINER SIDE:", event.data);
             };
 
             dataChannel.onclose = function() {
                 console.log("Data channel is closed");
+            };
+
+            dataChannel.onerror = function(error) {
+                console.log("Error:", error);
             };
 
             console.log("INITIALIZE FOR JOIN: CREATE OFFER")
