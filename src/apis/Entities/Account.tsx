@@ -31,6 +31,13 @@ export interface RawAccount {
   stripeAccountId: string;
 }
 
+export interface StrippedDownAccount {
+  accountId: number;
+  username: string;
+  name: string;
+  displayPictureUrl: string;
+}
+
 export interface CreateNewAccountReq {
   username: string;
   password: string;

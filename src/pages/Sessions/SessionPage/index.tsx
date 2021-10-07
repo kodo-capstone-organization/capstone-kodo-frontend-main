@@ -1,20 +1,87 @@
-import React, {useState} from 'react'
+import React, {useEffect, useReducer, useState} from 'react'
 import { SessionPageContainer, SessionPageBreadcrumbs, SessionPageDescription, SessionPageCreateOrJoinContainer, SessionPageTypography, SessionPageInvitedSessions } from './SessionPageElements';
-import { Link, Grid, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, InputLabel, Input } from '@material-ui/core';
+import { Link, Grid, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, InputLabel, Input, Checkbox, FormControlLabel, Chip, Avatar, Box } from '@material-ui/core';
 import MUIButton from '@material-ui/core/Button';
 import { Button } from '../../../values/ButtonElements';
 import TextField from '@material-ui/core/TextField';
 import PermPhoneMsgIcon from '@material-ui/icons/PermPhoneMsg';
 import { createSession } from '../../../apis/Session/SessionApis';
+import { Account, StrippedDownAccount } from '../../../apis/Entities/Account';
+import {getAllAccountsStrippedDown, getMyAccount } from '../../../apis/Account/AccountApis';
+import { Autocomplete } from '@material-ui/lab';
+import KodoAvatar from '../../../components/KodoAvatar/KodoAvatar';
+import { colours } from '../../../values/Colours';
+import { CreateSessionReq } from '../../../apis/Entities/Session';
+
+const formReducer = (state: any, event: any) => {
+    if(event.reset) {
+        if (event.isErrorForm) {
+            return {
+                sessionName: '',
+                isPublic: '',
+                creatorId: '',
+                inviteeList: ''
+            }
+        } else {
+            return {
+                sessionName: '',
+                isPublic: false,
+                creatorId: null,
+                inviteeList: []
+            }
+        }
+    }
+
+    return {
+        ...state,
+        [event.name]: event.value
+    }
+}
 
 function SessionPage(props: any) {
 
+    const accountId = parseInt(window.sessionStorage.getItem("loggedInAccountId") || "");
+    const [myAccount, setMyAccount] = useState<Account>();
     const [showJoinButton, setShowJoinButton] = useState<boolean>(false);
     const [inputSessionID, setInputSessionID] = useState<string>("");
     const [isCreateDialogOpen, setIsCreateDialogOpen] = useState<boolean>(false);
 
-    // Create dialog inputs
-    const [inputSessionName, setInputSessionName] = useState<string>("");
+    // CreateSession form states
+    const [createSessionForm, setCreateSessionForm] = useReducer(formReducer, {})
+    const [createSessionFormErrors, setCreateSessionFormErrors] = useReducer(formReducer, {});
+    const [userLibrary, setUserLibrary] = useState<StrippedDownAccount[]>([]);
+    
+    useEffect(() => {
+        // Get current account
+        getMyAccount(accountId).then(receivedAccount => {
+            setMyAccount(receivedAccount);
+        });
+        
+        // Get userlibrary
+        getAllAccountsStrippedDown().then((accs: StrippedDownAccount[]) => {
+            // Remove own obj
+            accs = accs.filter((acc: StrippedDownAccount) => acc.accountId !== accountId)
+            setUserLibrary(accs);
+        })
+
+        // Reset forms
+        setCreateSessionForm({ reset: true, isErrorForm: false })
+        setCreateSessionFormErrors({ reset: true, isErrorForm: true })
+    }, [])
+
+    useEffect(() => {
+
+        // If isPublic set to true, clear inviteeList
+        if (createSessionForm.isPublic) {
+            handleFormDataChange({
+                target: {
+                    name: "inviteeList",
+                    value: []
+                }
+            })
+        }
+
+    }, [createSessionForm.isPublic])
 
     const handleSessionIDChange = (event: any) => {
         setShowJoinButton(true);
@@ -30,17 +97,80 @@ function SessionPage(props: any) {
         setIsCreateDialogOpen(false)
     }
 
+    const handleCheckedInputChange = (event: any) => {
+
+        let wrapperEvent = {
+            target: {
+                name: "isPublic",
+                value: event.target.checked
+            }
+        }
+        return handleFormDataChange(wrapperEvent);
+    }
+
+    const handleChipInputChange = (e: object, value: StrippedDownAccount[], reason: string) => {
+        let wrapperEvent = {
+            target: {
+                name: "inviteeList",
+                value: value
+            }
+        }
+        return handleFormDataChange(wrapperEvent);
+    }
+
+    const handleFormDataChange = (event: any) => {
+        // Clear any existing errors on target field
+        handleFormErrorChange({ target: { name: event.target.name , value: "" }})
+
+        // Set to create form
+        setCreateSessionForm({
+            name: event.target.name,
+            value: event.target.value,
+        });
+    }
+
+    const handleFormErrorChange = (event: any) => {
+        setCreateSessionFormErrors({
+            name: event.target.name,
+            value: event.target.value,
+        });
+    }
+
     const handleCreateSessionValidation = () => {
-        if (inputSessionName !== "") {
+        let formIsValid = true
+
+        if (createSessionForm.sessionName === "") {
+            formIsValid = false
+            handleFormErrorChange({ target: { name: "sessionName", value: "Session Name cannot be empty" }})
+        }
+
+        // Check if form is still valid
+        if (formIsValid) {
             handleCreateSession()
         }
     }
 
     const handleCreateSession = () => {
-        createSession(inputSessionName).then((sessionId: string) => {
+
+        // Build CreateSessionReq
+        let createSessionReq = {} as CreateSessionReq;
+        createSessionReq.creatorId = accountId;
+        createSessionReq.sessionName = createSessionForm.sessionName;
+        createSessionReq.isPublic = createSessionForm.isPublic;
+        if (createSessionReq.isPublic) {
+            createSessionReq.inviteeIds = []
+        } else {
+            // Change inviteeList to inviteeIds number[]
+            createSessionReq.inviteeIds = createSessionForm.inviteeList.map((userObj: StrippedDownAccount) => userObj.accountId)
+        }
+
+        console.log("Built: ", createSessionReq);
+
+        // Make API Call
+        createSession(createSessionReq).then((sessionId: string) => {
             // Display success and redirect
             props.callOpenSnackBar("Session created successfully", "success")
-            props.history.push({ pathname: `/session/create/${sessionId}`, state: { sessionName: inputSessionName } })
+            props.history.push({ pathname: `/session/create/${sessionId}`, state: { sessionName: createSessionReq.sessionName } })
         }).catch((error) => {
             props.callOpenSnackBar(`Error in creating session: ${error}`, "error")
         })
@@ -99,15 +229,16 @@ function SessionPage(props: any) {
                 <DialogTitle id="create-session-dialog-title">Create A Kodo Session</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Name your session
+                        Give your session a name!
                     </DialogContentText>
-                    <FormControl fullWidth margin="normal">
+
+                    <FormControl fullWidth>
                         <InputLabel htmlFor="session-name">Session Name</InputLabel>
                         <Input
                             id="session-name"
-                            name="session-name"
-                            value={inputSessionName}
-                            onChange={(e) => setInputSessionName(e.target.value)}
+                            name="sessionName"
+                            value={createSessionForm.sessionName}
+                            onChange={handleFormDataChange}
                             type="text"
                             autoFocus
                         />
@@ -115,15 +246,61 @@ function SessionPage(props: any) {
 
                     <DialogContentText>
                         <br/>
-                        Invite other users to your call via their usernames
+                        <br/>
+                        Allow anyone to join your session OR specify who you'd like to invite ✍️
                     </DialogContentText>
+
                     <FormControl fullWidth>
-                        <InputLabel htmlFor="invitees">Invitees (TBD)</InputLabel>
-                        <Input
-                            id="invitees"
-                            name="invitees"
-                            disabled
-                            type="text"
+                        <FormControlLabel
+                            style={{ color: colours.GRAY3 }}
+                            label="Anyone can join this session"
+                            control={
+                                <Checkbox
+                                    name="isPublic"
+                                    checked={createSessionForm.isPublic}
+                                    onChange={handleCheckedInputChange}
+                                    color="primary"
+                                />
+                            }
+                        />
+                    </FormControl>
+
+                    <FormControl fullWidth>
+                        <Autocomplete
+                            multiple
+                            options={userLibrary}
+                            getOptionLabel={(option) => option.username}
+                            defaultValue={[]}
+                            value={createSessionForm.inviteeList}
+                            noOptionsText="No user found"
+                            onChange={handleChipInputChange}
+                            renderOption={(userObj, props) => (
+                                <Box {...props}>
+                                    <img width="30" src={userObj.displayPictureUrl || ""} alt={userObj.name}/>
+                                     &nbsp;&nbsp;&nbsp;
+                                    {userObj.username}
+                                </Box>
+                            )}
+                            renderTags={(values: StrippedDownAccount[], getTagProps) =>
+                                values.map((userObj: StrippedDownAccount, index: number) => (
+                                    <Chip
+                                        variant="outlined"
+                                        label={userObj?.username}
+                                        avatar={<Avatar alt={userObj.name} src={userObj.displayPictureUrl || ""} />}
+                                        {...getTagProps({ index })}
+                                    />
+                                ))
+                            }
+                            renderInput={(params) => (
+                                <TextField
+                                    {...params}
+                                    label="Invitees"
+                                    inputProps={{
+                                        ...params.inputProps
+                                    }}
+                                />
+                            )}
+                            disabled={createSessionForm.isPublic}
                         />
                     </FormControl>
                 </DialogContent>

@@ -1,10 +1,16 @@
+import { transformToBlob } from "../../utils/BlobCreator";
+import { CreateSessionReq } from "../Entities/Session";
 import { httpClient } from "../HttpClient/HttpClient";
 import { IHttpClientRequestParameters } from "../HttpClient/IHttpClientRequestParameters";
 
-export async function createSession(sessionName: string): Promise<string> {
-    const getParameters: IHttpClientRequestParameters<undefined> = {
-        url: `/kodoSession/createSession/${sessionName}`
+export async function createSession(createSessionReq: CreateSessionReq): Promise<string> {
+    const formData = new FormData();
+    formData.append('createSessionReq', transformToBlob(createSessionReq));
+    
+    const postParameters: IHttpClientRequestParameters<FormData> = {
+        url: '/kodoSession/createSession',
+        payload: formData
     }
 
-    return httpClient.get<undefined, string>(getParameters, true);
+    return httpClient.post<FormData, string>(postParameters, true);
 }

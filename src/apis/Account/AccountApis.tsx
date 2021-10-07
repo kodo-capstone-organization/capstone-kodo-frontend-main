@@ -1,5 +1,5 @@
 import { IHttpClientRequestParameters } from "./../HttpClient/IHttpClientRequestParameters";
-import { Account, CreateNewAccountReq, UpdateAccountReq, UpdateAccountPasswordReq } from "../Entities/Account";
+import { Account, CreateNewAccountReq, UpdateAccountReq, UpdateAccountPasswordReq, StrippedDownAccount } from "../Entities/Account";
 import { httpClient } from "../HttpClient/HttpClient";
 import { transformToBlob } from "./../../utils/BlobCreator";
 import { DeactivateAccountResponse } from "../Entities/Deactivate";
@@ -118,4 +118,13 @@ export async function updateAccountPassword(updateAccountPasswordReq: UpdateAcco
     }
 
     return httpClient.put<FormData, Account>(postParameters)
+}
+
+
+export async function getAllAccountsStrippedDown(): Promise<StrippedDownAccount[]> {
+    const getParameters: IHttpClientRequestParameters<undefined> = {
+        url: '/account/getAllAccountsWithoutEnrollment'
+    }
+
+    return httpClient.get<undefined, StrippedDownAccount[]>(getParameters)
 }
