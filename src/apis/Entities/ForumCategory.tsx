@@ -8,3 +8,13 @@ export interface ForumCategory {
     forumThreads: ForumThread[],
     course: Course
 }
+
+export interface UpdateForumCategoryReq {
+    forumCategory: ForumCategory
+}
+
+export interface CreateNewForumCategoryReq {
+    name: string,
+    description: string,
+    courseId: number
+}

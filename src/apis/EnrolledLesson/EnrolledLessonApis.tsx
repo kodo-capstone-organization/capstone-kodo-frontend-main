@@ -1,6 +1,7 @@
 import { IHttpClientRequestParameters } from "./../HttpClient/IHttpClientRequestParameters";
 import { httpClient } from "../HttpClient/HttpClient";
 import { EnrolledLesson } from "../Entities/EnrolledLesson";
+import { EnrolledLessonWithStudentName } from "../Entities/EnrolledLesson";
 
 
 export async function getEnrolledLesson(studentId: number, lessonId: number): Promise<EnrolledLesson> {
@@ -17,4 +18,20 @@ export async function getEnrolledLessonByEnrolledLessonId(enrolledLessonId: numb
     }
 
     return httpClient.get<undefined, EnrolledLesson>(getParameters);
+}
+
+export async function getAllEnrolledLessonsByLessonId(lessonId: number): Promise<EnrolledLesson[]> {
+    const getParameters: IHttpClientRequestParameters<undefined> = {
+        url: `/enrolledLesson/getAllEnrolledLessonsByLessonId/${lessonId}`
+    }
+
+    return httpClient.get<undefined, EnrolledLesson[]>(getParameters);
+}
+
+export async function getAllEnrolledLessonsWithStudentNameByParentLessonId(lessonId: number): Promise<EnrolledLessonWithStudentName[]> {
+    const getParameters: IHttpClientRequestParameters<undefined> = {
+        url: `/enrolledLesson/getAllEnrolledLessonsWithStudentNameByParentLessonId/${lessonId}`
+    }
+
+    return httpClient.get<undefined, EnrolledLessonWithStudentName[]>(getParameters);
 }
