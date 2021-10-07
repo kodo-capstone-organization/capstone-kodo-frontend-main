@@ -83,6 +83,9 @@ function LiveKodoSessionPage(props: any) {
         };
         peerConn =  new RTCPeerConnection(configuration);
 
+        // Add localstream tracks to the peer connection
+        localStream.getTracks().forEach(track => peerConn.addTrack(track, localStream));
+
         // Peer conn icecandidate event
         peerConn.onicecandidate = function(event) {
             if (event.candidate) {
@@ -91,7 +94,7 @@ function LiveKodoSessionPage(props: any) {
             }
         };
 
-        // Peer conn ontrack event
+        // Peer conn ontrack event (to add remote streams to audio object)
         peerConn.ontrack = function(event) {
             // console.log("AUDIO / VIDEO STREAM RECEIVED:", event);
             console.log('AUDIO / VIDEO STREAM RECEIVED:', event.track, event.streams[0]);
@@ -135,9 +138,6 @@ function LiveKodoSessionPage(props: any) {
             dataChannel.onerror = function(error) {
                 console.log("Error:", error);
             };
-
-            // Add localstream tracks to the peer connection
-            localStream.getTracks().forEach(track => peerConn.addTrack(track, localStream));
 
             console.log("INITIALIZE FOR JOIN: CREATE OFFER")
             createOffer(peerConn);
