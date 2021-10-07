@@ -5,7 +5,7 @@ import { formatUrl } from './UrlFormatter';
 
 export class HttpClient implements IHttpClient {
 
-    get<T, R>(parameters: IHttpClientRequestParameters<T>): Promise<R> {
+    get<T, R>(parameters: IHttpClientRequestParameters<T>, isWebRTC?: boolean): Promise<R> {
         return new Promise<R>((resolve, reject) => {
             const { url } = parameters
 
@@ -14,7 +14,7 @@ export class HttpClient implements IHttpClient {
             }
 
             axios
-                .get(formatUrl(url), options)
+                .get(formatUrl(url, isWebRTC || false), options)
                 .then((response: any) => {
                     resolve(response.data as R)
                 })
@@ -24,7 +24,7 @@ export class HttpClient implements IHttpClient {
         })
     }
 
-    post<T, R>(parameters: IHttpClientRequestParameters<T>): Promise<R> {
+    post<T, R>(parameters: IHttpClientRequestParameters<T>, isWebRTC?: boolean): Promise<R> {
         return new Promise<R>((resolve, reject) => {
             const { url, payload } = parameters
 
@@ -33,7 +33,7 @@ export class HttpClient implements IHttpClient {
             }
 
             axios
-                .post(formatUrl(url), payload, options)
+                .post(formatUrl(url, isWebRTC || false), payload, options)
                 .then((response: any) => {
                     resolve(response.data as R)
                 })
@@ -43,7 +43,7 @@ export class HttpClient implements IHttpClient {
         })
     }
 
-    put<T, R>(parameters: IHttpClientRequestParameters<T>): Promise<R> {
+    put<T, R>(parameters: IHttpClientRequestParameters<T>,  isWebRTC?: boolean): Promise<R> {
         return new Promise<R>((resolve, reject) => {
             const { url, payload } = parameters
 
@@ -52,7 +52,7 @@ export class HttpClient implements IHttpClient {
             }
 
             axios
-                .put(formatUrl(url), payload, options)
+                .put(formatUrl(url,  isWebRTC || false), payload, options)
                 .then((response: any) => {
                     resolve(response.data as R)
                 })
@@ -62,12 +62,12 @@ export class HttpClient implements IHttpClient {
         })
     }
 
-    delete<T, R>(parameters: IHttpClientRequestParameters<T>): Promise<R> {
+    delete<T, R>(parameters: IHttpClientRequestParameters<T>, isWebRTC?: boolean): Promise<R> {
         return new Promise<R>((resolve, reject) => {
             const { url, payload } = parameters
 
             axios
-                .delete(formatUrl(url), { headers: {}, data: payload })
+                .delete(formatUrl(url, isWebRTC || false), { headers: {}, data: payload })
                 .then((response: any) => {
                     resolve(response.data as R)
                 })

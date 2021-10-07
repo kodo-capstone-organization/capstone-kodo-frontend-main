@@ -5,6 +5,8 @@ const url =
     ? "http://localhost:8080"
     : "https://kodo-capstone-backend.herokuapp.com";
 
+const webRtcUrl = "https://capstone-kodo-webrtc.herokuapp.com";
+
 module.exports = function(app) {
   app.use(
     createProxyMiddleware("/account", {
@@ -72,4 +74,10 @@ module.exports = function(app) {
       changeOrigin: true
     })
   );
+  app.use(
+    createProxyMiddleware("/kodoSession", {
+      target: webRtcUrl,
+      changeOrigin: true
+    })
+  )
 };

@@ -1,5 +1,13 @@
-export function formatUrl(url: string): string {
-    return getBaseUrl().concat(url);
+export function formatUrl(url: string, isWebRTC: boolean): string {
+    if (isWebRTC) {
+        return getWebRTCUrl().concat(url);
+    } else {
+        return getBaseUrl().concat(url);
+    }
+}
+
+function getWebRTCUrl(): string {
+    return "https://capstone-kodo-webrtc.herokuapp.com";
 }
 
 function getBaseUrl(): string {

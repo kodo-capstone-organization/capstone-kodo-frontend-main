@@ -189,7 +189,7 @@ function LiveKodoSessionPage(props: any) {
 
     return (
         <LiveKodoSessionContainer>
-            <TopSessionBar><strong>Session_Name ({sessionId}) · Time_Elapsed</strong></TopSessionBar>
+            <TopSessionBar><strong>{props.location.state?.sessionName || "SESSION_NAME"} ({sessionId}) · Time_Elapsed</strong></TopSessionBar>
             {/*<Button onClick={createOffer}>Create Offer</Button>*/}
             <Button onClick={() => send({event: null, data: "helloWord"})}>SEND</Button>
             <Button onClick={() => sendMessage("hello from datachannel")}>SEND VIA DATACHANNEL</Button>

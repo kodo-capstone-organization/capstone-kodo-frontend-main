@@ -1,16 +1,20 @@
 import React, {useState} from 'react'
 import { SessionPageContainer, SessionPageBreadcrumbs, SessionPageDescription, SessionPageCreateOrJoinContainer, SessionPageTypography, SessionPageInvitedSessions } from './SessionPageElements';
-import { Link, Grid, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@material-ui/core';
+import { Link, Grid, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, InputLabel, Input } from '@material-ui/core';
 import MUIButton from '@material-ui/core/Button';
 import { Button } from '../../../values/ButtonElements';
 import TextField from '@material-ui/core/TextField';
 import PermPhoneMsgIcon from '@material-ui/icons/PermPhoneMsg';
+import { createSession } from '../../../apis/Session/SessionApis';
 
 function SessionPage(props: any) {
 
     const [showJoinButton, setShowJoinButton] = useState<boolean>(false);
     const [inputSessionID, setInputSessionID] = useState<string>("");
     const [isCreateDialogOpen, setIsCreateDialogOpen] = useState<boolean>(false);
+
+    // Create dialog inputs
+    const [inputSessionName, setInputSessionName] = useState<string>("");
 
     const handleSessionIDChange = (event: any) => {
         setShowJoinButton(true);
@@ -24,6 +28,22 @@ function SessionPage(props: any) {
 
     const handleCloseCreateDialog = () => {
         setIsCreateDialogOpen(false)
+    }
+
+    const handleCreateSessionValidation = () => {
+        if (inputSessionName !== "") {
+            handleCreateSession()
+        }
+    }
+
+    const handleCreateSession = () => {
+        createSession(inputSessionName).then((sessionId: string) => {
+            // Display success and redirect
+            props.callOpenSnackBar("Session created successfully", "success")
+            props.history.push({ pathname: `/session/create/${sessionId}`, state: { sessionName: inputSessionName } })
+        }).catch((error) => {
+            props.callOpenSnackBar(`Error in creating session: ${error}`, "error")
+        })
     }
 
     return (
@@ -79,11 +99,36 @@ function SessionPage(props: any) {
                 <DialogTitle id="create-session-dialog-title">Create A Kodo Session</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        TBD
+                        Name your session
                     </DialogContentText>
+                    <FormControl fullWidth margin="normal">
+                        <InputLabel htmlFor="session-name">Session Name</InputLabel>
+                        <Input
+                            id="session-name"
+                            name="session-name"
+                            value={inputSessionName}
+                            onChange={(e) => setInputSessionName(e.target.value)}
+                            type="text"
+                            autoFocus
+                        />
+                    </FormControl>
+
+                    <DialogContentText>
+                        <br/>
+                        Invite other users to your call via their usernames
+                    </DialogContentText>
+                    <FormControl fullWidth>
+                        <InputLabel htmlFor="invitees">Invitees (TBD)</InputLabel>
+                        <Input
+                            id="invitees"
+                            name="invitees"
+                            disabled
+                            type="text"
+                        />
+                    </FormControl>
                 </DialogContent>
                 <DialogActions>
-                    <Button primary>
+                    <Button primary onClick={handleCreateSessionValidation}>
                         Create
                     </Button>
                 </DialogActions>
