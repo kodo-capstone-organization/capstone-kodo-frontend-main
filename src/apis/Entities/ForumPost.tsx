@@ -7,3 +7,10 @@ export interface ForumPost {
     reply: ForumPost
     account: Account
 }
+
+export interface CreateNewForumPostReq {
+    message : string,
+    timeStamp : Date,
+    accountId : number,
+    forumThreadId : number
+}

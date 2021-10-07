@@ -1,42 +1,25 @@
 import { useEffect, useState } from 'react';
 import { useHistory } from "react-router-dom";
 
-import { getCourseByCourseId } from "../../apis/Course/CourseApis";
-import { getForumCategoryByCourseId } from "../../apis/Forum/ForumApis";
-import { ForumCategory } from '../../apis/Entities/ForumCategory';
-
 import {
-    ForumContainer, ForumCardHeader, ForumCardContent, ForumCard,
+    ForumContainer
 } from "./ForumElements";
-import {
-    DataGrid,
-    GridColDef,
-    GridValueGetterParams
-} from '@material-ui/data-grid';
-import { Button } from "../../values/ButtonElements";
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import {
     IconButton, Breadcrumbs, Link
 } from '@material-ui/core';
 
-import ForumCategories from './components/ForumCategories';
-
+import ForumCategoryList from './components/ForumCategoryList';
+import ForumThreadList from './components/ForumThreadList';
+import ForumPostList from './components/ForumPostList';
 
 function ForumPage(props: any) {
 
-    const courseId = props.match.params.courseId;
+    const courseId = parseInt(props.match.params.courseId);
     const loggedInAccountId = window.sessionStorage.getItem("loggedInAccountId");
-    const [forumCategories, setForumCategories] = useState<ForumCategory[]>([]);
     const [isIndexPage, setIsIndexPage] = useState<Boolean>();
-    // const [selectedQuestions, setSelectedQuestions] = useState<any>([]);
     const history = useHistory();
 
     useEffect(() => {
-        getCourseByCourseId(courseId).then((res) => {
-            if (loggedInAccountId && res.tutor.accountId !== parseInt(loggedInAccountId)) {
-                history.push("/profile");
-            }
-        });
     }, []);
 
     // To update isIndexPage
@@ -54,11 +37,15 @@ function ForumPage(props: any) {
             name: "Category",
             subpath: "/category",
             fullpath: `/forum/${courseId}/category/:forumCategoryId`
+        },
+        {
+            name: "Thread",
+            subpath: "/thread",
+            fullpath: `/forum/${courseId}/category/:forumCategoryId/thread/:forumThreadId`
         }
     ]
 
     const handleCallSnackbar = (snackbarObject: any) => {
-        console.log("reach parent");
         props.callOpenSnackBar(snackbarObject.message, snackbarObject.type);
     }
 
@@ -77,7 +64,10 @@ function ForumPage(props: any) {
                     })
                 }
             </Breadcrumbs>
-            {isIndexPage && <ForumCategories courseId={courseId} onCallSnackbar={handleCallSnackbar} />}
+            {isIndexPage && <ForumCategoryList history={history} courseId={courseId} onCallSnackbar={handleCallSnackbar} />}
+            {!isIndexPage && history.location.pathname.includes("category") && !history.location.pathname.includes("thread") && <ForumThreadList history={history} courseId={courseId} onCallSnackbar={handleCallSnackbar} />}
+            {!isIndexPage && history.location.pathname.includes("thread") && <ForumPostList history={history} courseId={courseId} onCallSnackbar={handleCallSnackbar} />}
+
         </ForumContainer>
     );
 }
