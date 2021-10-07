@@ -32,13 +32,13 @@ function Sidebar(props: any) {
     setLessons(props.course.lessons);
     setAccount(props.account);
     getEnrolledCourseByStudentIdAndCourseId(props.account.accountId, props.course.courseId)
-    .then((enrolledCourse: EnrolledCourse) => {
-      setEnrolledCourse(enrolledCourse);
-      setEnrolledLessons(enrolledCourse.enrolledLessons);
-    })
-    .catch((err: any) => {
-      console.log(err);
-    });
+      .then((enrolledCourse: EnrolledCourse) => {
+        setEnrolledCourse(enrolledCourse);
+        setEnrolledLessons(enrolledCourse.enrolledLessons);
+      })
+      .catch((err: any) => {
+        console.log(err);
+      });
   }, [props.course, props.account]);
 
   const handleImageError = (e: any) => {
@@ -48,60 +48,62 @@ function Sidebar(props: any) {
 
   const showStudentView = () => {
     return (
-      (!props.isTutorView && enrolledCourse && enrolledLessons) && 
-        enrolledLessons.map(enrolledLesson => {
-          return (
-            <LessonLink 
-              to={`/overview/lesson/${enrolledCourse.enrolledCourseId}/${enrolledLesson.enrolledLessonId}`} 
-              key={enrolledLesson.enrolledLessonId}
-            >
-              <RightArrow/> Week {enrolledLesson.parentLesson.sequence}
-            </LessonLink>
-          );
-      })      
+      (!props.isTutorView && enrolledCourse && enrolledLessons) &&
+      enrolledLessons.map(enrolledLesson => {
+        return (
+          <LessonLink
+            to={`/overview/lesson/${enrolledCourse.enrolledCourseId}/${enrolledLesson.enrolledLessonId}`}
+            key={enrolledLesson.enrolledLessonId}
+          >
+            <RightArrow /> Week {enrolledLesson.parentLesson.sequence}
+          </LessonLink>
+        );
+      })
     );
   }
 
   const showTutorView = () => {
     return (
-      (props.isTutorView && course && lessons) && 
-        lessons.map(lesson => {
-          return (
-            <LessonLink 
-              to={`/overview/lessonstatistics/${course.courseId}/${lesson.lessonId}`} 
-              key={lesson.lessonId}
-            >
-              <RightArrow/> Week {lesson.sequence}
-            </LessonLink>
-          );
-        })
+      (props.isTutorView && course && lessons) &&
+      lessons.map(lesson => {
+        return (
+          <LessonLink
+            to={`/overview/lessonstatistics/${course.courseId}/${lesson.lessonId}`}
+            key={lesson.lessonId}
+          >
+            <RightArrow /> Week {lesson.sequence}
+          </LessonLink>
+        );
+      })
     );
   }
 
   return (
     <>
-      { course &&
+      {course &&
         <SidebarWrapper>
           <CourseBanner
-              alt={course.name}
-              src={course?.bannerUrl === "" ? "invalidurl.com" : course?.bannerUrl }
-              onError={handleImageError}
+            alt={course.name}
+            src={course?.bannerUrl === "" ? "invalidurl.com" : course?.bannerUrl}
+            onError={handleImageError}
           />
           <SidebarMenu>
             {/* TODO: Conditional Active state of links */}
-            <SidebarLink 
-              className={"active"} 
+            <SidebarLink
+              className={"active"}
               to={`/overview/${course.courseId}`}
             >
-              <Home/> Overview
+              <Home /> Overview
             </SidebarLink>
-              
-            { showStudentView() }
-            { showTutorView() }
+
+            {showStudentView()}
+            {showTutorView()}
 
             {/* Discussion Forum Link */}
-            <SidebarLink>
-              <Forum/> Discussion Forum
+            <SidebarLink
+              to={`/forum/${course.courseId}`}
+            >
+              <Forum /> Discussion Forum
             </SidebarLink>
           </SidebarMenu>
         </SidebarWrapper>
