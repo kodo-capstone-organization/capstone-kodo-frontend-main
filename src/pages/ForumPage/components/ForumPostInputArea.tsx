@@ -43,17 +43,13 @@ function ForumPostInputArea(props: any) {
     }
 
     const handleCancel = () => {
+        setMessage(""); 
         setIsOpen(false);
     }
 
-    // export interface CreateNewForumPostReq {
-    //     message : string,
-    //     timeStamp : Date,
-    //     accountId : number,
-    //     forumThreadId : number
-    // }
-
     const handleCreateConfirm = () => {
+        console.log("createNewForumPostReq", forumThread);
+
         const createNewForumPostReq : CreateNewForumPostReq = {
             message,
             timeStamp : new Date(),
@@ -61,14 +57,14 @@ function ForumPostInputArea(props: any) {
             forumThreadId: forumThread.forumThreadId
         }
         console.log("createNewForumPostReq", createNewForumPostReq);
-        createNewForumPost(createNewForumPost)
+        createNewForumPost(createNewForumPostReq)
         .then((res) => {
             props.onForumPostChange({ message: "Forum Thread Reply Succeeded", type: "success" });
         }).catch((err) => {
             props.onForumPostChange({ message: "Forum Thread Reply Failed", type: "error" });
             console.log(err.response.data.message);
-        })
-        setIsOpen(false);
+        });
+        handleCancel();
     }
 
 
@@ -76,7 +72,7 @@ function ForumPostInputArea(props: any) {
         <>
             {
                 !isOpen &&
-                <IconButton onClick={handleOpen} style={{ width: "fit-content", marginInlineStart: "auto" }}>
+                <IconButton onClick={handleOpen} style={{ width: "fit-content", marginInlineStart: "auto", fontSize:"unset" }}>
                     <ReplyIcon /> Reply
                 </IconButton>
             }
@@ -101,10 +97,10 @@ function ForumPostInputArea(props: any) {
                             />
                         </div>
                     </ForumPostCardContent>
-                    <ForumPostCardContent style={{ marginLeft: "auto" }}>
+                    <div style={{ marginLeft: "auto", display:"flex" }}>
                         <Button onClick={handleCancel}>Cancel</Button>
                         <Button primary onClick={handleCreateConfirm}>Post Reply</Button>
-                    </ForumPostCardContent>
+                    </div>
                 </>
 
             }

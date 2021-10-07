@@ -81,7 +81,7 @@ function ForumPostList(props: any) {
                                     </Typography>
                                 </ForumPostCardContent>
                                 <Divider />
-                                <ForumPostInputArea forumThread={forumThread} onForumPostChange={handleCallSnackbar}/>
+                                <ForumPostInputArea forumThread={forumThread} onForumPostChange={handleCallSnackbar} />
                             </ForumPostCard>
                         </>
                     );
@@ -118,17 +118,19 @@ function ForumPostList(props: any) {
                             </Typography>
                         </ForumPostCardContent>
                         <Divider />
-                            <ForumPostInputArea forumThread={forumThread} onForumPostChange={handleCallSnackbar}/>
+                        <ForumPostInputArea forumThread={forumThread} onForumPostChange={handleCallSnackbar} />
                     </ForumPostCard>
                 }
             </ForumCardContent>
-            {/* <ForumCardContent> */}
-            <body id="replies">
-                Replies
-                </body>
-            {/* </ForumCardContent> */}
 
             <ForumCardContent>
+                <body id="replies">
+                    Replies
+                </body>
+            </ForumCardContent>
+
+            <ForumCardContent>
+
                 {forumThread != undefined && mapPosts(forumPosts)}
             </ForumCardContent>
         </ForumCard>
