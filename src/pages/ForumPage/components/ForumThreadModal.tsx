@@ -1,6 +1,4 @@
 import { useEffect, useState } from 'react';
-import { createMuiTheme } from "@material-ui/core";
-
 
 import {
     Dialog,
@@ -15,33 +13,23 @@ import AddIcon from '@material-ui/icons/Add';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { Button } from "../../../values/ButtonElements";
-import { ForumCategory, CreateNewForumCategoryReq, UpdateForumCategoryReq } from '../../../apis/Entities/ForumCategory';
-import { createNewForumCategory, updateForumCategory, deleteForumCategory } from "../../../apis/Forum/ForumApis";
+import { ForumThread, CreateNewForumThreadReq } from '../../../apis/Entities/ForumThread';
+import { createNewForumThread } from "../../../apis/Forum/ForumApis";
 
-const themeInstance = createMuiTheme({
-    overrides: {
-        MuiIconButton: {
-            root: {
-                fontSize: "unset ! important"
-            }
-        }
-    }
-});
-
-function ForumCategoryModal(props: any) {
+function ForumThreadModal(props: any) {
 
     const [open, setOpen] = useState<boolean>(false);
     const [name, setName] = useState<string>("");
     const [description, setDescription] = useState<string>("");
-    const [courseId, setCourseId] = useState<number>();
     const [modalType, setModalType] = useState<string>("");
     const [forumCategoryToSubmit, setForumCategoryToSubmit] = useState<ForumCategory>();
     const [isDisabled, setIsDisabled] = useState<boolean>(false);
+    const loggedInAccountId = window.sessionStorage.getItem("loggedInAccountId");
+
 
     useEffect(() => {
-        setCourseId(props.courseId);
-        setModalType(props.modalType);
         setForumCategoryToSubmit(props.forumCategory);
+        setModalType(props.modalType);
         if (props.modalType === "EDIT" || props.modalType === "DELETE") {
             setName(props.forumCategory.name);
             setDescription(props.forumCategory.description);
@@ -54,42 +42,35 @@ function ForumCategoryModal(props: any) {
 
     const handleClose = () => {
         setName("");
+        setDescription("");
         setOpen(false);
     };
 
     const handleCreateConfirm = () => {
-        const createNewForumCategoryReq: CreateNewForumCategoryReq = {
-            name,
-            description,
-            courseId: props.courseId
+        if (loggedInAccountId != null) {
+            const createNewForumThreadReq: CreateNewForumThreadReq = {
+                name,
+                description,
+                timeStamp: new Date(),
+                accountId: parseInt(loggedInAccountId),
+                forumCategoryId: forumCategoryToSubmit.forumCategoryId
+            }
+            console.log(createNewForumThreadReq);
+            createNewForumThread(createNewForumThreadReq).then((res) => {
+                props.onForumThreadChange({ message: "Forum Thread Creation Succeeded", type: "success" });
+            }).catch((err) => {
+                props.onForumThreadChange({ message: `Forum Thread Creation Failed: ${err.response.data.message}`, type: "error" });
+
+            })
+            handleClose();
         }
-        createNewForumCategory(createNewForumCategoryReq).then((res) => {
-            props.onForumCategoryChange({ message: "Forum Category Creation Succeeded", type: "success" });
-        }).catch((err) => {
-            props.onForumCategoryChange({ message: `Forum Category Creation Failed: ${err.response.data.message}`, type: "error" });
-        })
-        setOpen(false);
     }
 
     const handleEditConfirm = () => {
-        const forumCategory: ForumCategory = Object.assign(forumCategoryToSubmit, { name, description });
-        const updateForumCategoryReq: UpdateForumCategoryReq = {
-            forumCategory
-        }
-        updateForumCategory(updateForumCategoryReq).then((res) => {
-            props.onForumCategoryChange({ message: "Forum Category Update Succeeded", type: "success" });
-        }).catch((err) => {
-            props.onForumCategoryChange({ message: "Forum Category Update Failed", type: "error" });
-        })
         setOpen(false);
     }
 
     const handleDeleteConfirm = () => {
-        deleteForumCategory(forumCategoryToSubmit.forumCategoryId).then((res) => {
-            props.onForumCategoryChange({ message: "Forum Category Delete Success", type: "success" });
-        }).catch((err) => {
-            props.onForumCategoryChange({ message: "Forum Category Delete Failed", type: "error" });
-        });
         setOpen(false);
     }
 
@@ -99,10 +80,10 @@ function ForumCategoryModal(props: any) {
                 modalType === "CREATE" &&
                 <>
                     <IconButton aria-label="settings" color="primary" onClick={handleOpen}>
-                        <AddIcon /> &nbsp; Add Category
+                        <AddIcon /> &nbsp; Add Thread
             </IconButton>
                     <Dialog open={open} onClose={handleClose} maxWidth={"lg"}>
-                        <DialogTitle>Create Forum Category</DialogTitle>
+                        <DialogTitle>Create Forum Thread</DialogTitle>
                         <DialogContent>
                             <TextField
                                 required
@@ -132,11 +113,11 @@ function ForumCategoryModal(props: any) {
             {
                 modalType === "EMPTY" &&
                 <>
-                    <IconButton aria-label="settings" color="primary" onClick={handleOpen}>
-                        <AddIcon /> &nbsp; Start A Category
-            </IconButton>
+                    <Button onClick={handleOpen}>
+                        Start A Thread
+            </Button>
                     <Dialog open={open} onClose={handleClose} maxWidth={"lg"}>
-                        <DialogTitle>Create Forum Category</DialogTitle>
+                        <DialogTitle>Create Forum Thread</DialogTitle>
                         <DialogContent>
                             <TextField
                                 required
@@ -166,8 +147,8 @@ function ForumCategoryModal(props: any) {
             {
                 modalType === "EDIT" &&
                 <>
-                    <ListItemIcon disabled={isDisabled} onClick={handleOpen} >
-                        <EditIcon /> Edit Category
+                    <ListItemIcon disabled={isDisabled} onClick={handleOpen}>
+                        <EditIcon />
                     </ListItemIcon>
                     <Dialog open={open} onClose={handleClose} maxWidth={"lg"}>
                         <DialogTitle>Edit Forum Category</DialogTitle>
@@ -200,8 +181,8 @@ function ForumCategoryModal(props: any) {
             {
                 modalType === "DELETE" &&
                 <>
-                    <ListItemIcon disabled={isDisabled} onClick={handleOpen} >
-                        <DeleteIcon /> Delete Category
+                    <ListItemIcon disabled={isDisabled} onClick={handleOpen}>
+                        <DeleteIcon />
                     </ListItemIcon>
                     <Dialog open={open} onClose={handleClose} maxWidth={"lg"}>
                         <DialogTitle>Delete Forum Category</DialogTitle>
@@ -220,5 +201,5 @@ function ForumCategoryModal(props: any) {
     )
 }
 
-export default ForumCategoryModal
+export default ForumThreadModal
 
