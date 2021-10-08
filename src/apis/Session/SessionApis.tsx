@@ -22,3 +22,11 @@ export async function getInvitedSessions(userId: number) {
 
     return httpClient.get<undefined, InvitedSessionResp[]>(getParameters, true);
 }
+
+export async function endSession(sessionId: string) {
+    const deleteParameters: IHttpClientRequestParameters<undefined> = {
+        url: `/kodoSession/endSession/${sessionId}`
+    }
+
+    return httpClient.delete<undefined, undefined>(deleteParameters, true);
+}

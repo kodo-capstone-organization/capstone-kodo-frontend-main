@@ -1,5 +1,5 @@
-import { Input } from '@material-ui/core';
 import React, { useEffect, useRef, useState } from 'react'
+import { endSession } from '../../../apis/Session/SessionApis';
 import { Button } from '../../../values/ButtonElements';
 import ActionsPanel from './components/ActionsPanel';
 import ParticipantsPanel from './components/ParticipantsPanel';
@@ -8,8 +8,6 @@ import { LiveKodoSessionContainer, MainSessionWrapper, TopSessionBar } from './L
 
 let conn: WebSocket;
 let peerConns: Map<number, RTCInfo> = new Map(); // { peerId: PeerConn, peerId2: PeerConn2, ... }
-// let peerConn: RTCPeerConnection;
-// let dataChannel: RTCDataChannel;
 let localStream: MediaStream;
 
 const rtcConfiguration: RTCConfiguration = {
@@ -77,6 +75,9 @@ function LiveKodoSessionPage(props: any) {
                     case "candidate":
                         handleCandidate(incomingPeerId, data);
                         break;
+                    case "exit":
+                        handleExit(incomingPeerId);
+                        break;
                     default:
                         console.log("in default switch case")
                         break;
@@ -95,8 +96,15 @@ function LiveKodoSessionPage(props: any) {
         // Cleanup: Runs only during ComponentWillUnmount
         return () => {
             console.log("Closing websocket");
+            localStream.getTracks().forEach(track => track.stop());
+            send({ event : "exit" })
             conn.close();
-            // TODO: Send API to backend to close the session if user is the last one in the call
+            
+            if (peerConns.size === 0) {
+                endSession(sessionId).then(() => {
+                    console.log("Session closed successfully")
+                })
+            }
         }
 
     }, [])
@@ -233,6 +241,12 @@ function LiveKodoSessionPage(props: any) {
         }
     };
 
+    function handleExit(incomingPeerId: number) {
+        if (peerConns.has(incomingPeerId)) {
+            peerConns.delete(incomingPeerId)
+        }
+    }
+
     // Sending a message to websocket server
     const send = (receivedMessage: any) => {
         console.log("in sendMessage");
@@ -250,7 +264,7 @@ function LiveKodoSessionPage(props: any) {
             <audio ref={remoteAudioRef} autoPlay />
             <TopSessionBar><strong>{props.location.state?.sessionName || "SESSION_NAME"} ({sessionId}) · Time_Elapsed</strong></TopSessionBar>
             <Button onClick={() => send({event: null, data: "helloWord"})}>SEND</Button>
-            <Button onClick={() => sendMessage("hello from datachannel")}>SEND VIA DATACHANNEL</Button>
+            <Button onClick={() => sendMessage(`hello from ${myAccountId}`)}>SEND VIA DATACHANNEL</Button>
             <MainSessionWrapper>
                 <ParticipantsPanel />
                 <Stage dataChannelConnected={dataChannelConnected} />
