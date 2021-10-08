@@ -32,15 +32,15 @@ function ForumCategoryList(props: any) {
     const open = Boolean(anchorEl);
 
     useEffect(() => {
-        setCourseId(props.courseId)
-        getCourseByCourseId(props.courseId).then((res) => {
+        setCourseId(props.currentCourseId)
+        getCourseByCourseId(props.currentCourseId).then((res) => {
             // removing action access from students
             console.log("getCourseByCourseId", res);
             if (loggedInAccountId != null && res.tutor.accountId === loggedInAccountId) {
                 setActionsDisabled(false);
             }
         })
-        getForumCategoryByCourseId(props.courseId).then((res) => {
+        getForumCategoryByCourseId(props.currentCourseId).then((res) => {
             res.map((q) => {
                 Object.assign(q, { id: q.forumCategoryId })
                 return q;
@@ -54,12 +54,13 @@ function ForumCategoryList(props: any) {
     const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
     };
+
     const handleMenuClose = () => {
         setAnchorEl(null);
     };
 
     const handleCallSnackbar = (snackbarObject: any) => {
-        getForumCategoryByCourseId(props.courseId).then((res) => {
+        getForumCategoryByCourseId(courseId).then((res) => {
             res.map((q) => {
                 Object.assign(q, { id: q.forumCategoryId })
                 return q;
@@ -72,7 +73,7 @@ function ForumCategoryList(props: any) {
     }
 
     const navigateToIndividualCategory = (forumCategoryId: number) => {
-        props.history.push(`/forum/${courseId}/category/${forumCategoryId}`);
+        props.history.push(`/forum/${props.currentCourseId}/category/${forumCategoryId}`);
     }
 
     const mapCategories = (forumCategories: ForumCategory[]) => {
@@ -134,14 +135,14 @@ function ForumCategoryList(props: any) {
                 title="Forum Discussion"
                 action={
                     !actionsDisabled &&
-                    <ForumCategoryModal modalType={"CREATE"} courseId={props.courseId} onForumCategoryChange={handleCallSnackbar} />
+                    <ForumCategoryModal modalType={"CREATE"} courseId={courseId} onForumCategoryChange={handleCallSnackbar} />
                 }
             />
             <ForumCardContent>
                 {mapCategories(forumCategories)}
                 <EmptyStateContainer threadsExist={forumCategories.length > 0}>
                     <Typography>No Categories Created 🥺</Typography>
-                    <ForumCategoryModal modalType={"EMPTY"} courseId={props.courseId} onForumCategoryChange={handleCallSnackbar} />
+                    <ForumCategoryModal modalType={"EMPTY"} courseId={courseId} onForumCategoryChange={handleCallSnackbar} />
                 </EmptyStateContainer>
             </ForumCardContent>
         </ForumCard>

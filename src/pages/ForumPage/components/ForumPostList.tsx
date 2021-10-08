@@ -27,28 +27,37 @@ function ForumPostList(props: any) {
     const [courseId, setCourseId] = useState<number>();
     const [forumThread, setForumThread] = useState<ForumThread>();
     const [forumPosts, setForumPosts] = useState<ForumPost[]>([]);
+    const [currentForumThreadId, setCurrentForumThreadId] = useState<number>();
+    const [currentForumCategoryId, setCurrentForumCategoryId] = useState<number>();
 
     // const [selectedQuestions, setSelectedQuestions] = useState<any>([]);
 
     useEffect(() => {
-        var url = props.history.location.pathname;
-        const forumThreadId = parseInt(url.split('/thread/')[1]);
-        getForumThreadByForumThreadId(forumThreadId).then((res) => {
-            setForumThread(res);
-        }).catch((err) => {
-            props.onCallSnackbar({ message: "Failure", type: "error" })
-        });
-        getAllForumPostsOfAForumThread(forumThreadId).then((res) => {
-            setForumPosts(res);
-        }).catch((err) => {
-            props.onCallSnackbar({ message: "Failure", type: "error" })
-        });
-
+        setCourseId(props.courseId);
+        setCurrentForumCategoryId(props.currentForumCategoryId);
+        if(props.currentForumThreadId != undefined){
+            setCurrentForumThreadId(props.currentForumThreadId);
+            getForumThreadByForumThreadId(props.currentForumThreadId).then((res) => {
+                setForumThread(res);
+            }).catch((err) => {
+                props.onCallSnackbar({ message: "Failure", type: "error" })
+            });
+            getAllForumPostsOfAForumThread(props.currentForumThreadId).then((res) => {
+                setForumPosts(res);
+            }).catch((err) => {
+                props.onCallSnackbar({ message: "Failure", type: "error" })
+            });
+        }
     }, [props]);
 
     const handleCallSnackbar = (snackbarObject: any) => {
-        getForumThreadByForumThreadId(forumThread.forumThreadId).then((res) => {
-            setForumThread(res);
+        // getForumThreadByForumThreadId(forumThread.forumThreadId).then((res) => {
+        //     setForumThread(res);
+        // }).catch((err) => {
+        //     props.onCallSnackbar({ message: "Failure", type: "error" })
+        // });
+        getAllForumPostsOfAForumThread(forumThread.forumThreadId).then((res) => {
+            setForumPosts(res);
         }).catch((err) => {
             props.onCallSnackbar({ message: "Failure", type: "error" })
         });
@@ -70,7 +79,7 @@ function ForumPostList(props: any) {
                                 <ForumPostCardContent>
                                     <ForumAvatar alt="Remy Sharp" src={post.account.displayPictureUrl}/>
                                     <Typography variant="body1" component="div" style={{ marginLeft: "20px" }}>
-                                        <body style={{ color: "blue" }}>RE: {forumThread.name}</body>
+                                        <body style={{ color: "blue" }}>RE: {post.reply != null ? post.reply.message : forumThread.name}</body>
                                         <br />
                                     Posted By {post.account.name} on {formatDate(post.timeStamp)}
                                     </Typography>
@@ -82,7 +91,7 @@ function ForumPostList(props: any) {
                                     </Typography>
                                 </ForumPostCardContent>
                                 <Divider />
-                                <ForumPostInputArea postType={"REPLY"} forumPost={post} onForumPostChange={handleCallSnackbar} />
+                                <ForumPostInputArea postType={"REPLY"} history={props.history} courseId={courseId} forumPost={post} onForumPostChange={handleCallSnackbar} />
                             </ForumPostCard>
                         </>
                     );
@@ -119,7 +128,7 @@ function ForumPostList(props: any) {
                             </Typography>
                         </ForumPostCardContent>
                         <Divider />
-                        <ForumPostInputArea postType={"POST"} forumThread={forumThread} onForumPostChange={handleCallSnackbar} />
+                        <ForumPostInputArea history={props.history} courseId={courseId} postType={"POST"} currentForumCategoryId={currentForumCategoryId} forumThread={forumThread} onForumPostChange={handleCallSnackbar} />
                     </ForumPostCard>
                 }
             </ForumCardContent>

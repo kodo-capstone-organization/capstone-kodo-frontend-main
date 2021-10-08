@@ -14,7 +14,7 @@ import ReplyIcon from '@material-ui/icons/Reply';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { Button } from "../../../values/ButtonElements";
 import { ForumPost, CreateNewForumPostReq } from '../../../apis/Entities/ForumPost';
-import { createNewForumPost, createNewForumPostReply } from "../../../apis/Forum/ForumApis";
+import { createNewForumPost, createNewForumPostReply, deleteForumThread, deleteForumPost } from "../../../apis/Forum/ForumApis";
 import { Account } from "../../../apis/Entities/Account";
 import { getMyAccount } from "../../../apis/Account/AccountApis";
 
@@ -25,6 +25,8 @@ function ForumPostInputArea(props: any) {
     const [message, setMessage] = useState<string>("");
     const [forumThread, setForumThread] = useState<ForumThread>();
     const [parentForumPost, setParentForumPost] = useState<ForumPost>();
+    const [currentForumCategoryId, setCurrentForumCategoryId] = useState<number>();
+    const [courseId, setCourseId] = useState<number>();
     const [postType, setPostType] = useState<string>();
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [myAccount, setMyAccount] = useState<Account>();
@@ -36,6 +38,8 @@ function ForumPostInputArea(props: any) {
         setForumThread(props.forumThread);
         setParentForumPost(props.forumPost);
         setPostType(props.postType);
+        setCurrentForumCategoryId(props.currentForumCategoryId);
+        setCourseId(props.courseId);
         getMyAccount(loggedInAccountId).then((res) => {
             setMyAccount(res);
         }).catch((err) => {
@@ -53,7 +57,6 @@ function ForumPostInputArea(props: any) {
     }
 
     const handleCreateConfirm = () => {
-        console.log("createNewForumPostReq", forumThread);
         if (postType === "POST") {
             const createNewForumPostReq: CreateNewForumPostReq = {
                 message,
@@ -82,14 +85,38 @@ function ForumPostInputArea(props: any) {
                 parentForumPostId: parentForumPost.forumPostId
             }
             createNewForumPostReply(createNewForumPostReplyReq)
-            .then((res) => {
-                props.onForumPostChange({ message: "Forum Thread Reply Succeeded", type: "success" });
+                .then((res) => {
+                    props.onForumPostChange({ message: "Forum Thread Reply Succeeded", type: "success" });
 
-            }).catch((err) => {
-                props.onForumPostChange({ message: err.response.data.message, type: "error" });
-            })
+                }).catch((err) => {
+                    props.onForumPostChange({ message: err.response.data.message, type: "error" });
+                })
         }
 
+        handleCancel();
+    }
+
+    const handleDeletePost = () => {
+        if (postType === "POST" && forumThread.account.accountId === loggedInAccountId) {
+            //deleting a thread
+            props.history.push(`/forum/${courseId}/category/${currentForumCategoryId}`);
+            deleteForumThread(forumThread.forumThreadId)
+                .then((res) => {
+                    props.onForumPostChange({ message: "Forum Thread Deletion Succeeded", type: "success" });
+                }).catch((err) => {
+                    props.onForumPostChange({ message: err.response.data.message, type: "error" });
+                })
+        } else if (postType === "REPLY" && parentForumPost.account.accountId === loggedInAccountId) {
+            // deleting a post
+            deleteForumPost(parentForumPost.forumPostId)
+                .then((res) => {
+                    props.onForumPostChange({ message: "Forum Thread Deletion Succeeded", type: "success" });
+                }).catch((err) => {
+                    props.onForumPostChange({ message: err.response.data.message, type: "error" });
+                })
+        } else {
+            props.onForumPostChange({ message: "You are not the author of this thread/post.", type: "error" });
+        }
         handleCancel();
     }
 
@@ -99,9 +126,15 @@ function ForumPostInputArea(props: any) {
         <>
             {
                 !isOpen &&
-                <IconButton onClick={handleOpen} style={{ width: "fit-content", marginInlineStart: "auto", fontSize: "unset" }}>
-                    <ReplyIcon /> Reply
+                <div style={{ display: "flex" }}>
+                    <IconButton onClick={handleOpen} style={{ width: "fit-content", marginInlineStart: "auto", fontSize: "unset" }}>
+                        <ReplyIcon /> Reply
                 </IconButton>
+                    <IconButton onClick={handleDeletePost} style={{ width: "fit-content", fontSize: "unset" }}>
+                        <DeleteIcon /> Delete
+
+                </IconButton>
+                </div>
             }
 
             {

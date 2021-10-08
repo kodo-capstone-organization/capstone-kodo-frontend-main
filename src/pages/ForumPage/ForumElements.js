@@ -8,6 +8,7 @@ import {
 } from "@material-ui/core";
 import { fontSizes } from "../../values/FontSizes";
 import { colours } from "../../values/Colours";
+import { Button } from "../../values/ButtonElements";
 
 export const ForumContainer = styled.div`
     padding: 2rem;
@@ -126,3 +127,7 @@ export const ForumAvatar = styled(Avatar)`
     width: 100px;
     height: 100px;
 `;
+
+export const ForumButton = styled(Button)`
+    margin: 10px;
+`

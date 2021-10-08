@@ -61,7 +61,7 @@ function ForumCategoryModal(props: any) {
         const createNewForumCategoryReq: CreateNewForumCategoryReq = {
             name,
             description,
-            courseId: props.courseId
+            courseId
         }
         createNewForumCategory(createNewForumCategoryReq).then((res) => {
             props.onForumCategoryChange({ message: "Forum Category Creation Succeeded", type: "success" });
