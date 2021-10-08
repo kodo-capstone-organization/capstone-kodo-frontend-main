@@ -45,7 +45,6 @@ function LiveKodoSessionPage(props: any) {
                 const content = JSON.parse(msg.data);
                 const data = content.data;
                 console.log("conn.onmessage: ", content.event);
-
                 const incomingPeerId = content.peerId
                 
                 switch (content.event) {
@@ -62,8 +61,12 @@ function LiveKodoSessionPage(props: any) {
                         }
                         break;
                     case "answer":
-                        handleAnswer(incomingPeerId, data);
-                        console.log(peerConns)
+                        // Only handle the answers that are meant for me
+                        console.log("answer")
+                        if (content.sendTo === myAccountId) {
+                            handleAnswer(incomingPeerId, data);
+                            console.log(peerConns)
+                        }
                         break;
                     // when a remote peer sends an ice candidate to us
                     case "candidate":
@@ -194,7 +197,7 @@ function LiveKodoSessionPage(props: any) {
                 const answer = await incomingPeerConn.createAnswer(answerOptions);
                 await incomingPeerConn.setLocalDescription(answer);
                 peerConns.set(incomingPeerId, incomingPeerConn);
-                send({ event : "answer", data : answer });
+                send({ event : "answer", data : answer, sendTo: incomingPeerId });
             } else {
                 console.error("unable to find peer conn with id", incomingPeerId);
             }
@@ -206,8 +209,6 @@ function LiveKodoSessionPage(props: any) {
     };
 
     function handleCandidate(incomingPeerId: number, candidate: any) {
-        console.log("in handleCandidate -> add Ice Candidate to peer conn");
-
         const incomingPeerConn = peerConns.get(incomingPeerId);
         if (incomingPeerConn) {
             incomingPeerConn?.addIceCandidate(new RTCIceCandidate(candidate));
