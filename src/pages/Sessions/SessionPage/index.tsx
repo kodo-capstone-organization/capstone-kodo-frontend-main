@@ -214,7 +214,7 @@ function SessionPage(props: any) {
                     <Link color="primary" href="/session">Sessions</Link>
                 </SessionPageBreadcrumbs>
                 <SessionPageDescription>
-                    Trying to discuss a new algorithm or run through a challening problem with another Koder? Kodo sessions allows for ad-hoc collaboration with tools like whiteboard and code editor over a real-time audio call. Start a new Kodo session and invite other Koders along!
+                    Trying to discuss a new algorithm or run through a challenging problem with another Koder? Kodo sessions allows for ad-hoc collaboration with tools like whiteboard and code editor over a real-time audio call. Start a new Kodo session and invite other Koders along!
                 </SessionPageDescription>
                 <SessionPageCreateOrJoinContainer>
                     <SessionPageTypography variant="h6">Create or Join a Kodo Session</SessionPageTypography>
