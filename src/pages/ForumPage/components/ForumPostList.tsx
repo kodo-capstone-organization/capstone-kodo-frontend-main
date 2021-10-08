@@ -44,6 +44,7 @@ function ForumPostList(props: any) {
             });
             getAllForumPostsOfAForumThread(props.currentForumThreadId).then((res) => {
                 setForumPosts(res);
+                console.log("posyts", res);
             }).catch((err) => {
                 props.onCallSnackbar({ message: "Failure", type: "error" })
             });
@@ -51,11 +52,6 @@ function ForumPostList(props: any) {
     }, [props]);
 
     const handleCallSnackbar = (snackbarObject: any) => {
-        // getForumThreadByForumThreadId(forumThread.forumThreadId).then((res) => {
-        //     setForumThread(res);
-        // }).catch((err) => {
-        //     props.onCallSnackbar({ message: "Failure", type: "error" })
-        // });
         getAllForumPostsOfAForumThread(forumThread.forumThreadId).then((res) => {
             setForumPosts(res);
         }).catch((err) => {
@@ -80,6 +76,8 @@ function ForumPostList(props: any) {
                                     <ForumAvatar alt="Remy Sharp" src={post.account.displayPictureUrl}/>
                                     <Typography variant="body1" component="div" style={{ marginLeft: "20px" }}>
                                         <body style={{ color: "blue" }}>RE: {post.reply != null ? post.reply.message : forumThread.name}</body>
+                                        {/* <body style={{ color: "blue" }}>RE: {JSON.stringify(post)}</body> */}
+
                                         <br />
                                     Posted By {post.account.name} on {formatDate(post.timeStamp)}
                                     </Typography>

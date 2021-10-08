@@ -17,6 +17,5 @@ export interface CreateNewForumPostReq {
 
 export interface CreateNewForumPostReplyReq {
     newForumPostReply : ForumPost,
-    accountId : number,
-    parentForumPostId : number
+    accountId : number
 }
