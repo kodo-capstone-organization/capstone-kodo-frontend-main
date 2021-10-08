@@ -16,7 +16,8 @@ import {
 import ReplyIcon from '@material-ui/icons/Reply';
 import { Button } from "../../../values/ButtonElements";
 import {
-    Divider, Typography, Avatar, IconButton
+    Divider, Typography, Avatar, IconButton,
+    CircularProgress
 } from '@material-ui/core';
 
 import ForumPostInputArea from './ForumPostInputArea';
@@ -29,13 +30,16 @@ function ForumPostList(props: any) {
     const [forumPosts, setForumPosts] = useState<ForumPost[]>([]);
     const [currentForumThreadId, setCurrentForumThreadId] = useState<number>();
     const [currentForumCategoryId, setCurrentForumCategoryId] = useState<number>();
+    const [loading, setLoading] = useState<boolean>();
+
 
     // const [selectedQuestions, setSelectedQuestions] = useState<any>([]);
 
     useEffect(() => {
+        setLoading(true);
         setCourseId(props.courseId);
         setCurrentForumCategoryId(props.currentForumCategoryId);
-        if(props.currentForumThreadId != undefined){
+        if (props.currentForumThreadId != undefined) {
             setCurrentForumThreadId(props.currentForumThreadId);
             getForumThreadByForumThreadId(props.currentForumThreadId).then((res) => {
                 setForumThread(res);
@@ -44,7 +48,7 @@ function ForumPostList(props: any) {
             });
             getAllForumPostsOfAForumThread(props.currentForumThreadId).then((res) => {
                 setForumPosts(res);
-                console.log("posyts", res);
+                setLoading(false);
             }).catch((err) => {
                 props.onCallSnackbar({ message: "Failure", type: "error" })
             });
@@ -73,11 +77,9 @@ function ForumPostList(props: any) {
                         <>
                             <ForumPostCard key={postId}>
                                 <ForumPostCardContent>
-                                    <ForumAvatar alt="Remy Sharp" src={post.account.displayPictureUrl}/>
+                                    <ForumAvatar alt="Remy Sharp" src={post.account.displayPictureUrl} />
                                     <Typography variant="body1" component="div" style={{ marginLeft: "20px" }}>
-                                        <body style={{ color: "blue" }}>RE: {post.reply != null ? post.reply.message : forumThread.name}</body>
-                                        {/* <body style={{ color: "blue" }}>RE: {JSON.stringify(post)}</body> */}
-
+                                        <body style={{ color: "blue" }}>RE: {forumThread.name}</body>
                                         <br />
                                     Posted By {post.account.name} on {formatDate(post.timeStamp)}
                                     </Typography>
@@ -98,51 +100,68 @@ function ForumPostList(props: any) {
         );
     }
 
-    return (
-        <ForumCard>
-            {
-                forumThread !== undefined &&
-                < ForumCardHeader
-                    title="Thread"
-                />
-            }
-
-            <ForumCardContent>
+    if (loading) {
+        return (
+            <ForumCard>
                 {
-                    forumThread != undefined &&
-                    <ForumPostCard id="post-card">
-                        <ForumPostCardContent>
-                            <ForumAvatar alt="Remy Sharp" src={forumThread.account.displayPictureUrl}/>
-                            <Typography variant="body1" component="div" style={{ marginLeft: "20px" }}>
-                                <body style={{ color: "blue" }}>{forumThread.name}</body>
-                                <br />
-                            Posted By {forumThread.account.name} on {formatDate(forumThread.timeStamp)}
-                            </Typography>
-                        </ForumPostCardContent>
-                        <Divider />
-                        <ForumPostCardContent>
-                            <Typography variant="body1" component="div" style={{ marginLeft: "20px" }}>
-                                {forumThread.description}
-                            </Typography>
-                        </ForumPostCardContent>
-                        <Divider />
-                        <ForumPostInputArea history={props.history} courseId={courseId} postType={"POST"} currentForumCategoryId={currentForumCategoryId} forumThread={forumThread} onForumPostChange={handleCallSnackbar} />
-                    </ForumPostCard>
+                    < ForumCardHeader
+                        title="Loading ..."
+                    />
                 }
-            </ForumCardContent>
 
-            <ForumCardContent>
-                <body id="replies">
-                    Replies
-                </body>
-            </ForumCardContent>
+                <ForumCardContent>
+                    <CircularProgress />
+                </ForumCardContent>
+            </ForumCard>
+        );
+    } else {
+        return (
+            <ForumCard>
+                {
+                    forumThread !== undefined &&
+                    < ForumCardHeader
+                        title={forumThread.name}
+                    />
+                }
 
-            <ForumCardContent>
+                <ForumCardContent>
+                    {
+                        forumThread != undefined &&
+                        <ForumPostCard id="post-card">
+                            <ForumPostCardContent>
+                                <ForumAvatar alt="Remy Sharp" src={forumThread.account.displayPictureUrl} />
+                                <Typography variant="body1" component="div" style={{ marginLeft: "20px" }}>
+                                    <body style={{ color: "blue" }}>{forumThread.name}</body>
+                                    <br />
+                                Posted By {forumThread.account.name} on {formatDate(forumThread.timeStamp)}
+                                </Typography>
+                            </ForumPostCardContent>
+                            <Divider />
+                            <ForumPostCardContent>
+                                <Typography variant="body1" component="div" style={{ marginLeft: "20px" }}>
+                                    {forumThread.description}
+                                </Typography>
+                            </ForumPostCardContent>
+                            <Divider />
+                            <ForumPostInputArea history={props.history} courseId={courseId} postType={"POST"} currentForumCategoryId={currentForumCategoryId} forumThread={forumThread} onForumPostChange={handleCallSnackbar} />
+                        </ForumPostCard>
+                    }
+                </ForumCardContent>
 
-                {forumThread != undefined && mapPosts(forumPosts)}
-            </ForumCardContent>
-        </ForumCard>
-    );
+                <ForumCardContent>
+                    <body id="replies">
+                        Replies
+                    </body>
+                </ForumCardContent>
+
+                <ForumCardContent>
+
+                    {forumThread != undefined && mapPosts(forumPosts)}
+                </ForumCardContent>
+            </ForumCard>
+        );
+    }
+
 }
 
 export default ForumPostList

@@ -12,7 +12,7 @@ import {
 } from "../ForumElements";
 import {
     IconButton, Typography, Avatar, Link,
-    Menu, MenuItem, ListItemIcon
+    Menu, MenuItem, ListItemIcon, CircularProgress
 } from '@material-ui/core';
 import ForumIcon from '@material-ui/icons/Forum';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
@@ -31,14 +31,18 @@ function ForumThreadList(props: any) {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const loggedInAccountId = parseInt(window.sessionStorage.getItem("loggedInAccountId"));
     const [menuInfo, setMenuInfo] = useState<any>();
+    const [loading, setLoading] = useState<boolean>();
+
 
     const open = Boolean(anchorEl);
 
     useEffect(() => {
+        setLoading(true);
         if (props.currentForumCategoryId != undefined) {
             getForumCategoryByForumCategoryId(props.currentForumCategoryId).then((res) => {
                 setForumCategory(res);
                 setForumThreads(res.forumThreads);
+                setLoading(false);
             }).catch((err) => {
                 props.onCallSnackbar({ message: "Failure here", type: "error" })
             })
@@ -173,33 +177,60 @@ function ForumThreadList(props: any) {
         );
     }
 
-    return (
-        <ForumCard>
-            {
-                forumCategory !== undefined &&
-                < ForumCardHeader
-                    title={forumCategory.name}
-                    action={
-                        <>
-                            <ForumButton onClick={sortAtoZ}>Sort A to Z</ForumButton>
-                            <ForumButton onClick={sortZtoA}>Sort Z to A</ForumButton>
-                            <ForumButton onClick={sortOldestFirst}>Sort Old to New</ForumButton>
-                            <ForumButton onClick={sortNewestFirst}>Sort New to Old</ForumButton>
-                            <ForumThreadModal modalType={"CREATE"} courseId={props.courseId} forumCategory={forumCategory} onForumThreadChange={handleCallSnackbar} />
-                        </>
-                    }
-                />
-            }
 
-            <ForumThreadCardContent>
-                {mapThreads(forumThreads)}
-                <EmptyStateContainer threadsExist={forumThreads.length > 0}>
-                    <Typography>No threads currently 🥺</Typography>
-                    <ForumThreadModal modalType={"EMPTY"} courseId={props.courseId} forumCategory={forumCategory} onForumThreadChange={handleCallSnackbar} />
-                </EmptyStateContainer>
-            </ForumThreadCardContent>
-        </ForumCard>
-    );
+    if(loading){
+        return (
+            <ForumCard>
+                {
+                    < ForumCardHeader
+                        title="Loading ..."
+                        action={
+                            <>
+                                <ForumButton onClick={sortAtoZ}>Sort A to Z</ForumButton>
+                                <ForumButton onClick={sortZtoA}>Sort Z to A</ForumButton>
+                                <ForumButton onClick={sortOldestFirst}>Sort Old to New</ForumButton>
+                                <ForumButton onClick={sortNewestFirst}>Sort New to Old</ForumButton>
+                                <ForumThreadModal modalType={"CREATE"} courseId={props.courseId} forumCategory={forumCategory} onForumThreadChange={handleCallSnackbar} />
+                            </>
+                        }
+                    />
+                }
+    
+                <ForumThreadCardContent>
+                    <CircularProgress/>
+                </ForumThreadCardContent>
+            </ForumCard>
+        );
+    }else{
+        return (
+            <ForumCard>
+                {
+                    forumCategory !== undefined &&
+                    < ForumCardHeader
+                        title={forumCategory.name}
+                        action={
+                            <>
+                                <ForumButton onClick={sortAtoZ}>Sort A to Z</ForumButton>
+                                <ForumButton onClick={sortZtoA}>Sort Z to A</ForumButton>
+                                <ForumButton onClick={sortOldestFirst}>Sort Old to New</ForumButton>
+                                <ForumButton onClick={sortNewestFirst}>Sort New to Old</ForumButton>
+                                <ForumThreadModal modalType={"CREATE"} courseId={props.courseId} forumCategory={forumCategory} onForumThreadChange={handleCallSnackbar} />
+                            </>
+                        }
+                    />
+                }
+    
+                <ForumThreadCardContent>
+                    {mapThreads(forumThreads)}
+                    <EmptyStateContainer threadsExist={forumThreads.length > 0}>
+                        <Typography>No threads currently 🥺</Typography>
+                        <ForumThreadModal modalType={"EMPTY"} courseId={props.courseId} forumCategory={forumCategory} onForumThreadChange={handleCallSnackbar} />
+                    </EmptyStateContainer>
+                </ForumThreadCardContent>
+            </ForumCard>
+        );
+    }
+
 }
 
 export default ForumThreadList
