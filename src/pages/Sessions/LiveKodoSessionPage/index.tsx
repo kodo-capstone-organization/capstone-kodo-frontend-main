@@ -7,9 +7,9 @@ import Stage from './components/Stage';
 import { LiveKodoSessionContainer, MainSessionWrapper, TopSessionBar } from './LiveKodoSessionPageElements';
 
 let conn: WebSocket;
-let peerConns: Map<number, RTCPeerConnection> = new Map(); // { peerId: PeerConn, peerId2: PeerConn2, ... }
+let peerConns: Map<number, RTCInfo> = new Map(); // { peerId: PeerConn, peerId2: PeerConn2, ... }
 // let peerConn: RTCPeerConnection;
-let dataChannel: RTCDataChannel;
+// let dataChannel: RTCDataChannel;
 let localStream: MediaStream;
 
 const rtcConfiguration: RTCConfiguration = {
@@ -19,6 +19,11 @@ const rtcConfiguration: RTCConfiguration = {
         }
     ]
 };
+
+interface RTCInfo {
+    rtcPeerConnection?: RTCPeerConnection,
+    rtcDataChannel?: RTCDataChannel
+}
 
 // URL: /session/<CREATE_OR_JOIN>/<SESSION_ID>
 // To consider: Adding ?pwd=<PASSWORD> as a query param
@@ -122,7 +127,7 @@ function LiveKodoSessionPage(props: any) {
         // oniceconnectionstatechange = event => checkPeerDisconnect(event, peerUuid);
 
 
-        dataChannel = newPeerConn.createDataChannel("dataChannel");
+        const dataChannel = newPeerConn.createDataChannel("dataChannel");
 
         dataChannel.onopen = function(event) {
             console.log("dataChannel.onopen IN JOINER SIDE")
@@ -143,17 +148,18 @@ function LiveKodoSessionPage(props: any) {
         };
 
         newPeerConn.ondatachannel = function (event) {
-            dataChannel = event.channel;
-            dataChannel.onopen = function(event) {
+            const newDataChannel = event.channel;
+            newDataChannel.onopen = function(event) {
                 console.log("dataChannel.onopen in CREATOR SIDE")
                 setDataChannelConnected(true);
             }
-            dataChannel.onmessage = function(event) {
+            newDataChannel.onmessage = function(event) {
                 console.log("dataChannel.onmessage IN CREATOR SIDE")
             }
+            peerConns.set(newPeerId, { rtcPeerConnection: peerConns.get(newPeerId)?.rtcPeerConnection, rtcDataChannel: newDataChannel })
         };
 
-        peerConns.set(newPeerId, newPeerConn)
+        peerConns.set(newPeerId, { rtcPeerConnection: newPeerConn, rtcDataChannel: dataChannel })
 
         return newPeerConn
     }
@@ -187,7 +193,7 @@ function LiveKodoSessionPage(props: any) {
             voiceActivityDetection: true
         };
 
-        const incomingPeerConn = peerConns.get(incomingPeerId);
+        const incomingPeerConn = peerConns.get(incomingPeerId)?.rtcPeerConnection;
 
         try {
 
@@ -196,7 +202,7 @@ function LiveKodoSessionPage(props: any) {
                 // Create answer to offer
                 const answer = await incomingPeerConn.createAnswer(answerOptions);
                 await incomingPeerConn.setLocalDescription(answer);
-                peerConns.set(incomingPeerId, incomingPeerConn);
+                peerConns.set(incomingPeerId, { rtcPeerConnection: incomingPeerConn, rtcDataChannel: peerConns.get(incomingPeerId)?.rtcDataChannel });
                 send({ event : "answer", data : answer, sendTo: incomingPeerId });
             } else {
                 console.error("unable to find peer conn with id", incomingPeerId);
@@ -209,10 +215,10 @@ function LiveKodoSessionPage(props: any) {
     };
 
     function handleCandidate(incomingPeerId: number, candidate: any) {
-        const incomingPeerConn = peerConns.get(incomingPeerId);
+        const incomingPeerConn = peerConns.get(incomingPeerId)?.rtcPeerConnection;
         if (incomingPeerConn) {
             incomingPeerConn?.addIceCandidate(new RTCIceCandidate(candidate));
-            peerConns.set(incomingPeerId, incomingPeerConn);
+            peerConns.set(incomingPeerId, { rtcPeerConnection: incomingPeerConn, rtcDataChannel: peerConns.get(incomingPeerId)?.rtcDataChannel });
         }
     };
 
@@ -220,10 +226,10 @@ function LiveKodoSessionPage(props: any) {
         console.log("in handleAnswer -> connection established successfully!!");
         console.log("in handleAnswer -> incomingPeerId", incomingPeerId);
 
-        const incomingPeerConn = peerConns.get(incomingPeerId);
+        const incomingPeerConn = peerConns.get(incomingPeerId)?.rtcPeerConnection;
         if (incomingPeerConn) {
             await incomingPeerConn?.setRemoteDescription(new RTCSessionDescription(answer));
-            peerConns.set(incomingPeerId, incomingPeerConn);
+            peerConns.set(incomingPeerId, { rtcPeerConnection: incomingPeerConn, rtcDataChannel: peerConns.get(incomingPeerId)?.rtcDataChannel });
         }
     };
 
@@ -236,7 +242,7 @@ function LiveKodoSessionPage(props: any) {
     }
 
     const sendMessage = (someInput: string) => {
-        dataChannel?.send(someInput);
+        peerConns.forEach((rtcInfo: RTCInfo) => rtcInfo.rtcDataChannel?.send(someInput))
     }
 
     return (
