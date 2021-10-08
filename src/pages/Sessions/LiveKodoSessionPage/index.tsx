@@ -7,15 +7,25 @@ import Stage from './components/Stage';
 import { LiveKodoSessionContainer, MainSessionWrapper, TopSessionBar } from './LiveKodoSessionPageElements';
 
 let conn: WebSocket;
-let peerConn: RTCPeerConnection;
+let peerConns: Map<number, RTCPeerConnection> = new Map(); // { peerId: PeerConn, peerId2: PeerConn2, ... }
+// let peerConn: RTCPeerConnection;
 let dataChannel: RTCDataChannel;
 let localStream: MediaStream;
+
+const rtcConfiguration: RTCConfiguration = {
+    iceServers: [
+        {
+            urls: "stun:stun1.l.google.com:19302"
+        }
+    ]
+};
 
 // URL: /session/<CREATE_OR_JOIN>/<SESSION_ID>
 // To consider: Adding ?pwd=<PASSWORD> as a query param
 function LiveKodoSessionPage(props: any) {
 
     const remoteAudioRef = useRef(null);
+    const myAccountId = parseInt(window.sessionStorage.getItem("loggedInAccountId") || "");
     const [initAction, setInitAction] = useState<string>(props.match.params.initAction.toLowerCase()); // "create" or "join" only
     const [sessionId, setSessionId] = useState<string>(props.match.params.sessionId);
     const [dataChannelConnected, setDataChannelConnected] = useState<boolean>(false);
@@ -36,17 +46,26 @@ function LiveKodoSessionPage(props: any) {
                 const data = content.data;
                 console.log("conn.onmessage: ", content.event);
 
+                const incomingPeerId = content.peerId
+                
                 switch (content.event) {
+                    case "newConnection":
+                        const incomingPeerConn = setupNewPeerConn(incomingPeerId);
+                        console.log("NEW CONNECTION: CREATE OFFER")
+                        createOffer(incomingPeerConn);
+                        break;
                     // when somebody wants to call us
                     case "offer":
-                        handleOffer(data);
+                        setupNewPeerConn(incomingPeerId)
+                        handleOffer(incomingPeerId, data);
                         break;
                     case "answer":
-                        handleAnswer(data);
+                        handleAnswer(incomingPeerId, data);
+                        console.log(peerConns)
                         break;
                     // when a remote peer sends an ice candidate to us
                     case "candidate":
-                        handleCandidate(data);
+                        handleCandidate(incomingPeerId, data);
                         break;
                     default:
                         console.log("in default switch case")
@@ -56,7 +75,7 @@ function LiveKodoSessionPage(props: any) {
 
             conn.onopen = function() {
                 console.log("Connected to the signaling server");
-                initialize();
+                send({ event : "newConnection" });
             };
 
         } else {
@@ -72,22 +91,15 @@ function LiveKodoSessionPage(props: any) {
 
     }, [])
 
-    const initialize = () => {
-        // Setup peer conn
-        const configuration: RTCConfiguration = {
-            iceServers: [
-                {
-                    urls: "stun:stun1.l.google.com:19302"
-                }
-            ]
-        };
-        peerConn =  new RTCPeerConnection(configuration);
+    const setupNewPeerConn = (newPeerId: number) => {
+        // Create new peer connection
+        const newPeerConn = new RTCPeerConnection(rtcConfiguration)
 
-        // Add localstream tracks to the peer connection
-        localStream.getTracks().forEach(track => peerConn.addTrack(track, localStream));
+        // Add localstream tracks to the new peer connection
+        localStream.getTracks().forEach(track => newPeerConn.addTrack(track, localStream));
 
         // Peer conn icecandidate event
-        peerConn.onicecandidate = function(event) {
+        newPeerConn.onicecandidate = function(event) {
             if (event.candidate) {
                 console.log("peer.onicecandidate");
                 send({ event : "candidate", data : event.candidate });
@@ -95,51 +107,50 @@ function LiveKodoSessionPage(props: any) {
         };
 
         // Peer conn ontrack event (to add remote streams to audio object)
-        peerConn.ontrack = function(event) {
+        newPeerConn.ontrack = function(event) {
             console.log('AUDIO / VIDEO STREAM RECEIVED:', event.track, event.streams[0]);
             // @ts-ignore
             remoteAudioRef.current.srcObject = event.streams[0]
         };
 
-        if (initAction === "create") {
-            // Peer conn ondatachannel listener
-            peerConn.ondatachannel = function (event) {
-                dataChannel = event.channel;
-                dataChannel.onopen = function(event) {
-                    console.log("dataChannel.onopen in CREATOR SIDE")
-                    setDataChannelConnected(true);
-                }
-                dataChannel.onmessage = function(event) {
-                    console.log("dataChannel.onmessage IN CREATOR SIDE")
-                }
-            };
+        // TODO
+        // oniceconnectionstatechange = event => checkPeerDisconnect(event, peerUuid);
+
+
+        dataChannel = newPeerConn.createDataChannel("dataChannel");
+
+        dataChannel.onopen = function(event) {
+            console.log("dataChannel.onopen IN JOINER SIDE")
+            setDataChannelConnected(true);
         }
 
-        if (initAction === "join") {
-           // Setup data channel & listeners
-           dataChannel = peerConn.createDataChannel("dataChannel");
+        // when we receive a message from the other peer, printing it on the console
+        dataChannel.onmessage = function(event) {
+            console.log("datachannel onmessage IN JOINER SIDE:", event.data);
+        };
 
-           dataChannel.onopen = function(event) {
-               console.log("dataChannel.onopen IN JOINER SIDE")
-               setDataChannelConnected(true);
-           }
+        dataChannel.onclose = function() {
+            console.log("Data channel is closed");
+        };
 
-            // when we receive a message from the other peer, printing it on the console
+        dataChannel.onerror = function(error) {
+            console.log("Error:", error);
+        };
+
+        newPeerConn.ondatachannel = function (event) {
+            dataChannel = event.channel;
+            dataChannel.onopen = function(event) {
+                console.log("dataChannel.onopen in CREATOR SIDE")
+                setDataChannelConnected(true);
+            }
             dataChannel.onmessage = function(event) {
-                console.log("datachannel onmessage IN JOINER SIDE:", event.data);
-            };
+                console.log("dataChannel.onmessage IN CREATOR SIDE")
+            }
+        };
 
-            dataChannel.onclose = function() {
-                console.log("Data channel is closed");
-            };
+        peerConns.set(newPeerId, newPeerConn)
 
-            dataChannel.onerror = function(error) {
-                console.log("Error:", error);
-            };
-
-            console.log("INITIALIZE FOR JOIN: CREATE OFFER")
-            createOffer(peerConn);
-        }
+        return newPeerConn
     }
 
     // If "create", initialise a new active session
@@ -164,42 +175,58 @@ function LiveKodoSessionPage(props: any) {
         }
     }
 
-    async function handleOffer(offer: any) {
+    async function handleOffer(incomingPeerId: number, offer: any) {
         console.log("in handleOffer")
 
         const answerOptions: RTCAnswerOptions = {
             voiceActivityDetection: true
         };
 
+        const incomingPeerConn = peerConns.get(incomingPeerId);
+
         try {
-            await peerConn?.setRemoteDescription(new RTCSessionDescription(offer));
 
-            // Create answer to offer
-            const answer = await peerConn?.createAnswer(answerOptions);
-            console.log(answer);
+            if (incomingPeerConn) {
+                await incomingPeerConn.setRemoteDescription(new RTCSessionDescription(offer));
+                // Create answer to offer
+                const answer = await incomingPeerConn.createAnswer(answerOptions);
+                await incomingPeerConn.setLocalDescription(answer);
+                peerConns.set(incomingPeerId, incomingPeerConn);
+                send({ event : "answer", data : answer });
+            } else {
+                console.error("unable to find peer conn with id", incomingPeerId);
+            }
 
-            await peerConn?.setLocalDescription(answer);
-            send({ event : "answer", data : answer });
         } catch (e) {
             console.log("failed to create an answer: ", e)
         }
 
     };
 
-    function handleCandidate(candidate: any) {
+    function handleCandidate(incomingPeerId: number, candidate: any) {
         console.log("in handleCandidate -> add Ice Candidate to peer conn");
-        peerConn?.addIceCandidate(new RTCIceCandidate(candidate));
+
+        const incomingPeerConn = peerConns.get(incomingPeerId);
+        if (incomingPeerConn) {
+            incomingPeerConn?.addIceCandidate(new RTCIceCandidate(candidate));
+            peerConns.set(incomingPeerId, incomingPeerConn);
+        }
     };
 
-    async function handleAnswer(answer: any) {
+    async function handleAnswer(incomingPeerId: number, answer: any) {
         console.log("in handleAnswer -> connection established successfully!!");
-        await peerConn?.setRemoteDescription(new RTCSessionDescription(answer));
+
+        const incomingPeerConn = peerConns.get(incomingPeerId);
+        if (incomingPeerConn) {
+            await incomingPeerConn?.setRemoteDescription(new RTCSessionDescription(answer));
+            peerConns.set(incomingPeerId, incomingPeerConn);
+        }
     };
 
     // Sending a message to websocket server
     const send = (receivedMessage: any) => {
         console.log("in sendMessage");
-        // receivedMessage['sessionId'] = sessionId; // Append sessionId to message
+        receivedMessage['peerId'] = myAccountId; // Append in peerId (i.e. my account id)
         console.log(receivedMessage)
         conn.send(JSON.stringify(receivedMessage));
     }
