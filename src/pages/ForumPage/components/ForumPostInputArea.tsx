@@ -13,7 +13,8 @@ import {
 import ReplyIcon from '@material-ui/icons/Reply';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { Button } from "../../../values/ButtonElements";
-import { ForumPost, CreateNewForumPostReq } from '../../../apis/Entities/ForumPost';
+import { ForumPost, CreateNewForumPostReq, CreateNewForumPostReplyReq } from '../../../apis/Entities/ForumPost';
+import { ForumThread } from '../../../apis/Entities/ForumThread';
 import { createNewForumPost, createNewForumPostReply, deleteForumThread, deleteForumPost } from "../../../apis/Forum/ForumApis";
 import { Account } from "../../../apis/Entities/Account";
 import { getMyAccount } from "../../../apis/Account/AccountApis";
