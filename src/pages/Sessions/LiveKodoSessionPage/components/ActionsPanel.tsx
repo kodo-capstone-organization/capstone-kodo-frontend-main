@@ -1,16 +1,23 @@
-import { Grid, IconButton } from '@material-ui/core';
-import React, { useEffect, useState } from 'react'
+import React from 'react'
+import { useHistory } from "react-router";
 import { ActionsPanelContainer, ActionItem } from '../LiveKodoSessionPageElements';
+import { Grid, IconButton } from '@material-ui/core';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
-import { formatUrl } from '../../../../apis/HttpClient/UrlFormatter';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 function ActionsPanel(props: any) {
+
+    const history = useHistory();
 
     const copyJoinLinkToClipboard = () => {
         const prefix = `${window.location.protocol}//${window.location.host}`;
         const joinUrl = `${prefix}/session/join/${props.sessionId}`
         navigator.clipboard.writeText(joinUrl)
         props.callOpenSnackBar("Join Link Copied!", "info")
+    }
+
+    const navigateToSessionPage = () => {
+        history.push(`/session`)
     }
 
     return (
@@ -22,6 +29,12 @@ function ActionsPanel(props: any) {
                     <FileCopyIcon />
                 </IconButton>
                 <span style={{ textAlign: "center", color: "blue" }}>Copy Join Link</span>
+            </ActionItem>
+            <ActionItem>
+                <IconButton aria-label="exit-to-session-page" color="primary" onClick={navigateToSessionPage}>
+                    <ExitToAppIcon/>
+                </IconButton>
+                <span style={{ textAlign: "center", color: "blue" }}>Exit</span>
             </ActionItem>
         </ActionsPanelContainer>
     )

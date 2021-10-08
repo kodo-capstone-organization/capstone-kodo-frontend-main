@@ -60,5 +60,6 @@ export const ActionItem = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    font-size: ${fontSizes.SUBTEXT}
+    font-size: ${fontSizes.SUBTEXT};
+    padding: 1rem 0;
 `;
