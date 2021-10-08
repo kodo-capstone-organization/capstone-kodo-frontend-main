@@ -256,7 +256,13 @@ function LiveKodoSessionPage(props: any) {
     }
 
     const sendMessage = (someInput: string) => {
-        peerConns.forEach((rtcInfo: RTCInfo) => rtcInfo.rtcDataChannel?.send(someInput))
+        peerConns.forEach((rtcInfo: RTCInfo) => {
+
+            // Only send message to connections that are still connected
+            if (rtcInfo.rtcPeerConnection?.connectionState === "connected") {
+                rtcInfo.rtcDataChannel?.send(someInput)
+            }      
+        })
     }
 
     return (
