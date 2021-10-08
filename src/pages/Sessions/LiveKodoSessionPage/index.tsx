@@ -105,8 +105,9 @@ function LiveKodoSessionPage(props: any) {
                     console.log("Session closed successfully")
                 })
             }
-        }
 
+            props.callOpenSnackBar(`Exiting Kodo Session: ${props.location.state?.sessionName}`, "success")
+        }
     }, [])
 
     const setupNewPeerConn = (newPeerId: number) => {
