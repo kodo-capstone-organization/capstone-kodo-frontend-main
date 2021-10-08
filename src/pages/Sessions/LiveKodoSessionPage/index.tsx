@@ -56,8 +56,10 @@ function LiveKodoSessionPage(props: any) {
                         break;
                     // when somebody wants to call us
                     case "offer":
-                        setupNewPeerConn(incomingPeerId)
-                        handleOffer(incomingPeerId, data);
+                        if (!peerConns.has(incomingPeerId)) {
+                            setupNewPeerConn(incomingPeerId)
+                            handleOffer(incomingPeerId, data);
+                        }
                         break;
                     case "answer":
                         handleAnswer(incomingPeerId, data);
@@ -215,6 +217,7 @@ function LiveKodoSessionPage(props: any) {
 
     async function handleAnswer(incomingPeerId: number, answer: any) {
         console.log("in handleAnswer -> connection established successfully!!");
+        console.log("in handleAnswer -> incomingPeerId", incomingPeerId);
 
         const incomingPeerConn = peerConns.get(incomingPeerId);
         if (incomingPeerConn) {
