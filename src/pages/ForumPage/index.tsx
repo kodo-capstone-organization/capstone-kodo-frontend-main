@@ -2,19 +2,21 @@ import { useEffect, useState } from 'react';
 import { useHistory } from "react-router-dom";
 
 import {
-    ForumContainer
-} from "./ForumElements";
-import {
-    IconButton, Breadcrumbs, Link
+    Breadcrumbs, Link
 } from '@material-ui/core';
+
+import { getForumThreadByForumThreadId, getForumCategoryByForumCategoryId } from "../../apis/Forum/ForumApis";
+
+import { ForumCategory } from '../../apis/Entities/ForumCategory';
+import { ForumThread } from '../../apis/Entities/ForumThread';
 
 import ForumCategoryList from './components/ForumCategoryList';
 import ForumThreadList from './components/ForumThreadList';
 import ForumPostList from './components/ForumPostList';
 
-import { getForumThreadByForumThreadId, getForumCategoryByForumCategoryId } from "../../apis/Forum/ForumApis";
-import { ForumCategory } from '../../../apis/Entities/ForumCategory';
-import { ForumThread } from '../../../apis/Entities/ForumThread';
+import {
+    ForumContainer
+} from "./ForumElements";
 
 
 function ForumPage(props: any) {

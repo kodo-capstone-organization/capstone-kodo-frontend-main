@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import { createMuiTheme } from "@material-ui/core";
 
-
+import AddIcon from '@material-ui/icons/Add';
+import DeleteIcon from '@material-ui/icons/Delete';
+import EditIcon from '@material-ui/icons/Edit';
 import {
     Dialog,
     DialogActions,
@@ -11,12 +13,13 @@ import {
     TextField,
     ListItemIcon
 } from "@material-ui/core";
-import AddIcon from '@material-ui/icons/Add';
-import EditIcon from '@material-ui/icons/Edit';
-import DeleteIcon from '@material-ui/icons/Delete';
-import { Button } from "../../../values/ButtonElements";
-import { ForumCategory, CreateNewForumCategoryReq, UpdateForumCategoryReq } from '../../../apis/Entities/ForumCategory';
-import { createNewForumCategory, updateForumCategory, deleteForumCategory } from "../../../apis/Forum/ForumApis";
+
+import { ForumCategory, CreateNewForumCategoryReq, UpdateForumCategoryReq } from '../../../../apis/Entities/ForumCategory';
+
+import { createNewForumCategory, updateForumCategory, deleteForumCategory } from "../../../../apis/Forum/ForumApis";
+
+import { Button } from "../../../../values/ButtonElements";
+
 
 const themeInstance = createMuiTheme({
     overrides: {
@@ -36,7 +39,6 @@ function ForumCategoryModal(props: any) {
     const [courseId, setCourseId] = useState<number>();
     const [modalType, setModalType] = useState<string>("");
     const [forumCategoryToSubmit, setForumCategoryToSubmit] = useState<ForumCategory>();
-    const [isDisabled, setIsDisabled] = useState<boolean>(false);
 
     useEffect(() => {
         setCourseId(props.courseId);
@@ -85,12 +87,15 @@ function ForumCategoryModal(props: any) {
     }
 
     const handleDeleteConfirm = () => {
-        deleteForumCategory(forumCategoryToSubmit.forumCategoryId).then((res) => {
-            props.onForumCategoryChange({ message: "Forum Category Delete Success", type: "success" });
-        }).catch((err) => {
-            props.onForumCategoryChange({ message: "Forum Category Delete Failed", type: "error" });
-        });
-        setOpen(false);
+        if (forumCategoryToSubmit !== undefined)
+        {
+            deleteForumCategory(forumCategoryToSubmit.forumCategoryId).then((res) => {
+                props.onForumCategoryChange({ message: "Forum Category Delete Success", type: "success" });
+            }).catch((err) => {
+                props.onForumCategoryChange({ message: "Forum Category Delete Failed", type: "error" });
+            });
+            setOpen(false);
+        }
     }
 
     return (
@@ -166,7 +171,7 @@ function ForumCategoryModal(props: any) {
             {
                 modalType === "EDIT" &&
                 <>
-                    <ListItemIcon disabled={isDisabled} onClick={handleOpen} >
+                    <ListItemIcon onClick={handleOpen} >
                         <EditIcon /> Edit Category
                     </ListItemIcon>
                     <Dialog open={open} onClose={handleClose} maxWidth={"lg"}>
@@ -200,7 +205,7 @@ function ForumCategoryModal(props: any) {
             {
                 modalType === "DELETE" &&
                 <>
-                    <ListItemIcon disabled={isDisabled} onClick={handleOpen} >
+                    <ListItemIcon onClick={handleOpen} >
                         <DeleteIcon /> Delete Category
                     </ListItemIcon>
                     <Dialog open={open} onClose={handleClose} maxWidth={"lg"}>
