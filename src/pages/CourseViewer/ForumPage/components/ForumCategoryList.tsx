@@ -1,78 +1,85 @@
 import { useEffect, useState } from 'react';
-// import { useHistory } from "react-router-dom";
 
-import { getForumCategoryByCourseId } from "../../../apis/Forum/ForumApis";
-import { ForumCategory } from '../../../apis/Entities/ForumCategory';
+import ForumIcon from '@material-ui/icons/Forum';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import {
+    Typography, Link, CircularProgress,
+    IconButton, Menu, MenuItem
+} from '@material-ui/core';
+
+import { ForumCategory } from '../../../../apis/Entities/ForumCategory';
+import { getAllForumCategoriesWithForumThreadsOnlyByCourseId as getAllForumCategoriesByCourseId } from "../../../../apis/Forum/ForumApis";
+import { getCourseByCourseId } from '../../../../apis/Course/CourseApis';
 
 import {
     ForumCardHeader, ForumCardContent, ForumCard,
     ForumThreadCard, EmptyStateContainer,
 } from "../ForumElements";
-import { Button } from "../../../values/ButtonElements";
-import ForumIcon from '@material-ui/icons/Forum';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
-import {
-    Typography, Link,
-    IconButton, Menu, MenuItem
-} from '@material-ui/core';
 
 import ForumCategoryModal from './ForumCategoryModal';
-import { getCourseByCourseId } from '../../../apis/Course/CourseApis';
+
 
 function ForumCategoryList(props: any) {
 
     const [courseId, setCourseId] = useState<number>();
     const [forumCategories, setForumCategories] = useState<ForumCategory[]>([]);
-    const [actionsDisabled, setActionsDisabled] = useState<boolean>(true);
-    const loggedInAccountId = parseInt(window.sessionStorage.getItem("loggedInAccountId"));
+    const [actionsDisabled, setActionsDisabled] = useState<boolean>(true);    
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const [loading, setLoading] = useState<boolean>();
 
-
-
+    const loggedInAccountId = JSON.parse(window.sessionStorage.getItem("loggedInAccountId") || "{}");
     const open = Boolean(anchorEl);
 
     useEffect(() => {
-        setCourseId(props.courseId)
-        getCourseByCourseId(props.courseId).then((res) => {
-            // removing action access from students
-            console.log("getCourseByCourseId", res);
+        setLoading(true);
+        console.log("loading", true);
+        setCourseId(props.currentCourseId)
+        getCourseByCourseId(props.currentCourseId).then((res) => {
             if (loggedInAccountId != null && res.tutor.accountId === loggedInAccountId) {
                 setActionsDisabled(false);
             }
         })
-        getForumCategoryByCourseId(props.courseId).then((res) => {
+        getAllForumCategoriesByCourseId(props.currentCourseId).then((res) => {
             res.map((q) => {
                 Object.assign(q, { id: q.forumCategoryId })
                 return q;
             });
+            
             setForumCategories(res);
+            setLoading(false);
         }).catch((err) => {
             console.log("Failed", err);
         })
-    }, [props.courseId]);
+        console.log("loading", false);
+    }, [props.currentCourseId]);
 
     const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
     };
+
     const handleMenuClose = () => {
         setAnchorEl(null);
     };
 
     const handleCallSnackbar = (snackbarObject: any) => {
-        getForumCategoryByCourseId(props.courseId).then((res) => {
-            res.map((q) => {
-                Object.assign(q, { id: q.forumCategoryId })
-                return q;
-            });
-            setForumCategories(res);
-        }).catch((err) => {
-            console.log("Failed", err);
-        });
-        props.onCallSnackbar(snackbarObject);
+        if (courseId !== undefined) {
+            if (snackbarObject.type === "success") {
+                getAllForumCategoriesByCourseId(courseId).then((res) => {
+                    res.map((q) => {
+                        Object.assign(q, { id: q.forumCategoryId })
+                        return q;
+                    });
+                    setForumCategories(res);
+                }).catch((err) => {
+                    console.log("Failed", err);
+                });
+            }
+            props.onCallSnackbar(snackbarObject);
+        }
     }
 
     const navigateToIndividualCategory = (forumCategoryId: number) => {
-        props.history.push(`/forum/${courseId}/category/${forumCategoryId}`);
+        props.history.push(`/forum/${props.currentCourseId}/category/${forumCategoryId}`);
     }
 
     const mapCategories = (forumCategories: ForumCategory[]) => {
@@ -86,7 +93,7 @@ function ForumCategoryList(props: any) {
                                     <Link onClick={() => navigateToIndividualCategory(category.forumCategoryId)}>{category.name}</Link>
                                 </Typography>
                                 <Typography variant="body1" component="div" style={{ marginRight: "auto" }}>
-                                    {category.forumThreads.length} Threads
+                                    {category.forumThreads?.length} Threads
                                 <ForumIcon />
                                 </Typography>
                                 {
@@ -128,24 +135,41 @@ function ForumCategoryList(props: any) {
         );
     }
 
-    return (
-        <ForumCard>
-            <ForumCardHeader
-                title="Forum Discussion"
-                action={
-                    !actionsDisabled &&
-                    <ForumCategoryModal modalType={"CREATE"} courseId={props.courseId} onForumCategoryChange={handleCallSnackbar} />
-                }
-            />
-            <ForumCardContent>
-                {mapCategories(forumCategories)}
-                <EmptyStateContainer threadsExist={forumCategories.length > 0}>
-                    <Typography>No Categories Created 🥺</Typography>
-                    <ForumCategoryModal modalType={"EMPTY"} courseId={props.courseId} onForumCategoryChange={handleCallSnackbar} />
-                </EmptyStateContainer>
-            </ForumCardContent>
-        </ForumCard>
-    );
+    if (loading) {
+        return (
+            <ForumCard>
+                <ForumCardHeader
+                    title="Forum Discussion Categories"
+                    action={
+                        !actionsDisabled &&
+                        <ForumCategoryModal modalType={"CREATE"} courseId={courseId} onForumCategoryChange={handleCallSnackbar} />
+                    }
+                />
+                <ForumCardContent>
+                    <CircularProgress />
+                </ForumCardContent>
+            </ForumCard>
+        );
+    } else {
+        return (
+            <ForumCard>
+                <ForumCardHeader
+                    title="Forum Discussion Categories"
+                    action={
+                        !actionsDisabled &&
+                        <ForumCategoryModal modalType={"CREATE"} courseId={courseId} onForumCategoryChange={handleCallSnackbar} />
+                    }
+                />
+                <ForumCardContent>
+                    {mapCategories(forumCategories)}
+                    <EmptyStateContainer threadsExist={forumCategories.length > 0}>
+                        <Typography>No Categories Created 🥺</Typography>
+                        <ForumCategoryModal modalType={"EMPTY"} courseId={courseId} onForumCategoryChange={handleCallSnackbar} />
+                    </EmptyStateContainer>
+                </ForumCardContent>
+            </ForumCard>
+        );
+    }
 }
 
 export default ForumCategoryList
