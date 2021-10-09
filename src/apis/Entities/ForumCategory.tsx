@@ -9,13 +9,6 @@ export interface ForumCategory {
     course: Course
 }
 
-export interface ForumCategoriesWithoutForumThreadsAndCourses {
-    forumCategoryId: number,
-    name: string,
-    description: string,
-    forumThreads: ForumThread[]
-}
-
 export interface UpdateForumCategoryReq {
     forumCategory: ForumCategory
 }

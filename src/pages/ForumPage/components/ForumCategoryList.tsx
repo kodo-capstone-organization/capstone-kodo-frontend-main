@@ -7,7 +7,7 @@ import {
     IconButton, Menu, MenuItem
 } from '@material-ui/core';
 
-import { ForumCategoriesWithoutForumThreadsAndCourses as ForumCategory } from '../../../apis/Entities/ForumCategory';
+import { ForumCategory } from '../../../apis/Entities/ForumCategory';
 import { getAllForumCategoriesWithForumThreadsOnlyByCourseId as getAllForumCategoriesByCourseId } from "../../../apis/Forum/ForumApis";
 import { getCourseByCourseId } from '../../../apis/Course/CourseApis';
 

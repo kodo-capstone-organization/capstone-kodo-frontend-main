@@ -48,6 +48,7 @@ function ForumPostList(props: any) {
                 props.onCallSnackbar({ message: "Failure", type: "error" })
             });
             getAllForumPostsOfAForumThread(props.currentForumThreadId).then((res) => {
+                console.log(res);
                 setForumPosts(res);
                 setLoading(false);
             }).catch((err) => {
