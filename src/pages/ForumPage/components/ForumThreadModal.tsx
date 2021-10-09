@@ -14,6 +14,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { Button } from "../../../values/ButtonElements";
 import { ForumThread, CreateNewForumThreadReq } from '../../../apis/Entities/ForumThread';
+import { ForumCategory } from '../../../apis/Entities/ForumCategory';
 import { createNewForumThread } from "../../../apis/Forum/ForumApis";
 
 function ForumThreadModal(props: any) {
