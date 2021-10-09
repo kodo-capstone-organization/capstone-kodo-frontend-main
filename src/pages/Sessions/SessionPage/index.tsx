@@ -12,6 +12,7 @@ import { Autocomplete } from '@material-ui/lab';
 import KodoAvatar from '../../../components/KodoAvatar/KodoAvatar';
 import { colours } from '../../../values/Colours';
 import { CreateSessionReq, InvitedSessionResp } from '../../../apis/Entities/Session';
+import { BlankStateContainer } from '../../MyProfilePage/ProfileElements';
 
 const formReducer = (state: any, event: any) => {
     if(event.reset) {
@@ -248,36 +249,46 @@ function SessionPage(props: any) {
                 </SessionPageCreateOrJoinContainer>
                 <SessionPageInvitedSessions>
                     <SessionPageTypography variant="h6">My Invited Sessions</SessionPageTypography>
-                    <SessionPageDescription>
-                       These sessions are happening right now!
-                    </SessionPageDescription>
-                    <br/>
-                    <Grid container spacing={3}>
-                        { // TODO: Cleanup & Beautify
-                            myInvitedSessions
-                                .filter((invitedSession: InvitedSessionResp) => invitedSession.hostId !== accountId)
-                                .map((invitedSession: InvitedSessionResp) => (
-                                    <Grid item xs={4}>
-                                        <Card style={{ flexWrap: "wrap", wordWrap: "break-word"}}>
-                                            <CardContent>
-                                                <Typography variant="h5">
-                                                    {invitedSession.sessionName}
-                                                </Typography>
-                                                <Typography color="textSecondary">
-                                                    <strong>Host: </strong><i>@{getUsernameById(invitedSession.hostId)}</i>
-                                                </Typography>
-                                                <Typography color="textSecondary">
-                                                    <strong>Session ID: </strong>{invitedSession.sessionId}
-                                                </Typography>
-                                            </CardContent>
-                                            <CardActions style={{ display: "flex", justifyContent: "flex-end"}}>
-                                                <Button onClick={() => handleJoinSession(invitedSession.sessionId, invitedSession.sessionName)}>Join Session</Button>
-                                            </CardActions>
-                                        </Card>
-                                    </Grid>
-                                ))
-                        }
-                    </Grid>
+
+                    { myInvitedSessions.length === 0 &&
+                        <SessionPageDescription>
+                            No invited sessions to be found 🔍
+                        </SessionPageDescription>
+                    }
+
+                    { myInvitedSessions.length > 0 &&
+                        <>
+                            <SessionPageDescription>
+                                These sessions are happening right now!
+                            </SessionPageDescription>
+                            <br/>
+                            <Grid container spacing={3}>
+                                { // TODO: Cleanup & Beautify
+                                    myInvitedSessions
+                                        .map((invitedSession: InvitedSessionResp) => (
+                                            <Grid item xs={4} key={invitedSession.sessionId}>
+                                                <Card style={{ flexWrap: "wrap", wordWrap: "break-word"}}>
+                                                    <CardContent>
+                                                        <Typography variant="h5">
+                                                            {invitedSession.sessionName}
+                                                        </Typography>
+                                                        <Typography color="textSecondary">
+                                                            <strong>Host: </strong><i>@{getUsernameById(invitedSession.hostId)}</i>
+                                                        </Typography>
+                                                        <Typography color="textSecondary">
+                                                            <strong>Session ID: </strong>{invitedSession.sessionId}
+                                                        </Typography>
+                                                    </CardContent>
+                                                    <CardActions style={{ display: "flex", justifyContent: "flex-end"}}>
+                                                        <Button onClick={() => handleJoinSession(invitedSession.sessionId, invitedSession.sessionName)}>Join Session</Button>
+                                                    </CardActions>
+                                                </Card>
+                                            </Grid>
+                                        ))
+                                }
+                            </Grid>
+                        </>
+                    }
                 </SessionPageInvitedSessions>
             </SessionPageContainer>
 

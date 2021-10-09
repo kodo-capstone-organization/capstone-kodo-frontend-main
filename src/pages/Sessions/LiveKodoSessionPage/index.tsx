@@ -57,7 +57,7 @@ function LiveKodoSessionPage(props: any) {
                 navigator.mediaDevices.getUserMedia(mediaConstraints).then(stream => { localStream = stream })
 
                 // 2 - Connect this user to websocket signalling server + attach listeners
-                conn = new WebSocket(`ws://capstone-kodo-webrtc.herokuapp.com/socket/${props.match.params.sessionId}`);
+                conn = new WebSocket(`ws://capstone-kodo-webrtc.herokuapp.com/socket/${sessionDetails?.sessionId}`);
 
                 conn.onmessage = function(msg) {
                     const content = JSON.parse(msg.data);
@@ -119,7 +119,7 @@ function LiveKodoSessionPage(props: any) {
 
         if (peerConns.size === 0) {
             console.log("No peers, ending session")
-            endSession(sessionId).then(() => {
+            endSession(sessionDetails?.sessionId || sessionId).then(() => {
                 console.log("Session closed successfully")
             })
         } else {
@@ -289,15 +289,14 @@ function LiveKodoSessionPage(props: any) {
             { isValidSession &&
                 <LiveKodoSessionContainer>
                     <audio ref={remoteAudioRef} autoPlay/>
-                    <TopSessionBar><strong>{sessionDetails?.sessionName} ({sessionId}) ·
+                    <TopSessionBar><strong>{sessionDetails?.sessionName} ({sessionDetails?.sessionId}) ·
                         Time_Elapsed</strong></TopSessionBar>
                     <Button onClick={() => send({event: null, data: "helloWord"})}>SEND</Button>
                     <Button onClick={() => sendMessage(`hello from ${myAccountId}`)}>SEND VIA DATACHANNEL</Button>
                     <MainSessionWrapper>
                         <ParticipantsPanel myAccountId={myAccountId} peerConns={peerConns}/>
                         <Stage peerConns={peerConns} dataChannelConnected={dataChannelConnected}/>
-                        <ActionsPanel sessionId={sessionId} callOpenSnackBar={props.callOpenSnackBar}
-                                      handleMyExit={handleMyExit}/>
+                        <ActionsPanel sessionId={sessionId} callOpenSnackBar={props.callOpenSnackBar} handleMyExit={handleMyExit}/>
                     </MainSessionWrapper>
                 </LiveKodoSessionContainer>
             }
