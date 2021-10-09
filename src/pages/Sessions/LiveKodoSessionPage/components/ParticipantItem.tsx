@@ -1,6 +1,4 @@
-import {useEffect, useState } from "react";
 import { Badge } from "@material-ui/core";
-import { StrippedDownAccount } from "../../../../apis/Entities/Account";
 import KodoAvatar from "../../../../components/KodoAvatar/KodoAvatar";
 import { fontSizes } from "../../../../values/FontSizes";
 import MicIcon from '@material-ui/icons/Mic';
@@ -8,7 +6,6 @@ import MicOffIcon from '@material-ui/icons/MicOff';
 
 function ParticipantItem (props: any) {
 
-    
     return (
         <>
             <Badge

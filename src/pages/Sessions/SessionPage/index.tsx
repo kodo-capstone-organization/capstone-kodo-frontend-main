@@ -9,10 +9,8 @@ import { createSession, getInvitedSessions } from '../../../apis/Session/Session
 import { Account, StrippedDownAccount } from '../../../apis/Entities/Account';
 import {getAllAccountsStrippedDown, getMyAccount } from '../../../apis/Account/AccountApis';
 import { Autocomplete } from '@material-ui/lab';
-import KodoAvatar from '../../../components/KodoAvatar/KodoAvatar';
 import { colours } from '../../../values/Colours';
 import { CreateSessionReq, InvitedSessionResp } from '../../../apis/Entities/Session';
-import { BlankStateContainer } from '../../MyProfilePage/ProfileElements';
 
 const formReducer = (state: any, event: any) => {
     if(event.reset) {
@@ -97,7 +95,6 @@ function SessionPage(props: any) {
 
     const handleSessionIDChange = (event: any) => {
         setShowJoinButton(true);
-        // TODO: Link Handling
         setInputSessionID(event?.target?.value);
     }
 
@@ -194,7 +191,7 @@ function SessionPage(props: any) {
         // Make API Call
         createSession(createSessionReq).then((sessionId: string) => {
             // Display success and redirect
-            props.callOpenSnackBar("Session created successfully", "success")
+            props.callOpenSnackBar("Creating session...", "info")
             props.history.push({ pathname: `/session/create/${sessionId}`, state: { sessionName: createSessionReq.sessionName } })
         }).catch((error) => {
             props.callOpenSnackBar(`Error in creating session: ${error}`, "error")
@@ -203,8 +200,8 @@ function SessionPage(props: any) {
 
     const handleJoinSession = (sessionId: string, sessionName?: string) => {
         if (sessionId) {
+            props.callOpenSnackBar("Joining session...", "info")
             props.history.push({ pathname: `/session/join/${sessionId}`, state: { sessionName: sessionName || "" } })
-            props.callOpenSnackBar("Session joined successfully", "success")
         }
     }
 
@@ -228,7 +225,7 @@ function SessionPage(props: any) {
                         <Grid item xs={8} md={8} lg={5}>
                             <TextField
                                 id="session-id-input"
-                                label="Enter Session ID or Join Link"
+                                label="Enter Session ID"
                                 variant="outlined"
                                 fullWidth
                                 size="medium"
@@ -240,7 +237,12 @@ function SessionPage(props: any) {
                         </Grid>
                         { showJoinButton &&
                             <Grid item xs={4} md={4} lg={2} style={{ alignSelf: "center" }}>
-                                <MUIButton color="primary" disabled={inputSessionID === ""} style={{ fontSize: "18px", textTransform: "none"}}>
+                                <MUIButton
+                                    onClick={() => handleJoinSession(inputSessionID)}
+                                    color="primary"
+                                    disabled={inputSessionID === ""}
+                                    style={{ fontSize: "18px", textTransform: "none"}}
+                                >
                                     Join
                                 </MUIButton>
                             </Grid>

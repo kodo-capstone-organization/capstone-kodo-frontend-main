@@ -39,75 +39,80 @@ function LiveKodoSessionPage(props: any) {
         getSessionBySessionId(props.match.params.sessionId, myAccountId)
             .then((sessionDetails: InvitedSessionResp) => {
                 setSessionDetails(sessionDetails);
-                setIsValidSession(true);
+                if (initAction !== "create" && initAction !== "join") {
+                    setIsValidSession(false);
+                    const errorDataObj = { status: 404 }
+                    props.callOpenSnackBar("Error in joining session", "error")
+                    props.history.push({ pathname: "/session/invalidsession", state: { errorData: errorDataObj }})
+                } else {
+                    setIsValidSession(true);
+                }
             })
             .catch((error) => {
                 setIsValidSession(false);
+                props.callOpenSnackBar("Error in joining session", "error")
                 props.history.push({ pathname: "/session/invalidsession", state: { errorData: error?.response?.data }})
             })
     }, [])
 
     useEffect(() => {
+
+        // Only if session is determined to be valid
         if (isValidSession) {
-            // On init
-            if (initAction === "create" || initAction === "join") {
+            // Give indication of success
+            props.callOpenSnackBar(`Session ${initAction}ed successfully`, "success")
 
-                // 1 - Get this user's audio stream
-                const mediaConstraints = { audio : true };
-                navigator.mediaDevices.getUserMedia(mediaConstraints).then(stream => { localStream = stream })
+            // 1 - Get this user's audio stream
+            const mediaConstraints = { audio : true };
+            navigator.mediaDevices.getUserMedia(mediaConstraints).then(stream => { localStream = stream })
 
-                // 2 - Connect this user to websocket signalling server + attach listeners
-                conn = new WebSocket(`ws://capstone-kodo-webrtc.herokuapp.com/socket/${sessionDetails?.sessionId}`);
+            // 2 - Connect this user to websocket signalling server + attach listeners
+            conn = new WebSocket(`ws://capstone-kodo-webrtc.herokuapp.com/socket/${sessionDetails?.sessionId}`);
 
-                conn.onmessage = function(msg) {
-                    const content = JSON.parse(msg.data);
-                    const data = content.data;
-                    console.log("conn.onmessage: ", content.event);
-                    const incomingPeerId = content.peerId
+            conn.onmessage = function(msg) {
+                const content = JSON.parse(msg.data);
+                const data = content.data;
+                console.log("conn.onmessage: ", content.event);
+                const incomingPeerId = content.peerId
 
-                    switch (content.event) {
-                        case "newConnection":
-                            const incomingPeerConn = setupNewPeerConn(incomingPeerId);
-                            console.log("NEW CONNECTION: CREATE OFFER")
-                            createOffer(incomingPeerConn);
-                            break;
-                        case "offer":
-                            if (!peerConns.has(incomingPeerId)) {
-                                setupNewPeerConn(incomingPeerId)
-                                handleOffer(incomingPeerId, data);
-                            }
-                            break;
-                        case "answer":
-                            // Only handle the answers that are meant for me
-                            console.log("answer")
-                            if (content.sendTo === myAccountId) {
-                                handleAnswer(incomingPeerId, data);
-                                console.log(peerConns)
-                            }
-                            break;
-                        // when a remote peer sends an ice candidate to us
-                        case "candidate":
-                            handleCandidate(incomingPeerId, data);
-                            break;
-                        case "exit":
-                            handleExit(incomingPeerId);
-                            break;
-                        default:
-                            console.log("in default switch case")
-                            break;
-                    }
-                };
+                switch (content.event) {
+                    case "newConnection":
+                        const incomingPeerConn = setupNewPeerConn(incomingPeerId);
+                        console.log("NEW CONNECTION: CREATE OFFER")
+                        createOffer(incomingPeerConn);
+                        break;
+                    case "offer":
+                        if (!peerConns.has(incomingPeerId)) {
+                            setupNewPeerConn(incomingPeerId)
+                            handleOffer(incomingPeerId, data);
+                        }
+                        break;
+                    case "answer":
+                        // Only handle the answers that are meant for me
+                        console.log("answer")
+                        if (content.sendTo === myAccountId) {
+                            handleAnswer(incomingPeerId, data);
+                            console.log(peerConns)
+                        }
+                        break;
+                    // when a remote peer sends an ice candidate to us
+                    case "candidate":
+                        handleCandidate(incomingPeerId, data);
+                        break;
+                    case "exit":
+                        handleExit(incomingPeerId);
+                        break;
+                    default:
+                        console.log("in default switch case")
+                        break;
+                }
+            };
 
-                conn.onopen = function() {
-                    console.log("Connected to the signaling server");
-                    send({ event : "newConnection" });
-                };
-
-            } else {
-                props.history.push('/invalidsession') // redirects to 404 (for now)
-            }
+            conn.onopen = function() {
+                console.log("Connected to the signaling server");
+                send({ event : "newConnection" });
+            };
         }
-
     }, [isValidSession])
 
     // Cleanup Callback. Propped into ActionsPanel to be called from there.
@@ -126,6 +131,7 @@ function LiveKodoSessionPage(props: any) {
             console.log("there are still peer conns left. not ending whole session.")
         }
 
+        props.history.push("/session")
         props.callOpenSnackBar(`Exiting Kodo Session: ${sessionDetails?.sessionName}`, "success")
     }
 

@@ -1,13 +1,10 @@
 import React from 'react'
-import { useHistory } from "react-router";
 import { ActionsPanelContainer, ActionItem } from '../LiveKodoSessionPageElements';
-import { Grid, IconButton } from '@material-ui/core';
+import { IconButton } from '@material-ui/core';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 function ActionsPanel(props: any) {
-
-    const history = useHistory();
 
     const copyJoinLinkToClipboard = () => {
         const prefix = `${window.location.protocol}//${window.location.host}`;
@@ -18,7 +15,6 @@ function ActionsPanel(props: any) {
 
     const navigateToSessionPage = () => {
         props.handleMyExit(); // call parent exit method
-        history.push(`/session`)
     }
 
     return (
