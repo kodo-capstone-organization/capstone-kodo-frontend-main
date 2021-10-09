@@ -3,8 +3,6 @@ import { withRouter } from "react-router";
 
 import { useHistory } from "react-router-dom";
 
-import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
-
 import { Account } from "../../../apis/Entities/Account";
 import { EnrolledContent } from "../../../apis/Entities/EnrolledContent";
 import { EnrolledCourse } from "../../../apis/Entities/EnrolledCourse";
@@ -16,7 +14,6 @@ import { getEnrolledCourseByEnrolledCourseId } from "../../../apis/EnrolledCours
 import { getEnrolledLessonByEnrolledLessonId } from "../../../apis/EnrolledLesson/EnrolledLessonApis";
 
 import { 
-  ExitWrapper, 
   LessonViewerContainerElement,
   LessonViewerInnerContainerElement
 } from "./LessonViewerElements";
@@ -25,8 +22,6 @@ import LessonViewerFooter from "./components/LessonViewerFooter";
 import LessonViewerHeader from "./components/LessonViewerHeader";
 import LessonViewerMultimedia from "./components/LessonViewerMultimedia";
 import LessonViewerQuiz from "./components/LessonViewerQuiz";
-
-import { colours } from "../../../values/Colours";
 
 
 function LessonViewer(props: any) {
@@ -113,9 +108,6 @@ function LessonViewer(props: any) {
       { (!loading) &&     
         <LessonViewerContainerElement>
           <LessonViewerInnerContainerElement>
-            <ExitWrapper to={`/overview/${enrolledCourse?.parentCourse.courseId}`}>
-              <CancelOutlinedIcon fontSize="large" style={{ color: colours.BLUE2, padding: 20 }} />
-            </ExitWrapper>
             <LessonViewerHeader 
               enrolledCourse={enrolledCourse} 
               enrolledLesson={enrolledLesson} 

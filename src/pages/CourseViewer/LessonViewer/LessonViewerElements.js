@@ -9,6 +9,7 @@ import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
 import ImageIcon from '@material-ui/icons/Image';
 import { MdArrowForward, MdArrowBack } from "react-icons/md";
 import * as FaIcons from 'react-icons/fa'
+import Box from '@material-ui/core/Box';
 
 import { TextField, Card, CardHeader, CardContent, CardActions } from "@material-ui/core";
 
@@ -176,10 +177,13 @@ export const BtnWrapper = styled.div`
   margin-top: -8px;
 `
 
-export const ExitWrapper = styled(Link)`
+export const ExitWrapper = styled.div`
   display: flex;
   flex-direction: row-reverse;
 `
+
+export const ExitLink = styled(Link)`
+`;
 
 export const ExitIcon = styled(CancelOutlinedIcon)`
   color: ${colours.BLUE2};
@@ -280,3 +284,6 @@ export const LessonViewerContentElement = styled(CardContent)`
   padding: ${({ removePadTop }) => (removePadTop ? "0 2rem 2rem 2rem !important" : "2rem !important")};
 `;
 
+export const LessonViewerProgress = styled(Box)`
+  margin: 0px 1em 1.5em 1em;
+`;

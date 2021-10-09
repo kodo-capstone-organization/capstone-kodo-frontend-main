@@ -15,6 +15,7 @@ import QuizBuidlerPage from "./pages/QuizBuilderPage";
 
 import CourseOverview from "./pages/CourseViewer";
 import LessonViewerWithRouter from "./pages/CourseViewer/LessonViewer";
+import LessonStatisticsViewerWithRouter from "./pages/CourseViewer/LessonStatisticsViewer";
 import MultimediaViewerWithRouter from "./pages/CourseViewer/MultimediaViewer";
 import QuizViewer from "./pages/QuizViewer";
 import LiveKodoSessionPage from "./pages/Sessions/LiveKodoSessionPage";
@@ -92,6 +93,9 @@ function Routes() {
                             <Route path="/overview/:courseId" render={props => <CourseOverview {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
                             : <Redirect to="/" />}
                         {window.sessionStorage.getItem("loggedInAccountId") ?
+                            <Route path="/overview/lessonstatistics/:courseId/:lessonId" render={props => <LessonStatisticsViewerWithRouter {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
+                            : <Redirect to="/" />}
+                        {window.sessionStorage.getItem("loggedInAccountId") ?
                             <Route path="/overview/lesson/:enrolledCourseId/:enrolledLessonId" render={props => <LessonViewerWithRouter {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
                             : <Redirect to="/" />}
                         {window.sessionStorage.getItem("loggedInAccountId") ?
@@ -108,6 +112,12 @@ function Routes() {
                         {/* {window.sessionStorage.getItem("loggedInAccountId") ?
                             <Route path="/forum/:enrolledCourseId" render={props => <ForumPage {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
                             : <Redirect to="/" />} */}
+                        {window.sessionStorage.getItem("loggedInAccountId") ?
+                            <Route path="/forum/:courseId/category/:forumCategoryId" render={props => <ForumPage {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
+                            : <Redirect to="/" />}
+                        {window.sessionStorage.getItem("loggedInAccountId") ?
+                            <Route path="/forum/:courseId/category/:forumCategoryId/thread/:forumThreadId" render={props => <ForumPage {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
+                            : <Redirect to="/" />}
                         {/* Need to change the path namings here, we have 2 types of content, talk to chandya */}
                         {window.sessionStorage.getItem("loggedInAccountId") ?
                             <Route path="/markedquizviewer/:enrolledCourseId/:enrolledLessonId/:studentAttemptId" render={props => <QuizViewer {...props} callOpenSnackBar={callOpenSnackBar} />} exact />

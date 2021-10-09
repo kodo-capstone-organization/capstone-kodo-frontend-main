@@ -7,3 +7,8 @@ export interface EnrolledLesson {
   enrolledContents: EnrolledContent[];
   parentLesson: Lesson;
 }
+
+export interface EnrolledLessonWithStudentName {
+  enrolledLesson: EnrolledLesson;
+  studentName: string;
+}

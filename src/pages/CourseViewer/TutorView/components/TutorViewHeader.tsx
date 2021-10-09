@@ -3,12 +3,12 @@ import { useState, useEffect } from "react";
 import { Course } from "../../../../apis/Entities/Course";
 
 import Rating from '@material-ui/lab/Rating';
+import Tooltip from '@material-ui/core/Tooltip';
 
 import { getCourseRatingByCourseId } from "../../../../apis/Course/CourseApis";
 
 import {
     CourseTitle,
-    TutorCourseRatingBox,
     TutorTitle,
     TutorViewCard,
     TutorViewCardContent,
@@ -26,7 +26,7 @@ function TutorViewHeader(props: any) {
     const [courseRating, setCourseRating] = useState<number>(0);
 
     useEffect(() => {
-        getCourseRatingByCourseId(course.courseId).then((res) => {
+        getCourseRatingByCourseId(course.courseId).then((res: number) => {
             setCourseRating(res);
         })
         .catch((err) => {
@@ -42,10 +42,11 @@ function TutorViewHeader(props: any) {
                         <CourseTitle>{course?.name}</CourseTitle>
                         <TutorTitle>by {course?.tutor.name}</TutorTitle>
                         <TutorViewRow>
-                            <Rating value={courseRating} precision={0.1} readOnly /> 
-                            <TutorCourseRatingBox>
-                                {courseRating}
-                            </TutorCourseRatingBox>
+                            <Tooltip title={<div style={{ fontSize: "1.5em", padding: "2px" }}>{courseRating.toFixed(2)}</div>}>
+                                <div>
+                                    <Rating value={courseRating} precision={0.1} readOnly /> 
+                                </div>
+                            </Tooltip>
                         </TutorViewRow>
                     </TutorViewColumn>
                     <TutorViewColumn>
