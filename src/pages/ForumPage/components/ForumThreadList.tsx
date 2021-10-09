@@ -38,11 +38,13 @@ function ForumThreadList(props: any) {
 
     useEffect(() => {
         setLoading(true);
+        console.log("start loading")
         if (props.currentForumCategoryId != undefined) {
             getForumCategoryByForumCategoryId(props.currentForumCategoryId).then((res) => {
                 setForumCategory(res);
                 setForumThreads(res.forumThreads);
                 setLoading(false);
+                console.log("end loading")
             }).catch((err) => {
                 props.onCallSnackbar({ message: "Failure here", type: "error" })
             })
