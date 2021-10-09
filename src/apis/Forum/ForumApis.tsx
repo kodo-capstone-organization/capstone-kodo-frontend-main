@@ -6,9 +6,16 @@ import { ForumThread, CreateNewForumThreadReq } from "../Entities/ForumThread";
 import { ForumPost, CreateNewForumPostReq, CreateNewForumPostReplyReq } from "../Entities/ForumPost";
 
 
-export async function getForumCategoryByCourseId(courseId: number): Promise<ForumCategory[]> {
+export async function getAllForumCategoriesByCourseId(courseId: number): Promise<ForumCategory[]> {
     const getParameters: IHttpClientRequestParameters<undefined> = {
-        url: `/forumCategory/getForumCategoryByCourseId/${courseId}`
+        url: `/forumCategory/getAllForumCategoriesByCourseId/${courseId}`
+    }
+    return httpClient.get<undefined, ForumCategory[]>(getParameters)
+}
+
+export async function getAllForumCategoriesWithForumThreadsOnlyByCourseId(courseId: number): Promise<ForumCategory[]> {
+    const getParameters: IHttpClientRequestParameters<undefined> = {
+        url: `/forumCategory/getAllForumCategoriesWithForumThreadsOnlyByCourseId/${courseId}`
     }
     return httpClient.get<undefined, ForumCategory[]>(getParameters)
 }

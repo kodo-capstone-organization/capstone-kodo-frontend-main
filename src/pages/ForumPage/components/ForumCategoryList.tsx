@@ -1,14 +1,5 @@
 import { useEffect, useState } from 'react';
-// import { useHistory } from "react-router-dom";
 
-import { getForumCategoryByCourseId } from "../../../apis/Forum/ForumApis";
-import { ForumCategory } from '../../../apis/Entities/ForumCategory';
-
-import {
-    ForumCardHeader, ForumCardContent, ForumCard,
-    ForumThreadCard, EmptyStateContainer,
-} from "../ForumElements";
-import { Button } from "../../../values/ButtonElements";
 import ForumIcon from '@material-ui/icons/Forum';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import {
@@ -16,17 +7,27 @@ import {
     IconButton, Menu, MenuItem
 } from '@material-ui/core';
 
-import ForumCategoryModal from './ForumCategoryModal';
+import { ForumCategoriesWithoutForumThreadsAndCourses as ForumCategory } from '../../../apis/Entities/ForumCategory';
+import { getAllForumCategoriesWithForumThreadsOnlyByCourseId as getAllForumCategoriesByCourseId } from "../../../apis/Forum/ForumApis";
 import { getCourseByCourseId } from '../../../apis/Course/CourseApis';
+
+import {
+    ForumCardHeader, ForumCardContent, ForumCard,
+    ForumThreadCard, EmptyStateContainer,
+} from "../ForumElements";
+
+import ForumCategoryModal from './ForumCategoryModal';
+
 
 function ForumCategoryList(props: any) {
 
     const [courseId, setCourseId] = useState<number>();
     const [forumCategories, setForumCategories] = useState<ForumCategory[]>([]);
-    const [actionsDisabled, setActionsDisabled] = useState<boolean>(true);
-    const loggedInAccountId = parseInt(window.sessionStorage.getItem("loggedInAccountId"));
+    const [actionsDisabled, setActionsDisabled] = useState<boolean>(true);    
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [loading, setLoading] = useState<boolean>();
+
+    const loggedInAccountId = JSON.parse(window.sessionStorage.getItem("loggedInAccountId") || "{}");
     const open = Boolean(anchorEl);
 
     useEffect(() => {
@@ -34,16 +35,16 @@ function ForumCategoryList(props: any) {
         console.log("loading", true);
         setCourseId(props.currentCourseId)
         getCourseByCourseId(props.currentCourseId).then((res) => {
-            console.log("getCourseByCourseId", res);
             if (loggedInAccountId != null && res.tutor.accountId === loggedInAccountId) {
                 setActionsDisabled(false);
             }
         })
-        getForumCategoryByCourseId(props.currentCourseId).then((res) => {
+        getAllForumCategoriesByCourseId(props.currentCourseId).then((res) => {
             res.map((q) => {
                 Object.assign(q, { id: q.forumCategoryId })
                 return q;
             });
+            
             setForumCategories(res);
             setLoading(false);
         }).catch((err) => {
@@ -61,18 +62,20 @@ function ForumCategoryList(props: any) {
     };
 
     const handleCallSnackbar = (snackbarObject: any) => {
-        if (snackbarObject.type === "success") {
-            getForumCategoryByCourseId(courseId).then((res) => {
-                res.map((q) => {
-                    Object.assign(q, { id: q.forumCategoryId })
-                    return q;
+        if (courseId !== undefined) {
+            if (snackbarObject.type === "success") {
+                getAllForumCategoriesByCourseId(courseId).then((res) => {
+                    res.map((q) => {
+                        Object.assign(q, { id: q.forumCategoryId })
+                        return q;
+                    });
+                    setForumCategories(res);
+                }).catch((err) => {
+                    console.log("Failed", err);
                 });
-                setForumCategories(res);
-            }).catch((err) => {
-                console.log("Failed", err);
-            });
+            }
+            props.onCallSnackbar(snackbarObject);
         }
-        props.onCallSnackbar(snackbarObject);
     }
 
     const navigateToIndividualCategory = (forumCategoryId: number) => {
@@ -90,7 +93,7 @@ function ForumCategoryList(props: any) {
                                     <Link onClick={() => navigateToIndividualCategory(category.forumCategoryId)}>{category.name}</Link>
                                 </Typography>
                                 <Typography variant="body1" component="div" style={{ marginRight: "auto" }}>
-                                    {category.forumThreads.length} Threads
+                                    {category.forumThreads?.length} Threads
                                 <ForumIcon />
                                 </Typography>
                                 {
