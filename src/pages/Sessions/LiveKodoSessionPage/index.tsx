@@ -7,7 +7,7 @@ import Stage from './components/Stage';
 import { LiveKodoSessionContainer, MainSessionWrapper, TopSessionBar } from './LiveKodoSessionPageElements';
 
 let conn: WebSocket;
-let peerConns: Map<number, RTCInfo> = new Map(); // { peerId: PeerConn, peerId2: PeerConn2, ... }
+//let peerConns: Map<number, RTCInfo> = new Map(); // { peerId: PeerConn, peerId2: PeerConn2, ... }
 let localStream: MediaStream;
 
 const rtcConfiguration: RTCConfiguration = {
@@ -32,6 +32,7 @@ function LiveKodoSessionPage(props: any) {
     const [initAction, setInitAction] = useState<string>(props.match.params.initAction.toLowerCase()); // "create" or "join" only
     const [sessionId, setSessionId] = useState<string>(props.match.params.sessionId);
     const [dataChannelConnected, setDataChannelConnected] = useState<boolean>(false);
+    const [peerConns, setPeerConns] = useState<Map<number, RTCInfo>>(new Map());
 
     useEffect(() => {
         // On init
@@ -165,10 +166,10 @@ function LiveKodoSessionPage(props: any) {
             newDataChannel.onmessage = function(event) {
                 console.log("dataChannel.onmessage IN CREATOR SIDE")
             }
-            peerConns.set(newPeerId, { rtcPeerConnection: peerConns.get(newPeerId)?.rtcPeerConnection, rtcDataChannel: newDataChannel })
+            setPeerConns(peerConns.set(newPeerId, { rtcPeerConnection: peerConns.get(newPeerId)?.rtcPeerConnection, rtcDataChannel: newDataChannel }))
         };
 
-        peerConns.set(newPeerId, { rtcPeerConnection: newPeerConn, rtcDataChannel: dataChannel })
+        setPeerConns(peerConns.set(newPeerId, { rtcPeerConnection: newPeerConn, rtcDataChannel: dataChannel }))
 
         return newPeerConn
     }
@@ -211,7 +212,7 @@ function LiveKodoSessionPage(props: any) {
                 // Create answer to offer
                 const answer = await incomingPeerConn.createAnswer(answerOptions);
                 await incomingPeerConn.setLocalDescription(answer);
-                peerConns.set(incomingPeerId, { rtcPeerConnection: incomingPeerConn, rtcDataChannel: peerConns.get(incomingPeerId)?.rtcDataChannel });
+                setPeerConns(peerConns.set(incomingPeerId, { rtcPeerConnection: incomingPeerConn, rtcDataChannel: peerConns.get(incomingPeerId)?.rtcDataChannel }));
                 send({ event : "answer", data : answer, sendTo: incomingPeerId });
             } else {
                 console.error("unable to find peer conn with id", incomingPeerId);
@@ -227,7 +228,7 @@ function LiveKodoSessionPage(props: any) {
         const incomingPeerConn = peerConns.get(incomingPeerId)?.rtcPeerConnection;
         if (incomingPeerConn) {
             incomingPeerConn?.addIceCandidate(new RTCIceCandidate(candidate));
-            peerConns.set(incomingPeerId, { rtcPeerConnection: incomingPeerConn, rtcDataChannel: peerConns.get(incomingPeerId)?.rtcDataChannel });
+            setPeerConns(peerConns.set(incomingPeerId, { rtcPeerConnection: incomingPeerConn, rtcDataChannel: peerConns.get(incomingPeerId)?.rtcDataChannel }));
         }
     };
 
@@ -238,13 +239,25 @@ function LiveKodoSessionPage(props: any) {
         const incomingPeerConn = peerConns.get(incomingPeerId)?.rtcPeerConnection;
         if (incomingPeerConn) {
             await incomingPeerConn?.setRemoteDescription(new RTCSessionDescription(answer));
-            peerConns.set(incomingPeerId, { rtcPeerConnection: incomingPeerConn, rtcDataChannel: peerConns.get(incomingPeerId)?.rtcDataChannel });
+            setPeerConns(peerConns.set(incomingPeerId, { rtcPeerConnection: incomingPeerConn, rtcDataChannel: peerConns.get(incomingPeerId)?.rtcDataChannel }));
         }
     };
 
     function handleExit(incomingPeerId: number) {
         if (peerConns.has(incomingPeerId)) {
-            peerConns.delete(incomingPeerId)
+            console.log("deleting peer conn of id: ", incomingPeerId)
+            //peerConns.delete(incomingPeerId)
+            let newPeerConns = new Map()
+            for (const [key, value] of Object.entries(peerConns)) {
+                if (parseInt(key) !== incomingPeerId) {
+                    console.log('key', parseInt(key))
+                    console.log('incomingPeerId', incomingPeerId)
+                    newPeerConns.set(key, value)
+                } else {
+                    console.log("deleting this ", key, value)                    
+                }
+            }
+            setPeerConns(newPeerConns)
         }
     }
 
@@ -273,7 +286,7 @@ function LiveKodoSessionPage(props: any) {
             <Button onClick={() => send({event: null, data: "helloWord"})}>SEND</Button>
             <Button onClick={() => sendMessage(`hello from ${myAccountId}`)}>SEND VIA DATACHANNEL</Button>
             <MainSessionWrapper>
-                <ParticipantsPanel />
+                <ParticipantsPanel participantIds={Array.from(peerConns.keys())}/>
                 <Stage dataChannelConnected={dataChannelConnected} />
                 <ActionsPanel sessionId={sessionId} callOpenSnackBar={props.callOpenSnackBar}/>
             </MainSessionWrapper>
