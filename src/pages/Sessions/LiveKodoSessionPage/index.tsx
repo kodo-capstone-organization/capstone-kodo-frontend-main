@@ -93,23 +93,26 @@ function LiveKodoSessionPage(props: any) {
         } else {
             props.history.push('/invalidsession') // redirects to 404 (for now)
         }
-
-        // Cleanup Function: Runs only during ComponentWillUnmount
-        return () => {
-            console.log("Closing websocket");
-            localStream.getTracks().forEach(track => track.stop());
-            send({ event : "exit" })
-            conn.close();
-            
-            if (peerConns.size === 0) {
-                endSession(sessionId).then(() => {
-                    console.log("Session closed successfully")
-                })
-            }
-
-            props.callOpenSnackBar(`Exiting Kodo Session: ${props.location.state?.sessionName}`, "success")
-        }
     }, [])
+
+    // Cleanup Callback. Propped into ActionsPanel to be called from there.
+    const handleMyExit = () => {
+        console.log("Closing my own websocket");
+        localStream.getTracks().forEach(track => track.stop());
+        send({ event : "exit" })
+        conn.close();
+
+        if (peerConns.size === 0) {
+            console.log("No peers, ending session")
+            endSession(sessionId).then(() => {
+                console.log("Session closed successfully")
+            })
+        } else {
+            console.log("there are still peer conns left. not ending whole session.")
+        }
+
+        props.callOpenSnackBar(`Exiting Kodo Session: ${props.location.state?.sessionName}`, "success")
+    }
 
     const setupNewPeerConn = (newPeerId: number) => {
         // Create new peer connection
@@ -241,15 +244,9 @@ function LiveKodoSessionPage(props: any) {
     function handleExit(incomingPeerId: number) {
         if (peerConns.has(incomingPeerId)) {
             console.log("deleting peer conn of id: ", incomingPeerId)
-            let newPeerConns = new Map()
-            for (const [key, value] of Object.entries(peerConns)) {
-                if (parseInt(key) !== incomingPeerId) {
-                    newPeerConns.set(key, value)
-                } else {
-                    console.log("Deleting from peerConns: ", key, value)
-                }
-            }
-            setPeerConns(newPeerConns)
+            let copyMap = new Map(peerConns);
+            copyMap.delete(incomingPeerId)
+            setPeerConns(copyMap);
         }
     }
 
@@ -281,7 +278,7 @@ function LiveKodoSessionPage(props: any) {
             <MainSessionWrapper>
                 <ParticipantsPanel myAccountId={myAccountId} peerConns={peerConns} />
                 <Stage peerConns={peerConns} dataChannelConnected={dataChannelConnected} />
-                <ActionsPanel sessionId={sessionId} callOpenSnackBar={props.callOpenSnackBar}/>
+                <ActionsPanel sessionId={sessionId} callOpenSnackBar={props.callOpenSnackBar} handleMyExit={handleMyExit}/>
             </MainSessionWrapper>
         </LiveKodoSessionContainer>
     )

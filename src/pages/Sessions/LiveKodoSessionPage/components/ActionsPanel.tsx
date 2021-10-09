@@ -17,6 +17,7 @@ function ActionsPanel(props: any) {
     }
 
     const navigateToSessionPage = () => {
+        props.handleMyExit(); // call parent exit method
         history.push(`/session`)
     }
 
