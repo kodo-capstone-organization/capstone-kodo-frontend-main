@@ -1,14 +1,18 @@
 import styled from "styled-components";
+
+import { Link } from 'react-scroll'
+
 import { 
     Card, 
     CardContent,
     CardHeader, 
-    TableRow ,
     Avatar
 } from "@material-ui/core";
+
 import { fontSizes } from "../../values/FontSizes";
 import { colours } from "../../values/Colours";
 import { Button } from "../../values/ButtonElements";
+
 
 export const ForumContainer = styled.div`
     padding: 2rem;
@@ -131,3 +135,9 @@ export const ForumAvatar = styled(Avatar)`
 export const ForumButton = styled(Button)`
     margin: 10px;
 `
+
+export const ScrollLink = styled(Link)`
+    text-decoration: underline;
+    color: #3f51b5;
+    cursor: pointer;
+`;

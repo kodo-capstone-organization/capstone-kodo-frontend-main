@@ -1,33 +1,28 @@
 import { useEffect, useState } from 'react';
-import { useHistory } from "react-router-dom";
 
-import { getCourseByCourseId } from "../../../apis/Course/CourseApis";
-import { getForumCategoryByForumCategoryId, deleteForumThread } from "../../../apis/Forum/ForumApis";
-import { ForumCategory } from '../../../apis/Entities/ForumCategory';
-
-import {
-    ForumContainer, ForumCardHeader, ForumCardContent, ForumCard,
-    ForumThreadCard, ForumThreadCardContent, EmptyStateContainer,
-    EmptyStateText
-} from "../ForumElements";
-import {
-    DataGrid,
-    GridColDef,
-    GridValueGetterParams
-} from '@material-ui/data-grid';
+import DeleteIcon from '@material-ui/icons/Delete';
 import ForumIcon from '@material-ui/icons/Forum';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-import DeleteIcon from '@material-ui/icons/Delete';
-
-
-import { Button } from "../../../values/ButtonElements";
 import {
     IconButton, Typography, Avatar, Link,
     Menu, MenuItem, ListItemIcon
 } from '@material-ui/core';
 
+import { ForumCategory } from '../../../../apis/Entities/ForumCategory';
+import { ForumThread } from '../../../../apis/Entities/ForumThread';
+
+import { getForumCategoryWithForumThreadsOnlyByForumCategoryId as getForumCategoryByForumCategoryId } from "../../../../apis/Forum/ForumApis";
+import { getAllForumThreadsByForumCategoryId } from "../../../../apis/Forum/ForumApis";
+import { deleteForumThread } from "../../../../apis/Forum/ForumApis";
+
+import {
+    ForumCardHeader, ForumCard, ForumThreadCard, 
+    ForumThreadCardContent, EmptyStateContainer,
+} from "../ForumElements";
+
 import ForumThreadModal from './ForumThreadModal';
-import { ForumThread } from '../../../apis/Entities/ForumThread';
+
+import { Button } from "../../../../values/ButtonElements";
 
 
 function ForumThreadList(props: any) {
@@ -36,7 +31,7 @@ function ForumThreadList(props: any) {
     const [forumCategory, setForumCategory] = useState<ForumCategory>();
     const [forumThreads, setForumThreads] = useState<ForumThread[]>([]);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-    const loggedInAccountId = parseInt(window.sessionStorage.getItem("loggedInAccountId"));
+    const loggedInAccountId = JSON.parse(window.sessionStorage.getItem("loggedInAccountId") || "{}");
 
     const open = Boolean(anchorEl);
 
@@ -45,7 +40,11 @@ function ForumThreadList(props: any) {
         forumCategoryId = parseInt(forumCategoryId.split('/category/')[1]);
         getForumCategoryByForumCategoryId(forumCategoryId).then((res) => {
             setForumCategory(res);
-            setForumThreads(res.forumThreads);
+        }).catch((err) => {
+            props.onCallSnackbar({ message: "Failure", type: "error" })
+        })
+        getAllForumThreadsByForumCategoryId(forumCategoryId).then((res) => {
+            setForumThreads(res);
         }).catch((err) => {
             props.onCallSnackbar({ message: "Failure", type: "error" })
         })
@@ -54,18 +53,24 @@ function ForumThreadList(props: any) {
     }, [props.history.location.pathname]);
 
     const handleCallSnackbar = (snackbarObject: any) => {
-        getForumCategoryByForumCategoryId(forumCategory.forumCategoryId).then((res) => {
-            setForumCategory(res);
-            setForumThreads(res.forumThreads);
-            console.log("new thread", res.forumThreads);
-        }).catch((err) => {
-            console.log("Failed", err);
-        });
-        props.onCallSnackbar(snackbarObject);
+        if (forumCategory !== undefined)
+        {
+            getForumCategoryByForumCategoryId(forumCategory.forumCategoryId).then((res) => {
+                setForumCategory(res);
+                setForumThreads(res.forumThreads);
+                console.log("new thread", res.forumThreads);
+            }).catch((err) => {
+                console.log("Failed", err);
+            });
+            props.onCallSnackbar(snackbarObject);
+        }
     }
 
     const navigateToThread = (forumThreadId: number) => {
-        props.history.push(`/forum/${courseId}/category/${forumCategory.forumCategoryId}/thread/${forumThreadId}`);
+        if (forumCategory !== undefined)
+        {
+            props.history.push(`/forum/${courseId}/category/${forumCategory.forumCategoryId}/thread/${forumThreadId}`);
+        }        
     }
 
     const formatDate = (date: Date) => {
@@ -86,15 +91,20 @@ function ForumThreadList(props: any) {
     }
 
     const sortNewestFirst = () => {
+        console.log("1")
         const sorted = forumThreads
-            .sort((a, b) => new Date(b.timeStamp) - new Date(a.timeStamp));
+            .sort((a, b) => {
+                return +(new Date(a.timeStamp)) - +(new Date(b.timeStamp))
+            });
         setForumThreads(sorted);
     }
 
     const sortOldestFirst = () => {
+        console.log("2")
         const sorted = forumThreads
-            .sort((a, b) => new Date(a.timeStamp) - new Date(b.timeStamp));
-        console.log("Sorted", sorted);
+            .sort((a, b) => {
+                return +(new Date(b.timeStamp)) - +(new Date(a.timeStamp))
+            });
         setForumThreads(sorted);
     }
 
@@ -112,7 +122,6 @@ function ForumThreadList(props: any) {
                 props.onCallSnackbar({ message: "Thread Deleted Successfully", type: "success" })
             }).catch((err) => {
                 props.onCallSnackbar({ message: err.response.data.message , type: "error" })
-
             })
         }
     }

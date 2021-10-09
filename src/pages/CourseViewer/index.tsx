@@ -7,7 +7,6 @@ import { getCourseWithoutEnrollmentByCourseId } from "../../apis/Course/CourseAp
 import Sidebar from "./Sidebar/Sidebar";
 import TutorView from "./TutorView/TutorView";
 import StudentView from "./StudentView/StudentView";
-import ForumPage from "./ForumPage/ForumPage";
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 import { LayoutContainer, MessageContainer, Message, BtnWrapper } from "./CourseViewerElements";

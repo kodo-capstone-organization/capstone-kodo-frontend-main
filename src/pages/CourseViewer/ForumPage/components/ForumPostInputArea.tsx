@@ -1,22 +1,22 @@
 import { useEffect, useState } from 'react';
 
+import ReplyIcon from '@material-ui/icons/Reply';
 import {
-    IconButton,
-    TextField,
-    Avatar,
-    Typography
+    IconButton, TextField, Avatar, Typography
 } from "@material-ui/core";
+
+import { Account } from "../../../../apis/Entities/Account";
+import { CreateNewForumPostReq } from '../../../../apis/Entities/ForumPost';
+import { ForumThread } from '../../../../apis/Entities/ForumThread';
+
+import { createNewForumPost } from "../../../../apis/Forum/ForumApis";
+import { getMyAccount } from "../../../../apis/Account/AccountApis";
+
 import {
     ForumPostCardContent
 } from "../ForumElements";
-import ReplyIcon from '@material-ui/icons/Reply';
-import DeleteIcon from '@material-ui/icons/Delete';
-import { Button } from "../../../values/ButtonElements";
-import { ForumPost, CreateNewForumPostReq } from '../../../apis/Entities/ForumPost';
-import { createNewForumPost } from "../../../apis/Forum/ForumApis";
-import { Account } from "../../../apis/Entities/Account";
-import { getMyAccount } from "../../../apis/Account/AccountApis";
 
+import { Button } from "../../../../values/ButtonElements";
 
 
 function ForumPostInputArea(props: any) {
@@ -25,8 +25,7 @@ function ForumPostInputArea(props: any) {
     const [forumThread, setForumThread] = useState<ForumThread>();
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [myAccount, setMyAccount] = useState<Account>();
-    const loggedInAccountId = parseInt(window.sessionStorage.getItem("loggedInAccountId"));
-
+    const loggedInAccountId = JSON.parse(window.sessionStorage.getItem("loggedInAccountId") || "{}");
 
 
     useEffect(() => {
@@ -48,23 +47,23 @@ function ForumPostInputArea(props: any) {
     }
 
     const handleCreateConfirm = () => {
-        console.log("createNewForumPostReq", forumThread);
-
-        const createNewForumPostReq : CreateNewForumPostReq = {
-            message,
-            timeStamp : new Date(),
-            accountId : loggedInAccountId,
-            forumThreadId: forumThread.forumThreadId
+        if (forumThread !== undefined)
+        {
+            const createNewForumPostReq : CreateNewForumPostReq = {
+                message,
+                timeStamp : new Date(),
+                accountId : loggedInAccountId,
+                forumThreadId: forumThread.forumThreadId
+            }
+            createNewForumPost(createNewForumPostReq)
+            .then((res) => {
+                props.onForumPostChange({ message: "Forum Thread Reply Succeeded", type: "success" });
+            }).catch((err) => {
+                props.onForumPostChange({ message: "Forum Thread Reply Failed", type: "error" });
+                console.log(err.response.data.message);
+            });
+            handleCancel();
         }
-        console.log("createNewForumPostReq", createNewForumPostReq);
-        createNewForumPost(createNewForumPostReq)
-        .then((res) => {
-            props.onForumPostChange({ message: "Forum Thread Reply Succeeded", type: "success" });
-        }).catch((err) => {
-            props.onForumPostChange({ message: "Forum Thread Reply Failed", type: "error" });
-            console.log(err.response.data.message);
-        });
-        handleCancel();
     }
 
 

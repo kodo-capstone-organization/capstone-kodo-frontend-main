@@ -1,25 +1,21 @@
 import { useEffect, useState } from 'react';
-import { useHistory } from "react-router-dom";
-import {Link} from 'react-scroll'
 
-import { getCourseByCourseId } from "../../../apis/Course/CourseApis";
-import { getForumThreadByForumThreadId, getAllForumPostsOfAForumThread, createNewForumPost } from "../../../apis/Forum/ForumApis";
-import { ForumCategory } from '../../../apis/Entities/ForumCategory';
+import {
+    Divider, Typography, CircularProgress
+} from '@material-ui/core';
+
 import { ForumThread } from '../../../apis/Entities/ForumThread';
 import { ForumPost } from '../../../apis/Entities/ForumPost';
 
+import { 
+    getForumThreadByForumThreadId, 
+    getAllForumPostsOfAForumThread 
+} from "../../../apis/Forum/ForumApis";
+
 import {
-    ForumContainer, ForumCardHeader, ForumCardContent, ForumCard,
-    ForumThreadCard, ForumThreadCardContent, EmptyStateContainer,
-    EmptyStateText, ForumPostCard, ForumPostCardContent,
-    ForumAvatar
-} from "../ForumElements";
-import ReplyIcon from '@material-ui/icons/Reply';
-import { Button } from "../../../values/ButtonElements";
-import {
-    Divider, Typography, Avatar, IconButton,
-    CircularProgress
-} from '@material-ui/core';
+    ForumCardHeader, ForumCardContent, ForumCard, ForumPostCard, 
+    ForumPostCardContent, ForumAvatar, ScrollLink
+} from "../ForumElements"; 
 
 import ForumPostInputArea from './ForumPostInputArea';
 
@@ -48,6 +44,7 @@ function ForumPostList(props: any) {
                 props.onCallSnackbar({ message: "Failure", type: "error" })
             });
             getAllForumPostsOfAForumThread(props.currentForumThreadId).then((res) => {
+                console.log(res);
                 setForumPosts(res);
                 setLoading(false);
             }).catch((err) => {
@@ -57,37 +54,23 @@ function ForumPostList(props: any) {
     }, [props.currentForumCategoryId, props.currentForumThreadId, props.courseId]);
 
     const handleCallSnackbar = (snackbarObject: any) => {
-        if (snackbarObject.type === "success") {
-            getAllForumPostsOfAForumThread(forumThread.forumThreadId).then((res) => {
-                setForumPosts(res);
-            }).catch((err) => {
-                props.onCallSnackbar({ message: "Failure", type: "error" })
-            });
+        if (forumThread !== undefined)
+        {
+            if (snackbarObject.type === "success") {
+                getAllForumPostsOfAForumThread(forumThread.forumThreadId).then((res) => {
+                    setForumPosts(res);
+                }).catch((err) => {
+                    props.onCallSnackbar({ message: "Failure", type: "error" })
+                });
+            }
+            props.onCallSnackbar(snackbarObject);
         }
-        props.onCallSnackbar(snackbarObject);
     }
 
     const formatDate = (date: Date) => {
         var d = new Date(date);
         return d.toDateString() + ', ' + d.toLocaleTimeString();
     }
-
-    // export interface ForumPost {
-    //     forumPostId: number,
-    //     message: string,
-    //     timeStamp: Date,
-    //     parentForumPost: (ForumPost | null)
-    //     account: Account
-    // }
-
-    // export interface ForumThread {
-    //     forumThreadId: number,
-    //     name: string,
-    //     description: string,
-    //     timeStamp: Date,
-    //     account: Account,
-    //     forumPosts: ForumPost[]
-    // }
 
     const handleOnSetActive = (msg : string) =>{
         console.log("handleOnSetActive", msg);
@@ -104,17 +87,20 @@ function ForumPostList(props: any) {
                     return (
                         <>
                             <ForumPostCard key={postId} name={post.forumPostId}>
+                                { forumThread !== undefined &&
                                 <ForumPostCardContent>
                                     <ForumAvatar alt="Remy Sharp" src={post.account.displayPictureUrl} />
-                                    <Typography variant="body1" component="div" style={{ marginLeft: "20px" }}>
-                                    <Link  to={post.parentForumPost != null ? post.parentForumPost.forumPostId : "parentThread"} 
-                                          offset={-50} onSetActive={() => handleOnSetActive(post.message)} activeClass="true"
-                                          onSetInactive={()=>handleOnSetInactive(post.message)} spy={true}
-                                          smooth={true}>RE: {post.parentForumPost != null ? post.parentForumPost.message : forumThread.name}</Link>
+                                    <Typography variant="body1" component="div" style={{ marginLeft: "20px" }}>                                    
+                                    <ScrollLink 
+                                        to={post.parentForumPost != null ? post.parentForumPost.forumPostId : "parentThread"} 
+                                        offset={-50} onSetActive={() => handleOnSetActive(post.message)} activeClass="true"
+                                        onSetInactive={()=>handleOnSetInactive(post.message)} spy={true}
+                                        smooth={true}>RE: {post.parentForumPost != null ? post.parentForumPost.message : forumThread.name}</ScrollLink>
                                         <br />
-                                    Posted By {post.account.name} on {formatDate(post.timeStamp)}
+                                        Posted By {post.account.name} on {formatDate(post.timeStamp)}
                                     </Typography>
                                 </ForumPostCardContent>
+                                }
                                 <Divider />
                                 <ForumPostCardContent>
                                     <Typography variant="body1" component="div" style={{ marginLeft: "20px" }}>

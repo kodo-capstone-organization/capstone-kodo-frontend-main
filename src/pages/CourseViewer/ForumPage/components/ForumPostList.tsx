@@ -1,33 +1,26 @@
 import { useEffect, useState } from 'react';
-import { useHistory } from "react-router-dom";
-
-import { getCourseByCourseId } from "../../../apis/Course/CourseApis";
-import { getForumThreadByForumThreadId, getAllForumPostsOfAForumThread, createNewForumPost } from "../../../apis/Forum/ForumApis";
-import { ForumCategory } from '../../../apis/Entities/ForumCategory';
-import { ForumThread } from '../../../apis/Entities/ForumThread';
-import { ForumPost } from '../../../apis/Entities/ForumPost';
 
 import {
-    ForumContainer, ForumCardHeader, ForumCardContent, ForumCard,
-    ForumThreadCard, ForumThreadCardContent, EmptyStateContainer,
-    EmptyStateText, ForumPostCard, ForumPostCardContent
-} from "../ForumElements";
-import ReplyIcon from '@material-ui/icons/Reply';
-import { Button } from "../../../values/ButtonElements";
-import {
-    Divider, Typography, Avatar, IconButton
+    Divider, Typography, Avatar
 } from '@material-ui/core';
+
+import { ForumThread } from '../../../../apis/Entities/ForumThread';
+import { ForumPost } from '../../../../apis/Entities/ForumPost';
+
+import { getForumThreadByForumThreadId, getAllForumPostsOfAForumThread } from "../../../../apis/Forum/ForumApis";
+
+import {
+    ForumCardHeader, ForumCardContent, ForumCard, 
+    ForumPostCard, ForumPostCardContent
+} from "../ForumElements";
 
 import ForumPostInputArea from './ForumPostInputArea';
 
 
 function ForumPostList(props: any) {
 
-    const [courseId, setCourseId] = useState<number>();
     const [forumThread, setForumThread] = useState<ForumThread>();
     const [forumPosts, setForumPosts] = useState<ForumPost[]>([]);
-
-    // const [selectedQuestions, setSelectedQuestions] = useState<any>([]);
 
     useEffect(() => {
         var url = props.history.location.pathname;
@@ -46,12 +39,15 @@ function ForumPostList(props: any) {
     }, [props]);
 
     const handleCallSnackbar = (snackbarObject: any) => {
-        getForumThreadByForumThreadId(forumThread.forumThreadId).then((res) => {
-            setForumThread(res);
-        }).catch((err) => {
-            props.onCallSnackbar({ message: "Failure", type: "error" })
-        });
-        props.onCallSnackbar(snackbarObject);
+        if (forumThread !== undefined)
+        {
+            getForumThreadByForumThreadId(forumThread.forumThreadId).then((res) => {
+                setForumThread(res);
+            }).catch((err) => {
+                props.onCallSnackbar({ message: "Failure", type: "error" })
+            });
+            props.onCallSnackbar(snackbarObject);
+        }
     }
 
     const formatDate = (date: Date) => {
@@ -65,6 +61,7 @@ function ForumPostList(props: any) {
                 {forumPosts.map(function (post, postId) {
                     return (
                         <>
+                        { forumThread !== undefined &&
                             <ForumPostCard key={postId}>
                                 <ForumPostCardContent>
                                     <Avatar alt="Remy Sharp" src={post.account.displayPictureUrl} />
@@ -83,6 +80,7 @@ function ForumPostList(props: any) {
                                 <Divider />
                                 <ForumPostInputArea forumThread={forumThread} onForumPostChange={handleCallSnackbar} />
                             </ForumPostCard>
+                        }
                         </>
                     );
                 })}

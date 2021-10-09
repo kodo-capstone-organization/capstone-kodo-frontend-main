@@ -9,7 +9,6 @@ import { getCourseRatingByCourseId } from "../../../../apis/Course/CourseApis";
 
 import {
     CourseTitle,
-    TutorCourseRatingBox,
     TutorTitle,
     TutorViewCard,
     TutorViewCardContent,

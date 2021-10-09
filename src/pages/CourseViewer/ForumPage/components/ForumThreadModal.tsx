@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react';
 
+import AddIcon from '@material-ui/icons/Add';
+import DeleteIcon from '@material-ui/icons/Delete';
+import EditIcon from '@material-ui/icons/Edit';
 import {
     Dialog,
     DialogActions,
@@ -9,12 +12,14 @@ import {
     TextField,
     ListItemIcon
 } from "@material-ui/core";
-import AddIcon from '@material-ui/icons/Add';
-import EditIcon from '@material-ui/icons/Edit';
-import DeleteIcon from '@material-ui/icons/Delete';
-import { Button } from "../../../values/ButtonElements";
-import { ForumThread, CreateNewForumThreadReq } from '../../../apis/Entities/ForumThread';
-import { createNewForumThread } from "../../../apis/Forum/ForumApis";
+
+import { CreateNewForumThreadReq } from '../../../../apis/Entities/ForumThread';
+import { ForumCategory } from '../../../../apis/Entities/ForumCategory';
+
+import { createNewForumThread } from '../../../../apis/Forum/ForumApis';
+
+import { Button } from "../../../../values/ButtonElements";
+
 
 function ForumThreadModal(props: any) {
 
@@ -23,7 +28,6 @@ function ForumThreadModal(props: any) {
     const [description, setDescription] = useState<string>("");
     const [modalType, setModalType] = useState<string>("");
     const [forumCategoryToSubmit, setForumCategoryToSubmit] = useState<ForumCategory>();
-    const [isDisabled, setIsDisabled] = useState<boolean>(false);
     const loggedInAccountId = window.sessionStorage.getItem("loggedInAccountId");
 
 
@@ -47,7 +51,7 @@ function ForumThreadModal(props: any) {
     };
 
     const handleCreateConfirm = () => {
-        if (loggedInAccountId != null) {
+        if (loggedInAccountId !== null && forumCategoryToSubmit !== undefined) {
             const createNewForumThreadReq: CreateNewForumThreadReq = {
                 name,
                 description,
@@ -147,7 +151,7 @@ function ForumThreadModal(props: any) {
             {
                 modalType === "EDIT" &&
                 <>
-                    <ListItemIcon disabled={isDisabled} onClick={handleOpen}>
+                    <ListItemIcon onClick={handleOpen}>
                         <EditIcon />
                     </ListItemIcon>
                     <Dialog open={open} onClose={handleClose} maxWidth={"lg"}>
@@ -181,7 +185,7 @@ function ForumThreadModal(props: any) {
             {
                 modalType === "DELETE" &&
                 <>
-                    <ListItemIcon disabled={isDisabled} onClick={handleOpen}>
+                    <ListItemIcon onClick={handleOpen}>
                         <DeleteIcon />
                     </ListItemIcon>
                     <Dialog open={open} onClose={handleClose} maxWidth={"lg"}>
