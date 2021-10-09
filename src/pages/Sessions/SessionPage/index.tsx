@@ -254,26 +254,28 @@ function SessionPage(props: any) {
                     <br/>
                     <Grid container spacing={3}>
                         { // TODO: Cleanup & Beautify
-                            myInvitedSessions.map((invitedSession: InvitedSessionResp) => (
-                                <Grid item xs={4}>
-                                    <Card style={{ flexWrap: "wrap", wordWrap: "break-word"}}>
-                                        <CardContent>
-                                            <Typography variant="h5">
-                                                {invitedSession.sessionName}
-                                            </Typography>
-                                            <Typography color="textSecondary">
-                                                <strong>Host: </strong><i>@{getUsernameById(invitedSession.hostId)}</i>
-                                            </Typography>
-                                            <Typography color="textSecondary">
-                                                <strong>Session ID: </strong>{invitedSession.sessionId}
-                                            </Typography>
-                                        </CardContent>
-                                        <CardActions style={{ display: "flex", justifyContent: "flex-end"}}>
-                                            <Button onClick={() => handleJoinSession(invitedSession.sessionId, invitedSession.sessionName)}>Join Session</Button>
-                                        </CardActions>
-                                    </Card>
-                                </Grid>
-                            ))
+                            myInvitedSessions
+                                .filter((invitedSession: InvitedSessionResp) => invitedSession.hostId !== accountId)
+                                .map((invitedSession: InvitedSessionResp) => (
+                                    <Grid item xs={4}>
+                                        <Card style={{ flexWrap: "wrap", wordWrap: "break-word"}}>
+                                            <CardContent>
+                                                <Typography variant="h5">
+                                                    {invitedSession.sessionName}
+                                                </Typography>
+                                                <Typography color="textSecondary">
+                                                    <strong>Host: </strong><i>@{getUsernameById(invitedSession.hostId)}</i>
+                                                </Typography>
+                                                <Typography color="textSecondary">
+                                                    <strong>Session ID: </strong>{invitedSession.sessionId}
+                                                </Typography>
+                                            </CardContent>
+                                            <CardActions style={{ display: "flex", justifyContent: "flex-end"}}>
+                                                <Button onClick={() => handleJoinSession(invitedSession.sessionId, invitedSession.sessionName)}>Join Session</Button>
+                                            </CardActions>
+                                        </Card>
+                                    </Grid>
+                                ))
                         }
                     </Grid>
                 </SessionPageInvitedSessions>

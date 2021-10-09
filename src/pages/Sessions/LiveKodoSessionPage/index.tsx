@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { endSession } from '../../../apis/Session/SessionApis';
+import { InvitedSessionResp } from '../../../apis/Entities/Session';
+import { endSession, getSessionBySessionId } from '../../../apis/Session/SessionApis';
 import { Button } from '../../../values/ButtonElements';
 import ActionsPanel from './components/ActionsPanel';
 import ParticipantsPanel from './components/ParticipantsPanel';
@@ -29,71 +30,85 @@ function LiveKodoSessionPage(props: any) {
     const myAccountId = parseInt(window.sessionStorage.getItem("loggedInAccountId") || "");
     const [initAction, setInitAction] = useState<string>(props.match.params.initAction.toLowerCase()); // "create" or "join" only
     const [sessionId, setSessionId] = useState<string>(props.match.params.sessionId);
+    const [isValidSession, setIsValidSession] = useState<boolean>(false);
+    const [sessionDetails, setSessionDetails] = useState<InvitedSessionResp>();
     const [dataChannelConnected, setDataChannelConnected] = useState<boolean>(false);
     const [peerConns, setPeerConns] = useState<Map<number, RTCInfo>>(new Map());
 
     useEffect(() => {
-
-        // TODO: Get session info and invite list and kick people out accordingly (if invite list is empty, it is a public call)
-
-        // On init
-        if (initAction === "create" || initAction === "join") {
-
-            // 1 - Get this user's audio stream
-            const mediaConstraints = { audio : true };
-            navigator.mediaDevices.getUserMedia(mediaConstraints).then(stream => { localStream = stream })
-
-            // 2 - Connect this user to websocket signalling server + attach listeners
-            conn = new WebSocket(`ws://capstone-kodo-webrtc.herokuapp.com/socket/${props.match.params.sessionId}`);
-
-            conn.onmessage = function(msg) {
-                const content = JSON.parse(msg.data);
-                const data = content.data;
-                console.log("conn.onmessage: ", content.event);
-                const incomingPeerId = content.peerId
-                
-                switch (content.event) {
-                    case "newConnection":
-                        const incomingPeerConn = setupNewPeerConn(incomingPeerId);
-                        console.log("NEW CONNECTION: CREATE OFFER")
-                        createOffer(incomingPeerConn);
-                        break;
-                    case "offer":
-                        if (!peerConns.has(incomingPeerId)) {
-                            setupNewPeerConn(incomingPeerId)
-                            handleOffer(incomingPeerId, data);
-                        }
-                        break;
-                    case "answer":
-                        // Only handle the answers that are meant for me
-                        console.log("answer")
-                        if (content.sendTo === myAccountId) {
-                            handleAnswer(incomingPeerId, data);
-                            console.log(peerConns)
-                        }
-                        break;
-                    // when a remote peer sends an ice candidate to us
-                    case "candidate":
-                        handleCandidate(incomingPeerId, data);
-                        break;
-                    case "exit":
-                        handleExit(incomingPeerId);
-                        break;
-                    default:
-                        console.log("in default switch case")
-                        break;
-                }
-            };
-
-            conn.onopen = function() {
-                console.log("Connected to the signaling server");
-                send({ event : "newConnection" });
-            };
-
-        } else {
-            props.history.push('/invalidsession') // redirects to 404 (for now)
-        }
+        getSessionBySessionId(props.match.params.sessionId, myAccountId)
+            .then((sessionDetails: InvitedSessionResp) => {
+                setSessionDetails(sessionDetails);
+                setIsValidSession(true);
+            })
+            .catch((error) => {
+                setIsValidSession(false);
+                props.history.push({ pathname: "/session/invalidsession", state: { errorData: error?.response?.data }})
+            })
     }, [])
+
+    useEffect(() => {
+        if (isValidSession) {
+            // On init
+            if (initAction === "create" || initAction === "join") {
+
+                // 1 - Get this user's audio stream
+                const mediaConstraints = { audio : true };
+                navigator.mediaDevices.getUserMedia(mediaConstraints).then(stream => { localStream = stream })
+
+                // 2 - Connect this user to websocket signalling server + attach listeners
+                conn = new WebSocket(`ws://capstone-kodo-webrtc.herokuapp.com/socket/${props.match.params.sessionId}`);
+
+                conn.onmessage = function(msg) {
+                    const content = JSON.parse(msg.data);
+                    const data = content.data;
+                    console.log("conn.onmessage: ", content.event);
+                    const incomingPeerId = content.peerId
+
+                    switch (content.event) {
+                        case "newConnection":
+                            const incomingPeerConn = setupNewPeerConn(incomingPeerId);
+                            console.log("NEW CONNECTION: CREATE OFFER")
+                            createOffer(incomingPeerConn);
+                            break;
+                        case "offer":
+                            if (!peerConns.has(incomingPeerId)) {
+                                setupNewPeerConn(incomingPeerId)
+                                handleOffer(incomingPeerId, data);
+                            }
+                            break;
+                        case "answer":
+                            // Only handle the answers that are meant for me
+                            console.log("answer")
+                            if (content.sendTo === myAccountId) {
+                                handleAnswer(incomingPeerId, data);
+                                console.log(peerConns)
+                            }
+                            break;
+                        // when a remote peer sends an ice candidate to us
+                        case "candidate":
+                            handleCandidate(incomingPeerId, data);
+                            break;
+                        case "exit":
+                            handleExit(incomingPeerId);
+                            break;
+                        default:
+                            console.log("in default switch case")
+                            break;
+                    }
+                };
+
+                conn.onopen = function() {
+                    console.log("Connected to the signaling server");
+                    send({ event : "newConnection" });
+                };
+
+            } else {
+                props.history.push('/invalidsession') // redirects to 404 (for now)
+            }
+        }
+
+    }, [isValidSession])
 
     // Cleanup Callback. Propped into ActionsPanel to be called from there.
     const handleMyExit = () => {
@@ -111,7 +126,7 @@ function LiveKodoSessionPage(props: any) {
             console.log("there are still peer conns left. not ending whole session.")
         }
 
-        props.callOpenSnackBar(`Exiting Kodo Session: ${props.location.state?.sessionName}`, "success")
+        props.callOpenSnackBar(`Exiting Kodo Session: ${sessionDetails?.sessionName}`, "success")
     }
 
     const setupNewPeerConn = (newPeerId: number) => {
@@ -270,17 +285,23 @@ function LiveKodoSessionPage(props: any) {
 
 
     return (
-        <LiveKodoSessionContainer>
-            <audio ref={remoteAudioRef} autoPlay />
-            <TopSessionBar><strong>{props.location.state?.sessionName || "SESSION_NAME"} ({sessionId}) · Time_Elapsed</strong></TopSessionBar>
-            <Button onClick={() => send({event: null, data: "helloWord"})}>SEND</Button>
-            <Button onClick={() => sendMessage(`hello from ${myAccountId}`)}>SEND VIA DATACHANNEL</Button>
-            <MainSessionWrapper>
-                <ParticipantsPanel myAccountId={myAccountId} peerConns={peerConns} />
-                <Stage peerConns={peerConns} dataChannelConnected={dataChannelConnected} />
-                <ActionsPanel sessionId={sessionId} callOpenSnackBar={props.callOpenSnackBar} handleMyExit={handleMyExit}/>
-            </MainSessionWrapper>
-        </LiveKodoSessionContainer>
+        <>
+            { isValidSession &&
+                <LiveKodoSessionContainer>
+                    <audio ref={remoteAudioRef} autoPlay/>
+                    <TopSessionBar><strong>{sessionDetails?.sessionName} ({sessionId}) ·
+                        Time_Elapsed</strong></TopSessionBar>
+                    <Button onClick={() => send({event: null, data: "helloWord"})}>SEND</Button>
+                    <Button onClick={() => sendMessage(`hello from ${myAccountId}`)}>SEND VIA DATACHANNEL</Button>
+                    <MainSessionWrapper>
+                        <ParticipantsPanel myAccountId={myAccountId} peerConns={peerConns}/>
+                        <Stage peerConns={peerConns} dataChannelConnected={dataChannelConnected}/>
+                        <ActionsPanel sessionId={sessionId} callOpenSnackBar={props.callOpenSnackBar}
+                                      handleMyExit={handleMyExit}/>
+                    </MainSessionWrapper>
+                </LiveKodoSessionContainer>
+            }
+        </>
     )
 }
 
