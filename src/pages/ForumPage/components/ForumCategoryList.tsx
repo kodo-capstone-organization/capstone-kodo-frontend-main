@@ -50,7 +50,7 @@ function ForumCategoryList(props: any) {
             console.log("Failed", err);
         })
         console.log("loading", false);
-    }, [props.courseId]);
+    }, [props.currentCourseId]);
 
     const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
@@ -61,15 +61,17 @@ function ForumCategoryList(props: any) {
     };
 
     const handleCallSnackbar = (snackbarObject: any) => {
-        getForumCategoryByCourseId(courseId).then((res) => {
-            res.map((q) => {
-                Object.assign(q, { id: q.forumCategoryId })
-                return q;
+        if (snackbarObject.type === "success") {
+            getForumCategoryByCourseId(courseId).then((res) => {
+                res.map((q) => {
+                    Object.assign(q, { id: q.forumCategoryId })
+                    return q;
+                });
+                setForumCategories(res);
+            }).catch((err) => {
+                console.log("Failed", err);
             });
-            setForumCategories(res);
-        }).catch((err) => {
-            console.log("Failed", err);
-        });
+        }
         props.onCallSnackbar(snackbarObject);
     }
 

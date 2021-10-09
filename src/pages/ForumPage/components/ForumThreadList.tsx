@@ -48,16 +48,18 @@ function ForumThreadList(props: any) {
             })
         }
         setCourseId(props.currentCourseId);
-    }, [props]);
+    }, [props.currentForumCategoryId]);
 
     const handleCallSnackbar = (snackbarObject: any) => {
-        getForumCategoryByForumCategoryId(forumCategory.forumCategoryId).then((res) => {
-            setForumCategory(res);
-            setForumThreads(res.forumThreads);
-            console.log("new thread", res.forumThreads);
-        }).catch((err) => {
-            console.log("Failed", err);
-        });
+        if (snackbarObject.type === "success") {
+            getForumCategoryByForumCategoryId(forumCategory.forumCategoryId).then((res) => {
+                setForumCategory(res);
+                setForumThreads(res.forumThreads);
+                console.log("new thread", res.forumThreads);
+            }).catch((err) => {
+                console.log("Failed", err);
+            });
+        }
         props.onCallSnackbar(snackbarObject);
     }
 
@@ -178,7 +180,7 @@ function ForumThreadList(props: any) {
     }
 
 
-    if(loading){
+    if (loading) {
         return (
             <ForumCard>
                 {
@@ -195,13 +197,13 @@ function ForumThreadList(props: any) {
                         }
                     />
                 }
-    
+
                 <ForumThreadCardContent>
-                    <CircularProgress/>
+                    <CircularProgress />
                 </ForumThreadCardContent>
             </ForumCard>
         );
-    }else{
+    } else {
         return (
             <ForumCard>
                 {
@@ -219,7 +221,7 @@ function ForumThreadList(props: any) {
                         }
                     />
                 }
-    
+
                 <ForumThreadCardContent>
                     {mapThreads(forumThreads)}
                     <EmptyStateContainer threadsExist={forumThreads.length > 0}>

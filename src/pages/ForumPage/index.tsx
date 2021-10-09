@@ -31,7 +31,6 @@ function ForumPage(props: any) {
     useEffect(() => {
         const courseId = parseInt(props.match.params.courseId);
         setCurrentCourseId(courseId);
-        console.log("param", props.match.params.forumCategoryId);
         if(props.match.params.forumCategoryId != undefined){
             getForumCategoryByForumCategoryId(props.match.params.forumCategoryId)
             .then((res) => {
@@ -40,7 +39,6 @@ function ForumPage(props: any) {
                 handleCallSnackbar({message: err.response.data.message, type:"error"});
             });
         }
-        console.log("param", props.match.params.forumThreadId);
         if(props.match.params.forumThreadId != undefined){
             getForumThreadByForumThreadId(props.match.params.forumThreadId)
             .then((res) => {
@@ -50,7 +48,7 @@ function ForumPage(props: any) {
             });
         }
 
-    }, [props]);
+    }, [props.match.params]);
 
     // To update isIndexPage
     useEffect(() => {
@@ -78,25 +76,6 @@ function ForumPage(props: any) {
     const handleCallSnackbar = (snackbarObject: any) => {
         props.callOpenSnackBar(snackbarObject.message, snackbarObject.type);
     }
-
-    // const handleUpdateCurrentForumCategory = (forumCategoryId: number) => {
-    //     getForumCategoryByForumCategoryId(forumCategoryId)
-    //     .then((res) => {
-    //         setCurrentForumCategory(res);
-    //     }).catch((err) => {
-    //         handleCallSnackbar({message: err.response.data.message, type:"error"});
-    //     });
-    // }
-
-    // const handleUpdateCurrentForumThread = (forumThreadId: number) => {
-    //     getForumThreadByForumThreadId(forumThreadId)
-    //     .then((res) => {
-    //         setCurrentForumThread(res);
-    //     }).catch((err) => {
-    //         handleCallSnackbar({message: err.response.data.message, type:"error"});
-
-    //     });
-    // }
 
     return (
         <ForumContainer>

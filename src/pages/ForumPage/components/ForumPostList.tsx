@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useHistory } from "react-router-dom";
+import {Link} from 'react-scroll'
 
 import { getCourseByCourseId } from "../../../apis/Course/CourseApis";
 import { getForumThreadByForumThreadId, getAllForumPostsOfAForumThread, createNewForumPost } from "../../../apis/Forum/ForumApis";
@@ -53,14 +54,16 @@ function ForumPostList(props: any) {
                 props.onCallSnackbar({ message: "Failure", type: "error" })
             });
         }
-    }, [props]);
+    }, [props.currentForumCategoryId, props.currentForumThreadId, props.courseId]);
 
     const handleCallSnackbar = (snackbarObject: any) => {
-        getAllForumPostsOfAForumThread(forumThread.forumThreadId).then((res) => {
-            setForumPosts(res);
-        }).catch((err) => {
-            props.onCallSnackbar({ message: "Failure", type: "error" })
-        });
+        if (snackbarObject.type === "success") {
+            getAllForumPostsOfAForumThread(forumThread.forumThreadId).then((res) => {
+                setForumPosts(res);
+            }).catch((err) => {
+                props.onCallSnackbar({ message: "Failure", type: "error" })
+            });
+        }
         props.onCallSnackbar(snackbarObject);
     }
 
@@ -69,17 +72,45 @@ function ForumPostList(props: any) {
         return d.toDateString() + ', ' + d.toLocaleTimeString();
     }
 
+    // export interface ForumPost {
+    //     forumPostId: number,
+    //     message: string,
+    //     timeStamp: Date,
+    //     parentForumPost: (ForumPost | null)
+    //     account: Account
+    // }
+
+    // export interface ForumThread {
+    //     forumThreadId: number,
+    //     name: string,
+    //     description: string,
+    //     timeStamp: Date,
+    //     account: Account,
+    //     forumPosts: ForumPost[]
+    // }
+
+    const handleOnSetActive = (msg : string) =>{
+        console.log("handleOnSetActive", msg);
+    }
+
+    const handleOnSetInactive = (msg : string) =>{
+        console.log("handleOnSetInactive", msg);
+    }
+
     const mapPosts = (forumPosts: ForumPost[]) => {
         return (
             <div>
                 {forumPosts.map(function (post, postId) {
                     return (
                         <>
-                            <ForumPostCard key={postId}>
+                            <ForumPostCard key={postId} name={post.forumPostId}>
                                 <ForumPostCardContent>
                                     <ForumAvatar alt="Remy Sharp" src={post.account.displayPictureUrl} />
                                     <Typography variant="body1" component="div" style={{ marginLeft: "20px" }}>
-                                        <body style={{ color: "blue" }}>RE: {forumThread.name}</body>
+                                    <Link  to={post.parentForumPost != null ? post.parentForumPost.forumPostId : "parentThread"} 
+                                          offset={-50} onSetActive={() => handleOnSetActive(post.message)} activeClass="true"
+                                          onSetInactive={()=>handleOnSetInactive(post.message)} spy={true}
+                                          smooth={true}>RE: {post.parentForumPost != null ? post.parentForumPost.message : forumThread.name}</Link>
                                         <br />
                                     Posted By {post.account.name} on {formatDate(post.timeStamp)}
                                     </Typography>
@@ -127,11 +158,11 @@ function ForumPostList(props: any) {
                 <ForumCardContent>
                     {
                         forumThread != undefined &&
-                        <ForumPostCard id="post-card">
+                        <ForumPostCard name="parentThread">
                             <ForumPostCardContent>
                                 <ForumAvatar alt="Remy Sharp" src={forumThread.account.displayPictureUrl} />
                                 <Typography variant="body1" component="div" style={{ marginLeft: "20px" }}>
-                                    <body style={{ color: "blue" }}>{forumThread.name}</body>
+                                    {forumThread.name}
                                     <br />
                                 Posted By {forumThread.account.name} on {formatDate(forumThread.timeStamp)}
                                 </Typography>

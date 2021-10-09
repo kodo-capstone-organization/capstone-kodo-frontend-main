@@ -111,7 +111,7 @@ function ForumPostInputArea(props: any) {
             // deleting a post
             deleteForumPost(parentForumPost.forumPostId)
                 .then((res) => {
-                    props.onForumPostChange({ message: "Forum Thread Deletion Succeeded", type: "success" });
+                    props.onForumPostChange({ message: "Forum Post Deletion Succeeded", type: "success" });
                 }).catch((err) => {
                     props.onForumPostChange({ message: err.response.data.message, type: "error" });
                 })
