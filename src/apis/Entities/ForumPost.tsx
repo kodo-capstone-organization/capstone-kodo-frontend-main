@@ -4,7 +4,7 @@ export interface ForumPost {
     forumPostId: number,
     message: string,
     timeStamp: Date,
-    reply: ForumPost
+    parentForumPost: (ForumPost | null)
     account: Account
 }
 
@@ -13,4 +13,9 @@ export interface CreateNewForumPostReq {
     timeStamp : Date,
     accountId : number,
     forumThreadId : number
+}
+
+export interface CreateNewForumPostReplyReq {
+    newForumPostReply : ForumPost,
+    accountId : number
 }
