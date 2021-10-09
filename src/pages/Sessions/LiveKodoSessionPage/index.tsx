@@ -7,7 +7,6 @@ import Stage from './components/Stage';
 import { LiveKodoSessionContainer, MainSessionWrapper, TopSessionBar } from './LiveKodoSessionPageElements';
 
 let conn: WebSocket;
-//let peerConns: Map<number, RTCInfo> = new Map(); // { peerId: PeerConn, peerId2: PeerConn2, ... }
 let localStream: MediaStream;
 
 const rtcConfiguration: RTCConfiguration = {
@@ -24,7 +23,6 @@ interface RTCInfo {
 }
 
 // URL: /session/<CREATE_OR_JOIN>/<SESSION_ID>
-// To consider: Adding ?pwd=<PASSWORD> as a query param
 function LiveKodoSessionPage(props: any) {
 
     const remoteAudioRef = useRef(null);
@@ -35,14 +33,17 @@ function LiveKodoSessionPage(props: any) {
     const [peerConns, setPeerConns] = useState<Map<number, RTCInfo>>(new Map());
 
     useEffect(() => {
+
+        // TODO: Get session info and invite list and kick people out accordingly (if invite list is empty, it is a public call)
+
         // On init
         if (initAction === "create" || initAction === "join") {
-            // Get this user's audio stream
-            const mediaConstraints = { audio : true };
-            navigator.mediaDevices.getUserMedia(mediaConstraints).then(stream => {
-                localStream = stream;
-            })
 
+            // 1 - Get this user's audio stream
+            const mediaConstraints = { audio : true };
+            navigator.mediaDevices.getUserMedia(mediaConstraints).then(stream => { localStream = stream })
+
+            // 2 - Connect this user to websocket signalling server + attach listeners
             conn = new WebSocket(`ws://capstone-kodo-webrtc.herokuapp.com/socket/${props.match.params.sessionId}`);
 
             conn.onmessage = function(msg) {
@@ -57,7 +58,6 @@ function LiveKodoSessionPage(props: any) {
                         console.log("NEW CONNECTION: CREATE OFFER")
                         createOffer(incomingPeerConn);
                         break;
-                    // when somebody wants to call us
                     case "offer":
                         if (!peerConns.has(incomingPeerId)) {
                             setupNewPeerConn(incomingPeerId)
@@ -94,7 +94,7 @@ function LiveKodoSessionPage(props: any) {
             props.history.push('/invalidsession') // redirects to 404 (for now)
         }
 
-        // Cleanup: Runs only during ComponentWillUnmount
+        // Cleanup Function: Runs only during ComponentWillUnmount
         return () => {
             console.log("Closing websocket");
             localStream.getTracks().forEach(track => track.stop());
@@ -129,13 +129,12 @@ function LiveKodoSessionPage(props: any) {
         // Peer conn ontrack event (to add remote streams to audio object)
         newPeerConn.ontrack = function(event) {
             console.log('AUDIO / VIDEO STREAM RECEIVED:', event.track, event.streams[0]);
-            // @ts-ignore
+            //@ts-ignore
             remoteAudioRef.current.srcObject = event.streams[0]
         };
 
         // TODO
         // oniceconnectionstatechange = event => checkPeerDisconnect(event, peerUuid);
-
 
         const dataChannel = newPeerConn.createDataChannel("dataChannel");
 
@@ -173,10 +172,6 @@ function LiveKodoSessionPage(props: any) {
 
         return newPeerConn
     }
-
-    // If "create", initialise a new active session
-
-    // If "join", it is a peer joining into an active session
 
     async function createOffer(passedInPeerConn: RTCPeerConnection) {
 
@@ -234,7 +229,6 @@ function LiveKodoSessionPage(props: any) {
 
     async function handleAnswer(incomingPeerId: number, answer: any) {
         console.log("in handleAnswer -> connection established successfully!!");
-        console.log("in handleAnswer -> incomingPeerId", incomingPeerId);
 
         const incomingPeerConn = peerConns.get(incomingPeerId)?.rtcPeerConnection;
         if (incomingPeerConn) {
@@ -243,18 +237,16 @@ function LiveKodoSessionPage(props: any) {
         }
     };
 
+    // When a peerconn is exiting, remove from local peerConns
     function handleExit(incomingPeerId: number) {
         if (peerConns.has(incomingPeerId)) {
             console.log("deleting peer conn of id: ", incomingPeerId)
-            //peerConns.delete(incomingPeerId)
             let newPeerConns = new Map()
             for (const [key, value] of Object.entries(peerConns)) {
                 if (parseInt(key) !== incomingPeerId) {
-                    console.log('key', parseInt(key))
-                    console.log('incomingPeerId', incomingPeerId)
                     newPeerConns.set(key, value)
                 } else {
-                    console.log("deleting this ", key, value)                    
+                    console.log("Deleting from peerConns: ", key, value)
                 }
             }
             setPeerConns(newPeerConns)
@@ -263,21 +255,22 @@ function LiveKodoSessionPage(props: any) {
 
     // Sending a message to websocket server
     const send = (receivedMessage: any) => {
-        console.log("in sendMessage");
         receivedMessage['peerId'] = myAccountId; // Append in peerId (i.e. my account id)
-        console.log(receivedMessage)
+        console.log("in send (via websocket server): ", receivedMessage);
         conn.send(JSON.stringify(receivedMessage));
     }
 
+    // Sending a message via datachannel
     const sendMessage = (someInput: string) => {
+        console.log("in sendMessage (via datachannel) to all other peers")
         peerConns.forEach((rtcInfo: RTCInfo) => {
-
             // Only send message to connections that are still connected
             if (rtcInfo.rtcPeerConnection?.connectionState === "connected") {
                 rtcInfo.rtcDataChannel?.send(someInput)
             }      
         })
     }
+
 
     return (
         <LiveKodoSessionContainer>
@@ -286,8 +279,8 @@ function LiveKodoSessionPage(props: any) {
             <Button onClick={() => send({event: null, data: "helloWord"})}>SEND</Button>
             <Button onClick={() => sendMessage(`hello from ${myAccountId}`)}>SEND VIA DATACHANNEL</Button>
             <MainSessionWrapper>
-                <ParticipantsPanel participantIds={Array.from(peerConns.keys())}/>
-                <Stage dataChannelConnected={dataChannelConnected} />
+                <ParticipantsPanel myAccountId={myAccountId} peerConns={peerConns} />
+                <Stage peerConns={peerConns} dataChannelConnected={dataChannelConnected} />
                 <ActionsPanel sessionId={sessionId} callOpenSnackBar={props.callOpenSnackBar}/>
             </MainSessionWrapper>
         </LiveKodoSessionContainer>

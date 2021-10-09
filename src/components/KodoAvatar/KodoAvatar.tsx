@@ -24,7 +24,7 @@ function KodoAvatar(props: any) {
         <KodoAvatarWrapper
             alt={name}
             src={displayPictureURL}
-            style={{ height: "128px", width: "128px" }}
+            style={{ height: props.small ?  "5rem" : "8rem", width: props.small ?  "5rem" : "8rem" }}
         >
             <KodoAvatarInitials>
                 {avatarInitials()}

@@ -128,3 +128,15 @@ export async function getAllAccountsStrippedDown(): Promise<StrippedDownAccount[
 
     return httpClient.get<undefined, StrippedDownAccount[]>(getParameters)
 }
+
+export async function getSomeAccountsStrippedDown(accountIds: number[]): Promise<StrippedDownAccount[]> {
+    const formData = new FormData();
+    formData.append('accountIds', transformToBlob(accountIds));
+
+    const postParameters: IHttpClientRequestParameters<FormData> = {
+        url: '/account/getSomeAccountsWithoutEnrollment',
+        payload: formData
+    }
+
+    return httpClient.post<FormData, StrippedDownAccount[]>(postParameters)
+}

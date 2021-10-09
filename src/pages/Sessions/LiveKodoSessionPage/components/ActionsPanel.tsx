@@ -31,10 +31,10 @@ function ActionsPanel(props: any) {
                 <span style={{ textAlign: "center", color: "blue" }}>Copy Join Link</span>
             </ActionItem>
             <ActionItem>
-                <IconButton aria-label="exit-to-session-page" color="primary" onClick={navigateToSessionPage}>
+                <IconButton aria-label="exit-to-session-page" color="secondary" onClick={navigateToSessionPage}>
                     <ExitToAppIcon/>
                 </IconButton>
-                <span style={{ textAlign: "center", color: "blue" }}>Exit</span>
+                <span style={{ textAlign: "center", color: "red" }}>Exit</span>
             </ActionItem>
         </ActionsPanelContainer>
     )
