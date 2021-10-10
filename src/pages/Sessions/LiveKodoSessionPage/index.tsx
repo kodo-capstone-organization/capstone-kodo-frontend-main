@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, createRef, useState } from 'react'
 import { InvitedSessionResp } from '../../../apis/Entities/Session';
 import { endSession, getSessionBySessionId } from '../../../apis/Session/SessionApis';
 import { Button } from '../../../values/ButtonElements';
@@ -21,12 +21,12 @@ const rtcConfiguration: RTCConfiguration = {
 interface RTCInfo {
     rtcPeerConnection?: RTCPeerConnection,
     rtcDataChannel?: RTCDataChannel
+    mediaStream?: MediaStream
 }
 
 // URL: /session/<CREATE_OR_JOIN>/<SESSION_ID>
 function LiveKodoSessionPage(props: any) {
 
-    const remoteAudioRef = useRef(null);
     const myAccountId = parseInt(window.sessionStorage.getItem("loggedInAccountId") || "");
     const [initAction, setInitAction] = useState<string>(props.match.params.initAction.toLowerCase()); // "create" or "join" only
     const [sessionId, setSessionId] = useState<string>(props.match.params.sessionId);
@@ -34,6 +34,7 @@ function LiveKodoSessionPage(props: any) {
     const [sessionDetails, setSessionDetails] = useState<InvitedSessionResp>();
     const [dataChannelConnected, setDataChannelConnected] = useState<boolean>(false);
     const [peerConns, setPeerConns] = useState<Map<number, RTCInfo>>(new Map());
+    const [amIMuted, setAmIMuted] = useState<boolean>(false);
 
     useEffect(() => {
         getSessionBySessionId(props.match.params.sessionId, myAccountId)
@@ -154,8 +155,7 @@ function LiveKodoSessionPage(props: any) {
         newPeerConn.ontrack = function(event) {
             console.log('AUDIO / VIDEO STREAM RECEIVED:', event.track, event.streams[0]);
 
-            //@ts-ignore
-            remoteAudioRef.current.srcObject = event.streams[0]
+            setPeerConns(peerConns.set(newPeerId, { rtcPeerConnection: peerConns.get(newPeerId)?.rtcPeerConnection, rtcDataChannel: peerConns.get(newPeerId)?.rtcDataChannel, mediaStream: event.streams[0] }))
         };
 
         // TODO
@@ -190,10 +190,10 @@ function LiveKodoSessionPage(props: any) {
             newDataChannel.onmessage = function(event) {
                 console.log("dataChannel.onmessage IN CREATOR SIDE")
             }
-            setPeerConns(peerConns.set(newPeerId, { rtcPeerConnection: peerConns.get(newPeerId)?.rtcPeerConnection, rtcDataChannel: newDataChannel }))
+            setPeerConns(peerConns.set(newPeerId, { rtcPeerConnection: peerConns.get(newPeerId)?.rtcPeerConnection, rtcDataChannel: newDataChannel, mediaStream: peerConns.get(newPeerId)?.mediaStream }))
         };
 
-        setPeerConns(peerConns.set(newPeerId, { rtcPeerConnection: newPeerConn, rtcDataChannel: dataChannel }))
+        setPeerConns(peerConns.set(newPeerId, { rtcPeerConnection: newPeerConn, rtcDataChannel: dataChannel, mediaStream: new MediaStream() }))
 
         return newPeerConn
     }
@@ -232,7 +232,7 @@ function LiveKodoSessionPage(props: any) {
                 // Create answer to offer
                 const answer = await incomingPeerConn.createAnswer(answerOptions);
                 await incomingPeerConn.setLocalDescription(answer);
-                setPeerConns(peerConns.set(incomingPeerId, { rtcPeerConnection: incomingPeerConn, rtcDataChannel: peerConns.get(incomingPeerId)?.rtcDataChannel }));
+                setPeerConns(peerConns.set(incomingPeerId, { rtcPeerConnection: incomingPeerConn, rtcDataChannel: peerConns.get(incomingPeerId)?.rtcDataChannel, mediaStream: peerConns.get(incomingPeerId)?.mediaStream }));
                 send({ event : "answer", data : answer, sendTo: incomingPeerId });
             } else {
                 console.error("unable to find peer conn with id", incomingPeerId);
@@ -248,7 +248,7 @@ function LiveKodoSessionPage(props: any) {
         const incomingPeerConn = peerConns.get(incomingPeerId)?.rtcPeerConnection;
         if (incomingPeerConn) {
             incomingPeerConn?.addIceCandidate(new RTCIceCandidate(candidate));
-            setPeerConns(peerConns.set(incomingPeerId, { rtcPeerConnection: incomingPeerConn, rtcDataChannel: peerConns.get(incomingPeerId)?.rtcDataChannel }));
+            setPeerConns(peerConns.set(incomingPeerId, { rtcPeerConnection: incomingPeerConn, rtcDataChannel: peerConns.get(incomingPeerId)?.rtcDataChannel, mediaStream: peerConns.get(incomingPeerId)?.mediaStream }));
         }
     };
 
@@ -258,7 +258,7 @@ function LiveKodoSessionPage(props: any) {
         const incomingPeerConn = peerConns.get(incomingPeerId)?.rtcPeerConnection;
         if (incomingPeerConn) {
             await incomingPeerConn?.setRemoteDescription(new RTCSessionDescription(answer));
-            setPeerConns(peerConns.set(incomingPeerId, { rtcPeerConnection: incomingPeerConn, rtcDataChannel: peerConns.get(incomingPeerId)?.rtcDataChannel }));
+            setPeerConns(peerConns.set(incomingPeerId, { rtcPeerConnection: incomingPeerConn, rtcDataChannel: peerConns.get(incomingPeerId)?.rtcDataChannel, mediaStream: peerConns.get(incomingPeerId)?.mediaStream }));
         }
     };
 
@@ -290,12 +290,18 @@ function LiveKodoSessionPage(props: any) {
         })
     }
 
-
     return (
         <>
             { isValidSession &&
                 <LiveKodoSessionContainer>
-                    <audio ref={remoteAudioRef} autoPlay/>
+                    {Array.from(peerConns.values()).map((rtcInfo: RTCInfo) => { 
+                        console.log("my ms", localStream)
+                        console.log("ms", rtcInfo.mediaStream);
+                        console.log("ms audio tracks", rtcInfo.mediaStream?.getAudioTracks());
+                        return ( 
+                            <audio ref={(audio: HTMLAudioElement) => audio.srcObject = rtcInfo.mediaStream || null } autoPlay/> 
+                        )
+                    })}
                     <TopSessionBar><strong>{sessionDetails?.sessionName} ({sessionDetails?.sessionId}) ·
                         Time_Elapsed</strong></TopSessionBar>
                     <Button onClick={() => send({event: null, data: "helloWord"})}>SEND</Button>
@@ -303,7 +309,7 @@ function LiveKodoSessionPage(props: any) {
                     <MainSessionWrapper>
                         <ParticipantsPanel myAccountId={myAccountId} peerConns={peerConns}/>
                         <Stage peerConns={peerConns} dataChannelConnected={dataChannelConnected}/>
-                        <ActionsPanel sessionId={sessionId} callOpenSnackBar={props.callOpenSnackBar} handleMyExit={handleMyExit}/>
+                        <ActionsPanel sessionId={sessionId} callOpenSnackBar={props.callOpenSnackBar} handleMyExit={handleMyExit} amIMuted={amIMuted} setAmIMuted={setAmIMuted}/>
                     </MainSessionWrapper>
                 </LiveKodoSessionContainer>
             }

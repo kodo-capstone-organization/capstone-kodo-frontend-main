@@ -41,8 +41,7 @@ function ParticipantsPanel(props: any) {
     }
 
     const isParticipantMuted = (accountId: number) => {
-        // TODO: Search through peerConns and see if their audio stream is even there?
-        return false
+        return props.peerConns.get(accountId)?.isMuted
     }
 
     return (
@@ -52,7 +51,7 @@ function ParticipantsPanel(props: any) {
             <Grid container direction="column" spacing={2} style={{ alignItems: "center"}}>
                 { participants.map((participant: StrippedDownAccount) => (
                     <Grid item key={participant.accountId} >
-                        <ParticipantItem participant={participant} isMuted={isParticipantMuted(participant.accountId)} isSpeaking={isParticipantSpeaking(participant.accountId)}/>
+                        <ParticipantItem participant={participant} isMuted={participant.accountId === props.myAccountId ? props.amIMuted : isParticipantMuted(participant.accountId)} isSpeaking={isParticipantSpeaking(participant.accountId)}/>
                     </Grid>
                 ))}
             </Grid>
