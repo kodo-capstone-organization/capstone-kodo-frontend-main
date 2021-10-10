@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, createRef, useState, RefObject } from 'react'
-import { InvitedSessionResp } from '../../../apis/Entities/Session';
+import React, { useEffect, createRef, useState, RefObject } from 'react'
+import {CallEvent, InvitedSessionResp, KodoDataChannelMessage, KodoSessionEvent, KodoSessionEventType } from '../../../apis/Entities/Session';
 import { endSession, getSessionBySessionId } from '../../../apis/Session/SessionApis';
 import { Button } from '../../../values/ButtonElements';
 import ActionsPanel from './components/ActionsPanel';
@@ -23,6 +23,7 @@ interface RTCInfo {
     rtcDataChannel?: RTCDataChannel
     mediaStream?: MediaStream
     audioRef?: RefObject<HTMLAudioElement>
+    isMuted?: boolean
 }
 
 // URL: /session/<CREATE_OR_JOIN>/<SESSION_ID>
@@ -59,7 +60,6 @@ function LiveKodoSessionPage(props: any) {
     }, [])
 
     useEffect(() => {
-
         // Only if session is determined to be valid
         if (isValidSession) {
             // Give indication of success
@@ -72,6 +72,7 @@ function LiveKodoSessionPage(props: any) {
             // 2 - Connect this user to websocket signalling server + attach listeners
             conn = new WebSocket(`ws://capstone-kodo-webrtc.herokuapp.com/socket/${sessionDetails?.sessionId}`);
 
+            // 3 - Attach onmessage event listener to websocket connection
             conn.onmessage = function(msg) {
                 const content = JSON.parse(msg.data);
                 const data = content.data;
@@ -80,9 +81,12 @@ function LiveKodoSessionPage(props: any) {
 
                 switch (content.event) {
                     case "newConnection":
-                        const incomingPeerConn = setupNewPeerConn(incomingPeerId);
-                        console.log("NEW CONNECTION: CREATE OFFER")
-                        createOffer(incomingPeerConn);
+                        // Make sure not to add myself nor peers that I already have registered
+                        if (incomingPeerId.toString() !== myAccountId.toString() && !peerConns.has(incomingPeerId)) {
+                            const incomingPeerConn = setupNewPeerConn(incomingPeerId);
+                            console.log("NEW CONNECTION: CREATE OFFER")
+                            createOffer(incomingPeerConn);
+                        }
                         break;
                     case "offer":
                         if (!peerConns.has(incomingPeerId)) {
@@ -100,17 +104,20 @@ function LiveKodoSessionPage(props: any) {
                         break;
                     // when a remote peer sends an ice candidate to us
                     case "candidate":
-                        handleCandidate(incomingPeerId, data);
+                        if (incomingPeerId.toString() !== myAccountId.toString()) {
+                            handleCandidate(incomingPeerId, data);
+                        }
                         break;
                     case "exit":
                         handleExit(incomingPeerId);
                         break;
                     default:
-                        console.log("in default switch case")
+                        console.log("in default switch case", content.event)
                         break;
                 }
             };
 
+            // 4 - Attach onopen event listener to websocket connection
             conn.onopen = function() {
                 console.log("Connected to the signaling server");
                 send({ event : "newConnection" });
@@ -136,29 +143,6 @@ function LiveKodoSessionPage(props: any) {
             setFireEffect(false)
         }
     }, [fireEffect])
-
-    // Cleanup Callback. Propped into ActionsPanel to be called from there.
-    const handleMyExit = () => {
-
-        // Clean up local states
-        console.log("Closing my own websocket");
-        localStream.getTracks().forEach(track => track.stop());
-        send({ event : "exit" })
-        conn.close();
-
-        // To determine whether to send a hook to close session or not
-        if (peerConns.size === 0) {
-            console.log("No peers, ending session")
-            endSession(sessionDetails?.sessionId || sessionId).then(() => {
-                console.log("Session closed successfully")
-            })
-        } else {
-            console.log("there are still peer conns left. not ending whole session.")
-        }
-
-        props.history.push("/session")
-        props.callOpenSnackBar(`Exiting Kodo Session: ${sessionDetails?.sessionName}`, "success")
-    }
 
     const setupNewPeerConn = (newPeerId: number) => {
         // Create new peer connection
@@ -187,7 +171,7 @@ function LiveKodoSessionPage(props: any) {
             setFireEffect(true)
         };
 
-        // TODO
+        // TODO ("failed", "disconnected", "closed")
         // oniceconnectionstatechange = event => checkPeerDisconnect(event, peerUuid);
 
         const dataChannel = newPeerConn.createDataChannel("dataChannel");
@@ -199,7 +183,17 @@ function LiveKodoSessionPage(props: any) {
 
         // when we receive a message from the other peer, printing it on the console
         dataChannel.onmessage = function(event) {
-            console.log("datachannel onmessage IN JOINER SIDE:", event.data);
+            const dcMessage: KodoDataChannelMessage = JSON.parse(event.data)
+            console.log("datachannel onmessage IN JOINER SIDE:", dcMessage);
+            if (dcMessage.eventType === KodoSessionEventType.CALL) {
+                handleIncomingDataChannelCallEvent(dcMessage);
+            } else if (dcMessage.eventType === KodoSessionEventType.WHITEBOARD) {
+                // TODO: (probably wanna prop into stage > whiteboard component to handle)
+            } else if (dcMessage.eventType === KodoSessionEventType.EDITOR) {
+                // TODO: (probably wanna prop into stage > editor component to handle)
+            } else {
+                console.error("invalid eventType on datachannel message received");
+            }
         };
 
         dataChannel.onclose = function() {
@@ -219,10 +213,22 @@ function LiveKodoSessionPage(props: any) {
             newDataChannel.onmessage = function(event) {
                 console.log("dataChannel.onmessage IN CREATOR SIDE")
             }
-            setPeerConns(peerConns.set(newPeerId, { rtcPeerConnection: peerConns.get(newPeerId)?.rtcPeerConnection, rtcDataChannel: newDataChannel, audioRef: peerConns.get(newPeerId)?.audioRef, mediaStream:  peerConns.get(newPeerId)?.mediaStream }))
+            setPeerConns(peerConns.set(newPeerId, {
+                rtcPeerConnection: peerConns.get(newPeerId)?.rtcPeerConnection,
+                rtcDataChannel: newDataChannel,
+                audioRef: peerConns.get(newPeerId)?.audioRef,
+                mediaStream:  peerConns.get(newPeerId)?.mediaStream,
+                isMuted: peerConns.get(newPeerId)?.isMuted
+            }))
         };
 
-        setPeerConns(peerConns.set(newPeerId, { rtcPeerConnection: newPeerConn, rtcDataChannel: dataChannel, audioRef: createRef(), mediaStream: new MediaStream() }))
+        setPeerConns(peerConns.set(newPeerId, {
+            rtcPeerConnection: newPeerConn,
+            rtcDataChannel: dataChannel,
+            audioRef: createRef<HTMLAudioElement>(),
+            mediaStream: new MediaStream(),
+            isMuted: false
+        }))
 
         return newPeerConn
     }
@@ -264,7 +270,8 @@ function LiveKodoSessionPage(props: any) {
                     rtcPeerConnection: incomingPeerConn,
                     rtcDataChannel: peerConns.get(incomingPeerId)?.rtcDataChannel,
                     audioRef: peerConns.get(incomingPeerId)?.audioRef,
-                    mediaStream:  peerConns.get(incomingPeerId)?.mediaStream
+                    mediaStream:  peerConns.get(incomingPeerId)?.mediaStream,
+                    isMuted: peerConns.get(incomingPeerId)?.isMuted
                 }));
                 send({ event : "answer", data : answer, sendTo: incomingPeerId });
             } else {
@@ -277,11 +284,19 @@ function LiveKodoSessionPage(props: any) {
 
     };
 
-    function handleCandidate(incomingPeerId: number, candidate: any) {
+     const handleCandidate = (incomingPeerId: number, candidate: any) => {
         const incomingPeerConn = peerConns.get(incomingPeerId)?.rtcPeerConnection;
-        if (incomingPeerConn) {
+        if (incomingPeerConn && incomingPeerConn?.remoteDescription?.type) {
             incomingPeerConn?.addIceCandidate(new RTCIceCandidate(candidate));
-            setPeerConns(peerConns.set(incomingPeerId, { rtcPeerConnection: incomingPeerConn, rtcDataChannel: peerConns.get(incomingPeerId)?.rtcDataChannel, audioRef: peerConns.get(incomingPeerId)?.audioRef, mediaStream:  peerConns.get(incomingPeerId)?.mediaStream }));
+            setPeerConns(peerConns.set(incomingPeerId, { 
+                rtcPeerConnection: incomingPeerConn, 
+                rtcDataChannel: peerConns.get(incomingPeerId)?.rtcDataChannel, 
+                audioRef: peerConns.get(incomingPeerId)?.audioRef, 
+                mediaStream:  peerConns.get(incomingPeerId)?.mediaStream,
+                isMuted: peerConns.get(incomingPeerId)?.isMuted
+            }));
+        } else {
+            console.error("Not adding icecandidate before remote description is set for peerConn with peerId", incomingPeerId)
         }
     };
 
@@ -291,7 +306,13 @@ function LiveKodoSessionPage(props: any) {
         const incomingPeerConn = peerConns.get(incomingPeerId)?.rtcPeerConnection;
         if (incomingPeerConn) {
             await incomingPeerConn?.setRemoteDescription(new RTCSessionDescription(answer));
-            setPeerConns(peerConns.set(incomingPeerId, { rtcPeerConnection: incomingPeerConn, rtcDataChannel: peerConns.get(incomingPeerId)?.rtcDataChannel, audioRef: peerConns.get(incomingPeerId)?.audioRef, mediaStream:  peerConns.get(incomingPeerId)?.mediaStream }));
+            setPeerConns(peerConns.set(incomingPeerId, {
+                rtcPeerConnection: incomingPeerConn, rtcDataChannel:
+                peerConns.get(incomingPeerId)?.rtcDataChannel,
+                audioRef: peerConns.get(incomingPeerId)?.audioRef,
+                mediaStream:  peerConns.get(incomingPeerId)?.mediaStream,
+                isMuted: peerConns.get(incomingPeerId)?.isMuted
+            }));
         }
     };
 
@@ -312,33 +333,122 @@ function LiveKodoSessionPage(props: any) {
         conn.send(JSON.stringify(receivedMessage));
     }
 
+    /* * * * * * * * * * * * * * * * * * * * * * *
+     * [SENDING] Data channel message handling   *
+     * * * * * * * * * * * * * * * * * * * * * * */
+
     // Sending a message via datachannel
-    const sendMessage = (someInput: string) => {
-        console.log("in sendMessage (via datachannel) to all other peers")
+    const sendDataChannelMessage = (dcMessage: KodoDataChannelMessage) => {
+        console.log("in sendDataChannelMessage (via datachannel) to all other peers")
         peerConns.forEach((rtcInfo: RTCInfo) => {
             // Only send message to connections that are still connected
             if (rtcInfo.rtcPeerConnection?.connectionState === "connected") {
-                rtcInfo.rtcDataChannel?.send(someInput)
+                rtcInfo.rtcDataChannel?.send(JSON.stringify(dcMessage));
             }      
         })
+    }
+
+    const craftAndSendDcMessage = (sessionEvent: KodoSessionEvent, eventType: KodoSessionEventType) => {
+        const newDcMessage: KodoDataChannelMessage = {
+            peerId: myAccountId,
+            eventType: eventType,
+            event: sessionEvent
+        }
+        return sendDataChannelMessage(newDcMessage);
+    }
+
+    const craftAndSendCallEventMessage = (message?: string, isMuted?: boolean) => {
+        const newCallEvent: CallEvent = {
+            eventType: KodoSessionEventType.CALL,
+            message: message ? message : "",
+            isMuted: isMuted === undefined ? amIMuted : isMuted
+        }
+        return craftAndSendDcMessage(newCallEvent, KodoSessionEventType.CALL)
+    }
+
+    /* * * * * * * * * * * * * * * * * * * * * * *
+     * [RECEIVING] Data channel message handling   *
+     * * * * * * * * * * * * * * * * * * * * * * */
+
+    const handleIncomingDataChannelCallEvent = (dcMessage: KodoDataChannelMessage) => {
+        const incomingPeerId = dcMessage.peerId;
+        const callEvent: CallEvent = dcMessage.event; // typecasting
+
+        // Printing message
+        console.log(callEvent.message);
+
+        // Handling mute
+        setPeerConns(peerConns.set(incomingPeerId, {
+            rtcPeerConnection: peerConns.get(incomingPeerId)?.rtcPeerConnection,
+            rtcDataChannel: peerConns.get(incomingPeerId)?.rtcDataChannel,
+            audioRef: peerConns.get(incomingPeerId)?.audioRef,
+            mediaStream:  peerConns.get(incomingPeerId)?.mediaStream,
+            isMuted: callEvent.isMuted
+        }));
+    }
+
+    /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+     * Action callbacks (Propped into ActionsPanel to be called from there)  *
+     * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+    const handleMyMuteToggle = () => {
+        const newMuteState = !amIMuted;
+        setAmIMuted(newMuteState)
+        craftAndSendCallEventMessage("", newMuteState);
+    }
+
+    // Cleanup Callback.
+    const handleMyExit = () => {
+
+        // Clean up local states
+        console.log("Closing my own websocket");
+        localStream.getTracks().forEach(track => track.stop());
+        send({ event : "exit" })
+        conn.close();
+
+        // To determine whether to send a hook to close session or not
+        if (peerConns.size === 0) {
+            console.log("No peers, ending session")
+            endSession(sessionDetails?.sessionId || sessionId).then(() => {
+                console.log("Session closed successfully")
+            })
+        } else {
+            console.log("there are still peer conns left. not ending whole session.")
+        }
+
+        props.history.push("/session")
+        props.callOpenSnackBar(`Exiting Kodo Session: ${sessionDetails?.sessionName}`, "success")
     }
 
     return (
         <>
             { isValidSession &&
                 <LiveKodoSessionContainer>
-                    {Array.from(peerConns.values()).map((pcRtcInfo: RTCInfo) => (
-                        <audio ref={pcRtcInfo.audioRef} autoPlay/>
+                    { Array.from(peerConns.values()).map((pcRtcInfo: RTCInfo) => (
+                        <audio key={pcRtcInfo.mediaStream?.id} ref={pcRtcInfo.audioRef} autoPlay />
                     ))}
                     <TopSessionBar>
                         <strong>{sessionDetails?.sessionName} ({sessionDetails?.sessionId}) · Time_Elapsed</strong>
                     </TopSessionBar>
-                    <Button onClick={() => send({event: null, data: "helloWord"})}>SEND</Button>
-                    <Button onClick={() => sendMessage(`hello from ${myAccountId}`)}>SEND VIA DATACHANNEL</Button>
+                    <Button to="#" onClick={() => send({event: null, data: "helloWord"})}>SEND</Button>
+                    <Button to="#" onClick={() => craftAndSendCallEventMessage(`hello from ${myAccountId}`)}>SEND VIA DATACHANNEL</Button>
                     <MainSessionWrapper>
-                        <ParticipantsPanel myAccountId={myAccountId} peerConns={peerConns}/>
-                        <Stage peerConns={peerConns} dataChannelConnected={dataChannelConnected}/>
-                        <ActionsPanel sessionId={sessionId} callOpenSnackBar={props.callOpenSnackBar} handleMyExit={handleMyExit} amIMuted={amIMuted} setAmIMuted={setAmIMuted}/>
+                        <ParticipantsPanel
+                            myAccountId={myAccountId}
+                            amIMuted={amIMuted}
+                            peerConns={peerConns}
+                        />
+                        <Stage
+                            peerConns={peerConns}
+                            dataChannelConnected={dataChannelConnected}
+                        />
+                        <ActionsPanel 
+                            sessionId={sessionId} 
+                            callOpenSnackBar={props.callOpenSnackBar} 
+                            handleMyExit={handleMyExit} 
+                            amIMuted={amIMuted}
+                            handleMyMuteToggle={handleMyMuteToggle}
+                        />
                     </MainSessionWrapper>
                 </LiveKodoSessionContainer>
             }

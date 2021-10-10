@@ -1,4 +1,5 @@
-import { Badge } from "@material-ui/core";
+import React from 'react'
+import { Badge, Tooltip } from "@material-ui/core";
 import KodoAvatar from "../../../../components/KodoAvatar/KodoAvatar";
 import { fontSizes } from "../../../../values/FontSizes";
 import MicIcon from '@material-ui/icons/Mic';
@@ -16,7 +17,9 @@ function ParticipantItem (props: any) {
                 <KodoAvatar small="true" name={props.participant.name} displayPictureURL={props.participant.displayPictureUrl}/>
             </Badge>
             <br/>
-            <span style={{ fontSize: fontSizes.SUBTEXT }}>{props.participant.name}</span>
+            <Tooltip title={<i>@{props.participant.username}</i>} placement="right" arrow>
+                <span style={{ fontSize: fontSizes.SUBTEXT }}>{props.participant.name}</span>
+            </Tooltip>
         </>
     )
     

@@ -6,7 +6,7 @@ import ParticipantItem from './ParticipantItem';
 import { Grid } from '@material-ui/core';
 
 function ParticipantsPanel(props: any) {
-    
+
     const [participants, setParticipants] = useState<StrippedDownAccount[]>([]);
 
     useEffect(() => {
@@ -16,7 +16,7 @@ function ParticipantsPanel(props: any) {
             setParticipants(accs)
         })
     }, [props.peerConns.size, props.myAccountId])
-    
+
     const isParticipantSpeaking = (accountId: number) => {
         
         if (isParticipantMuted(accountId)) {
@@ -41,7 +41,7 @@ function ParticipantsPanel(props: any) {
     }
 
     const isParticipantMuted = (accountId: number) => {
-        return props.peerConns.get(accountId)?.isMuted
+        return accountId === props.myAccountId ? props.amIMuted : props.peerConns.get(accountId)?.isMuted
     }
 
     return (
@@ -49,9 +49,14 @@ function ParticipantsPanel(props: any) {
             <strong>Participants</strong>
             <br/>
             <Grid container direction="column" spacing={2} style={{ alignItems: "center"}}>
-                { participants.map((participant: StrippedDownAccount) => (
-                    <Grid item key={participant.accountId} >
-                        <ParticipantItem participant={participant} isMuted={participant.accountId === props.myAccountId ? props.amIMuted : isParticipantMuted(participant.accountId)} isSpeaking={isParticipantSpeaking(participant.accountId)}/>
+                { participants.map((participant: StrippedDownAccount, index: number) => (
+                    <Grid item key={index} >
+                        <ParticipantItem
+                            key={participant.accountId}
+                            participant={participant}
+                            isMuted={isParticipantMuted(participant.accountId)}
+                            isSpeaking={isParticipantSpeaking(participant.accountId)}
+                        />
                     </Grid>
                 ))}
             </Grid>

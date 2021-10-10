@@ -19,27 +19,27 @@ function ActionsPanel(props: any) {
         props.handleMyExit(); // call parent exit method
     }
 
-    const handleMute = () => {
-        props.setAmIMuted(!props.amIMuted)
+    const handleMuteToggle = () => {
+        props.handleMyMuteToggle(); // call parent toggle method
     }
 
     return (
         <ActionsPanelContainer>
             <strong>Actions</strong>
             <br/>
-            <ActionItem>
+            <ActionItem id="copy-action">
                 <IconButton aria-label="copy-join-link" color="primary" onClick={copyJoinLinkToClipboard}>
                     <FileCopyIcon />
                 </IconButton>
                 <span style={{ textAlign: "center", color: "blue" }}>Copy Join Link</span>
             </ActionItem>
-            <ActionItem>
-                <IconButton aria-label={props.amIMuted ? "unmute" : "mute" } color="primary" onClick={handleMute}>
-                    {props.amIMuted ? <MicOffIcon/> : <MicIcon/>}
+            <ActionItem id="mute-unmute-action">
+                <IconButton aria-label="mute-unmute"  color="primary" onClick={handleMuteToggle}>
+                    {props.amIMuted ? <MicOffIcon /> : <MicIcon/>}
                 </IconButton>
-                <span style={{ textAlign: "center", color: "blue" }}>Mute</span>
+                <span style={{ textAlign: "center", color: "blue" }}>{props.amIMuted ? "Unmute" : "Mute"}</span>
             </ActionItem>
-            <ActionItem>
+            <ActionItem id="exit-action">
                 <IconButton aria-label="exit-to-session-page" color="secondary" onClick={navigateToSessionPage}>
                     <ExitToAppIcon/>
                 </IconButton>
