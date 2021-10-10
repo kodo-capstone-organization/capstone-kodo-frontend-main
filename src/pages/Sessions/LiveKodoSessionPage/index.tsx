@@ -154,9 +154,8 @@ function LiveKodoSessionPage(props: any) {
         newPeerConn.ontrack = function(event) {
             console.log('AUDIO / VIDEO STREAM RECEIVED:', event.track, event.streams[0]);
 
-            localStream.addTrack(event.track)
             //@ts-ignore
-            remoteAudioRef.current.srcObject = localStream
+            remoteAudioRef.current.srcObject = event.streams[0]
         };
 
         // TODO
