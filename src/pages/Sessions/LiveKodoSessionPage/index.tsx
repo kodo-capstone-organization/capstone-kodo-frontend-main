@@ -19,9 +19,10 @@ const rtcConfiguration: RTCConfiguration = {
 };
 
 interface RTCInfo {
-    rtcPeerConnection?: RTCPeerConnection,
+    rtcPeerConnection?: RTCPeerConnection
     rtcDataChannel?: RTCDataChannel
     mediaStream?: MediaStream
+    audioRef?: any
 }
 
 // URL: /session/<CREATE_OR_JOIN>/<SESSION_ID>
@@ -35,6 +36,19 @@ function LiveKodoSessionPage(props: any) {
     const [dataChannelConnected, setDataChannelConnected] = useState<boolean>(false);
     const [peerConns, setPeerConns] = useState<Map<number, RTCInfo>>(new Map());
     const [amIMuted, setAmIMuted] = useState<boolean>(false);
+    const [fireEffect, setFireEffect] = useState<boolean>(false);
+
+    useEffect(() => {
+        if (fireEffect) {
+            let newPeerConns = new Map(peerConns)
+            Array.from(peerConns.keys()).forEach((peerId: number) => {
+                //@ts-ignore
+                peerConns.get(peerId).audioRef.current.srcObject = peerConns.get(peerId)?.mediaStream
+            })
+            setPeerConns(newPeerConns)
+            setFireEffect(false)
+        }
+    }, [fireEffect])
 
     useEffect(() => {
         getSessionBySessionId(props.match.params.sessionId, myAccountId)
@@ -155,7 +169,11 @@ function LiveKodoSessionPage(props: any) {
         newPeerConn.ontrack = function(event) {
             console.log('AUDIO / VIDEO STREAM RECEIVED:', event.track, event.streams[0]);
 
-            setPeerConns(peerConns.set(newPeerId, { rtcPeerConnection: peerConns.get(newPeerId)?.rtcPeerConnection, rtcDataChannel: peerConns.get(newPeerId)?.rtcDataChannel, mediaStream: event.streams[0] }))
+            const newAudioRef = peerConns.get(newPeerId)?.audioRef
+
+            setPeerConns(peerConns.set(newPeerId, { rtcPeerConnection: peerConns.get(newPeerId)?.rtcPeerConnection, rtcDataChannel: peerConns.get(newPeerId)?.rtcDataChannel, audioRef: newAudioRef, mediaStream: event.streams[0] }))  
+
+            setFireEffect(true)
         };
 
         // TODO
@@ -190,10 +208,10 @@ function LiveKodoSessionPage(props: any) {
             newDataChannel.onmessage = function(event) {
                 console.log("dataChannel.onmessage IN CREATOR SIDE")
             }
-            setPeerConns(peerConns.set(newPeerId, { rtcPeerConnection: peerConns.get(newPeerId)?.rtcPeerConnection, rtcDataChannel: newDataChannel, mediaStream: peerConns.get(newPeerId)?.mediaStream }))
+            setPeerConns(peerConns.set(newPeerId, { rtcPeerConnection: peerConns.get(newPeerId)?.rtcPeerConnection, rtcDataChannel: newDataChannel, audioRef: peerConns.get(newPeerId)?.audioRef, mediaStream:  peerConns.get(newPeerId)?.mediaStream }))
         };
 
-        setPeerConns(peerConns.set(newPeerId, { rtcPeerConnection: newPeerConn, rtcDataChannel: dataChannel, mediaStream: new MediaStream() }))
+        setPeerConns(peerConns.set(newPeerId, { rtcPeerConnection: newPeerConn, rtcDataChannel: dataChannel, audioRef: createRef(), mediaStream: new MediaStream() }))
 
         return newPeerConn
     }
@@ -232,7 +250,7 @@ function LiveKodoSessionPage(props: any) {
                 // Create answer to offer
                 const answer = await incomingPeerConn.createAnswer(answerOptions);
                 await incomingPeerConn.setLocalDescription(answer);
-                setPeerConns(peerConns.set(incomingPeerId, { rtcPeerConnection: incomingPeerConn, rtcDataChannel: peerConns.get(incomingPeerId)?.rtcDataChannel, mediaStream: peerConns.get(incomingPeerId)?.mediaStream }));
+                setPeerConns(peerConns.set(incomingPeerId, { rtcPeerConnection: incomingPeerConn, rtcDataChannel: peerConns.get(incomingPeerId)?.rtcDataChannel, audioRef: peerConns.get(incomingPeerId)?.audioRef, mediaStream:  peerConns.get(incomingPeerId)?.mediaStream }));
                 send({ event : "answer", data : answer, sendTo: incomingPeerId });
             } else {
                 console.error("unable to find peer conn with id", incomingPeerId);
@@ -248,7 +266,7 @@ function LiveKodoSessionPage(props: any) {
         const incomingPeerConn = peerConns.get(incomingPeerId)?.rtcPeerConnection;
         if (incomingPeerConn) {
             incomingPeerConn?.addIceCandidate(new RTCIceCandidate(candidate));
-            setPeerConns(peerConns.set(incomingPeerId, { rtcPeerConnection: incomingPeerConn, rtcDataChannel: peerConns.get(incomingPeerId)?.rtcDataChannel, mediaStream: peerConns.get(incomingPeerId)?.mediaStream }));
+            setPeerConns(peerConns.set(incomingPeerId, { rtcPeerConnection: incomingPeerConn, rtcDataChannel: peerConns.get(incomingPeerId)?.rtcDataChannel, audioRef: peerConns.get(incomingPeerId)?.audioRef, mediaStream:  peerConns.get(incomingPeerId)?.mediaStream }));
         }
     };
 
@@ -258,7 +276,7 @@ function LiveKodoSessionPage(props: any) {
         const incomingPeerConn = peerConns.get(incomingPeerId)?.rtcPeerConnection;
         if (incomingPeerConn) {
             await incomingPeerConn?.setRemoteDescription(new RTCSessionDescription(answer));
-            setPeerConns(peerConns.set(incomingPeerId, { rtcPeerConnection: incomingPeerConn, rtcDataChannel: peerConns.get(incomingPeerId)?.rtcDataChannel, mediaStream: peerConns.get(incomingPeerId)?.mediaStream }));
+            setPeerConns(peerConns.set(incomingPeerId, { rtcPeerConnection: incomingPeerConn, rtcDataChannel: peerConns.get(incomingPeerId)?.rtcDataChannel, audioRef: peerConns.get(incomingPeerId)?.audioRef, mediaStream:  peerConns.get(incomingPeerId)?.mediaStream }));
         }
     };
 
@@ -294,12 +312,9 @@ function LiveKodoSessionPage(props: any) {
         <>
             { isValidSession &&
                 <LiveKodoSessionContainer>
-                    {Array.from(peerConns.values()).map((rtcInfo: RTCInfo) => { 
-                        console.log("my ms", localStream)
-                        console.log("ms", rtcInfo.mediaStream);
-                        console.log("ms audio tracks", rtcInfo.mediaStream?.getAudioTracks());
+                    {Array.from(peerConns.keys()).map((peerId: number) => { 
                         return ( 
-                            <audio ref={(audio: HTMLAudioElement) => audio.srcObject = rtcInfo.mediaStream || null } autoPlay/> 
+                            <audio ref={peerConns.get(peerId)?.audioRef} autoPlay/> 
                         )
                     })}
                     <TopSessionBar><strong>{sessionDetails?.sessionName} ({sessionDetails?.sessionId}) ·
