@@ -34,11 +34,9 @@ export interface CallEvent extends KodoSessionEvent {
 }
 
 export interface WhiteboardEvent extends KodoSessionEvent {
-    eventType: KodoSessionEventType.WHITEBOARD
     // TODO
 }
 
 export interface EditorEvent extends KodoSessionEvent {
-    eventType: KodoSessionEventType.EDITOR,
     // TODO
 }
