@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react";
 import { withRouter } from "react-router";
-import { getCourseByCourseId } from "../../../apis/Course/CourseApis";
-import { getLessonByLessonId } from "../../../apis/Lesson/LessonApis";
 import { getMultimediaByMultimediaId } from "../../../apis/Multimedia/MultimediaApis";
 import { getEnrolledContentByAccountIdAndContentId } from "../../../apis/EnrolledContent/EnrolledContentApis"
 import { Multimedia } from "../../../apis/Entities/Multimedia";
@@ -55,19 +53,12 @@ function MultimediaViewer(props: any) {
   const [currentCourse, setCourse] = useState<Course>();
   const [currentEnrolledContent, setEnrolledContent] = useState<EnrolledContent>();
 
-
   let history = useHistory();
 
   useEffect(() => {
     getMultimediaByMultimediaId(contentId).then(receivedMultimedia => {
       setMultimedia(receivedMultimedia);
     });
-    // getLessonByLessonId(lessonId).then(receivedLesson => {
-    //   setLesson(receivedLesson);
-    // });
-    // getCourseByCourseId(courseId).then(receivedCourse => {
-    //   setCourse(receivedCourse);
-    // });
     getEnrolledContentByAccountIdAndContentId(accountId, contentId).then(receivedContent => {
       setEnrolledContent(receivedContent);
     })
@@ -78,7 +69,6 @@ function MultimediaViewer(props: any) {
       setCourse(enrolledCourse.parentCourse);
     })
   }, [enrolledCourseId, enrolledLessonId, contentId]);
-
 
   function getUrlForDocument() {
     return `https://docs.google.com/gview?url=https://storage.googleapis.com/capstone-kodo-bucket/${currentMultimedia?.urlFilename}&embedded=true`
