@@ -39,7 +39,7 @@ function LiveKodoSessionPage(props: any) {
     const [fireEffect, setFireEffect] = useState<boolean>(false);
 
     useEffect(() => {
-        if (fireEffect) {
+        if (fireEffect && isValidSession) {
             let newPeerConns = new Map(peerConns)
             Array.from(peerConns.keys()).forEach((peerId: number) => {
                 //@ts-ignore
