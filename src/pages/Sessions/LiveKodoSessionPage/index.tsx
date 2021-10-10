@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, createRef, useState } from 'react'
+import React, { useEffect, useRef, createRef, useState, RefObject } from 'react'
 import { InvitedSessionResp } from '../../../apis/Entities/Session';
 import { endSession, getSessionBySessionId } from '../../../apis/Session/SessionApis';
 import { Button } from '../../../values/ButtonElements';
@@ -22,7 +22,7 @@ interface RTCInfo {
     rtcPeerConnection?: RTCPeerConnection
     rtcDataChannel?: RTCDataChannel
     mediaStream?: MediaStream
-    audioRef?: any
+    audioRef?: RefObject<HTMLAudioElement>
 }
 
 // URL: /session/<CREATE_OR_JOIN>/<SESSION_ID>
@@ -37,18 +37,6 @@ function LiveKodoSessionPage(props: any) {
     const [peerConns, setPeerConns] = useState<Map<number, RTCInfo>>(new Map());
     const [amIMuted, setAmIMuted] = useState<boolean>(false);
     const [fireEffect, setFireEffect] = useState<boolean>(false);
-
-    useEffect(() => {
-        if (fireEffect && isValidSession) {
-            let newPeerConns = new Map(peerConns)
-            Array.from(peerConns.keys()).forEach((peerId: number) => {
-                //@ts-ignore
-                peerConns.get(peerId).audioRef.current.srcObject = peerConns.get(peerId)?.mediaStream
-            })
-            setPeerConns(newPeerConns)
-            setFireEffect(false)
-        }
-    }, [fireEffect])
 
     useEffect(() => {
         getSessionBySessionId(props.match.params.sessionId, myAccountId)
@@ -130,13 +118,35 @@ function LiveKodoSessionPage(props: any) {
         }
     }, [isValidSession])
 
+    // Our secret weapon </3
+    useEffect(() => {
+        if (fireEffect && isValidSession) {
+            // Make a copy of peerConns
+            let newPeerConns = new Map(peerConns)
+
+            // Set all peer conn's srcObject
+            for (let pcRtcInfo of Array.from(newPeerConns.values())) {
+                if (pcRtcInfo?.audioRef?.current && pcRtcInfo.mediaStream ) {
+                    pcRtcInfo.audioRef.current.srcObject = pcRtcInfo.mediaStream
+                }
+            }
+
+            // Update PeerConns
+            setPeerConns(newPeerConns)
+            setFireEffect(false)
+        }
+    }, [fireEffect])
+
     // Cleanup Callback. Propped into ActionsPanel to be called from there.
     const handleMyExit = () => {
+
+        // Clean up local states
         console.log("Closing my own websocket");
         localStream.getTracks().forEach(track => track.stop());
         send({ event : "exit" })
         conn.close();
 
+        // To determine whether to send a hook to close session or not
         if (peerConns.size === 0) {
             console.log("No peers, ending session")
             endSession(sessionDetails?.sessionId || sessionId).then(() => {
@@ -165,14 +175,15 @@ function LiveKodoSessionPage(props: any) {
             }
         };
 
-        // Peer conn ontrack event (to add remote streams to audio object)
+        // Peer conn ontrack event (Fires when a peer adds their local stream to the shared peerconn)
         newPeerConn.ontrack = function(event) {
             console.log('AUDIO / VIDEO STREAM RECEIVED:', event.track, event.streams[0]);
-
-            const newAudioRef = peerConns.get(newPeerId)?.audioRef
-
-            setPeerConns(peerConns.set(newPeerId, { rtcPeerConnection: peerConns.get(newPeerId)?.rtcPeerConnection, rtcDataChannel: peerConns.get(newPeerId)?.rtcDataChannel, audioRef: newAudioRef, mediaStream: event.streams[0] }))  
-
+            setPeerConns(peerConns.set(newPeerId, {
+                rtcPeerConnection: peerConns.get(newPeerId)?.rtcPeerConnection,
+                rtcDataChannel: peerConns.get(newPeerId)?.rtcDataChannel,
+                audioRef: peerConns.get(newPeerId)?.audioRef,
+                mediaStream: event.streams[0] // Updating this
+            }))
             setFireEffect(true)
         };
 
@@ -244,13 +255,17 @@ function LiveKodoSessionPage(props: any) {
         const incomingPeerConn = peerConns.get(incomingPeerId)?.rtcPeerConnection;
 
         try {
-
             if (incomingPeerConn) {
                 await incomingPeerConn.setRemoteDescription(new RTCSessionDescription(offer));
                 // Create answer to offer
                 const answer = await incomingPeerConn.createAnswer(answerOptions);
                 await incomingPeerConn.setLocalDescription(answer);
-                setPeerConns(peerConns.set(incomingPeerId, { rtcPeerConnection: incomingPeerConn, rtcDataChannel: peerConns.get(incomingPeerId)?.rtcDataChannel, audioRef: peerConns.get(incomingPeerId)?.audioRef, mediaStream:  peerConns.get(incomingPeerId)?.mediaStream }));
+                await setPeerConns(peerConns.set(incomingPeerId, {
+                    rtcPeerConnection: incomingPeerConn,
+                    rtcDataChannel: peerConns.get(incomingPeerId)?.rtcDataChannel,
+                    audioRef: peerConns.get(incomingPeerId)?.audioRef,
+                    mediaStream:  peerConns.get(incomingPeerId)?.mediaStream
+                }));
                 send({ event : "answer", data : answer, sendTo: incomingPeerId });
             } else {
                 console.error("unable to find peer conn with id", incomingPeerId);
@@ -312,13 +327,12 @@ function LiveKodoSessionPage(props: any) {
         <>
             { isValidSession &&
                 <LiveKodoSessionContainer>
-                    {Array.from(peerConns.keys()).map((peerId: number) => { 
-                        return ( 
-                            <audio ref={peerConns.get(peerId)?.audioRef} autoPlay/> 
-                        )
-                    })}
-                    <TopSessionBar><strong>{sessionDetails?.sessionName} ({sessionDetails?.sessionId}) ·
-                        Time_Elapsed</strong></TopSessionBar>
+                    {Array.from(peerConns.values()).map((pcRtcInfo: RTCInfo) => (
+                        <audio ref={pcRtcInfo.audioRef} autoPlay/>
+                    ))}
+                    <TopSessionBar>
+                        <strong>{sessionDetails?.sessionName} ({sessionDetails?.sessionId}) · Time_Elapsed</strong>
+                    </TopSessionBar>
                     <Button onClick={() => send({event: null, data: "helloWord"})}>SEND</Button>
                     <Button onClick={() => sendMessage(`hello from ${myAccountId}`)}>SEND VIA DATACHANNEL</Button>
                     <MainSessionWrapper>
