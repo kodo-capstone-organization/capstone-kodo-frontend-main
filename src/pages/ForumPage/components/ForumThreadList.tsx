@@ -27,8 +27,8 @@ import ForumThreadModal from './ForumThreadModal';
 
 
 function ForumThreadList(props: any) {
-
-    const [courseId, setCourseId] = useState<number>();
+    const courseId = props.currentCourseId;
+    const categoryId = props.currentForumCategoryId;
     const [forumCategory, setForumCategory] = useState<ForumCategory>();
     const [forumThreads, setForumThreads] = useState<ForumThread[]>([]);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);   
@@ -42,23 +42,22 @@ function ForumThreadList(props: any) {
     useEffect(() => {
         setLoading(true);
         console.log("start loading")
-        if (props.currentForumCategoryId != undefined) {
-            getForumCategoryByForumCategoryId(props.currentForumCategoryId).then((res) => {
+        if (categoryId !== undefined) {
+            getForumCategoryByForumCategoryId(categoryId).then((res) => {
                 console.log(res);
                 setForumCategory(res);    
             }).catch((err) => {
                 props.onCallSnackbar({ message: "Failure here", type: "error" })
             })
-            getAllForumThreadsByForumCategoryId(props.currentForumCategoryId).then((res) => {
+            getAllForumThreadsByForumCategoryId(categoryId).then((res) => {
                 console.log(res);
-                setForumThreads(res);    
-                setLoading(false);
+                setForumThreads(res);
+                setLoading(false);    
             }).catch((err) => {
                 props.onCallSnackbar({ message: "Failure here", type: "error" })
             })            
         }
-        setCourseId(props.currentCourseId);
-    }, [props.currentForumCategoryId]);
+    }, [props, courseId, categoryId]);
 
     const handleCallSnackbar = (snackbarObject: any) => {
         if (forumCategory !== undefined)
