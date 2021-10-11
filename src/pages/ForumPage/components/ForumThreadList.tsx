@@ -2,38 +2,45 @@ import { useEffect, useState } from 'react';
 
 import ForumIcon from '@material-ui/icons/Forum';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
+import SortByAlphaIcon from '@material-ui/icons/SortByAlpha';
 import DeleteIcon from '@material-ui/icons/Delete';
 import {
-    IconButton, Typography, Link, Menu, 
-    MenuItem, ListItemIcon, CircularProgress
+    IconButton, Typography, Link, Menu,
+    MenuItem, ListItemIcon, CircularProgress, OutlinedInput
 } from '@material-ui/core';
 
 import { ForumCategory } from '../../../apis/Entities/ForumCategory';
 import { ForumThread } from '../../../apis/Entities/ForumThread';
+import { Course } from '../../../apis/Entities/Course';
 
-import { 
-    getForumCategoryWithForumThreadsOnlyByForumCategoryId as getForumCategoryByForumCategoryId, 
+import {
+    getForumCategoryWithForumThreadsOnlyByForumCategoryId as getForumCategoryByForumCategoryId,
     getAllForumThreadsByForumCategoryId,
-    deleteForumThread 
+    deleteForumThread
 } from "../../../apis/Forum/ForumApis";
 
 import {
-    ForumCardHeader, ForumCard, ForumThreadCard, 
+    ForumCardHeader, ForumCard, ForumThreadCard,
     ForumThreadCardContent, EmptyStateContainer,
-    ForumAvatar, ForumButton
+    ForumAvatar, ForumButton, ForumTextField
 } from "../ForumElements";
 
 import ForumThreadModal from './ForumThreadModal';
+import { getCourseByCourseId } from '../../../apis/Course/CourseApis';
 
 
 function ForumThreadList(props: any) {
 
     const [courseId, setCourseId] = useState<number>();
+    const [course, setCourse] = useState<Course>();
     const [forumCategory, setForumCategory] = useState<ForumCategory>();
     const [forumThreads, setForumThreads] = useState<ForumThread[]>([]);
-    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);   
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [menuInfo, setMenuInfo] = useState<any>();
     const [loading, setLoading] = useState<boolean>();
+    const [sortAlphabet, setSortAlphabet] = useState<boolean>(true);
+    const [searchValue, setSearchValue] = useState<string>("");
+
 
     const loggedInAccountId = JSON.parse(window.sessionStorage.getItem("loggedInAccountId") || "{}");
 
@@ -41,28 +48,30 @@ function ForumThreadList(props: any) {
 
     useEffect(() => {
         setLoading(true);
-        console.log("start loading")
         if (props.currentForumCategoryId != undefined) {
+            console.log('props here in thread list');
             getForumCategoryByForumCategoryId(props.currentForumCategoryId).then((res) => {
-                console.log(res);
-                setForumCategory(res);    
+                setForumCategory(res);
             }).catch((err) => {
                 props.onCallSnackbar({ message: "Failure here", type: "error" })
             })
             getAllForumThreadsByForumCategoryId(props.currentForumCategoryId).then((res) => {
-                console.log(res);
-                setForumThreads(res);    
+                setForumThreads(res);
                 setLoading(false);
             }).catch((err) => {
                 props.onCallSnackbar({ message: "Failure here", type: "error" })
-            })            
+            })
         }
         setCourseId(props.currentCourseId);
+        getCourseByCourseId(props.currentCourseId).then((res) => {
+            setCourse(res);
+        }).catch((err) => {
+            props.onCallSnackbar({ message: "Failure here", type: "error" })
+        })
     }, [props.currentForumCategoryId]);
 
     const handleCallSnackbar = (snackbarObject: any) => {
-        if (forumCategory !== undefined)
-        {
+        if (forumCategory !== undefined) {
             if (snackbarObject.type === "success") {
                 getForumCategoryByForumCategoryId(forumCategory.forumCategoryId).then((res) => {
                     setForumCategory(res);
@@ -77,8 +86,7 @@ function ForumThreadList(props: any) {
     }
 
     const navigateToThread = (forumThreadId: number) => {
-        if (forumCategory !== undefined)
-        {
+        if (forumCategory !== undefined) {
             props.history.push(`/forum/${courseId}/category/${forumCategory.forumCategoryId}/thread/${forumThreadId}`);
         }
     }
@@ -89,24 +97,43 @@ function ForumThreadList(props: any) {
     }
 
     const sortAtoZ = () => {
-        const sorted = forumThreads
-            .sort((a, b) => a.name.localeCompare(b.name));
-        setForumThreads(sorted);
+        if (sortAlphabet) {
+            const sorted = forumThreads
+                .sort((a, b) => a.name.localeCompare(b.name));
+            setForumThreads(sorted);
+        } else {
+            const sorted = forumThreads
+                .sort((a, b) => b.name.localeCompare(a.name));
+            setForumThreads(sorted);
+        }
+        setSortAlphabet(!sortAlphabet);
     }
 
-    const sortZtoA = () => {
-        const sorted = forumThreads
-            .sort((a, b) => b.name.localeCompare(a.name));
-        setForumThreads(sorted);
+    const filterByNameDescAuthor = (search: string) => {
+        search = search.toLowerCase();
+        if (search != "") {
+            const sorted = forumThreads
+                .filter((thread) => thread.name.toLowerCase().includes(search) 
+                || thread.description.toLowerCase().includes(search) 
+                || thread.account.name.toLowerCase().includes(search));
+            setForumThreads(sorted);
+        } else {
+            getAllForumThreadsByForumCategoryId(props.currentForumCategoryId).then((res) => {
+                setForumThreads(res);
+            }).catch((err) => {
+                props.onCallSnackbar({ message: "Failure here", type: "error" })
+            })
+        }
+        setSearchValue(search);
     }
 
-    const sortOldestFirst = () => {
+    const sortNewestFirst = () => {
         const sorted = forumThreads
             .sort((a, b) => new Date(b.timeStamp).getTime() - new Date(a.timeStamp).getTime());
         setForumThreads(sorted);
     }
 
-    const sortNewestFirst = () => {
+    const sortOldestFirst = () => {
         const sorted = forumThreads
             .sort((a, b) => new Date(a.timeStamp).getTime() - new Date(b.timeStamp).getTime());
         setForumThreads(sorted);
@@ -123,8 +150,8 @@ function ForumThreadList(props: any) {
     };
 
     const handleDeleteThread = () => {
-        if (forumCategory !== undefined) {        
-            if (menuInfo.accountId === loggedInAccountId) {
+        if (forumCategory !== undefined) {
+            if (menuInfo.accountId === loggedInAccountId || course?.tutor.accountId === loggedInAccountId) {
                 deleteForumThread(menuInfo.forumThreadId)
                     .then((res) => {
                         props.onCallSnackbar({ message: "Thread Deleted Successfully", type: "success" })
@@ -147,6 +174,8 @@ function ForumThreadList(props: any) {
     const mapThreads = (forumThreads: ForumThread[]) => {
         return (
             <div>
+                <ForumTextField placeholder="Search By Name, Description, Author..." id="mytextfield" value={searchValue} variant="outlined"
+                    onChange={(e) => filterByNameDescAuthor(e.target.value)}  style={{width:"500px"}}/>
                 {forumThreads.map(function (thread, threadId) {
                     return (
                         <>
@@ -159,7 +188,7 @@ function ForumThreadList(props: any) {
                                 </Typography>
                                 <Typography variant="body1" component="div" style={{ marginRight: "auto" }}>
                                     {thread.forumPosts.length} Replies
-                                <ForumIcon />
+                                    <ForumIcon />
                                 </Typography>
                                 <div>
                                     <IconButton
@@ -183,7 +212,7 @@ function ForumThreadList(props: any) {
                                         <MenuItem>
                                             <ListItemIcon onClick={handleDeleteThread}>
                                                 <DeleteIcon /> Delete
-                                        </ListItemIcon>
+                                            </ListItemIcon>
                                         </MenuItem>
                                     </Menu>
                                 </div>
@@ -204,8 +233,7 @@ function ForumThreadList(props: any) {
                         title="Loading ..."
                         action={
                             <>
-                                <ForumButton onClick={sortAtoZ}>Sort A to Z</ForumButton>
-                                <ForumButton onClick={sortZtoA}>Sort Z to A</ForumButton>
+                                <ForumButton onClick={sortAtoZ}><SortByAlphaIcon /></ForumButton>
                                 <ForumButton onClick={sortOldestFirst}>Sort Old to New</ForumButton>
                                 <ForumButton onClick={sortNewestFirst}>Sort New to Old</ForumButton>
                                 <ForumThreadModal modalType={"CREATE"} courseId={props.courseId} forumCategory={forumCategory} onForumThreadChange={handleCallSnackbar} />
@@ -228,8 +256,7 @@ function ForumThreadList(props: any) {
                         title={forumCategory.name}
                         action={
                             <>
-                                <ForumButton onClick={sortAtoZ}>Sort A to Z</ForumButton>
-                                <ForumButton onClick={sortZtoA}>Sort Z to A</ForumButton>
+                                <ForumButton onClick={sortAtoZ}><SortByAlphaIcon /></ForumButton>
                                 <ForumButton onClick={sortOldestFirst}>Sort Old to New</ForumButton>
                                 <ForumButton onClick={sortNewestFirst}>Sort New to Old</ForumButton>
                                 <ForumThreadModal modalType={"CREATE"} courseId={props.courseId} forumCategory={forumCategory} onForumThreadChange={handleCallSnackbar} />

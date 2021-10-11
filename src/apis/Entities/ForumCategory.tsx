@@ -2,7 +2,7 @@ import { Course } from "./Course";
 import { ForumThread } from "./ForumThread";
 
 export interface ForumCategory {
-    forumCategoryId: number,
+    forumCategoryId: (number | null),
     name: string,
     description: string,
     forumThreads: ForumThread[],

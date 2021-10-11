@@ -3,20 +3,19 @@ import { httpClient } from "../HttpClient/HttpClient";
 import { EnrolledContent } from "../Entities/EnrolledContent";
 import { transformToBlob } from "./../../utils/BlobCreator";
 
-export async function setDateTimeOfCompletionOfEnrolledContentByAccountIdAndContentId(complete: boolean, accountId: number, contentId: number): Promise<EnrolledContent> {
+export async function setDateTimeOfCompletionOfEnrolledContentByEnrolledContentId(complete: boolean, enrolledContentId: number): Promise<EnrolledContent> {
 
     const formData = new FormData();
 
     let completeMultimediaReq = {
         complete: complete,
-        accountId: accountId,
-        contentId: contentId
+        enrolledContentId: enrolledContentId
     }
 
     formData.append('completeMultimediaReq', transformToBlob(completeMultimediaReq));
 
     const postParameters: IHttpClientRequestParameters<FormData> = {
-        url: `/enrolledContent/setDateTimeOfCompletionOfEnrolledContentByAccountIdAndContentId/`,
+        url: `/enrolledContent/setDateTimeOfCompletionOfEnrolledContentByEnrolledContentId/`,
         payload: formData
     }
 
@@ -28,12 +27,5 @@ export async function getEnrolledContentByEnrolledContentId(enrolledContentId: n
         url: `/enrolledContent/getEnrolledContentByEnrolledContentId/${enrolledContentId}`
     }
 
-    return httpClient.get<undefined, EnrolledContent>(getParameters)
-}
-
-export async function getEnrolledContentByAccountIdAndContentId(accountId: number, contentId: number): Promise<EnrolledContent> {
-    const getParameters: IHttpClientRequestParameters<undefined> = {
-        url: `/enrolledContent/getEnrolledContentByAccountIdAndContentId/${accountId}/${contentId}`
-    }
     return httpClient.get<undefined, EnrolledContent>(getParameters)
 }

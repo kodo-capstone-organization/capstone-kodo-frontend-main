@@ -20,6 +20,7 @@ import {
     LessonViewerCardElement, 
     LessonViewerContentElement,
     LessonViewerHeaderElement, 
+    LessonViewerLine,
     LessonViewerProgress,
 } from "../LessonViewerElements";
 
@@ -109,11 +110,10 @@ function LessonViewerHeader(props: any) {
                     <LessonViewerHeaderElement title="Lesson Overview"/>
                     <LessonViewerContentElement>
                         <LessonTitle>Week {lesson?.sequence}</LessonTitle>
-                        <br/>
-                        <CourseTitle>{course?.name}</CourseTitle>                        
-                        { lesson.description }
-                        <br/>
-                        <br/>
+                        <CourseTitle>{course?.name}</CourseTitle>      
+                        <LessonViewerLine/>
+                        { lesson.description }                        
+                        <LessonViewerLine/>
                         { showLessonProgress() }
                     </LessonViewerContentElement>
                 </LessonViewerCardElement>

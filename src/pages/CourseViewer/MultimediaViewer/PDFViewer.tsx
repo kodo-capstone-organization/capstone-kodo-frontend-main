@@ -1,6 +1,10 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Document, Page } from "react-pdf";
 import { Button } from "../../../values/ButtonElements";
+
+import {
+    MultimediaActionButtonWrapper,
+  } from "./MultimediaViewerElements";
 
 function PDFViewer(props: any) {
 
@@ -40,12 +44,16 @@ function PDFViewer(props: any) {
                 Page {pageNumber || (numPages ? 1 : "--")} of {numPages || "--"}
             </p>
             <div style={{ display: 'flex', flexDirection: 'row'}}>
-                <Button disabled={pageNumber <= 1} onClick={previousPage}>
-                    Previous
-                </Button>
-                <Button disabled={pageNumber >= numPages!} onClick={nextPage}>
-                    Next
-                </Button>
+                <MultimediaActionButtonWrapper>
+                    <Button disabled={pageNumber <= 1} onClick={previousPage}>
+                        Previous
+                    </Button>
+                </MultimediaActionButtonWrapper>
+                <MultimediaActionButtonWrapper>
+                    <Button disabled={pageNumber >= numPages!} onClick={nextPage}>
+                        Next
+                    </Button>
+                </MultimediaActionButtonWrapper>
             </div>
         </>
     );

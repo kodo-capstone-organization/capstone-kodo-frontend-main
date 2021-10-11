@@ -37,6 +37,7 @@ function ForumPage(props: any) {
             getForumCategoryByForumCategoryId(props.match.params.forumCategoryId)
             .then((res) => {
                 setCurrentForumCategory(res);
+                console.log("getForumCategoryByForumCategoryId", typeof res);
             }).catch((err) => {
                 handleCallSnackbar({message: err.response.data.message, type:"error"});
             });
@@ -49,7 +50,6 @@ function ForumPage(props: any) {
                 handleCallSnackbar({message: err.response.data.message, type:"error"});
             });
         }
-
     }, [props.match.params]);
 
     // To update isIndexPage
@@ -97,22 +97,21 @@ function ForumPage(props: any) {
             {isIndexPage && 
             <ForumCategoryList history={history} 
             onCallSnackbar={handleCallSnackbar} 
-            currentCourseId={currentCourseId} />
+            currentCourseId={props.match.params.courseId} />
             }
 
             {
             !isIndexPage && history.location.pathname.includes("category") && !history.location.pathname.includes("thread") && 
             <ForumThreadList history={history} 
             onCallSnackbar={handleCallSnackbar} 
-            currentCourseId={currentCourseId} currentForumCategoryId={currentForumCategory?.forumCategoryId} 
-            // onHandleUpdateCurrentForumThread={handleUpdateCurrentForumThread}
+            currentCourseId={props.match.params.courseId} currentForumCategoryId={props.match.params.forumCategoryId} 
             />
             }
 
             {
             !isIndexPage && history.location.pathname.includes("thread") && 
             <ForumPostList history={history} 
-            currentCourseId={currentCourseId} currentForumCategoryId={currentForumCategory?.forumCategoryId} currentForumThreadId={currentForumThread?.forumThreadId} 
+            currentCourseId={props.match.params.courseId} currentForumCategoryId={props.match.params.forumCategoryId} currentForumThreadId={props.match.params.forumThreadId} 
             onCallSnackbar={handleCallSnackbar} />
             }
 

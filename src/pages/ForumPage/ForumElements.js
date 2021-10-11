@@ -6,7 +6,8 @@ import {
     Card, 
     CardContent,
     CardHeader, 
-    Avatar
+    Avatar,
+    OutlinedInput
 } from "@material-ui/core";
 
 import { fontSizes } from "../../values/FontSizes";
@@ -136,8 +137,32 @@ export const ForumButton = styled(Button)`
     margin: 10px;
 `
 
+export const ForumTextField = styled(OutlinedInput)`
+    margin: 10px;
+    width: 500px;
+`
+
 export const ScrollLink = styled(Link)`
     text-decoration: underline;
     color: #3f51b5;
     cursor: pointer;
+`;
+
+export const ForumPostReplyCard = styled(Card)`
+    width: 1000px;
+    border-radius : 10px;
+    padding: 10px;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+`;
+
+export const ForumPostReplyCardContent = styled(CardContent)`
+    display: flex;
+    flex-direction: flex;
+    flex-wrap: wrap;
+    background-color: ${colours.WHITE};
+    color: ${colours.GRAY2};
+    padding: 2rem !important;
+    padding: ${({ removePadTop }) => (removePadTop ? "0 2rem 2rem 2rem !important" : "2rem !important")};
 `;

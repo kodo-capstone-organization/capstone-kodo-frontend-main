@@ -64,7 +64,7 @@ function LessonViewerMultimedia(props: any) {
                             key={multimedia.contentId} 
                             isCompleted={ isCompleted(enrolledContent) }
                             previousCompleted={ props.previousLessonCompleted() }
-                            to={`/overview/lesson/${enrolledCourseId}/${enrolledLessonId}/${multimedia.contentId}`}
+                            to={`/overview/lesson/${enrolledCourseId}/${enrolledLessonId}/${enrolledContent.enrolledContentId}`}
                         >
                             { showContentLink(multimedia) }
                             { showCompleted(enrolledContent) }
