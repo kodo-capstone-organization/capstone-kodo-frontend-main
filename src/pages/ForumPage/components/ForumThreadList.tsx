@@ -11,6 +11,7 @@ import {
 
 import { ForumCategory } from '../../../apis/Entities/ForumCategory';
 import { ForumThread } from '../../../apis/Entities/ForumThread';
+import { Course } from '../../../apis/Entities/Course';
 
 import {
     getForumCategoryWithForumThreadsOnlyByForumCategoryId as getForumCategoryByForumCategoryId,
@@ -25,11 +26,13 @@ import {
 } from "../ForumElements";
 
 import ForumThreadModal from './ForumThreadModal';
+import { getCourseByCourseId } from '../../../apis/Course/CourseApis';
 
 
 function ForumThreadList(props: any) {
 
     const [courseId, setCourseId] = useState<number>();
+    const [course, setCourse] = useState<Course>();
     const [forumCategory, setForumCategory] = useState<ForumCategory>();
     const [forumThreads, setForumThreads] = useState<ForumThread[]>([]);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -60,6 +63,11 @@ function ForumThreadList(props: any) {
             })
         }
         setCourseId(props.currentCourseId);
+        getCourseByCourseId(props.currentCourseId).then((res) => {
+            setCourse(res);
+        }).catch((err) => {
+            props.onCallSnackbar({ message: "Failure here", type: "error" })
+        })
     }, [props.currentForumCategoryId]);
 
     const handleCallSnackbar = (snackbarObject: any) => {
@@ -105,7 +113,9 @@ function ForumThreadList(props: any) {
         search = search.toLowerCase();
         if (search != "") {
             const sorted = forumThreads
-                .filter((thread) => thread.name.toLowerCase().includes(search) || thread.description.toLowerCase().includes(search) || thread.account.name.toLowerCase().includes(search));
+                .filter((thread) => thread.name.toLowerCase().includes(search) 
+                || thread.description.toLowerCase().includes(search) 
+                || thread.account.name.toLowerCase().includes(search));
             setForumThreads(sorted);
         } else {
             getAllForumThreadsByForumCategoryId(props.currentForumCategoryId).then((res) => {
@@ -141,7 +151,7 @@ function ForumThreadList(props: any) {
 
     const handleDeleteThread = () => {
         if (forumCategory !== undefined) {
-            if (menuInfo.accountId === loggedInAccountId) {
+            if (menuInfo.accountId === loggedInAccountId || course?.tutor.accountId === loggedInAccountId) {
                 deleteForumThread(menuInfo.forumThreadId)
                     .then((res) => {
                         props.onCallSnackbar({ message: "Thread Deleted Successfully", type: "success" })

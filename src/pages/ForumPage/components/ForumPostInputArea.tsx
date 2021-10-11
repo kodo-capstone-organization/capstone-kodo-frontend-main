@@ -22,7 +22,9 @@ import { ForumPost, CreateNewForumPostReq, CreateNewForumPostReplyReq } from '..
 import { ForumThread } from '../../../apis/Entities/ForumThread';
 import { createNewForumPost, createNewForumPostReply, deleteForumThread, deleteForumPost } from "../../../apis/Forum/ForumApis";
 import { Account } from "../../../apis/Entities/Account";
+import { Course } from "../../../apis/Entities/Course";
 import { getMyAccount } from "../../../apis/Account/AccountApis";
+import { getCourseByCourseId } from '../../../apis/Course/CourseApis';
 
 
 
@@ -34,6 +36,7 @@ function ForumPostInputArea(props: any) {
     const [childForumPosts, setChildForumPosts] = useState<ForumPost[]>([]);
     const [currentForumCategoryId, setCurrentForumCategoryId] = useState<number>();
     const [courseId, setCourseId] = useState<number>();
+    const [course, setCourse] = useState<Course>();
     const [postType, setPostType] = useState<string>();
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [myAccount, setMyAccount] = useState<Account>();
@@ -51,6 +54,11 @@ function ForumPostInputArea(props: any) {
         setPostType(props.postType);
         setCurrentForumCategoryId(props.currentForumCategoryId);
         setCourseId(props.courseId);
+        getCourseByCourseId(props.courseId).then((res) => {
+            setCourse(res);
+        }).catch((err) => {
+            console.log("Failed", err);
+        });
         getMyAccount(loggedInAccountId).then((res) => {
             setMyAccount(res);
         }).catch((err) => {
@@ -117,7 +125,7 @@ function ForumPostInputArea(props: any) {
     }
 
     const handleDeletePost = () => {
-        if (postType === "POST" && forumThread.account.accountId === loggedInAccountId) {
+        if (postType === "POST" && forumThread.account.accountId === loggedInAccountId || course?.tutor.accountId === loggedInAccountId) {
             //deleting a thread
             props.history.push(`/forum/${courseId}/category/${currentForumCategoryId}`);
             deleteForumThread(forumThread.forumThreadId)
@@ -137,6 +145,7 @@ function ForumPostInputArea(props: any) {
         } else {
             props.onForumPostChange({ message: "You are not the author of this thread/post.", type: "error" });
         }
+        handleCancel();
     }
 
     const handleDeleteReply = (forumPost: ForumPost) => {
