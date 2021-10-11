@@ -7,15 +7,16 @@ import { Grid } from '@material-ui/core';
 
 function ParticipantsPanel(props: any) {
 
+    const [peerConns, setPeerConns] = useState(props.peerConns)
     const [participants, setParticipants] = useState<StrippedDownAccount[]>([]);
 
     useEffect(() => {
-        let ids: number[] = Array.from(props.peerConns.keys());
+        let ids: number[] = Array.from(peerConns.keys());
         ids.unshift(props.myAccountId); // append my own id to the start of the array
         getSomeAccountsStrippedDown(ids).then((accs: StrippedDownAccount[]) => {
             setParticipants(accs)
         })
-    }, [props.peerConns.size, props.myAccountId])
+    }, [peerConns.size, props.myAccountId])
 
     const isParticipantSpeaking = (accountId: number) => {
         
@@ -41,7 +42,7 @@ function ParticipantsPanel(props: any) {
     }
 
     const isParticipantMuted = (accountId: number) => {
-        return accountId === props.myAccountId ? props.amIMuted : props.peerConns.get(accountId)?.isMuted
+        return accountId === props.myAccountId ? props.amIMuted : peerConns.get(accountId)?.isMuted
     }
 
     return (

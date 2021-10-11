@@ -38,6 +38,7 @@ function LiveKodoSessionPage(props: any) {
     const [peerConns, setPeerConns] = useState<Map<number, RTCInfo>>(new Map());
     const [amIMuted, setAmIMuted] = useState<boolean>(false);
     const [fireEffect, setFireEffect] = useState<boolean>(false);
+    const [updateParticipantsStatus, setUpdateParticipantsStatus] = useState<boolean>(false);
 
     useEffect(() => {
         getSessionBySessionId(props.match.params.sessionId, myAccountId)
@@ -143,6 +144,16 @@ function LiveKodoSessionPage(props: any) {
             setFireEffect(false)
         }
     }, [fireEffect])
+
+    // Added a useEffect for immediate update of peerConns state once any participants updates their speaking status
+    // Should be used if there's a need for an immediate update of participants info, e.g. mic or speaking status
+    useEffect(() => {
+        console.log("Firing useEffect")
+        if (updateParticipantsStatus) {
+            setPeerConns(peerConns)
+            setUpdateParticipantsStatus(false)
+        }
+    }, [updateParticipantsStatus])
 
     const setupNewPeerConn = (newPeerId: number) => {
         // Create new peer connection
@@ -385,6 +396,8 @@ function LiveKodoSessionPage(props: any) {
             mediaStream:  peerConns.get(incomingPeerId)?.mediaStream,
             isMuted: callEvent.isMuted
         }));
+
+        setUpdateParticipantsStatus(true)
     }
 
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
