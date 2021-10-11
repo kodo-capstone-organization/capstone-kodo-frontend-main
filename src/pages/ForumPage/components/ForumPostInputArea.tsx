@@ -192,8 +192,8 @@ function ForumPostInputArea(props: any) {
                     {
                         postType === "REPLY" &&
                         <>
-                            <IconButton onClick={handleSeeReplies} style={{ width: "fit-content", marginInlineStart: "auto", fontSize: "unset" }}>
-                                <QuestionAnswerIcon /> See Replies
+                            <IconButton disabled={childForumPosts.length < 1} onClick={handleSeeReplies} style={{ width: "fit-content", marginInlineStart: "auto", fontSize: "unset" }}>
+                                <QuestionAnswerIcon /> {childForumPosts.length} Replies
                             </IconButton>
                             <IconButton onClick={handleMakeReply} style={{ width: "fit-content", fontSize: "unset" }}>
                                 <ReplyIcon /> Reply
@@ -218,7 +218,7 @@ function ForumPostInputArea(props: any) {
             {
                 isOpen && postType === "VIEW" &&
                 <>
-                    <div style={{margin:"20px 0px 0px 20px"}}>
+                    <div style={{ margin: "20px 0px 0px 20px" }}>
                         Replies
                     </div>
                     <div style={{ marginLeft: "auto", display: "flex", flexDirection: "column" }}>
