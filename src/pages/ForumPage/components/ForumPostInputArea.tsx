@@ -144,12 +144,12 @@ function ForumPostInputArea(props: any) {
     const handleSeeReplies = () => {
         setPostType("VIEW");
         handleOpen();
-        console.log("see replies");
+        console.log("handleSeeReplies");
     }
 
     const handleMakeReply = () => {
         handleOpen();
-        console.log("see replies");
+        console.log("handleMakeReply");
     }
 
     // const handleSeeLess = () => {
@@ -237,6 +237,8 @@ function ForumPostInputArea(props: any) {
                     <ForumPostCardContent>
                         <ForumAvatar alt="Remy Sharp" src={myAccount.displayPictureUrl} />
                         <Typography variant="body1" component="div" style={{ marginLeft: "20px" }}>
+                            RE: {parentForumPost !=undefined ? parentForumPost.message : forumThread?.name}
+                            <br/>
                             Posting as {myAccount.name}
                         </Typography>
                         <div id="textarea" style={{ margin: "20px", width: "100%" }}>
