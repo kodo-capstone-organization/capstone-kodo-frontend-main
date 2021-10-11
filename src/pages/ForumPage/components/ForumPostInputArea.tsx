@@ -4,14 +4,19 @@ import {
     IconButton,
     TextField,
     Avatar,
-    Typography
+    Typography,
+    Divider
 } from "@material-ui/core";
 import {
     ForumPostCardContent,
-    ForumAvatar
+    ForumAvatar,
+    ForumPostCard,
+    ForumPostReplyCard,
+    ForumPostReplyCardContent
 } from "../ForumElements";
 import ReplyIcon from '@material-ui/icons/Reply';
 import DeleteIcon from '@material-ui/icons/Delete';
+import QuestionAnswerIcon from "@material-ui/icons/QuestionAnswer";
 import { Button } from "../../../values/ButtonElements";
 import { ForumPost, CreateNewForumPostReq, CreateNewForumPostReplyReq } from '../../../apis/Entities/ForumPost';
 import { ForumThread } from '../../../apis/Entities/ForumThread';
@@ -26,11 +31,13 @@ function ForumPostInputArea(props: any) {
     const [message, setMessage] = useState<string>("");
     const [forumThread, setForumThread] = useState<ForumThread>();
     const [parentForumPost, setParentForumPost] = useState<ForumPost>();
+    const [childForumPosts, setChildForumPosts] = useState<ForumPost[]>([]);
     const [currentForumCategoryId, setCurrentForumCategoryId] = useState<number>();
     const [courseId, setCourseId] = useState<number>();
     const [postType, setPostType] = useState<string>();
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [myAccount, setMyAccount] = useState<Account>();
+    const [seeLess, setSeeLess] = useState<boolean>(false);
     const loggedInAccountId = parseInt(window.sessionStorage.getItem("loggedInAccountId"));
 
 
@@ -38,6 +45,9 @@ function ForumPostInputArea(props: any) {
     useEffect(() => {
         setForumThread(props.forumThread);
         setParentForumPost(props.forumPost);
+        if (props.forumPost != undefined) {
+            setChildForumPosts(props.forumPost?.replies);
+        }
         setPostType(props.postType);
         setCurrentForumCategoryId(props.currentForumCategoryId);
         setCourseId(props.courseId);
@@ -48,6 +58,10 @@ function ForumPostInputArea(props: any) {
         });
     }, [props]);
 
+    useEffect(() => {
+        console.log("postType", postType);
+    }, [postType]);
+
     const handleOpen = () => {
         setIsOpen(true);
     }
@@ -55,6 +69,11 @@ function ForumPostInputArea(props: any) {
     const handleCancel = () => {
         setMessage("");
         setIsOpen(false);
+    }
+
+    const formatDate = (date: Date) => {
+        var d = new Date(date);
+        return d.toDateString() + ', ' + d.toLocaleTimeString();
     }
 
     const handleCreateConfirm = () => {
@@ -72,7 +91,7 @@ function ForumPostInputArea(props: any) {
                 }).catch((err) => {
                     props.onForumPostChange({ message: err.response.data.message, type: "error" });
                 });
-        } else if (postType === "REPLY") {
+        } else if (postType === "REPLY" || postType === "VIEW") {
             const newForumPostReply: ForumPost = {
                 forumPostId: null,
                 message,
@@ -121,6 +140,47 @@ function ForumPostInputArea(props: any) {
         handleCancel();
     }
 
+    const handleSeeReplies = () => {
+        setPostType("VIEW");
+        handleOpen();
+        console.log("see replies");
+    }
+
+    const handleMakeReply = () => {
+        handleOpen();
+        console.log("see replies");
+    }
+
+    const handleSeeLess = () => {
+        setSeeLess(!seeLess);
+    }
+
+    const mapReplies = (forumPosts: ForumPost[]) => {
+        return (
+            <div>
+                {forumPosts.map(function (post, postId) {
+                    return (
+                        <>
+                            <ForumPostReplyCard key={postId} name={post.forumPostId} elevation={0} variant="outlined">
+                                <ForumPostReplyCardContent>
+                                    <ForumAvatar alt="Remy Sharp" src={post.account.displayPictureUrl} />
+                                    <Typography variant="body1" component="div" style={{ marginLeft: "20px" }}>
+                                        Posted By {post.account.name} on {formatDate(post.timeStamp)}
+                                    </Typography>
+                                </ForumPostReplyCardContent>
+                                <Divider />
+                                <ForumPostReplyCardContent>
+                                    <Typography variant="body1" component="div" style={{ marginLeft: "20px" }}>
+                                        {post.message}
+                                    </Typography>
+                                </ForumPostReplyCardContent>
+                            </ForumPostReplyCard>
+                        </>
+                    );
+                })}
+            </div>
+        );
+    }
 
 
     return (
@@ -128,16 +188,48 @@ function ForumPostInputArea(props: any) {
             {
                 !isOpen &&
                 <div style={{ display: "flex" }}>
-                    <IconButton onClick={handleOpen} style={{ width: "fit-content", marginInlineStart: "auto", fontSize: "unset" }}>
-                        <ReplyIcon /> Reply
-                </IconButton>
+                    {
+                        postType === "REPLY" &&
+                        <>
+                            <IconButton onClick={handleSeeReplies} style={{ width: "fit-content", marginInlineStart: "auto", fontSize: "unset" }}>
+                                <QuestionAnswerIcon /> See Replies
+                            </IconButton>
+                            <IconButton onClick={handleMakeReply} style={{ width: "fit-content", fontSize: "unset" }}>
+                                <ReplyIcon /> Reply
+                            </IconButton>
+                        </>
+                    }
+                    {
+                        postType === "POST" &&
+                        <>
+                            <IconButton onClick={handleMakeReply} style={{ width: "fit-content", marginInlineStart: "auto", fontSize: "unset" }}>
+                                <ReplyIcon /> Reply
+                            </IconButton>
+                        </>
+                    }
                     <IconButton onClick={handleDeletePost} style={{ width: "fit-content", fontSize: "unset" }}>
                         <DeleteIcon /> Delete
-
-                </IconButton>
+                    </IconButton>
                 </div>
             }
 
+            {/* For viewing replies */}
+            {
+                isOpen && postType === "VIEW" &&
+                <>
+                    <div style={{margin:"20px 0px 0px 20px"}}>
+                        Replies
+                    </div>
+                    <div style={{ marginLeft: "auto", display: "flex", flexDirection: "column" }}>
+                        <ForumPostCardContent>
+                            {mapReplies(childForumPosts)}
+                        </ForumPostCardContent>
+                    </div>
+                </>
+            }
+
+
+            {/* For creating replies */}
             {
                 isOpen && myAccount != undefined &&
                 <>
@@ -165,6 +257,7 @@ function ForumPostInputArea(props: any) {
                 </>
 
             }
+
         </>
     )
 }

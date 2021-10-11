@@ -41,18 +41,16 @@ function ForumThreadList(props: any) {
 
     useEffect(() => {
         setLoading(true);
-        console.log("start loading")
         if (props.currentForumCategoryId != undefined) {
+            console.log('props here in thread list');
             getForumCategoryByForumCategoryId(props.currentForumCategoryId).then((res) => {
-                console.log(res);
                 setForumCategory(res);    
             }).catch((err) => {
                 props.onCallSnackbar({ message: "Failure here", type: "error" })
             })
             getAllForumThreadsByForumCategoryId(props.currentForumCategoryId).then((res) => {
-                console.log(res);
-                setForumThreads(res);    
-                setLoading(false);
+                setForumThreads(res);
+                setLoading(false);    
             }).catch((err) => {
                 props.onCallSnackbar({ message: "Failure here", type: "error" })
             })            
@@ -196,30 +194,30 @@ function ForumThreadList(props: any) {
     }
 
 
-    if (loading) {
-        return (
-            <ForumCard>
-                {
-                    < ForumCardHeader
-                        title="Loading ..."
-                        action={
-                            <>
-                                <ForumButton onClick={sortAtoZ}>Sort A to Z</ForumButton>
-                                <ForumButton onClick={sortZtoA}>Sort Z to A</ForumButton>
-                                <ForumButton onClick={sortOldestFirst}>Sort Old to New</ForumButton>
-                                <ForumButton onClick={sortNewestFirst}>Sort New to Old</ForumButton>
-                                <ForumThreadModal modalType={"CREATE"} courseId={props.courseId} forumCategory={forumCategory} onForumThreadChange={handleCallSnackbar} />
-                            </>
-                        }
-                    />
-                }
+    // if (loading) {
+    //     return (
+    //         <ForumCard>
+    //             {
+    //                 < ForumCardHeader
+    //                     title="Loading ..."
+    //                     action={
+    //                         <>
+    //                             <ForumButton onClick={sortAtoZ}>Sort A to Z</ForumButton>
+    //                             <ForumButton onClick={sortZtoA}>Sort Z to A</ForumButton>
+    //                             <ForumButton onClick={sortOldestFirst}>Sort Old to New</ForumButton>
+    //                             <ForumButton onClick={sortNewestFirst}>Sort New to Old</ForumButton>
+    //                             <ForumThreadModal modalType={"CREATE"} courseId={props.courseId} forumCategory={forumCategory} onForumThreadChange={handleCallSnackbar} />
+    //                         </>
+    //                     }
+    //                 />
+    //             }
 
-                <ForumThreadCardContent>
-                    <CircularProgress />
-                </ForumThreadCardContent>
-            </ForumCard>
-        );
-    } else {
+    //             <ForumThreadCardContent>
+    //                 <CircularProgress />
+    //             </ForumThreadCardContent>
+    //         </ForumCard>
+    //     );
+    // } else {
         return (
             <ForumCard>
                 {
@@ -247,7 +245,7 @@ function ForumThreadList(props: any) {
                 </ForumThreadCardContent>
             </ForumCard>
         );
-    }
+    // }
 
 }
 
