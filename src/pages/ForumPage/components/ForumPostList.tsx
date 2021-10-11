@@ -7,17 +7,18 @@ import {
 import { ForumThread } from '../../../apis/Entities/ForumThread';
 import { ForumPost } from '../../../apis/Entities/ForumPost';
 
-import { 
-    getForumThreadByForumThreadId, 
-    getAllForumPostsOfAForumThread 
+import {
+    getForumThreadByForumThreadId,
+    getAllForumPostsByForumThreadId
 } from "../../../apis/Forum/ForumApis";
 
 import {
-    ForumCardHeader, ForumCardContent, ForumCard, ForumPostCard, 
+    ForumCardHeader, ForumCardContent, ForumCard, ForumPostCard,
     ForumPostCardContent, ForumAvatar, ScrollLink
-} from "../ForumElements"; 
+} from "../ForumElements";
 
 import ForumPostInputArea from './ForumPostInputArea';
+import ForumPostReplyList from "./ForumPostReplyList";
 
 
 function ForumPostList(props: any) {
@@ -28,9 +29,6 @@ function ForumPostList(props: any) {
     const [currentForumThreadId, setCurrentForumThreadId] = useState<number>();
     const [currentForumCategoryId, setCurrentForumCategoryId] = useState<number>();
     const [loading, setLoading] = useState<boolean>();
-
-
-    // const [selectedQuestions, setSelectedQuestions] = useState<any>([]);
 
     useEffect(() => {
         setLoading(true);
@@ -43,7 +41,7 @@ function ForumPostList(props: any) {
             }).catch((err) => {
                 props.onCallSnackbar({ message: "Failure", type: "error" })
             });
-            getAllForumPostsOfAForumThread(props.currentForumThreadId).then((res) => {
+            getAllForumPostsByForumThreadId(props.currentForumThreadId).then((res) => {
                 console.log(res);
                 setForumPosts(res);
                 setLoading(false);
@@ -54,16 +52,17 @@ function ForumPostList(props: any) {
     }, [props.currentForumCategoryId, props.currentForumThreadId, props.courseId]);
 
     const handleCallSnackbar = (snackbarObject: any) => {
-        if (forumThread !== undefined)
-        {
+        if (forumThread !== undefined) {
             if (snackbarObject.type === "success") {
-                getAllForumPostsOfAForumThread(forumThread.forumThreadId).then((res) => {
+                getAllForumPostsByForumThreadId(forumThread.forumThreadId).then((res) => {
                     setForumPosts(res);
                 }).catch((err) => {
                     props.onCallSnackbar({ message: "Failure", type: "error" })
                 });
             }
             props.onCallSnackbar(snackbarObject);
+        } else {
+            props.onCallSnackbar({ message: "Forum Post Failed", type: "error" });
         }
     }
 
@@ -72,11 +71,11 @@ function ForumPostList(props: any) {
         return d.toDateString() + ', ' + d.toLocaleTimeString();
     }
 
-    const handleOnSetActive = (msg : string) =>{
+    const handleOnSetActive = (msg: string) => {
         console.log("handleOnSetActive", msg);
     }
 
-    const handleOnSetInactive = (msg : string) =>{
+    const handleOnSetInactive = (msg: string) => {
         console.log("handleOnSetInactive", msg);
     }
 
@@ -87,19 +86,15 @@ function ForumPostList(props: any) {
                     return (
                         <>
                             <ForumPostCard key={postId} name={post.forumPostId}>
-                                { forumThread !== undefined &&
-                                <ForumPostCardContent>
-                                    <ForumAvatar alt="Remy Sharp" src={post.account.displayPictureUrl} />
-                                    <Typography variant="body1" component="div" style={{ marginLeft: "20px" }}>                                    
-                                    <ScrollLink 
-                                        to={post.parentForumPost != null ? post.parentForumPost.forumPostId : "parentThread"} 
-                                        offset={-50} onSetActive={() => handleOnSetActive(post.message)} activeClass="true"
-                                        onSetInactive={()=>handleOnSetInactive(post.message)} spy={true}
-                                        smooth={true}>RE: {post.parentForumPost != null ? post.parentForumPost.message : forumThread.name}</ScrollLink>
-                                        <br />
-                                        Posted By {post.account.name} on {formatDate(post.timeStamp)}
-                                    </Typography>
-                                </ForumPostCardContent>
+                                {forumThread !== undefined &&
+                                    <ForumPostCardContent>
+                                        <ForumAvatar alt="Remy Sharp" src={post.account.displayPictureUrl} />
+                                        <Typography variant="body1" component="div" style={{ marginLeft: "20px" }}>
+                                            RE: {forumThread.name}
+                                            <br />
+                                            Posted By {post.account.name} on {formatDate(post.timeStamp)}
+                                        </Typography>
+                                    </ForumPostCardContent>
                                 }
                                 <Divider />
                                 <ForumPostCardContent>
@@ -150,7 +145,7 @@ function ForumPostList(props: any) {
                                 <Typography variant="body1" component="div" style={{ marginLeft: "20px" }}>
                                     {forumThread.name}
                                     <br />
-                                Posted By {forumThread.account.name} on {formatDate(forumThread.timeStamp)}
+                                    Posted By {forumThread.account.name} on {formatDate(forumThread.timeStamp)}
                                 </Typography>
                             </ForumPostCardContent>
                             <Divider />
@@ -165,11 +160,9 @@ function ForumPostList(props: any) {
                     }
                 </ForumCardContent>
 
-                <ForumCardContent>
-                    <body id="replies">
-                        Replies
-                    </body>
-                </ForumCardContent>
+                <body id="replies" style={{marginLeft:"350px"}}>
+                    Replies
+                </body>
 
                 <ForumCardContent>
 
