@@ -9,23 +9,7 @@ import PDFViewer from "./PDFViewer";
 import ReactPlayer from "react-player";
 
 import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
-
-import {
-  CourseTitle,
-  DocumentCard,
-  ExitWrapper,
-  ImageCard,
-  LessonTitle,
-  MultimediaCard,
-  MultimediaContainer,
-  MultimediaDescription,
-  MultimediaHeader,
-  MultimediaName,
-  PDFCard,
-  PageHeading,
-  PageHeadingAndButton,
-  VideoCard,
-} from "./MultimediaViewerElements";
+import Tooltip from '@material-ui/core/Tooltip';
 
 import { Course } from "../../../apis/Entities/Course";
 import { EnrolledContent } from "../../../apis/Entities/EnrolledContent";
@@ -36,6 +20,27 @@ import { getEnrolledContentByEnrolledContentId } from "../../../apis/EnrolledCon
 import { getEnrolledCourseByEnrolledCourseId } from "../../../apis/EnrolledCourse/EnrolledCourseApis";
 import { getEnrolledLessonByEnrolledLessonId } from "../../../apis/EnrolledLesson/EnrolledLessonApis";
 import { setDateTimeOfCompletionOfEnrolledContentByEnrolledContentId } from "../../../apis/EnrolledContent/EnrolledContentApis";
+
+import {
+  CourseTitle,
+  DocumentCard,
+  ExitLink,
+  ExitWrapper,
+  ImageCard,
+  LessonTitle,
+  MultimediaActionButtonWrapper,
+  MultimediaActionWrapper,
+  MultimediaDescription,
+  MultimediaName,
+  MultimediaViewerCardElement,
+  MultimediaViewerContainerElement,
+  MultimediaViewerContentElement,
+  MultimediaViewerHeaderElement,
+  MultimediaViewerInnerContainerElement,
+  MultimediaViewerLine,
+  PDFCard,
+  VideoCard,
+} from "./MultimediaViewerElements";
 
 import { colours } from "../../../values/Colours";
 import { Button } from "../../../values/ButtonElements";
@@ -82,69 +87,123 @@ function MultimediaViewer(props: any) {
       .catch(err => props.callOpenSnackBar(err.response.data.message, "error"))
   }
 
-  return (
-    <>
-      <MultimediaContainer>
-        <PageHeadingAndButton>
-          <PageHeading>
-            <LessonTitle>Week {currentLesson?.sequence}</LessonTitle>
-            <CourseTitle>{currentCourse?.name}</CourseTitle>
-          </PageHeading>
-          <ExitWrapper to={`/overview/lesson/${enrolledCourseId}/${enrolledLessonId}`}>
-            <CancelOutlinedIcon fontSize="large" style={{ color: colours.BLUE2, padding: 20 }} />
-          </ExitWrapper>
-        </PageHeadingAndButton>
-        <MultimediaCard>
-          <MultimediaHeader>Multimedia Overview</MultimediaHeader>
-          <MultimediaName> <strong>Name: </strong> {currentMultimedia?.name}</MultimediaName>
-          <MultimediaDescription> <strong>Description: </strong> <p style={{ whiteSpace: 'pre'}}>{currentMultimedia?.description}</p></MultimediaDescription>
-        </MultimediaCard>
+  const showBackToLessonOverviewIcon = () => {
+    return (
+      <ExitWrapper>
+          <ExitLink to={`/overview/lesson/${enrolledCourseId}/${enrolledLessonId}`}>
+              <Tooltip title={<div style={{ fontSize: "1.5em", padding: "2px" }}>Back to Lesson Overview</div>}>
+                  <CancelOutlinedIcon fontSize="large" style={{ color: colours.BLUE2, padding: 20 }} />
+              </Tooltip>
+          </ExitLink>
+      </ExitWrapper>
+    );
+  }
 
-        <div id="action-row" style={{ display: "flex", flexDirection: "row", justifyContent: "flex-end" }}>
+  const showLessonOverview = () => {
+    return (
+      <>
+        { currentLesson !== undefined &&
+          currentCourse !== undefined &&
+          currentEnrolledContent !== undefined &&
+            <MultimediaViewerCardElement>
+                <MultimediaViewerHeaderElement title="Lesson Overview"/>
+                <MultimediaViewerContentElement>
+                    <LessonTitle>Week {currentLesson.sequence}</LessonTitle>
+                    <CourseTitle>{currentCourse.name}</CourseTitle>
+                    <MultimediaViewerLine/>
+                    { currentLesson.description }    
+                </MultimediaViewerContentElement>
+            </MultimediaViewerCardElement>
+        }
+      </>
+    );
+  }
+
+  const showMultimediaOverview = () => {
+    return (
+      <>
+        { currentMultimedia !== undefined &&
+          <MultimediaViewerCardElement>
+              <MultimediaViewerHeaderElement title="Multimedia"/>
+              <MultimediaViewerContentElement>
+                  <MultimediaName>Name: {currentMultimedia.name}</MultimediaName>
+                  <MultimediaDescription>Description: {currentMultimedia.description}</MultimediaDescription>
+                  <MultimediaViewerLine/>
+                  { showMultimediaActions() }
+                  <MultimediaViewerLine/>
+                  { showMultimedia() }
+              </MultimediaViewerContentElement>
+          </MultimediaViewerCardElement>
+        }
+      </>
+    );
+  }
+
+  const showMultimediaActions = () => {
+    return (
+      <MultimediaActionWrapper>
+        <MultimediaActionButtonWrapper>
           <DownloadFile multimediaName={currentMultimedia?.name} multimediaUrl={currentMultimedia?.url} />
-          &nbsp;&nbsp;
-          {currentEnrolledContent?.dateTimeOfCompletion === null &&
-          <Button primary onClick={completeMultimedia}>
-            Mark as Done
-          </Button>
+        </MultimediaActionButtonWrapper>
+        <MultimediaActionButtonWrapper>
+          { currentEnrolledContent?.dateTimeOfCompletion === null &&
+              <Button primary onClick={completeMultimedia}>
+                Mark as Done
+              </Button>
           }
-        </div>
+        </MultimediaActionButtonWrapper>
+      </MultimediaActionWrapper>
+    )
+  }
 
-        {currentMultimedia && currentMultimedia.multimediaType === "VIDEO" &&
-          <VideoCard>
-            <ReactPlayer
-              url={currentMultimedia.url}
-              controls={true}
+  const showMultimedia = () => {
+    return (
+      <>
+      {currentMultimedia && currentMultimedia.multimediaType === "VIDEO" &&
+        <VideoCard>
+          <ReactPlayer
+            url={currentMultimedia.url}
+            controls={true}
+          />
+        </VideoCard>
+      }
+
+      {currentMultimedia && currentMultimedia.multimediaType === "PDF" &&
+        <PDFCard>
+          <PDFViewer doc={currentMultimedia.url} />
+        </PDFCard>
+      }
+
+      {currentMultimedia?.multimediaType === "IMAGE" &&
+        <div style={{ display: 'flex', justifyContent: 'center', flexDirection: 'row' }} >
+          <ImageCard>
+            <img alt={currentMultimedia?.name}
+              src={currentMultimedia.url}
+              width="600"
             />
-          </VideoCard>
-        }
+          </ImageCard>
+        </div>
+      }
 
-        {currentMultimedia && currentMultimedia.multimediaType === "PDF" &&
-          <PDFCard>
-            <PDFViewer doc={currentMultimedia.url} />
-          </PDFCard>
-        }
+      {currentMultimedia?.multimediaType === "DOCUMENT" &&
+        <DocumentCard>
+          <iframe title="docx-view" width="560" height="780" src={getUrlForDocument()}>
+          </iframe>
+        </DocumentCard>
+      }
+      </>
+    );
+  }
 
-        {currentMultimedia?.multimediaType === "IMAGE" &&
-          <div style={{ display: 'flex', justifyContent: 'center', flexDirection: 'row' }} >
-            <ImageCard>
-              <img alt={currentMultimedia?.name}
-                src={currentMultimedia.url}
-                width="600"
-              />
-            </ImageCard>
-          </div>
-        }
+  return (
+      <MultimediaViewerContainerElement>
+        <MultimediaViewerInnerContainerElement>
+          { showBackToLessonOverviewIcon() }
+          { showLessonOverview() }
+          { showMultimediaOverview() }
+        </MultimediaViewerInnerContainerElement>
+      </MultimediaViewerContainerElement>
 
-        {currentMultimedia?.multimediaType === "DOCUMENT" &&
-          <DocumentCard>
-            <iframe title="docx-view" width="560" height="780" src={getUrlForDocument()}>
-            </iframe>
-          </DocumentCard>
-        }
-
-      </MultimediaContainer>
-    </>
   );
 }
 
