@@ -68,6 +68,7 @@ function ForumPostInputArea(props: any) {
 
     const handleCancel = () => {
         setMessage("");
+        setPostType("");
         setIsOpen(false);
     }
 
@@ -151,9 +152,9 @@ function ForumPostInputArea(props: any) {
         console.log("see replies");
     }
 
-    const handleSeeLess = () => {
-        setSeeLess(!seeLess);
-    }
+    // const handleSeeLess = () => {
+    //     setSeeLess(!seeLess);
+    // }
 
     const mapReplies = (forumPosts: ForumPost[]) => {
         return (
