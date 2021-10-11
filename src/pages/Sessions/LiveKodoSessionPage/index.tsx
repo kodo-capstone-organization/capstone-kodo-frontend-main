@@ -333,6 +333,8 @@ function LiveKodoSessionPage(props: any) {
             let copyMap = new Map(peerConns);
             copyMap.delete(incomingPeerId)
             setPeerConns(copyMap);
+            
+            setUpdateParticipantsStatus(true)
         }
     }
 
