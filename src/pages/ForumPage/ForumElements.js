@@ -6,7 +6,8 @@ import {
     Card, 
     CardContent,
     CardHeader, 
-    Avatar
+    Avatar,
+    OutlinedInput
 } from "@material-ui/core";
 
 import { fontSizes } from "../../values/FontSizes";
@@ -134,6 +135,11 @@ export const ForumAvatar = styled(Avatar)`
 
 export const ForumButton = styled(Button)`
     margin: 10px;
+`
+
+export const ForumTextField = styled(OutlinedInput)`
+    margin: 10px;
+    width: 500px;
 `
 
 export const ScrollLink = styled(Link)`

@@ -113,7 +113,6 @@ function ForumPostInputArea(props: any) {
                     props.onForumPostChange({ message: err.response.data.message, type: "error" });
                 })
         }
-
         handleCancel();
     }
 
@@ -138,7 +137,19 @@ function ForumPostInputArea(props: any) {
         } else {
             props.onForumPostChange({ message: "You are not the author of this thread/post.", type: "error" });
         }
-        handleCancel();
+    }
+
+    const handleDeleteReply = (forumPost: ForumPost) => {
+        if (forumPost.account.accountId === loggedInAccountId) {
+            deleteForumPost(forumPost.forumPostId)
+                .then((res) => {
+                    props.onForumPostChange({ message: "Forum Post Deletion Succeeded", type: "success" });
+                }).catch((err) => {
+                    props.onForumPostChange({ message: err.response.data.message, type: "error" });
+                })
+        } else {
+            props.onForumPostChange({ message: "You are not the author of this thread/post.", type: "error" });
+        }
     }
 
     const handleSeeReplies = () => {
@@ -175,6 +186,10 @@ function ForumPostInputArea(props: any) {
                                         {post.message}
                                     </Typography>
                                 </ForumPostReplyCardContent>
+                                <Divider />
+                                <IconButton onClick={() => handleDeleteReply(post)} style={{ width: "fit-content", marginInlineStart: "auto", fontSize: "unset" }}>
+                                    <DeleteIcon /> Delete
+                                </IconButton>
                             </ForumPostReplyCard>
                         </>
                     );
@@ -237,8 +252,8 @@ function ForumPostInputArea(props: any) {
                     <ForumPostCardContent>
                         <ForumAvatar alt="Remy Sharp" src={myAccount.displayPictureUrl} />
                         <Typography variant="body1" component="div" style={{ marginLeft: "20px" }}>
-                            RE: {parentForumPost !=undefined ? parentForumPost.message : forumThread?.name}
-                            <br/>
+                            RE: {parentForumPost != undefined ? parentForumPost.message : forumThread?.name}
+                            <br />
                             Posting as {myAccount.name}
                         </Typography>
                         <div id="textarea" style={{ margin: "20px", width: "100%" }}>
