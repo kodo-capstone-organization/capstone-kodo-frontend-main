@@ -148,9 +148,8 @@ function LiveKodoSessionPage(props: any) {
     // Added a useEffect for immediate update of peerConns state once any participants updates their speaking status
     // Should be used if there's a need for an immediate update of participants info, e.g. mic or speaking status
     useEffect(() => {
-        console.log("Firing useEffect")
         if (updateParticipantsStatus) {
-            setPeerConns(peerConns)
+            setPeerConns(new Map(peerConns))
             setUpdateParticipantsStatus(false)
         }
     }, [updateParticipantsStatus])
@@ -160,7 +159,7 @@ function LiveKodoSessionPage(props: any) {
         const newPeerConn = new RTCPeerConnection(rtcConfiguration)
 
         // Add localstream tracks to the new peer connection
-        localStream.getTracks().forEach(track => newPeerConn.addTrack(track, localStream));
+        localStream?.getTracks().forEach(track => newPeerConn.addTrack(track, localStream));
 
         // Peer conn icecandidate event
         newPeerConn.onicecandidate = function(event) {
@@ -408,6 +407,8 @@ function LiveKodoSessionPage(props: any) {
         const newMuteState = !amIMuted;
         setAmIMuted(newMuteState)
         craftAndSendCallEventMessage("", newMuteState);
+
+        localStream.getAudioTracks().forEach((track: MediaStreamTrack) => track.enabled = !newMuteState)
     }
 
     // Cleanup Callback.
@@ -438,7 +439,7 @@ function LiveKodoSessionPage(props: any) {
             { isValidSession &&
                 <LiveKodoSessionContainer>
                     { Array.from(peerConns.values()).map((pcRtcInfo: RTCInfo) => (
-                        <audio key={pcRtcInfo.mediaStream?.id} ref={pcRtcInfo.audioRef} autoPlay />
+                        <audio key={pcRtcInfo.mediaStream?.id} ref={pcRtcInfo.audioRef} muted={pcRtcInfo.isMuted} autoPlay />
                     ))}
                     <TopSessionBar>
                         <strong>{sessionDetails?.sessionName} ({sessionDetails?.sessionId}) · Time_Elapsed</strong>
