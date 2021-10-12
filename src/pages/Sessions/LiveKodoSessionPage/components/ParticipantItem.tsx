@@ -14,11 +14,13 @@ function ParticipantItem (props: any) {
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                 badgeContent={ props.isMuted ? <MicOffIcon color="secondary" /> : <MicIcon color="primary" /> }
             >
-                <KodoAvatar small="true" showRing="true" name={props.participant.name} displayPictureURL={props.participant.displayPictureUrl}/>
+                <KodoAvatar small="true" showRing={props.isSpeaking} name={props.participant.name} displayPictureURL={props.participant.displayPictureUrl}/>
             </Badge>
             <br/>
             <Tooltip title={<i>@{props.participant.username}</i>} placement="right" arrow>
-                <span style={{ fontSize: fontSizes.SUBTEXT }}>{props.participant.name}</span>
+                <div style={{ textAlign: "center", fontSize: fontSizes.SUBTEXT, paddingTop: "0.5rem"  }}>
+                   {props.participant.name}
+                </div>
             </Tooltip>
         </>
     )
