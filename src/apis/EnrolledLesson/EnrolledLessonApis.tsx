@@ -20,6 +20,14 @@ export async function getEnrolledLessonByEnrolledLessonId(enrolledLessonId: numb
     return httpClient.get<undefined, EnrolledLesson>(getParameters);
 }
 
+export async function getEnrolledLessonByEnrolledLessonIdAndAccountId(enrolledLessonId: number, accountId: number): Promise<EnrolledLesson> {
+    const getParameters: IHttpClientRequestParameters<undefined> = {
+        url: `/enrolledLesson/getEnrolledLessonByEnrolledLessonIdAndAccountId/${enrolledLessonId}/${accountId}`
+    }
+
+    return httpClient.get<undefined, EnrolledLesson>(getParameters);
+}
+
 export async function getAllEnrolledLessonsByLessonId(lessonId: number): Promise<EnrolledLesson[]> {
     const getParameters: IHttpClientRequestParameters<undefined> = {
         url: `/enrolledLesson/getAllEnrolledLessonsByLessonId/${lessonId}`

@@ -4,7 +4,7 @@ import { Redirect } from "react-router"
 
 // Pages without sidebar
 import HomePage from "./pages/HomePage";
-import NotFound from "./pages/NotFound";
+import InvalidPage from "./pages/InvalidPage/InvalidPage";
 
 import Layout from "./components/Layout";
 import { RouteItemsWithSidebar } from "./routeItems";
@@ -82,6 +82,7 @@ function Routes() {
                         </Route>
                         <Route path="/login" render={props => <Login {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
                         <Route path="/signup" render={props => <SignUp {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
+                        <Route path="/invalidpage" render={props => <InvalidPage {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
                         
                         {window.sessionStorage.getItem("loggedInAccountId") ?
                             <Route path="/builder/:courseId" render={props => <CourseBuilderPage {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
@@ -137,7 +138,6 @@ function Routes() {
                                 );
                             })
                         }
-                        <Route component={NotFound} />
                     </Switch>
                 </Layout>
             )} />

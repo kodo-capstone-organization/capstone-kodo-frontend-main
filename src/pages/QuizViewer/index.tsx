@@ -73,7 +73,7 @@ function QuizViewer(props: any) {
     return (
         <>
             <QuizContainer>
-                {viewMode && <MarkedQuizComponent enrolledCourseId={enrolledCourseId} enrolledLessonId={enrolledLessonId} studentAttemptId={studentAttemptId} />}
+                {viewMode && <MarkedQuizComponent enrolledCourseId={enrolledCourseId} enrolledLessonId={enrolledLessonId} studentAttemptId={studentAttemptId} callOpenSnackBar={props.callOpenSnackBar} />}
                 {attemptMode && <AttemptQuizComponent enrolledCourseId={enrolledCourseId} enrolledLessonId={enrolledLessonId} enrolledContentId={enrolledContentId} callOpenSnackBar={props.callOpenSnackBar} />}
             </QuizContainer>
         </>

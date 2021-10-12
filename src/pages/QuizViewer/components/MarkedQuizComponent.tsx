@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 
+import { useHistory } from "react-router-dom";
+
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import CancelIcon from '@material-ui/icons/Cancel';
 import { Link } from '@material-ui/core';
@@ -19,16 +21,14 @@ import {
     createMuiTheme,
 } from "@material-ui/core";
 
-import { Course } from "../../../apis/Entities/Course";
-import { Lesson } from "../../../apis/Entities/Lesson";
 import { Quiz } from "../../../apis/Entities/Quiz";
 import { StudentAttempt } from "../../../apis/Entities/StudentAttempt";
 import { StudentAttemptQuestion } from "../../../apis/Entities/StudentAttemptQuestion";
 import { StudentAttemptAnswer } from "../../../apis/Entities/StudentAttemptAnswer";
 
-import { getStudentAttemptByStudentAttemptId } from "../../../apis/StudentAttempt/StudentAttemptApis";
-import { getLessonByStudentAttemptId } from "../../../apis/Lesson/LessonApis";
-import { getCourseByStudentAttemptId } from "../../../apis/Course/CourseApis";
+import { getStudentAttemptByStudentAttemptIdAndAccountId } from "../../../apis/StudentAttempt/StudentAttemptApis";
+import { getEnrolledCourseByEnrolledCourseIdAndAccountId } from "../../../apis/EnrolledCourse/EnrolledCourseApis"
+import { getEnrolledLessonByEnrolledLessonIdAndAccountId } from "../../../apis/EnrolledLesson/EnrolledLessonApis"
 
 import {
     ArrowBackward,
@@ -74,28 +74,56 @@ const themeInstance = createMuiTheme({
 
 
 function MarkedQuizComponent(props: any) {
+
+    const enrolledLessonId = props.enrolledLessonId;
+    const enrolledCourseId = props.enrolledCourseId;
+    const studentAttemptId = props.studentAttemptId;    
+
     const [studentAttempt, setStudentAttempt] = useState<StudentAttempt>();
     const [studentAttemptQuestions, setStudentAttemptQuestions] = useState<StudentAttemptQuestion[]>([]);
-    const [courseId, setCourseId] = useState<number>();
-    const [lessonId, setLessonId] = useState<number>();
 
     const [quiz, setQuiz] = useState<Quiz>();
 
+    const history = useHistory();
+
+    const accountId = JSON.parse(window.sessionStorage.getItem("loggedInAccountId") || "{}");
+
     useEffect(() => {
-        getStudentAttemptByStudentAttemptId(props.studentAttemptId).then(studentAttempt => {
+        getEnrolledCourseByEnrolledCourseIdAndAccountId(enrolledCourseId, accountId)
+        .catch((err) => handleError(err));       
+    }, [enrolledCourseId, accountId]);
+
+    useEffect(() => {
+        getEnrolledLessonByEnrolledLessonIdAndAccountId(enrolledLessonId, accountId)
+        .catch((err) => handleError(err));      
+    }, [enrolledLessonId, accountId]);
+
+    useEffect(() => {
+        getStudentAttemptByStudentAttemptIdAndAccountId(studentAttemptId, accountId).then((studentAttempt: StudentAttempt) => {
             setStudentAttempt(studentAttempt);
             setQuiz(studentAttempt.quiz);
             setStudentAttemptQuestions(studentAttempt.studentAttemptQuestions);
-        }).catch((err) => { console.log("error:getStudentAttemptByStudentAttemptId", err) });
-        getLessonByStudentAttemptId(props.studentAttemptId).then((lesson: Lesson) => {
-            setLessonId(lesson.lessonId);
-        })
-            .catch((err) => { console.log(err.response.data.message) });
-        getCourseByStudentAttemptId(props.studentAttemptId).then((course: Course) => {
-            setCourseId(course.courseId);
-        })
-            .catch((err) => { console.log(err.response.data.message) });
-    }, [props.studentAttemptId]);
+        }).catch((err) => handleError(err));        
+    }, [studentAttemptId, accountId]);
+
+    function handleError(err: any): void {
+        console.log(err.response);
+        const errorDataObj = createErrorDataObj(err);
+        props.callOpenSnackBar("Error in retrieving student attempt", "error");
+        history.push({ pathname: "/invalidpage", state: { errorData: errorDataObj }})
+    }
+
+    function createErrorDataObj(err: any): any {
+        console.log(err.response.data.message)
+        const errorDataObj = { 
+            message1: 'Unable to view student attempt',
+            message2: err.response.data.message,
+            errorStatus: err.response.status,
+            returnPath: '/progresspage'
+        }
+
+        return errorDataObj;
+    }
 
     const formatDate = (date: Date) => {
         var d = new Date(date);
@@ -130,12 +158,12 @@ function MarkedQuizComponent(props: any) {
     const showBackButton = () => {
         return (
             <>
-            {(courseId !== undefined && lessonId !== undefined) &&
+            {(enrolledCourseId && enrolledLessonId) &&
                 <BackBtnWrapper>
                     <Link
                         type="button"
                         color="primary"
-                        href={`/overview/course/${props.enrolledCourseId}/lesson/${props.enrolledLessonId}`}
+                        href={`/overview/course/${enrolledCourseId}/lesson/${enrolledLessonId}`}
                     >
                         <ArrowBackward /> Back to Lesson Overview
                     </Link>
