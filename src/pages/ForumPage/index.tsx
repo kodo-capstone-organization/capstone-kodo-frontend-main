@@ -54,24 +54,24 @@ function ForumPage(props: any) {
 
     // To update isIndexPage
     useEffect(() => {
-        setIsIndexPage(history.location.pathname === `/forum/${parseInt(props.match.params.courseId)}`);
+        setIsIndexPage(history.location.pathname === `/overview/course/${parseInt(props.match.params.courseId)}/forum/`);
     }, [history.location.pathname])
 
     const ForumBreadcrumbItems = [
         {
             name: "Forum",
             subpath: "/forum",
-            fullpath: `/forum/${props.match.params.courseId}`
+            fullpath: `/overview/course/${props.match.params.courseId}/forum/`
         },
         {
             name: `${currentForumCategory?.name}`,
             subpath: "/category",
-            fullpath: `/forum/${props.match.params.courseId}/category/${props.match.params.forumCategoryId}`
+            fullpath: `/overview/course/${props.match.params.courseId}/forum/category/${props.match.params.forumCategoryId}`
         },
         {
             name: `${currentForumThread?.name}`,
             subpath: "/thread",
-            fullpath: `/forum/${props.match.params.courseId}/category/${props.match.params.forumCategoryId}/thread/${props.match.params.forumThreadId}`
+            fullpath: `/overview/course/${props.match.params.courseId}/forum/category/${props.match.params.forumCategoryId}/thread/${props.match.params.forumThreadId}`
         }
     ]
 

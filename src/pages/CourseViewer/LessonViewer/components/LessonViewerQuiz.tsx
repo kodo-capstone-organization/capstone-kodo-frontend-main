@@ -64,11 +64,9 @@ function LessonViewerQuiz(props: any) {
             + (seconds === 0 ? "" : seconds + "s ");
     }
 
-    const attemptQuiz = (enrolledContentId: number) => {
-        history.push({ pathname: `/attemptquizviewer/${enrolledCourseId}/${enrolledLessonId}/${enrolledContentId}`, state: { mode: 'ATTEMPT' } });
+    const attemptQuiz = (enrolledContentId: number) => {        
+        history.push({ pathname: `/overview/course/${enrolledCourseId}/lesson/${enrolledLessonId}/attemptquizviewer/${enrolledContentId}`, state: { mode: 'ATTEMPT' } });
     }
-
-
   
     const showQuizzes = (enrolledContents: EnrolledContent[]) => {
         return (

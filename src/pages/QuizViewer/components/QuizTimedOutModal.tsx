@@ -51,7 +51,7 @@ function QuizTimedOutModal(props: any) {
             props.callOpenSnackBar("Quiz Submitted Successfully", "success");
             getCourseByEnrolledContentId(props.enrolledContentId).then((course: Course) => {
                 getLessonByEnrolledContentId(props.enrolledContentId).then((lesson: Lesson) => {
-                    history.push(`/overview/lesson/${course.courseId}/${lesson.lessonId}`);
+                    history.push(`/overview/course/${course.courseId}/lesson/${lesson.lessonId}`);
                     // console.log("Attempt quiz success:", res);
                 })
                 .catch(err => {
@@ -60,17 +60,6 @@ function QuizTimedOutModal(props: any) {
             })            
         })
     }
-
-    // const formatDate = (date: Date) => {
-    //     var d = new Date(date);
-    //     return d.toDateString() + ', ' + d.toLocaleTimeString();
-    // }
-
-    // const navigateToMarkedQuizView = (studentAttemptId: number) => {
-    //     console.log("studentAttemptId", studentAttemptId);
-    //     history.push({ pathname: `/markedquizviewer/${studentAttemptId}`, state: { mode: 'VIEW' } });
-    // }
-
 
     return (
         <>

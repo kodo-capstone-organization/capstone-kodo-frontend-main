@@ -90,7 +90,7 @@ function CourseList(props: any) {
                         <Button
                           variant="outlined"
                           primary={true}
-                          to={`/overview/lesson/${enrolledCourse.enrolledCourseId}/${enrolledLesson.enrolledLessonId}`}
+                          to={`/overview/course/${enrolledCourse.enrolledCourseId}/lesson/${enrolledLesson.enrolledLessonId}`}
                         >
                           { enrolledLesson.dateTimeOfCompletion ? "View" : "Resume" }
                         </Button>
@@ -102,7 +102,7 @@ function CourseList(props: any) {
                   ) : (
                       <Button
                         primary={true}
-                        to={`/overview/lesson/${enrolledCourse.enrolledCourseId}/${enrolledLesson.enrolledLessonId}`}
+                        to={`/overview/course/${enrolledCourse.enrolledCourseId}/lesson/${enrolledLesson.enrolledLessonId}`}
                       >
                         View
                       </Button>

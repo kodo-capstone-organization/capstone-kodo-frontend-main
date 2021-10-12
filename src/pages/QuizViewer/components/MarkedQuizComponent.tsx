@@ -72,14 +72,6 @@ const themeInstance = createMuiTheme({
     }
 });
 
-const styles = theme => ({
-    radio: {
-        '&$checked': {
-            color: '#C8E6C9 ! important'
-        }
-    },
-    checked: {}
-});
 
 function MarkedQuizComponent(props: any) {
     const [studentAttempt, setStudentAttempt] = useState<StudentAttempt>();
@@ -133,6 +125,24 @@ function MarkedQuizComponent(props: any) {
         });
 
         return score;
+    }
+
+    const showBackButton = () => {
+        return (
+            <>
+            {(courseId !== undefined && lessonId !== undefined) &&
+                <BackBtnWrapper>
+                    <Link
+                        type="button"
+                        color="primary"
+                        href={`/overview/course/${props.enrolledCourseId}/lesson/${props.enrolledLessonId}`}
+                    >
+                        <ArrowBackward /> Back to Lesson Overview
+                    </Link>
+                </BackBtnWrapper>
+            }
+            </>
+        )
     }
 
     const mapQuestionArray = (attemptArray: StudentAttemptQuestion[]) => {
@@ -344,6 +354,9 @@ function MarkedQuizComponent(props: any) {
                     </Grid>
                 </QuizCardContent>
             </QuizCard>
+
+            { showBackButton() }
+
             <QuizCard>
                 <QuizCardHeader
                     title={quiz !== undefined ? quiz.name : ""}
@@ -352,17 +365,8 @@ function MarkedQuizComponent(props: any) {
                     {mapQuestionArray(studentAttemptQuestions)}
                 </QuizViewerCardContent>
             </QuizCard>
-            {(courseId !== undefined && lessonId !== undefined) &&
-                <BackBtnWrapper>
-                    <Link
-                        type="button"
-                        color="primary"
-                        href={`/overview/lesson/${props.enrolledCourseId}/${props.enrolledLessonId}`}
-                    >
-                        <ArrowBackward /> Back to Lesson Overview
-                    </Link>
-                </BackBtnWrapper>
-            }
+            
+            { showBackButton() }
         </>
     );
 }

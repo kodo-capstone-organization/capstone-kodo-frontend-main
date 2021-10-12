@@ -25,7 +25,6 @@ import Slide from '@material-ui/core/Slide';
 import Alert from '@material-ui/lab/Alert';
 import { severityList } from './values/Colours';
 import ForumPage from "./pages/ForumPage";
-// import MarkedQuizViewer from "./pages/CourseViewer/LessonViewer/MarkedQuizViewer";
 
 function Routes() {
 
@@ -83,49 +82,55 @@ function Routes() {
                         </Route>
                         <Route path="/login" render={props => <Login {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
                         <Route path="/signup" render={props => <SignUp {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
+                        
                         {window.sessionStorage.getItem("loggedInAccountId") ?
                             <Route path="/builder/:courseId" render={props => <CourseBuilderPage {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
                             : <Redirect to="/" />}
                         {window.sessionStorage.getItem("loggedInAccountId") ?
                             <Route path="/buildquiz/:contentId" render={props => <QuizBuidlerPage {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
                             : <Redirect to="/" />}
+                        
                         {window.sessionStorage.getItem("loggedInAccountId") ?
-                            <Route path="/overview/:courseId" render={props => <CourseOverview {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
+                            <Route path="/overview/course/:courseId" render={props => <CourseOverview {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
                             : <Redirect to="/" />}
                         {window.sessionStorage.getItem("loggedInAccountId") ?
-                            <Route path="/overview/lessonstatistics/:courseId/:lessonId" render={props => <LessonStatisticsViewerWithRouter {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
+                            <Route path="/overview/course/:courseId/lessonstatistics/:lessonId" render={props => <LessonStatisticsViewerWithRouter {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
+                            : <Redirect to="/" />}
+                        
+                        {window.sessionStorage.getItem("loggedInAccountId") ?
+                            <Route path="/overview/course/:enrolledCourseId/lesson/:enrolledLessonId" render={props => <LessonViewerWithRouter {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
+                            : <Redirect to="/" />}
+
+                        {window.sessionStorage.getItem("loggedInAccountId") ?
+                            <Route path="/overview/course/:enrolledCourseId/lesson/:enrolledLessonId/multimedia/:enrolledContentId" render={props => <MultimediaViewerWithRouter {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
+                            : <Redirect to="/" />}                        
+                        {/* Need to change the path namings here, we have 2 types of content, talk to chandya */}
+                        {window.sessionStorage.getItem("loggedInAccountId") ?
+                            <Route path="/overview/course/:enrolledCourseId/lesson/:enrolledLessonId/markedquizviewer/:studentAttemptId" render={props => <QuizViewer {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
                             : <Redirect to="/" />}
                         {window.sessionStorage.getItem("loggedInAccountId") ?
-                            <Route path="/overview/lesson/:enrolledCourseId/:enrolledLessonId" render={props => <LessonViewerWithRouter {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
+                            <Route path="/overview/course/:enrolledCourseId/lesson/:enrolledLessonId/attemptquizviewer/:enrolledContentId" render={props => <QuizViewer {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
                             : <Redirect to="/" />}
+
                         {window.sessionStorage.getItem("loggedInAccountId") ?
-                            <Route path="/overview/lesson/:enrolledCourseId/:enrolledLessonId/:enrolledContentId" render={props => <MultimediaViewerWithRouter {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
-                            : <Redirect to="/" />}
-                        {window.sessionStorage.getItem("loggedInAccountId") ?
-                            <Route path="/session/:initAction/:sessionId" render={props => <LiveKodoSessionPage {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
-                            : <Redirect to="/" />}
-                        {/* tutor view */}
-                        {window.sessionStorage.getItem("loggedInAccountId") ?
-                            <Route path="/forum/:courseId" render={props => <ForumPage {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
+                            <Route path="/overview/course/:courseId/forum/" render={props => <ForumPage {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
                             : <Redirect to="/" />}
                         {/* student view */}
                         {/* {window.sessionStorage.getItem("loggedInAccountId") ?
                             <Route path="/forum/:enrolledCourseId" render={props => <ForumPage {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
                             : <Redirect to="/" />} */}
                         {window.sessionStorage.getItem("loggedInAccountId") ?
-                            <Route path="/forum/:courseId/category/:forumCategoryId" render={props => <ForumPage {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
+                            <Route path="/overview/course/:courseId/forum/category/:forumCategoryId" render={props => <ForumPage {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
                             : <Redirect to="/" />}
                         {window.sessionStorage.getItem("loggedInAccountId") ?
-                            <Route path="/forum/:courseId/category/:forumCategoryId/thread/:forumThreadId" render={props => <ForumPage {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
-                            : <Redirect to="/" />}
-                        {/* Need to change the path namings here, we have 2 types of content, talk to chandya */}
-                        {window.sessionStorage.getItem("loggedInAccountId") ?
-                            <Route path="/markedquizviewer/:enrolledCourseId/:enrolledLessonId/:studentAttemptId" render={props => <QuizViewer {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
-                            : <Redirect to="/" />}
-                        {window.sessionStorage.getItem("loggedInAccountId") ?
-                            <Route path="/attemptquizviewer/:enrolledCourseId/:enrolledLessonId/:enrolledContentId" render={props => <QuizViewer {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
+                            <Route path="/overview/course/:courseId/forum/category/:forumCategoryId/thread/:forumThreadId" render={props => <ForumPage {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
                             : <Redirect to="/" />}
 
+                        {window.sessionStorage.getItem("loggedInAccountId") ?
+                            <Route path="/session/:initAction/:sessionId" render={props => <LiveKodoSessionPage {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
+                            : <Redirect to="/" />}
+                        {/* tutor view */}
+                        
                         {
                             RouteItemsWithSidebar.map(item => {
                                 return (

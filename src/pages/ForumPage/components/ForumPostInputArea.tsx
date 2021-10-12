@@ -133,7 +133,7 @@ function ForumPostInputArea(props: any) {
     const handleDeletePost = () => {
         if (postType === "POST" && forumThread.account.accountId === loggedInAccountId || course?.tutor.accountId === loggedInAccountId) {
             //deleting a thread
-            props.history.push(`/forum/${courseId}/category/${currentForumCategoryId}`);
+            props.history.push(`/overview/course/${courseId}/forum/category/${currentForumCategoryId}`);
             deleteForumThread(forumThread.forumThreadId)
                 .then((res) => {
                     props.onForumPostChange({ message: "Forum Thread Deletion Succeeded", type: "success" });
