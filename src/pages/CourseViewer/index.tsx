@@ -65,7 +65,8 @@ function CourseOverview(props: any) {
     {loading ? 
       <MessageContainer>
         <CircularProgress/>
-      </MessageContainer> : (currentUser && currentCourse && !courseIsEnrolled() && !isCourseTutor() ? 
+      </MessageContainer> :
+      ( currentUser && currentCourse && !courseIsEnrolled() && !isCourseTutor() ?
         <>
           <MessageContainer isEnrolled={courseIsEnrolled()} isTutor={isCourseTutor()}>
             <Message>You are not enrolled in this course 😡</Message>
@@ -74,18 +75,17 @@ function CourseOverview(props: any) {
             <Button primary to={`/browsecourse`}>Browse Courses</Button>
           </BtnWrapper>
         </> :
-      <LayoutContainer>
-        { (courseIsEnrolled() || isCourseTutor()) &&
-            <>
-              <Sidebar course={currentCourse} account={currentUser} isTutorView={isCourseTutor()}/>
-              <LayoutContentPage showSideBar style={{ paddingRight: "10rem"}}>
-                { isCourseTutor() && <TutorView course={currentCourse}/>  }
-                { courseIsEnrolled() && <StudentView course={currentCourse} account={currentUser} /> }
-                {/* <ForumPage> */}
-              </LayoutContentPage>
-            </>
-        }
-      </LayoutContainer>)}
+        <LayoutContainer>
+          { currentUser && currentCourse && (courseIsEnrolled() || isCourseTutor()) &&
+              <>
+                <Sidebar course={currentCourse} account={currentUser} isTutorView={isCourseTutor()}/>
+                <LayoutContentPage showSideBar style={{ paddingRight: "10rem"}}>
+                  { isCourseTutor() && <TutorView course={currentCourse}/>  }
+                  { !isCourseTutor() && courseIsEnrolled() && <StudentView course={currentCourse} account={currentUser} /> }
+                </LayoutContentPage>
+              </>
+          }
+          </LayoutContainer>)}
     </>
   );
 }
