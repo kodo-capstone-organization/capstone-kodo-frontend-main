@@ -5,9 +5,9 @@ export interface ForumPost {
     message : string,
     timeStamp : Date,
     isReported : boolean,
-    reasonForReport: string,
+    reasonForReport: (string | null),
     replies : ForumPost[],
-    parentForumPost : ForumPost,
+    parentForumPost : (ForumPost | null),
     account : Account
 }
 
@@ -20,12 +20,14 @@ export interface CreateNewForumPostReq {
 
 export interface CreateNewForumPostReplyReq {
     newForumPostReply: ForumPost,
-    accountId: number
+    accountId: number,
+    parentForumPostId: number
 }
 
 export interface ForumPostWithRepliesResp {
     forumPostId: (number | null),
     message: string,
     timeStamp: Date,
-    replies: ForumPostWithRepliesResp
+    account : Account,
+    replies: ForumPostWithRepliesResp[]
 }

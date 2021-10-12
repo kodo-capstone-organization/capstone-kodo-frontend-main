@@ -5,7 +5,7 @@ import {
 } from '@material-ui/core';
 
 import { ForumThread } from '../../../apis/Entities/ForumThread';
-import { ForumPost } from '../../../apis/Entities/ForumPost';
+import { ForumPostWithRepliesResp } from '../../../apis/Entities/ForumPost';
 
 import {
     getForumThreadByForumThreadId,
@@ -14,19 +14,17 @@ import {
 
 import {
     ForumCardHeader, ForumCardContent, ForumCard, ForumPostCard,
-    ForumPostCardContent, ForumAvatar, ScrollLink
+    ForumPostCardContent, ForumAvatar
 } from "../ForumElements";
 
 import ForumPostInputArea from './ForumPostInputArea';
-import ForumPostReplyList from "./ForumPostReplyList";
 
 
 function ForumPostList(props: any) {
 
     const [courseId, setCourseId] = useState<number>();
     const [forumThread, setForumThread] = useState<ForumThread>();
-    const [forumPosts, setForumPosts] = useState<ForumPost[]>([]);
-    const [currentForumThreadId, setCurrentForumThreadId] = useState<number>();
+    const [forumPosts, setForumPosts] = useState<ForumPostWithRepliesResp[]>([]);
     const [currentForumCategoryId, setCurrentForumCategoryId] = useState<number>();
     const [loading, setLoading] = useState<boolean>();
 
@@ -35,13 +33,12 @@ function ForumPostList(props: any) {
         setCourseId(props.courseId);
         setCurrentForumCategoryId(props.currentForumCategoryId);
         if (props.currentForumThreadId != undefined) {
-            setCurrentForumThreadId(props.currentForumThreadId);
-            getForumThreadByForumThreadId(props.currentForumThreadId).then((res) => {
+            getForumThreadByForumThreadId(parseInt(props.currentForumThreadId)).then((res) => {
                 setForumThread(res);
             }).catch((err) => {
                 props.onCallSnackbar({ message: "Failure", type: "error" })
             });
-            getAllForumPostsByForumThreadId(props.currentForumThreadId).then((res) => {
+            getAllForumPostsByForumThreadId(parseInt(props.currentForumThreadId)).then((res) => {
                 console.log(res);
                 setForumPosts(res);
                 setLoading(false);
@@ -71,15 +68,7 @@ function ForumPostList(props: any) {
         return d.toDateString() + ', ' + d.toLocaleTimeString();
     }
 
-    const handleOnSetActive = (msg: string) => {
-        console.log("handleOnSetActive", msg);
-    }
-
-    const handleOnSetInactive = (msg: string) => {
-        console.log("handleOnSetInactive", msg);
-    }
-
-    const mapPosts = (forumPosts: ForumPost[]) => {
+    const mapPosts = (forumPosts: ForumPostWithRepliesResp[]) => {
         return (
             <div>
                 {forumPosts.map(function (post, postId) {
@@ -165,7 +154,6 @@ function ForumPostList(props: any) {
                 </body>
 
                 <ForumCardContent>
-
                     {forumThread != undefined && mapPosts(forumPosts)}
                 </ForumCardContent>
             </ForumCard>

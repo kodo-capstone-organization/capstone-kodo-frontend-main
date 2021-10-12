@@ -115,10 +115,6 @@ function Routes() {
                         {window.sessionStorage.getItem("loggedInAccountId") ?
                             <Route path="/overview/course/:courseId/forum/" render={props => <ForumPage {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
                             : <Redirect to="/" />}
-                        {/* student view */}
-                        {/* {window.sessionStorage.getItem("loggedInAccountId") ?
-                            <Route path="/forum/:enrolledCourseId" render={props => <ForumPage {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
-                            : <Redirect to="/" />} */}
                         {window.sessionStorage.getItem("loggedInAccountId") ?
                             <Route path="/overview/course/:courseId/forum/category/:forumCategoryId" render={props => <ForumPage {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
                             : <Redirect to="/" />}
