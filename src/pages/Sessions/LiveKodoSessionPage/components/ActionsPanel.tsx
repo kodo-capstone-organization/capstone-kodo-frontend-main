@@ -16,7 +16,7 @@ function ActionsPanel(props: any) {
     }
 
     const navigateToSessionPage = () => {
-        props.handleMyExit(); // call parent exit method
+        props.history.push("/session")
     }
 
     const handleMuteToggle = () => {

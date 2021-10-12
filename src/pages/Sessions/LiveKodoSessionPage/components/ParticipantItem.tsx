@@ -14,7 +14,7 @@ function ParticipantItem (props: any) {
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                 badgeContent={ props.isMuted ? <MicOffIcon color="secondary" /> : <MicIcon color="primary" /> }
             >
-                <KodoAvatar small="true" name={props.participant.name} displayPictureURL={props.participant.displayPictureUrl}/>
+                <KodoAvatar small="true" showRing="true" name={props.participant.name} displayPictureURL={props.participant.displayPictureUrl}/>
             </Badge>
             <br/>
             <Tooltip title={<i>@{props.participant.username}</i>} placement="right" arrow>
