@@ -8,6 +8,7 @@ import Stage from './components/Stage';
 import { LiveKodoSessionContainer, MainSessionWrapper, TopSessionBar } from './LiveKodoSessionPageElements';
 
 let conn: WebSocket;
+let interval: NodeJS.Timer;
 let localStream: MediaStream;
 
 const rtcConfiguration: RTCConfiguration = {
@@ -38,7 +39,6 @@ function LiveKodoSessionPage(props: any) {
     const [peerConns, setPeerConns] = useState<Map<number, RTCInfo>>(new Map());
     const [amIMuted, setAmIMuted] = useState<boolean>(false);
     const [fireEffect, setFireEffect] = useState<boolean>(false);
-    const [updateParticipantsStatus, setUpdateParticipantsStatus] = useState<boolean>(false);
 
     useEffect(() => {
         getSessionBySessionId(props.match.params.sessionId, myAccountId)
@@ -59,7 +59,10 @@ function LiveKodoSessionPage(props: any) {
                 props.history.push({ pathname: "/session/invalidsession", state: { errorData: error?.response?.data }})
             })
         
-        return () => handleMyExit();
+        return () => {
+            handleMyExit()
+            clearInterval(interval)
+        };
     }, [])
 
     useEffect(() => {
@@ -124,6 +127,9 @@ function LiveKodoSessionPage(props: any) {
             conn.onopen = function() {
                 console.log("Connected to the signaling server");
                 send({ event : "newConnection" });
+
+                // Set consistent ping to prevent Websocket from closing
+                interval = setInterval(() => conn.send(JSON.stringify({ event: "ping" })), 10000)
             };
 
             // 5 - Cleanup function when connection is closed (in ComponentWillUnmount return function)
