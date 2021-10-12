@@ -428,7 +428,7 @@ function LiveKodoSessionPage(props: any) {
     const handleMyExit = () => {
         // Clean up local states
         console.log("Closing my own websocket");
-        localStream.getTracks().forEach(track => track.stop());
+        localStream?.getTracks().forEach(track => track.stop());
         send({ event : "exit" }) // Inform peers that I am leaving
         conn.close(); // Triggers conn.onclose cleanup function (my own exit)
     }
