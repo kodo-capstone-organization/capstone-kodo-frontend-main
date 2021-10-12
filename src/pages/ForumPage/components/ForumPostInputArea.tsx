@@ -71,10 +71,6 @@ function ForumPostInputArea(props: any) {
         });
     }, [props]);
 
-    useEffect(() => {
-        console.log("postType", postType);
-    }, [postType]);
-
     const handleOpen = () => {
         setIsOpen(true);
     }
@@ -149,11 +145,14 @@ function ForumPostInputArea(props: any) {
                         }).catch((err) => {
                             props.onForumPostChange({ message: err.response.data.message, type: "error" });
                         })
+                    } else {
+                        props.onForumPostChange({ message: "You are not the author of this thread/post.", type: "error" });
                     }
                 }
         } else if (postType === "REPLY") {
             if (parentForumPost !== undefined && parentForumPost.forumPostId !== null) {
-                if (parentForumPost.account.accountId === loggedInAccountId) {
+                if (parentForumPost.account.accountId === loggedInAccountId
+                    || course?.tutor.accountId === loggedInAccountId) {
                     // deleting a post
                     deleteForumPost(parentForumPost.forumPostId)
                         .then((res) => {
@@ -161,10 +160,10 @@ function ForumPostInputArea(props: any) {
                         }).catch((err) => {
                             props.onForumPostChange({ message: err.response.data.message, type: "error" });
                         })
+                } else {
+                    props.onForumPostChange({ message: "You are not the author of this thread/post.", type: "error" });
                 }
             }
-        } else {
-            props.onForumPostChange({ message: "You are not the author of this thread/post.", type: "error" });
         }
         handleCancel();
     }
@@ -190,7 +189,6 @@ function ForumPostInputArea(props: any) {
 
     const handleMakeReply = () => {
         handleOpen();
-        console.log("handleMakeReply");
     }
 
     const mapReplies = (forumPosts: ForumPost[]) => {
