@@ -30,7 +30,6 @@ function QuizQuestionComponent(props: any) {
 
     useEffect(() => {
         setQuestion(props.question)
-        console.log(props.question);
         setIsDisabled(props.disabled)
         setQuestionIndex(props.questionIndex)
         setContent(props.question.content)
@@ -42,21 +41,18 @@ function QuizQuestionComponent(props: any) {
         setQuestionType(event.target.value as string);
         const newlyUpdatedQuestion = Object.assign(question, { questionType: event.target.value, quizQuestionOptions: [] })
         console.log("newlyUpdatedQuestion", newlyUpdatedQuestion);
-        // setUpdatedQuestion(newlyUpdatedQuestion)
         props.onUpdateQuestion(newlyUpdatedQuestion, questionIndex)
     };
 
     const handleMarkChange = (event: React.ChangeEvent<{ value: unknown }>) => {
         setMarks(event.target.value as number);
         const newlyUpdatedQuestion = Object.assign(question, { marks: event.target.value })
-        // setUpdatedQuestion(newlyUpdatedQuestion)
         props.onUpdateQuestion(newlyUpdatedQuestion, questionIndex)
     };
 
     const handleContentChange = (event: React.ChangeEvent<{ value: unknown }>) => {
         setContent(event.target.value as string);
         const newlyUpdatedQuestion = Object.assign(question, { content: event.target.value })
-        // setUpdatedQuestion(newlyUpdatedQuestion)
         props.onUpdateQuestion(newlyUpdatedQuestion, questionIndex)
     };
 
