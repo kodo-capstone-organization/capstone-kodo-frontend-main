@@ -34,6 +34,7 @@ function QuizQuestionOptionsList(props: any) {
             setQuizQuestionOptions(props.question.quizQuestionOptions);
             setIsDisabled(props.disabled);
             if (props.question.quizQuestionOptions.length === 0) {
+                // population of options when type changes
                 var newQuizQuestionOptions: QuizQuestionOption[];
                 if (props.questionType === "TF") {
                     const trueOption: QuizQuestionOption = {

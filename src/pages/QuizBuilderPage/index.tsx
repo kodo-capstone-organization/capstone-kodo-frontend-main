@@ -126,12 +126,12 @@ function QuizBuilderPage(props: any) {
                 rightContent: null,
                 correct: true
             };
-            const defaultOptionTwo : QuizQuestionOption = {
+            const defaultOptionTwo: QuizQuestionOption = {
                 quizQuestionOptionId: null,
                 leftContent: "MCQ OPTION",
                 rightContent: null,
                 correct: false
-            };            const newQuizQuestion: any = {
+            }; const newQuizQuestion: any = {
                 quizQuestionId: null,
                 content: "",
                 questionType: "MCQ",
@@ -170,7 +170,6 @@ function QuizBuilderPage(props: any) {
         setTimeLimitHours(value);
         setTimeLimitMinutes(resetMinutes);
         const timeLimit = `${value}:${resetMinutes}:${timeLimitSeconds}`
-        console.log("timeLimit", timeLimit);
         const newQuiz = Object.assign(updatedQuiz, { timeLimit });
         setUpdatedQuiz(newQuiz);
     }
@@ -234,7 +233,6 @@ function QuizBuilderPage(props: any) {
                 quizQuestions,
                 quizQuestionOptionLists
             }
-            console.log("check updateQuizReq", updateQuizReq);
             updateQuizWithQuizQuestionsAndQuizQuestionOptions(updateQuizReq)
                 .then((res) => {
                     props.callOpenSnackBar("Successfully updated Quiz", "success")
@@ -272,7 +270,6 @@ function QuizBuilderPage(props: any) {
     }
 
     const handleChangeFromQuestionBank = (questionBankQuestions: any[]) => {
-        console.log("questionBankQuestionIds", questionBankQuestions);
         let arrayWtihDraggableId: any = quizQuestionArray;
         var mapDraggable = draggableId + 1;
         questionBankQuestions.map((question) => {
@@ -299,10 +296,10 @@ function QuizBuilderPage(props: any) {
         props.callOpenSnackBar(`Error in updating Quiz: ${msg}`, "error")
     }
 
-    const mapQuestionArray = (questionArray: QuizQuestion[]) => {
+    const mapQuestionArray = (questionArray: any[]) => {
         return (
             <div>
-                {questionArray.length > 0 && questionArray.map(function (q, qId) {
+                { questionArray.map(function (q, qId) {
                     return (
                         isDisabled ?
                             <QuizQuestionCard key={qId}>
@@ -313,7 +310,6 @@ function QuizBuilderPage(props: any) {
                             <Draggable key={q.draggableId.toString()} draggableId={q.draggableId.toString()} index={qId}>
                                 {(provided) => (
                                     <QuizQuestionCard ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
-                                        {/* {q.draggableId.toString()} */}
                                         <QuizQuestionComponent disabled={isDisabled} question={q} questionIndex={q.draggableId.toString()}
                                             onUpdateQuestion={handleUpdateQuestion} onUpdateQuizQuestionOptions={handleQuizQuestionOptionUpdate}
                                             onCallSnackbar={handleCallSnackbar}
@@ -412,8 +408,8 @@ function QuizBuilderPage(props: any) {
                                     isDisabled ? <Chip variant="outlined" size="small" label="View Mode" style={{ color: "blue", border: "1px solid blue" }} disabled /> :
                                         <>
                                             <QuestionBankModal selectedFromQuestionBank={selectedFromQuestionBank} disabled={isDisabled} onChangeFromQuestionBank={handleChangeFromQuestionBank} />
-                                          &nbsp;&nbsp;
-                                          <Button primary disabled={isDisabled} onClick={addNewQuestion}>Add New Question</Button>
+                                            &nbsp;&nbsp;
+                                            <Button primary disabled={isDisabled} onClick={addNewQuestion}>Add New Question</Button>
                                         </>
                                 }
                             </div>
@@ -421,9 +417,12 @@ function QuizBuilderPage(props: any) {
                     />
                     <QuizBuilderCardContent>
                         {
-                            isDisabled && mapQuestionArray(quizQuestionArray)
+                            // printing non-draggable array
+                            isDisabled &&
+                            mapQuestionArray(quizQuestionArray)
                         }
                         {
+                            // printing draggable array
                             !isDisabled &&
                             <DragDropContext onDragEnd={handleOnDragEnd}>
                                 <Droppable droppableId="characters">
