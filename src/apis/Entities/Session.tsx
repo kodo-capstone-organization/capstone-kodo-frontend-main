@@ -19,7 +19,7 @@ export interface KodoDataChannelMessage {
 }
 
 export interface KodoSessionEvent {
-    eventType: KodoSessionEventType
+    
 }
 
 export enum KodoSessionEventType {
