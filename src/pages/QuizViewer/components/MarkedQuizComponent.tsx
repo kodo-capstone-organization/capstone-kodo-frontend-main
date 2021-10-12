@@ -26,9 +26,9 @@ import { StudentAttempt } from "../../../apis/Entities/StudentAttempt";
 import { StudentAttemptQuestion } from "../../../apis/Entities/StudentAttemptQuestion";
 import { StudentAttemptAnswer } from "../../../apis/Entities/StudentAttemptAnswer";
 
-import { getStudentAttemptByStudentAttemptIdAndAccountId } from "../../../apis/StudentAttempt/StudentAttemptApis";
 import { getEnrolledCourseByEnrolledCourseIdAndAccountId } from "../../../apis/EnrolledCourse/EnrolledCourseApis"
 import { getEnrolledLessonByEnrolledLessonIdAndAccountId } from "../../../apis/EnrolledLesson/EnrolledLessonApis"
+import { getStudentAttemptByStudentAttemptIdAndAccountId } from "../../../apis/StudentAttempt/StudentAttemptApis";
 
 import {
     ArrowBackward,
@@ -107,7 +107,6 @@ function MarkedQuizComponent(props: any) {
     }, [studentAttemptId, accountId]);
 
     function handleError(err: any): void {
-        console.log(err.response);
         const errorDataObj = createErrorDataObj(err);
         props.callOpenSnackBar("Error in retrieving student attempt", "error");
         history.push({ pathname: "/invalidpage", state: { errorData: errorDataObj }})
