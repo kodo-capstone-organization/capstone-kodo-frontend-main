@@ -46,12 +46,18 @@ function ForumPostInputArea(props: any) {
 
 
     useEffect(() => {
-        setForumThread(props.forumThread);
-        setParentForumPost(props.forumPost);
+        if(props.forumThread != undefined){
+            setForumThread(props.forumThread);
+        }
+        if(props.forumPost != undefined){
+            setParentForumPost(props.forumPost);
+        }
         if (props.forumPost != undefined) {
             setChildForumPosts(props.forumPost?.replies);
         }
-        setPostType(props.postType);
+        if(props.postType != undefined){
+            setPostType(props.postType);
+        }
         setCurrentForumCategoryId(props.currentForumCategoryId);
         setCourseId(props.courseId);
         getCourseByCourseId(props.courseId).then((res) => {
