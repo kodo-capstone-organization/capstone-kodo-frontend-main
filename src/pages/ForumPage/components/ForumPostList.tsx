@@ -30,7 +30,7 @@ function ForumPostList(props: any) {
 
     useEffect(() => {
         setLoading(true);
-        setCourseId(props.courseId);
+        setCourseId(props.currentCourseId);
         setCurrentForumCategoryId(props.currentForumCategoryId);
         if (props.currentForumThreadId != undefined) {
             getForumThreadByForumThreadId(parseInt(props.currentForumThreadId)).then((res) => {

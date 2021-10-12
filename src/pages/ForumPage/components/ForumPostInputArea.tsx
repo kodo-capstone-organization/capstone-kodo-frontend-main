@@ -44,47 +44,32 @@ function ForumPostInputArea(props: any) {
     const [myAccount, setMyAccount] = useState<Account>();
     const loggedInAccountId = JSON.parse(window.sessionStorage.getItem("loggedInAccountId") || "{}");
 
-    useEffect(() => {        
+    useEffect(() => {
+        if(props.forumThread != undefined){
+            setForumThread(props.forumThread);
+        }
+        if(props.forumPost != undefined){
+            setParentForumPost(props.forumPost);
+        }
+        if (props.forumPost != undefined) {
+            setChildForumPosts(props.forumPost?.replies);
+        }
+        if(props.postType != undefined){
+            setPostType(props.postType);
+        }
+        setCurrentForumCategoryId(props.currentForumCategoryId);
+        setCourseId(props.courseId);
+        getCourseByCourseId(props.courseId).then((res) => {
+            setCourse(res);
+        }).catch((err) => {
+            console.log("Failed", err);
+        });
         getMyAccount(loggedInAccountId).then((res) => {
             setMyAccount(res);
         }).catch((err) => {
             console.log("Failed", err);
         });
-    }, [loggedInAccountId]);
-
-    useEffect(() => {
-        setParentForumPost(props.forumPost);
-        if (props.forumPost != undefined) {
-            setChildForumPosts(props.forumPost?.replies);
-        }
-    }, [props.forumPost]);
-
-    useEffect(() => {
-        setForumThread(props.forumThread);
-    }, [props.forumThread]);
-
-    useEffect(() => {
-        if (props.currentForumCategoryId !== undefined)
-        {
-            setCurrentForumCategoryId(props.currentForumCategoryId);
-        }
-    }, [props.currentForumCategoryId]);
-
-    useEffect(() => {
-        setPostType(props.postType);
-    }, [props.postType]);
-
-    useEffect(() => {
-        if (props.courseId !== undefined)
-        {
-            setCourseId(props.courseId);
-            getCourseByCourseId(props.courseId).then((res) => {
-                setCourse(res);
-            }).catch((err) => {
-                console.log("Failed", err);
-            });
-        }
-    }, [props.courseId])
+    }, [props]);
 
     useEffect(() => {
         console.log("postType", postType);
