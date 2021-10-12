@@ -13,9 +13,9 @@ import { QuizQuestion } from "../../../apis/Entities/QuizQuestion";
 
 import { createNewStudentAttempt } from "../../../apis/StudentAttempt/StudentAttemptApis";
 import { getAllQuizQuestionsByQuizId } from "../../../apis/QuizQuestion/QuizQuestionApis";
+import { getEnrolledContentByEnrolledContentIdAndAccountId } from "../../../apis/EnrolledContent/EnrolledContentApis";
 import { getEnrolledCourseByEnrolledCourseIdAndAccountId } from "../../../apis/EnrolledCourse/EnrolledCourseApis"
 import { getEnrolledLessonByEnrolledLessonIdAndAccountId } from "../../../apis/EnrolledLesson/EnrolledLessonApis"
-import { getEnrolledContentByEnrolledContentIdAndAccountId } from "../../../apis/EnrolledContent/EnrolledContentApis";
 import { getQuizByQuizId } from "../../../apis/Quiz/QuizApis";
 
 import
@@ -101,7 +101,6 @@ function AttemptQuizComponent(props: any)
     }
 
     function createErrorDataObj(err: any): any {
-        console.log(err.response.data.message)
         const errorDataObj = { 
             message1: 'Unable to view quiz',
             message2: err.response.data.message,

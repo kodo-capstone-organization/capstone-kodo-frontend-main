@@ -113,7 +113,6 @@ function MarkedQuizComponent(props: any) {
     }
 
     function createErrorDataObj(err: any): any {
-        console.log(err.response.data.message)
         const errorDataObj = { 
             message1: 'Unable to view student attempt',
             message2: err.response.data.message,
