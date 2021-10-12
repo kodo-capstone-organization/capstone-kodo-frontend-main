@@ -54,7 +54,7 @@ function LessonViewerHeader(props: any) {
     const showBackToCourseOverviewIcon = () => {
         return (
             <ExitWrapper>
-                <ExitLink to={`/overview/${enrolledCourse?.parentCourse.courseId}`}>
+                <ExitLink to={`/overview/course/${enrolledCourse?.parentCourse.courseId}`}>
                     <Tooltip title={<div style={{ fontSize: "1.5em", padding: "2px" }}>Back to Course Overview</div>}>
                         <CancelOutlinedIcon fontSize="large" style={{ color: colours.BLUE2, padding: 20 }} />
                     </Tooltip>

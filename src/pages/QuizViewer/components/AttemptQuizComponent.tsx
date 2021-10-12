@@ -116,7 +116,7 @@ function AttemptQuizComponent(props: any)
             {
                 props.callOpenSnackBar("Quiz Submitted Successfully", "success")
 
-                history.push(`/overview/lesson/${props.enrolledCourseId}/${props.enrolledLessonId}`);
+                history.push(`/overview/course/${props.enrolledCourseId}/lesson/${props.enrolledLessonId}`);
             })
             .catch(err =>
             {

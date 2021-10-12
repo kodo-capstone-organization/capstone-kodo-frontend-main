@@ -64,8 +64,8 @@ function ViewQuizAttemptsModal(props: any) {
     return d.toDateString() + ', ' + d.toLocaleTimeString();
   }
 
-  const navigateToMarkedQuizView = (studentAttemptId : number) => {
-    history.push({ pathname: `/markedquizviewer/${enrolledCourseId}/${enrolledLessonId}/${studentAttemptId}`, state: { mode: 'VIEW' } });
+  const navigateToMarkedQuizView = (studentAttemptId : number) => {    
+    history.push({ pathname: `/overview/course/${enrolledCourseId}/lesson/${enrolledLessonId}/markedquizviewer/${studentAttemptId}`, state: { mode: 'VIEW' } });
   }
 
   const getScore = (studentAttemptQuestions: StudentAttemptQuestion[]) => {

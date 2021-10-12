@@ -87,7 +87,7 @@ function ForumThreadList(props: any) {
 
     const navigateToThread = (forumThreadId: number) => {
         if (forumCategory !== undefined) {
-            props.history.push(`/forum/${courseId}/category/${forumCategory.forumCategoryId}/thread/${forumThreadId}`);
+            props.history.push(`/overview/course/${courseId}/forum/category/${forumCategory.forumCategoryId}/thread/${forumThreadId}`);
         }
     }
 

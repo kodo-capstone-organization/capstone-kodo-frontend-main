@@ -182,7 +182,7 @@ function StudentView(props: any) {
   }
 
   const navigateToLatestLesson = () => {
-    history.push(`/overview/lesson/${enrolledCourse?.enrolledCourseId}/${latestLesson?.enrolledLessonId}`)
+    history.push(`/overview/course/${enrolledCourse?.enrolledCourseId}/lesson/${latestLesson?.enrolledLessonId}`)
   }
 
   const classes = useStyles();
@@ -204,7 +204,7 @@ function StudentView(props: any) {
                   return(
                     <Step key={enrolledLesson.parentLesson.lessonId}>                
                       <StepLabel StepIconComponent={StepIcon}>
-                        <Link color="primary" href={`/overview/lesson/${enrolledCourse?.enrolledCourseId}/${enrolledLesson.enrolledLessonId}`}>
+                        <Link color="primary" href={`/overview/course/${enrolledCourse?.enrolledCourseId}/lesson/${enrolledLesson.enrolledLessonId}`}>
                           Week {enrolledLesson.parentLesson.sequence}
                         </Link>
                       </StepLabel>

@@ -79,7 +79,7 @@ function ForumCategoryList(props: any) {
     }
 
     const navigateToIndividualCategory = (forumCategoryId: number) => {
-        props.history.push(`/forum/${props.currentCourseId}/category/${forumCategoryId}`);
+        props.history.push(`/overview/course/${props.currentCourseId}/forum/category/${forumCategoryId}`);
     }
 
     const mapCategories = (forumCategories: ForumCategory[]) => {
@@ -126,7 +126,6 @@ function ForumCategoryList(props: any) {
                                         </Menu>
                                     </>
                                 }
-
                             </ForumThreadCard>
                         </>
                     );

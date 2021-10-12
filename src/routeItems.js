@@ -47,7 +47,7 @@ export const RouteItemsWithSidebar = [
 
 export const RouteItemsWithoutSidePadding = [
     {
-        path: "/overview/:courseId",
+        path: "/overview/course/:courseId",
         isDynamic: true,
         component: CourseOverview
     },

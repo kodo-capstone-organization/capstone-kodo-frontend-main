@@ -52,7 +52,7 @@ function Sidebar(props: any) {
       enrolledLessons.map(enrolledLesson => {
         return (
           <LessonLink
-            to={`/overview/lesson/${enrolledCourse.enrolledCourseId}/${enrolledLesson.enrolledLessonId}`}
+            to={`/overview/course/${enrolledCourse.enrolledCourseId}/lesson/${enrolledLesson.enrolledLessonId}`}
             key={enrolledLesson.enrolledLessonId}
           >
             <RightArrow /> Week {enrolledLesson.parentLesson.sequence}
@@ -68,7 +68,7 @@ function Sidebar(props: any) {
       lessons.map(lesson => {
         return (
           <LessonLink
-            to={`/overview/lessonstatistics/${course.courseId}/${lesson.lessonId}`}
+            to={`/overview/course/${course.courseId}/lessonstatistics/${lesson.lessonId}`}
             key={lesson.lessonId}
           >
             <RightArrow /> Week {lesson.sequence}
@@ -91,7 +91,7 @@ function Sidebar(props: any) {
             {/* TODO: Conditional Active state of links */}
             <SidebarLink
               className={"active"}
-              to={`/overview/${course.courseId}`}
+              to={`/overview/course/${course.courseId}`}
             >
               <Home /> Overview
             </SidebarLink>
@@ -101,7 +101,7 @@ function Sidebar(props: any) {
 
             {/* Discussion Forum Link */}
             <SidebarLink
-              to={`/forum/${course.courseId}`}
+              to={`/overview/course/${course.courseId}/forum/`}
             >
               <Forum /> Discussion Forum
             </SidebarLink>

@@ -149,7 +149,7 @@ function CourseBuilderPage(props: any) {
         updateCourse(updateCourseReq, bannerImageFile)
             .then((updatedCourse) => {
                 setCourseFormData(updatedCourse)
-                history.push(`/overview/${courseFormData.courseId}`)
+                history.push(`/overview/course/${courseFormData.courseId}`)
                 props.callOpenSnackBar("Course information successfully updated", "success")
             })
             .catch((error) => {
@@ -189,19 +189,11 @@ function CourseBuilderPage(props: any) {
         return courseFormData.isEnrollmentActive ? "Unpublish" : "Publish"
     }
 
-    // const navigateToCourseOverview = () => {
-    //     history.push(`/overview/${courseFormData.courseId}`)
-    // }
-    //
-    // const navigateToPreviousPage = () => {
-    //     history.goBack();
-    // }
-
     return loading ? <MessageContainer><CircularProgress/></MessageContainer> : ( !isTutorOfCourse ? 
         <h1>You are not a tutor of this course 😡</h1> :       
         <CourseBuilderContainer>
             <Breadcrumbs aria-label="coursebuilder-breadcrumb" style={{ marginBottom: "1rem"}}>
-                <Link color="primary" href={`/overview/${courseFormData.courseId}`}>
+                <Link color="primary" href={`/overview/course/${courseFormData.courseId}`}>
                     <ArrowBackIcon style={{ verticalAlign: "middle"}}/>&nbsp;
                     <span style={{ verticalAlign: "bottom"}}>Back To Overview</span>
                 </Link>
