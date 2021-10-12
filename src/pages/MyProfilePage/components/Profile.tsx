@@ -254,7 +254,7 @@ function Profile(props: any) {
                                         course={enrolledCourse.parentCourse} 
                                         myCourseView={false} 
                                         isCourseCompleted={enrolledCourse.dateTimeOfCompletion !== null} 
-                                        redirectUrlBase="/overview"
+                                        redirectUrlBase="/overview/course"
                                     />
                                 )})
                             }
@@ -327,7 +327,7 @@ function Profile(props: any) {
                                         course={myCourse} 
                                         myCourseView={true} 
                                         isCourseCompleted={false} 
-                                        redirectUrlBase="/overview"
+                                        redirectUrlBase="/overview/course"
                                     />
                                 )})
                             }

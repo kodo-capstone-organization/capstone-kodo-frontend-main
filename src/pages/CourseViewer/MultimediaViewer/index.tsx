@@ -82,7 +82,7 @@ function MultimediaViewer(props: any) {
     setDateTimeOfCompletionOfEnrolledContentByEnrolledContentId(true, enrolledContentId)
       .then((res: EnrolledContent) => {
         props.callOpenSnackBar("Multimedia completed", "success");
-        history.push(`/overview/lesson/${enrolledCourseId}/${enrolledLessonId}`);
+        history.push(`/overview/course/${enrolledCourseId}/lesson/${enrolledLessonId}`);
       })
       .catch(err => props.callOpenSnackBar(err.response.data.message, "error"))
   }
@@ -90,7 +90,7 @@ function MultimediaViewer(props: any) {
   const showBackToLessonOverviewIcon = () => {
     return (
       <ExitWrapper>
-          <ExitLink to={`/overview/lesson/${enrolledCourseId}/${enrolledLessonId}`}>
+          <ExitLink to={`/overview/course/${enrolledCourseId}/lesson/${enrolledLessonId}`}>
               <Tooltip title={<div style={{ fontSize: "1.5em", padding: "2px" }}>Back to Lesson Overview</div>}>
                   <CancelOutlinedIcon fontSize="large" style={{ color: colours.BLUE2, padding: 20 }} />
               </Tooltip>

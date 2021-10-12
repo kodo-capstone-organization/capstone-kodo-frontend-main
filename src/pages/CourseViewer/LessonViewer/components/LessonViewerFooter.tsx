@@ -36,7 +36,7 @@ function LessonViewerFooter(props: any) {
                         <Link
                             type="button"
                             color="primary"
-                            href={`/overview/lesson/${enrolledCourse.enrolledCourseId}/${enrolledLesson.enrolledLessonId - 1}`}
+                            href={`/overview/course/${enrolledCourse.enrolledCourseId}/lesson/${enrolledLesson.enrolledLessonId - 1}`}
                         >
                             <ArrowBackward/> Previous Lesson
                         </Link>
@@ -49,7 +49,7 @@ function LessonViewerFooter(props: any) {
                         <Link
                             type="button"
                             color="primary"
-                            href={`/overview/lesson/${enrolledCourse.enrolledCourseId}/${enrolledLesson.enrolledLessonId + 1}`}
+                            href={`/overview/course/${enrolledCourse.enrolledCourseId}/lesson/${enrolledLesson.enrolledLessonId + 1}`}
                         >
                             Next Lesson <ArrowForward />
                         </Link>

@@ -1,31 +1,33 @@
 import { useEffect, useState } from 'react';
 
+import DeleteIcon from '@material-ui/icons/Delete';
+import QuestionAnswerIcon from "@material-ui/icons/QuestionAnswer";
+import ReplyIcon from '@material-ui/icons/Reply';
+
 import {
     IconButton,
     TextField,
-    Avatar,
     Typography,
     Divider
 } from "@material-ui/core";
+
+import { Account } from "../../../apis/Entities/Account";
+import { Course } from "../../../apis/Entities/Course";
+import { ForumPost, CreateNewForumPostReq, CreateNewForumPostReplyReq } from '../../../apis/Entities/ForumPost';
+import { ForumThread } from '../../../apis/Entities/ForumThread';
+
+import { createNewForumPost, createNewForumPostReply, deleteForumThread, deleteForumPost } from "../../../apis/Forum/ForumApis";
+import { getCourseByCourseId } from '../../../apis/Course/CourseApis';
+import { getMyAccount } from "../../../apis/Account/AccountApis";
+
 import {
     ForumPostCardContent,
     ForumAvatar,
-    ForumPostCard,
     ForumPostReplyCard,
     ForumPostReplyCardContent
 } from "../ForumElements";
-import ReplyIcon from '@material-ui/icons/Reply';
-import DeleteIcon from '@material-ui/icons/Delete';
-import QuestionAnswerIcon from "@material-ui/icons/QuestionAnswer";
-import { Button } from "../../../values/ButtonElements";
-import { ForumPost, CreateNewForumPostReq, CreateNewForumPostReplyReq } from '../../../apis/Entities/ForumPost';
-import { ForumThread } from '../../../apis/Entities/ForumThread';
-import { createNewForumPost, createNewForumPostReply, deleteForumThread, deleteForumPost } from "../../../apis/Forum/ForumApis";
-import { Account } from "../../../apis/Entities/Account";
-import { Course } from "../../../apis/Entities/Course";
-import { getMyAccount } from "../../../apis/Account/AccountApis";
-import { getCourseByCourseId } from '../../../apis/Course/CourseApis';
 
+import { Button } from "../../../values/ButtonElements";
 
 
 function ForumPostInputArea(props: any) {
@@ -40,18 +42,21 @@ function ForumPostInputArea(props: any) {
     const [postType, setPostType] = useState<string>();
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [myAccount, setMyAccount] = useState<Account>();
-    const [seeLess, setSeeLess] = useState<boolean>(false);
-    const loggedInAccountId = parseInt(window.sessionStorage.getItem("loggedInAccountId"));
-
-
+    const loggedInAccountId = JSON.parse(window.sessionStorage.getItem("loggedInAccountId") || "{}");
 
     useEffect(() => {
-        setForumThread(props.forumThread);
-        setParentForumPost(props.forumPost);
+        if(props.forumThread != undefined){
+            setForumThread(props.forumThread);
+        }
+        if(props.forumPost != undefined){
+            setParentForumPost(props.forumPost);
+        }
         if (props.forumPost != undefined) {
             setChildForumPosts(props.forumPost?.replies);
         }
-        setPostType(props.postType);
+        if(props.postType != undefined){
+            setPostType(props.postType);
+        }
         setCurrentForumCategoryId(props.currentForumCategoryId);
         setCourseId(props.courseId);
         getCourseByCourseId(props.courseId).then((res) => {
@@ -65,10 +70,6 @@ function ForumPostInputArea(props: any) {
             console.log("Failed", err);
         });
     }, [props]);
-
-    useEffect(() => {
-        console.log("postType", postType);
-    }, [postType]);
 
     const handleOpen = () => {
         setIsOpen(true);
@@ -86,7 +87,7 @@ function ForumPostInputArea(props: any) {
     }
 
     const handleCreateConfirm = () => {
-        if (postType === "POST") {
+        if (postType === "POST" && forumThread !== undefined) {
             const createNewForumPostReq: CreateNewForumPostReq = {
                 message,
                 timeStamp: new Date(),
@@ -100,13 +101,20 @@ function ForumPostInputArea(props: any) {
                 }).catch((err) => {
                     props.onForumPostChange({ message: err.response.data.message, type: "error" });
                 });
-        } else if (postType === "REPLY" || postType === "VIEW") {
+        } else if ((postType === "REPLY" || postType === "VIEW") 
+                    && myAccount !== undefined 
+                    && parentForumPost !== undefined
+                    && parentForumPost.forumPostId !== null
+        ) {
             const newForumPostReply: ForumPost = {
                 forumPostId: null,
                 message,
                 timeStamp: new Date(),
-                reply: null,
-                account: myAccount
+                isReported: false,
+                reasonForReport: null,
+                replies: [],      
+                parentForumPost: null,
+                account: myAccount,
             }
             const createNewForumPostReplyReq: CreateNewForumPostReplyReq = {
                 newForumPostReply,
@@ -125,31 +133,43 @@ function ForumPostInputArea(props: any) {
     }
 
     const handleDeletePost = () => {
-        if (postType === "POST" && forumThread.account.accountId === loggedInAccountId || course?.tutor.accountId === loggedInAccountId) {
-            //deleting a thread
-            props.history.push(`/forum/${courseId}/category/${currentForumCategoryId}`);
-            deleteForumThread(forumThread.forumThreadId)
-                .then((res) => {
-                    props.onForumPostChange({ message: "Forum Thread Deletion Succeeded", type: "success" });
-                }).catch((err) => {
-                    props.onForumPostChange({ message: err.response.data.message, type: "error" });
-                })
-        } else if (postType === "REPLY" && parentForumPost.account.accountId === loggedInAccountId) {
-            // deleting a post
-            deleteForumPost(parentForumPost.forumPostId)
-                .then((res) => {
-                    props.onForumPostChange({ message: "Forum Post Deletion Succeeded", type: "success" });
-                }).catch((err) => {
-                    props.onForumPostChange({ message: err.response.data.message, type: "error" });
-                })
-        } else {
-            props.onForumPostChange({ message: "You are not the author of this thread/post.", type: "error" });
+        if (postType === "POST") {
+            if (forumThread !== undefined) {
+                if (forumThread.account.accountId === loggedInAccountId 
+                    || course?.tutor.accountId === loggedInAccountId) {
+                    //deleting a thread
+                    props.history.push(`/overview/course/${courseId}/forum/category/${currentForumCategoryId}`);
+                    deleteForumThread(forumThread.forumThreadId)
+                        .then((res) => {
+                            props.onForumPostChange({ message: "Forum Thread Deletion Succeeded", type: "success" });
+                        }).catch((err) => {
+                            props.onForumPostChange({ message: err.response.data.message, type: "error" });
+                        })
+                    } else {
+                        props.onForumPostChange({ message: "You are not the author of this thread/post.", type: "error" });
+                    }
+                }
+        } else if (postType === "REPLY") {
+            if (parentForumPost !== undefined && parentForumPost.forumPostId !== null) {
+                if (parentForumPost.account.accountId === loggedInAccountId
+                    || course?.tutor.accountId === loggedInAccountId) {
+                    // deleting a post
+                    deleteForumPost(parentForumPost.forumPostId)
+                        .then((res) => {
+                            props.onForumPostChange({ message: "Forum Post Deletion Succeeded", type: "success" });
+                        }).catch((err) => {
+                            props.onForumPostChange({ message: err.response.data.message, type: "error" });
+                        })
+                } else {
+                    props.onForumPostChange({ message: "You are not the author of this thread/post.", type: "error" });
+                }
+            }
         }
         handleCancel();
     }
 
     const handleDeleteReply = (forumPost: ForumPost) => {
-        if (forumPost.account.accountId === loggedInAccountId) {
+        if (forumPost.account.accountId === loggedInAccountId && forumPost.forumPostId !== null) {
             deleteForumPost(forumPost.forumPostId)
                 .then((res) => {
                     props.onForumPostChange({ message: "Forum Post Deletion Succeeded", type: "success" });
@@ -169,12 +189,7 @@ function ForumPostInputArea(props: any) {
 
     const handleMakeReply = () => {
         handleOpen();
-        console.log("handleMakeReply");
     }
-
-    // const handleSeeLess = () => {
-    //     setSeeLess(!seeLess);
-    // }
 
     const mapReplies = (forumPosts: ForumPost[]) => {
         return (

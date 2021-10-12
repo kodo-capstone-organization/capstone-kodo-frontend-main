@@ -102,7 +102,7 @@ function CoursePreviewPage(props: any) {
             </Button>
           )}
           {currentCourse && isCourseTutor(currentCourse) && (
-            <Button primary to={`/overview/${currentCourse.courseId}`}>
+            <Button primary to={`/overview/course/${currentCourse.courseId}`}>
               Go to overview
             </Button>
           )}
