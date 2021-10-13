@@ -47,8 +47,10 @@ import {
     QuizQuestionCard,
 } from "./QuizBuilderElements";
 
-import QuizQuestionComponent from "./components/QuizQuestionComponent"
-import QuestionBankModal from "./components/QuestionBankModal"
+import QuizQuestionComponent from "./components/QuizQuestionComponent";
+import QuestionBankModal from "./components/QuestionBankModal";
+import CreateQuestionModal from "./components/CreateQuestionModal";
+
 
 import { Button } from "../../values/ButtonElements";
 
@@ -116,31 +118,13 @@ function QuizBuilderPage(props: any) {
         });
     }, [contentId]);
 
-    const addNewQuestion = () => {
+    const handleAddNewQuestion = (newQuizQuestion: QuizQuestion) => {
         if (quiz) {
             const newDraggableId = draggableId + 1;
             setDraggableId(newDraggableId);
-            const newQuizQuestionOption: QuizQuestionOption = {
-                quizQuestionOptionId: null,
-                leftContent: "MCQ OPTION",
-                rightContent: null,
-                correct: true
-            };
-            const defaultOptionTwo: QuizQuestionOption = {
-                quizQuestionOptionId: null,
-                leftContent: "MCQ OPTION",
-                rightContent: null,
-                correct: false
-            }; const newQuizQuestion: any = {
-                quizQuestionId: null,
-                content: "",
-                questionType: "MCQ",
-                marks: 1,
-                quiz: quiz,
-                quizQuestionOptions: [newQuizQuestionOption, defaultOptionTwo],
-                draggableId: newDraggableId
-            }
+            newQuizQuestion = Object.assign(newQuizQuestion, { draggableId: newDraggableId, quiz });
             quizQuestionArray.push(newQuizQuestion);
+            props.callOpenSnackBar(`Added new ${newQuizQuestion.questionType} question.`, "success")
         }
     }
 
@@ -248,9 +232,11 @@ function QuizBuilderPage(props: any) {
         var updatedQuizQuestionArray = [];
         if (updatedQuizQuestion === null) {
             // question deletion
+            console.log("qn deletion")
             updatedQuizQuestionArray = quizQuestionArray.filter((q, qId) => q.draggableId !== index);
         } else {
             // question update
+            console.log("qn update")
             updatedQuizQuestionArray = quizQuestionArray.map((q, qId) => {
                 return (
                     qId === index ? updatedQuizQuestion : q
@@ -299,7 +285,7 @@ function QuizBuilderPage(props: any) {
     const mapQuestionArray = (questionArray: any[]) => {
         return (
             <div>
-                { questionArray.map(function (q, qId) {
+                {questionArray.map(function (q, qId) {
                     return (
                         isDisabled ?
                             <QuizQuestionCard key={qId}>
@@ -310,7 +296,7 @@ function QuizBuilderPage(props: any) {
                             <Draggable key={q.draggableId.toString()} draggableId={q.draggableId.toString()} index={qId}>
                                 {(provided) => (
                                     <QuizQuestionCard ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
-                                        <QuizQuestionComponent disabled={isDisabled} question={q} questionIndex={q.draggableId.toString()}
+                                        <QuizQuestionComponent disabled={isDisabled} question={q} questionIndex={q.draggableId}
                                             onUpdateQuestion={handleUpdateQuestion} onUpdateQuizQuestionOptions={handleQuizQuestionOptionUpdate}
                                             onCallSnackbar={handleCallSnackbar}
                                         />
@@ -409,7 +395,7 @@ function QuizBuilderPage(props: any) {
                                         <>
                                             <QuestionBankModal selectedFromQuestionBank={selectedFromQuestionBank} disabled={isDisabled} onChangeFromQuestionBank={handleChangeFromQuestionBank} />
                                             &nbsp;&nbsp;
-                                            <Button primary disabled={isDisabled} onClick={addNewQuestion}>Add New Question</Button>
+                                            <CreateQuestionModal disabled={isDisabled} onAddNewQuestion={handleAddNewQuestion} />
                                         </>
                                 }
                             </div>

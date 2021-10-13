@@ -105,3 +105,9 @@ export const AddQuizOptionButton = styled(Button)`
     width: fit-content;
     margin: 4px auto;
 `
+
+export const AddQuestionByTypeButton = styled(Button)`
+    width: 200px;
+    margin: auto;
+    height: 100px;
+`

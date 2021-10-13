@@ -118,7 +118,7 @@ function QuestionBankModal(props: any) {
                     </DialogContent>
                     <DialogActions>
                         <Button onClick={handleClose}>Cancel</Button>
-                        <Button onClick={handleConfirm}>Confirm</Button>
+                        <Button onClick={handleConfirm} primary>Confirm</Button>
                     </DialogActions>
                 </Dialog>
             </div>
