@@ -33,7 +33,7 @@ function Routes() {
     const [snackBarSeverity, setSnackBarSeverity] = useState("info");
 
     // To be propped into children components for them to call
-    const callOpenSnackBar = (messageFromCaller: string, severityFromCaller: string) => {
+    const callOpenSnackBar = (messageFromCaller, severityFromCaller) => {
         // severityList: error, warning, info, success ONLY
         if (!severityList.includes(severityFromCaller)) { // invalid severity received, default to info
             severityFromCaller = "info"

@@ -3,10 +3,12 @@ import { EnrolledLessonWithStudentName } from "../../../../../apis/Entities/Enro
 import { StudentAttempt } from "../../../../../apis/Entities/StudentAttempt";
 
 function isMultimedia(enrolledContent: EnrolledContent): boolean {
+    // @ts-ignore
     return enrolledContent.parentContent.type === "multimedia";
 }
  
 function isQuiz(enrolledContent: EnrolledContent): boolean {
+    // @ts-ignore
     return enrolledContent.parentContent.type === "quiz";
 }
 

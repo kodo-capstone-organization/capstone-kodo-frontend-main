@@ -71,7 +71,7 @@ function ForumThreadList(props: any) {
     }, [props.currentForumCategoryId]);
 
     const handleCallSnackbar = (snackbarObject: any) => {
-        if (forumCategory !== undefined) {
+        if (forumCategory && forumCategory.forumCategoryId !== null) {
             if (snackbarObject.type === "success") {
                 getForumCategoryByForumCategoryId(forumCategory.forumCategoryId).then((res) => {
                     setForumCategory(res);
@@ -150,24 +150,24 @@ function ForumThreadList(props: any) {
     };
 
     const handleDeleteThread = () => {
-        if (forumCategory !== undefined) {
-            if (menuInfo.accountId === loggedInAccountId || course?.tutor.accountId === loggedInAccountId) {
-                deleteForumThread(menuInfo.forumThreadId)
-                    .then((res) => {
-                        props.onCallSnackbar({ message: "Thread Deleted Successfully", type: "success" })
-                        getForumCategoryByForumCategoryId(forumCategory.forumCategoryId).then((res) => {
-                            setForumCategory(res);
-                            setForumThreads(res.forumThreads);
-                        }).catch((err) => {
-                            props.onCallSnackbar({ message: "Failure", type: "error" })
-                        })
+        if (menuInfo.accountId === loggedInAccountId || course?.tutor.accountId === loggedInAccountId) {
+            deleteForumThread(menuInfo.forumThreadId)
+                .then((res) => {
+                    if (forumCategory && forumCategory.forumCategoryId !== null) {
+                    props.onCallSnackbar({ message: "Thread Deleted Successfully", type: "success" })
+                    getForumCategoryByForumCategoryId(forumCategory.forumCategoryId).then((res) => {
+                        setForumCategory(res);
+                        setForumThreads(res.forumThreads);
                     }).catch((err) => {
-                        props.onCallSnackbar({ message: err.response.data.message, type: "error" })
-
+                        props.onCallSnackbar({ message: "Failure", type: "error" })
                     })
-            } else {
-                props.onCallSnackbar({ message: "You are not the author of this thread", type: "error" })
-            }
+                    }   
+                }).catch((err) => {
+                    props.onCallSnackbar({ message: err.response.data.message, type: "error" })
+
+                })
+        } else {
+            props.onCallSnackbar({ message: "You are not the author of this thread", type: "error" })
         }
     }
 
@@ -175,7 +175,7 @@ function ForumThreadList(props: any) {
         return (
             <div>
                 <ForumTextField placeholder="Search By Name, Description, Author..." id="mytextfield" value={searchValue} variant="outlined"
-                    onChange={(e) => filterByNameDescAuthor(e.target.value)}  style={{width:"500px"}}/>
+                    onChange={(e: any) => filterByNameDescAuthor(e.target.value)}  style={{width:"500px"}}/>
                 {forumThreads.map(function (thread, threadId) {
                     return (
                         <>

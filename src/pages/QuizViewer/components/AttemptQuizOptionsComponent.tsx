@@ -18,9 +18,8 @@ import { QuizQuestion } from '../../../apis/Entities/QuizQuestion';
 
 function AttemptQuizOptionsComponent(props: any) {
 
-    const [question, setQuestion] = useState<QuizQuestion>({});
+    const [question, setQuestion] = useState<QuizQuestion>();
     const [questionIndex, setQuestionIndex] = useState<number>();
-    const [optionArrayToUpdate, setOptionArrayToUpdate] = useState<number[][]>([]);
     const [selectedOptionArray, setSelectedOptionArray] = useState<number[]>([]);
     const [rightSelected, setRightSelected] = useState<any>("");
 
@@ -33,141 +32,145 @@ function AttemptQuizOptionsComponent(props: any) {
         }
     }, [props.question])
 
-    // useEffect(() => {
-    //     console.log("selectedOptionArray", selectedOptionArray);
-    // }, [selectedOptionArray])
-
     const handleOptionsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const value = parseInt(event.target.value);
-        var newOptionArray;
-        if (question.questionType === "MCQ" || question.questionType === "TF") {
-            newOptionArray = [value];
-        } else if (question.questionType === "MATCHING") {
-            var newOptionArray;
-            if (!selectedOptionArray.includes(value)) {
-                newOptionArray = selectedOptionArray.concat([value]);
+        if (question)
+        {
+            const value = parseInt(event.target.value);
+            var newOptionArray: number[];
+            if (question.questionType === "MCQ" || question.questionType === "TF") {
+                newOptionArray = [value];
+            } else if (question.questionType === "MATCHING") {
+                if (!selectedOptionArray.includes(value)) {
+                    newOptionArray = selectedOptionArray.concat([value]);
+                } else {
+                    newOptionArray = selectedOptionArray.filter(x => x !== value);
+                }
             } else {
-                newOptionArray = selectedOptionArray.filter(x => x !== value);
+                newOptionArray = [];
             }
+            setSelectedOptionArray(newOptionArray);
+            props.onHandleAttemptAnswer([newOptionArray], questionIndex);
         }
-        setSelectedOptionArray(newOptionArray);
-        setOptionArrayToUpdate([newOptionArray]);
-        props.onHandleAttemptAnswer([newOptionArray], questionIndex);
     }
 
-    const handleSelectorChange = (event: SelectChangeEvent, index: number) => {
-        var newOptionArray = [];
-        const rightOptionId = event.target.value;
-        const leftOptionId = question.quizQuestionOptions[index].quizQuestionOptionId;
-        const combinedOption = [leftOptionId, rightOptionId];
-        console.log("combinedOption", combinedOption)
+    const handleSelectorChange = (event: any, index: number) => {
+        if (question) {
+            var newOptionArray = [];
+            const rightOptionId = event.target.value;
+            const leftOptionId = question.quizQuestionOptions[index].quizQuestionOptionId;
+            const combinedOption = [leftOptionId, rightOptionId];
 
-        console.log("1", selectedOptionArray)
-        newOptionArray = selectedOptionArray.filter((selectedOption) => selectedOption[0] !== leftOptionId);
-        console.log("2", newOptionArray)
-        newOptionArray = newOptionArray.concat([combinedOption]);
-        console.log("3", newOptionArray)
-        setSelectedOptionArray(newOptionArray);
-        setOptionArrayToUpdate(newOptionArray);
-        props.onHandleAttemptAnswer(newOptionArray, questionIndex);
-
+            newOptionArray = selectedOptionArray.filter((selectedOption: number) => selectedOption !== leftOptionId);
+            newOptionArray = newOptionArray.concat(combinedOption);
+            setSelectedOptionArray(newOptionArray);
+            props.onHandleAttemptAnswer(newOptionArray, questionIndex);
+        }
     }
 
 
     return (
         <>
-            <TableContainer component={Paper} style={{ marginTop: "16px" }}>
-                <Table size="small" aria-label="a dense table">
-                    <TableHead>
-                        <TableRow>
-                            {
-                                (question.questionType === "MCQ" || question.questionType === "TF") &&
-                                <>
-                                    <TableCell>Options</TableCell>
-                                    <TableCell align="right">Answer</TableCell>
-                                </>
+            { question &&
+                <TableContainer component={Paper} style={{ marginTop: "16px" }}>
+                    <Table size="small" aria-label="a dense table">
+                        <TableHead>
+                            <TableRow>
+                                {
+                                    (question.questionType === "MCQ" || question.questionType === "TF") &&
+                                    <>
+                                        <TableCell>Options</TableCell>
+                                        <TableCell align="right">Answer</TableCell>
+                                    </>
 
+                                }
+                                {
+                                    question.questionType === "MATCHING" &&
+                                    <>
+                                        <TableCell>LEFT</TableCell>
+                                        <TableCell align="right">RIGHT</TableCell>
+                                    </>
+
+                                }
+                            </TableRow>
+                        </TableHead>
+
+
+                        <TableBody>
+                            {
+                                question.questionType === "MCQ" &&
+                                question.quizQuestionOptions?.map((row, index) => {
+                                    if (row.quizQuestionOptionId !== null) {
+                                        <TableRow
+                                            key={index}
+                                        >
+                                            <TableCell component="th" scope="row">
+                                                {row.leftContent}
+                                            </TableCell>
+                                            <TableCell align="right">
+                                                <Radio
+                                                    checked={selectedOptionArray.includes(row.quizQuestionOptionId)}
+                                                    value={row.quizQuestionOptionId}
+                                                    onChange={handleOptionsChange}
+                                                />
+                                            </TableCell>
+                                        </TableRow>
+                                    }
+                                })
+
+                            }
+
+                            {
+                                question.questionType === "TF" &&
+                                question.quizQuestionOptions?.map((row, index) => {
+                                    if (row.quizQuestionOptionId !== null) {
+                                        <TableRow
+                                            key={index}
+                                        >
+                                            <TableCell component="th" scope="row">
+                                                {row.leftContent}
+                                            </TableCell>
+                                            <TableCell align="right">
+                                                <Radio
+                                                    checked={selectedOptionArray.includes(row.quizQuestionOptionId)}
+                                                    value={row.quizQuestionOptionId}
+                                                    onChange={handleOptionsChange}
+                                                />
+                                            </TableCell>
+                                        </TableRow>
+                                    }
+                                })
                             }
                             {
                                 question.questionType === "MATCHING" &&
-                                <>
-                                    <TableCell>LEFT</TableCell>
-                                    <TableCell align="right">RIGHT</TableCell>
-                                </>
-
+                                question.quizQuestionOptions?.map((row, index) => (
+                                    <TableRow
+                                        key={index}
+                                    >
+                                        <TableCell component="th" scope="row">
+                                            {row.leftContent}
+                                        </TableCell>
+                                        <TableCell component="th" scope="row" align="right">
+                                            <Select
+                                                value={rightSelected[index]}
+                                                onChange={(e) => handleSelectorChange(e, index)}
+                                            >
+                                                {
+                                                    question.quizQuestionOptions?.map((row, index) => {
+                                                        if (row.quizQuestionOptionId)
+                                                        {
+                                                            return (<MenuItem value={row.quizQuestionOptionId} key={index}>{row.rightContent}</MenuItem>);
+                                                        }                                                        
+                                                    })
+                                                }
+                                            </Select>
+                                        </TableCell>
+                                    </TableRow>
+                                ))
                             }
-                        </TableRow>
-                    </TableHead>
-
-
-                    <TableBody>
-                        {
-                            question.questionType === "MCQ" &&
-                            question.quizQuestionOptions?.map((row, index) => (
-                                <TableRow
-                                    key={index}
-                                >
-                                    <TableCell component="th" scope="row">
-                                        {row.leftContent}
-                                    </TableCell>
-                                    <TableCell align="right">
-                                        <Radio
-                                            checked={selectedOptionArray.includes(row.quizQuestionOptionId)}
-                                            value={row.quizQuestionOptionId}
-                                            onChange={handleOptionsChange}
-                                        />
-                                    </TableCell>
-                                </TableRow>
-                            ))
-
-                        }
-
-                        {
-                            question.questionType === "TF" &&
-                            question.quizQuestionOptions?.map((row, index) => (
-                                <TableRow
-                                    key={index}
-                                >
-                                    <TableCell component="th" scope="row">
-                                        {row.leftContent}
-                                    </TableCell>
-                                    <TableCell align="right">
-                                        <Radio
-                                            checked={selectedOptionArray.includes(row.quizQuestionOptionId)}
-                                            value={row.quizQuestionOptionId}
-                                            onChange={handleOptionsChange}
-                                        />
-                                    </TableCell>
-                                </TableRow>
-                            ))
-                        }
-                        {
-                            question.questionType === "MATCHING" &&
-                            question.quizQuestionOptions?.map((row, index) => (
-                                <TableRow
-                                    key={index}
-                                >
-                                    <TableCell component="th" scope="row">
-                                        {row.leftContent}
-                                    </TableCell>
-                                    <TableCell component="th" scope="row" align="right">
-                                        <Select
-                                            value={rightSelected[index]}
-                                            onChange={(e) => handleSelectorChange(e, index)}
-                                        >
-                                            {
-                                                question.quizQuestionOptions?.map((row, index) => {
-                                                    return (<MenuItem value={row.quizQuestionOptionId} key={index}>{row.rightContent}</MenuItem>);
-                                                })
-                                            }
-                                        </Select>
-                                    </TableCell>
-                                </TableRow>
-                            ))
-                        }
-                    </TableBody>
-                </Table>
-            </TableContainer>
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            }
         </>
     )
 }

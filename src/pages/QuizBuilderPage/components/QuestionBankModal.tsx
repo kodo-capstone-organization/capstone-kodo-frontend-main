@@ -13,9 +13,12 @@ import {
     GridValueGetterParams 
 } from '@material-ui/data-grid';
 
+import { QuizQuestion } from '../../../apis/Entities/QuizQuestion';
+
 import { getAllQuizQuestionsByTutorId } from "../../../apis/QuizQuestion/QuizQuestionApis";
 
 import { Button } from "../../../values/ButtonElements";
+
 
 const columns: GridColDef[] = [
     {
@@ -32,20 +35,6 @@ const columns: GridColDef[] = [
         headerName: 'Question Type',
         width: 150,
     },
-    // {
-    //     field: 'quiz',
-    //     headerName: 'Quiz',
-    //     type: 'object',
-    //     width: 110,
-    //     editable: true,
-    // },
-    // {
-    //     field: 'quizQuestionId',
-    //     headerName: 'Quiz Question Id',
-    //     type: 'number',
-    //     width: 110,
-    //     editable: true,
-    // },
     {
         field: 'quizQuestionOptions',
         headerName: 'Options',
@@ -76,10 +65,7 @@ function QuestionBankModal(props: any) {
                 .catch(err => { console.log("Question Bank Failed", err) })
         }
         setIsDisabled(props.disabled);
-        const newSelected = props.selectedFromQuestionBank.map(x => x.quizQuestionId);
-        console.log("props.selectedFromQuestionBank",props.selectedFromQuestionBank);
-        console.log("props.selectedFromQuestionBank",newSelected);
-
+        const newSelected = props.selectedFromQuestionBank.map((quizQuestion: QuizQuestion) => quizQuestion.quizQuestionId);
         setSelectedQuestions(newSelected);
     }, [accountId, props.disabled])
 

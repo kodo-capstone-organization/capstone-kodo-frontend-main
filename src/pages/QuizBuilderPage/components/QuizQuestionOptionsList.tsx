@@ -50,7 +50,6 @@ function QuizQuestionOptionsList(props: any) {
                         correct: false
                     };
                     newQuizQuestionOptions = [trueOption, falseOption];
-                    console.log('tf', newQuizQuestionOptions);
                     setQuizQuestionOptions(newQuizQuestionOptions);
                 } else if (props.questionType === "MCQ") {
                     const defaultOption: QuizQuestionOption = {
@@ -66,7 +65,6 @@ function QuizQuestionOptionsList(props: any) {
                         correct: false
                     };
                     newQuizQuestionOptions = [defaultOption, defaultOptionTwo];
-                    console.log('mcq', newQuizQuestionOptions);
                     setQuizQuestionOptions(newQuizQuestionOptions);
                 } else if (props.questionType === "MATCHING") {
                     const defaultOption: QuizQuestionOption = {
@@ -76,8 +74,9 @@ function QuizQuestionOptionsList(props: any) {
                         correct: true
                     };
                     newQuizQuestionOptions = [defaultOption, defaultOption];
-                    console.log('match', newQuizQuestionOptions);
                     setQuizQuestionOptions(newQuizQuestionOptions);
+                } else {
+                    newQuizQuestionOptions = [];
                 }
                 props.onHandleQuizQuestionOptionUpdate(newQuizQuestionOptions, props.questionIndex)
             }
@@ -117,18 +116,21 @@ function QuizQuestionOptionsList(props: any) {
     }
 
     const handleDeleteOption = (event: React.MouseEvent<unknown>, optionIndex: number) => {
-        const optionToDelete = quizQuestionOptions[optionIndex];
-        if(optionToDelete.correct === true && questionType === "MCQ"){
-            handleCallSnackbar("Cannot delete correct option");
-        } else if (quizQuestionOptions.length > 2) {
-            var newQuizQuestionOptions = quizQuestionOptions?.filter((option, index) => index !== optionIndex);
-            if (newQuizQuestionOptions.length === 1) {
-                newQuizQuestionOptions = newQuizQuestionOptions?.map((option) => Object.assign(option, { correct: true }));
+        if (quizQuestionOptions)
+        {
+            const optionToDelete = quizQuestionOptions[optionIndex];
+            if(optionToDelete.correct === true && questionType === "MCQ"){
+                handleCallSnackbar("Cannot delete correct option");
+            } else if (quizQuestionOptions.length > 2) {
+                var newQuizQuestionOptions = quizQuestionOptions?.filter((option, index) => index !== optionIndex);
+                if (newQuizQuestionOptions.length === 1) {
+                    newQuizQuestionOptions = newQuizQuestionOptions?.map((option) => Object.assign(option, { correct: true }));
+                }
+                setQuizQuestionOptions(newQuizQuestionOptions);
+                props.onHandleQuizQuestionOptionUpdate(newQuizQuestionOptions, questionIndex)
+            } else {
+                handleCallSnackbar("Each Question Must Have At Least 2 Options");
             }
-            setQuizQuestionOptions(newQuizQuestionOptions);
-            props.onHandleQuizQuestionOptionUpdate(newQuizQuestionOptions, questionIndex)
-        } else {
-            handleCallSnackbar("Each Question Must Have At Least 2 Options");
         }
     }
 

@@ -50,6 +50,7 @@ function LessonViewerQuiz(props: any) {
     }, [enrolledLesson]);
 
     function isQuiz(content: Content): boolean {
+        // @ts-ignore
         return content.type === "quiz";
     }
 
