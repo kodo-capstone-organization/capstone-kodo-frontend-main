@@ -25,9 +25,9 @@ function ParticipantItem (props: any) {
             }, 500) // Every 0.5 seconds
         }
 
-        // return () => {
-        //     clearInterval(peerInterval)
-        // }
+        return () => {
+            clearInterval(peerInterval)
+        }
     }, [props.receiver])
 
     useEffect(() => {
