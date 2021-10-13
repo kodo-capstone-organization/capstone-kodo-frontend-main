@@ -384,7 +384,6 @@ function LiveKodoSessionPage(props: any) {
 
     const craftAndSendCallEventMessage = (message?: string, isMuted?: boolean) => {
         const newCallEvent: CallEvent = {
-            eventType: KodoSessionEventType.CALL,
             message: message ? message : "",
             isMuted: isMuted === undefined ? amIMuted : isMuted
         }
