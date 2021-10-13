@@ -33,53 +33,53 @@ function QuizQuestionOptionsList(props: any) {
             setQuestionIndex(props.questionIndex);
             setQuizQuestionOptions(props.question.quizQuestionOptions);
             setIsDisabled(props.disabled);
-            if (props.question.quizQuestionOptions.length === 0) {
-                // population of options when type changes
-                var newQuizQuestionOptions: QuizQuestionOption[];
-                if (props.questionType === "TF") {
-                    const trueOption: QuizQuestionOption = {
-                        quizQuestionOptionId: null,
-                        leftContent: "true",
-                        rightContent: null,
-                        correct: true
-                    };
-                    const falseOption: QuizQuestionOption = {
-                        quizQuestionOptionId: null,
-                        leftContent: "false",
-                        rightContent: null,
-                        correct: false
-                    };
-                    newQuizQuestionOptions = [trueOption, falseOption];
-                    setQuizQuestionOptions(newQuizQuestionOptions);
-                } else if (props.questionType === "MCQ") {
-                    const defaultOption: QuizQuestionOption = {
-                        quizQuestionOptionId: null,
-                        leftContent: "MCQ OPTION",
-                        rightContent: null,
-                        correct: true
-                    };
-                    const defaultOptionTwo : QuizQuestionOption = {
-                        quizQuestionOptionId: null,
-                        leftContent: "MCQ OPTION",
-                        rightContent: null,
-                        correct: false
-                    };
-                    newQuizQuestionOptions = [defaultOption, defaultOptionTwo];
-                    setQuizQuestionOptions(newQuizQuestionOptions);
-                } else if (props.questionType === "MATCHING") {
-                    const defaultOption: QuizQuestionOption = {
-                        quizQuestionOptionId: null,
-                        leftContent: "MATCHING OPTION A",
-                        rightContent: "MATCHING OPTION B",
-                        correct: true
-                    };
-                    newQuizQuestionOptions = [defaultOption, defaultOption];
-                    setQuizQuestionOptions(newQuizQuestionOptions);
-                } else {
-                    newQuizQuestionOptions = [];
-                }
-                props.onHandleQuizQuestionOptionUpdate(newQuizQuestionOptions, props.questionIndex)
-            }
+            // if (props.question.quizQuestionOptions.length === 0) {
+            //     // population of options when type changes
+            //     var newQuizQuestionOptions: QuizQuestionOption[];
+            //     if (props.questionType === "TF") {
+            //         const trueOption: QuizQuestionOption = {
+            //             quizQuestionOptionId: null,
+            //             leftContent: "true",
+            //             rightContent: null,
+            //             correct: true
+            //         };
+            //         const falseOption: QuizQuestionOption = {
+            //             quizQuestionOptionId: null,
+            //             leftContent: "false",
+            //             rightContent: null,
+            //             correct: false
+            //         };
+            //         newQuizQuestionOptions = [trueOption, falseOption];
+            //         setQuizQuestionOptions(newQuizQuestionOptions);
+            //     } else if (props.questionType === "MCQ") {
+            //         const defaultOption: QuizQuestionOption = {
+            //             quizQuestionOptionId: null,
+            //             leftContent: "MCQ OPTION",
+            //             rightContent: null,
+            //             correct: true
+            //         };
+            //         const defaultOptionTwo : QuizQuestionOption = {
+            //             quizQuestionOptionId: null,
+            //             leftContent: "MCQ OPTION",
+            //             rightContent: null,
+            //             correct: false
+            //         };
+            //         newQuizQuestionOptions = [defaultOption, defaultOptionTwo];
+            //         setQuizQuestionOptions(newQuizQuestionOptions);
+            //     } else if (props.questionType === "MATCHING") {
+            //         const defaultOption: QuizQuestionOption = {
+            //             quizQuestionOptionId: null,
+            //             leftContent: "MATCHING OPTION A",
+            //             rightContent: "MATCHING OPTION B",
+            //             correct: true
+            //         };
+            //         newQuizQuestionOptions = [defaultOption, defaultOption];
+            //         setQuizQuestionOptions(newQuizQuestionOptions);
+            //     } else {
+            //         newQuizQuestionOptions = [];
+            //     }
+            //     props.onHandleQuizQuestionOptionUpdate(newQuizQuestionOptions, props.questionIndex)
+            // }
         }
     }, [props.question, props.questionType, props.disabled, props.questionIndex])
 
@@ -116,12 +116,18 @@ function QuizQuestionOptionsList(props: any) {
     }
 
     const handleDeleteOption = (event: React.MouseEvent<unknown>, optionIndex: number) => {
-        if (quizQuestionOptions)
-        {
+        if (quizQuestionOptions) {
             const optionToDelete = quizQuestionOptions[optionIndex];
-            if(optionToDelete.correct === true && questionType === "MCQ"){
+            if (optionToDelete.correct === true && questionType === "MCQ") {
                 handleCallSnackbar("Cannot delete correct option");
-            } else if (quizQuestionOptions.length > 2) {
+            } else if (quizQuestionOptions.length > 2 && questionType === "MATCHING") {
+                var newQuizQuestionOptions = quizQuestionOptions?.filter((option, index) => index !== optionIndex);
+                if (newQuizQuestionOptions.length === 1) {
+                    newQuizQuestionOptions = newQuizQuestionOptions?.map((option) => Object.assign(option, { correct: true }));
+                }
+                setQuizQuestionOptions(newQuizQuestionOptions);
+                props.onHandleQuizQuestionOptionUpdate(newQuizQuestionOptions, questionIndex)
+            } else if (quizQuestionOptions.length > 3 && questionType === "MCQ") {
                 var newQuizQuestionOptions = quizQuestionOptions?.filter((option, index) => index !== optionIndex);
                 if (newQuizQuestionOptions.length === 1) {
                     newQuizQuestionOptions = newQuizQuestionOptions?.map((option) => Object.assign(option, { correct: true }));
@@ -129,7 +135,7 @@ function QuizQuestionOptionsList(props: any) {
                 setQuizQuestionOptions(newQuizQuestionOptions);
                 props.onHandleQuizQuestionOptionUpdate(newQuizQuestionOptions, questionIndex)
             } else {
-                handleCallSnackbar("Each Question Must Have At Least 2 Options");
+                handleCallSnackbar(`Insufficient Options for ${questionType}`);
             }
         }
     }

@@ -1,20 +1,22 @@
 import React, { useState, useEffect } from 'react';
 
 import DeleteIcon from '@material-ui/icons/Delete';
+import DragHandleIcon from '@material-ui/icons/DragHandle';
 import {
-    Box, 
-    FormControl, 
+    Box,
+    FormControl,
     IconButton,
-    InputLabel, 
+    InputLabel,
+    Chip
 } from "@material-ui/core";
 
 import { QuizQuestion } from "../../../apis/Entities/QuizQuestion";
 import { QuizQuestionOption } from '../../../apis/Entities/QuizQuestionOption';
 
 import QuizQuestionOptionsList from "./QuizQuestionOptionsList"
-import { 
-    QuizBuilderTextInput, 
-    QuizSelectMenu 
+import {
+    QuizBuilderTextInput,
+    QuizSelectMenu
 } from "../QuizBuilderElements";
 
 
@@ -66,34 +68,23 @@ function QuizQuestionComponent(props: any) {
         props.onUpdateQuestion(null, questionIndex)
     }
 
-    const handleCallSnackbar = (msg : string) => {
+    const handleCallSnackbar = (msg: string) => {
         props.onCallSnackbar(msg);
+    }
+
+    const formatQuestionType = (questionType: string) => {
+        if (questionType === "TF") {
+            return "True/False";
+        } else {
+            return questionType;
+        }
     }
 
     return (
         <>
-            <div id="questioncomponent" style={{ width: "inherit" }}>
+            <div id="questioncomponent" style={{ width: "inherit", textAlign: "center" }}>
+                <DragHandleIcon/>
                 <div id="typeAndMark" style={{ display: "flex", justifyContent: "center" }}>
-                    {
-                        questionType !== undefined &&
-                        <Box sx={{ minWidth: 120 }} style={{ margin: "6px" }}>
-                            <FormControl fullWidth>
-                                <InputLabel variant="standard" htmlFor="uncontrolled-native">
-                                    Question Type
-                                </InputLabel>
-                                <QuizSelectMenu
-                                disabled={isDisabled} 
-                                    value={questionType}
-                                    onChange={handleTypeChange}
-                                >
-                                    <option value={"MCQ"}>MCQ</option>
-                                    <option value={"TF"}>True/False</option>
-                                    <option value={"MATCHING"}>Matching</option>
-                                </QuizSelectMenu>
-                            </FormControl>
-                        </Box>
-                    }
-                    &nbsp;&nbsp;&nbsp;
                     {
                         marks !== undefined &&
                         <Box sx={{ minWidth: 120 }} style={{ margin: "6px" }}>
@@ -115,24 +106,31 @@ function QuizQuestionComponent(props: any) {
                             </FormControl>
                         </Box>
                     }
-                    <IconButton disabled={isDisabled} style={{ alignItems: "baseline", marginLeft:"auto" }} onClick={deleteQuestion}>
+                    &nbsp;&nbsp;&nbsp;
+                    {
+                        questionType !== undefined &&
+                        <Box sx={{ minWidth: 120 }} style={{ margin: "6px" }}>
+                            <Chip label={formatQuestionType(questionType)} />
+                        </Box>
+                    }
+                    <IconButton disabled={isDisabled} style={{ alignItems: "baseline", marginLeft: "auto" }} onClick={deleteQuestion}>
                         <DeleteIcon />
                     </IconButton>
                 </div>
 
-                <br/>
+                <br />
 
                 <div>
                     {
                         content !== undefined &&
-                        <QuizBuilderTextInput disabled={isDisabled}  id="question-input" label="Question" variant="standard" value={content} onChange={handleContentChange} />
+                        <QuizBuilderTextInput disabled={isDisabled} id="question-input" label="Question" variant="standard" value={content} onChange={handleContentChange} />
                     }
                 </div>
 
-                <br/>
+                <br />
 
-                <QuizQuestionOptionsList disabled={isDisabled} questionIndex={questionIndex} question={question} questionType={questionType} 
-                onHandleQuizQuestionOptionUpdate={handleQuizQuestionOptionUpdate} onCallSnackbar={handleCallSnackbar}/>
+                <QuizQuestionOptionsList disabled={isDisabled} questionIndex={questionIndex} question={question} questionType={questionType}
+                    onHandleQuizQuestionOptionUpdate={handleQuizQuestionOptionUpdate} onCallSnackbar={handleCallSnackbar} />
             </div>
 
         </>

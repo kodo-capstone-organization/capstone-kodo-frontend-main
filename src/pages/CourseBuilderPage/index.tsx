@@ -54,7 +54,7 @@ function CourseBuilderPage(props: any) {
                 }
                 handleFormDataChange(wrapperEvent)
             }) 
-        });
+        }).catch((error) => handleError(error));
         getAllTags().then((res: any)=> setTagLibrary(res)).catch(() => console.log("error getting tags."))
     }, [courseId]);
 
@@ -189,8 +189,36 @@ function CourseBuilderPage(props: any) {
         return courseFormData.isEnrollmentActive ? "Unpublish" : "Publish"
     }
 
+    const handleError = (err: any) => {
+        const errorDataObj = createErrorDataObj(err);
+        props.callOpenSnackBar("Error in retrieving course builder information", "error");
+        history.push({ pathname: "/invalidpage", state: { errorData: errorDataObj }})
+    }
+    
+    const createErrorDataObj = (err: any) => {
+        const errorDataObj = { 
+            message1: 'Unable to view course builder',
+            message2: err.response.data.message,
+            errorStatus: err.response.status,
+            returnPath: '/profile'
+        }
+    
+        return errorDataObj;
+    }
+
+
+
     return loading ? <MessageContainer><CircularProgress/></MessageContainer> : ( !isTutorOfCourse ? 
-        <h1>You are not a tutor of this course 😡</h1> :       
+        <>
+            {handleError({
+                response: {
+                    data: {
+                        message: "You are not the tutor of the selected course"
+                    },
+                    status: 403
+                }
+            })}
+        </> :       
         <CourseBuilderContainer>
             <Breadcrumbs aria-label="coursebuilder-breadcrumb" style={{ marginBottom: "1rem"}}>
                 <Link color="primary" href={`/overview/course/${courseFormData.courseId}`}>
