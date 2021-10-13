@@ -17,6 +17,7 @@ import {
   RightArrow,
 } from "./SidebarElements";
 import { Account } from "../../../apis/Entities/Account";
+import { useLocation } from "react-router";
 
 function Sidebar(props: any) {
 
@@ -26,6 +27,8 @@ function Sidebar(props: any) {
 
   const [enrolledCourse, setEnrolledCourse] = useState<EnrolledCourse>();
   const [enrolledLessons, setEnrolledLessons] = useState<EnrolledLesson[]>();
+
+  const location = useLocation();
 
   useEffect(() => {
     setCourse(props.course);
@@ -70,6 +73,7 @@ function Sidebar(props: any) {
           <LessonLink
             to={`/overview/course/${course.courseId}/lessonstatistics/${lesson.lessonId}`}
             key={lesson.lessonId}
+            className={isLessonLinkActive(lesson.lessonId.toString()) ? "active" : ""}
           >
             <RightArrow /> Week {lesson.sequence}
           </LessonLink>
@@ -78,21 +82,32 @@ function Sidebar(props: any) {
     );
   }
 
+  const isOverviewLinkActive = () => {
+    return !isForumLinkActive() && !isLessonLinkActive("");
+  }
+
+  const isLessonLinkActive = (lessonId: string) => {
+
+    if (props.isTutorView) {
+      return location.pathname.includes(`/lessonstatistics/${lessonId}`)
+    } else {
+      return location.pathname.includes(`lesson/${lessonId}`)
+    }
+
+  }
+
+  const isForumLinkActive = () => {
+    return location.pathname.includes("/forum")
+  }
+
   return (
     <>
       {course &&
         <SidebarWrapper>
-          <CourseBanner
-            alt={course.name}
-            src={course?.bannerUrl === "" ? "invalidurl.com" : course?.bannerUrl}
-            onError={handleImageError}
-          />
+          <CourseBanner alt={course.name} src={course?.bannerUrl === "" ? "invalidurl.com" : course?.bannerUrl} onError={handleImageError}/>
+
           <SidebarMenu>
-            {/* TODO: Conditional Active state of links */}
-            <SidebarLink
-              className={"active"}
-              to={`/overview/course/${course.courseId}`}
-            >
+            <SidebarLink className={isOverviewLinkActive() ? "active" : "" } to={`/overview/course/${course.courseId}`}>
               <Home /> Overview
             </SidebarLink>
 
@@ -100,9 +115,7 @@ function Sidebar(props: any) {
             {showTutorView()}
 
             {/* Discussion Forum Link */}
-            <SidebarLink
-              to={`/overview/course/${course.courseId}/forum/`}
-            >
+            <SidebarLink className={isForumLinkActive() ? "active" : ""} to={`/overview/course/${course.courseId}/forum`}>
               <Forum /> Discussion Forum
             </SidebarLink>
           </SidebarMenu>

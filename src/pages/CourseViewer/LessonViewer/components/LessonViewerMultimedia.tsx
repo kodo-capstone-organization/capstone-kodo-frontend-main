@@ -49,6 +49,7 @@ function LessonViewerMultimedia(props: any) {
     }
 
     function isMultimedia(content: Content): boolean {
+        // @ts-ignore
         return content.type === "multimedia";
     }
 

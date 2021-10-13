@@ -29,3 +29,11 @@ export async function getEnrolledContentByEnrolledContentId(enrolledContentId: n
 
     return httpClient.get<undefined, EnrolledContent>(getParameters)
 }
+
+export async function getEnrolledContentByEnrolledContentIdAndAccountId(enrolledContentId: number, accountId: number): Promise<EnrolledContent> {
+    const getParameters: IHttpClientRequestParameters<undefined> = {
+        url: `/enrolledContent/getEnrolledContentByEnrolledContentIdAndAccountId/${enrolledContentId}/${accountId}`
+    }
+
+    return httpClient.get<undefined, EnrolledContent>(getParameters)
+}

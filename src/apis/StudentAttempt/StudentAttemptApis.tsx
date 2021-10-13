@@ -4,9 +4,9 @@ import { httpClient } from "../HttpClient/HttpClient";
 import { transformToBlob } from "./../../utils/BlobCreator";
 const FormData = require('form-data');
 
-export async function getStudentAttemptByStudentAttemptId(studentAttemptId: number): Promise<StudentAttempt> {
+export async function getStudentAttemptByStudentAttemptIdAndAccountId(studentAttemptId: number, accountId: number): Promise<StudentAttempt> {
     const getParameters: IHttpClientRequestParameters<undefined> = {
-        url: `/studentAttempt/getStudentAttemptByStudentAttemptId/${studentAttemptId}`
+        url: `/studentAttempt/getStudentAttemptByStudentAttemptIdAndAccountId/${studentAttemptId}/${accountId}`
     }
 
     return httpClient.get<undefined, StudentAttempt>(getParameters);

@@ -10,6 +10,14 @@ export async function getEnrolledCourseByEnrolledCourseId(enrolledCourseId: numb
     return httpClient.get<undefined, EnrolledCourse>(getParameters);
 }
 
+export async function getEnrolledCourseByEnrolledCourseIdAndAccountId(enrolledCourseId: number, accountId: number): Promise<EnrolledCourse> {
+    const getParameters: IHttpClientRequestParameters<undefined> = {
+        url: `/enrolledCourse/getEnrolledCourseByEnrolledCourseIdAndAccountId/${enrolledCourseId}/${accountId}`
+    }
+
+    return httpClient.get<undefined, EnrolledCourse>(getParameters);
+}
+
 export async function getEnrolledCourseByStudentIdAndCourseId(studentId: number, courseId: number): Promise<EnrolledCourse> {
     const getParameters: IHttpClientRequestParameters<undefined> = {
         url: `/enrolledCourse/getEnrolledCourseByStudentIdAndCourseId/${studentId}/${courseId}`

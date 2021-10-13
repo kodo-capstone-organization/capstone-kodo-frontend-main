@@ -78,8 +78,11 @@ function ForumCategoryList(props: any) {
         }
     }
 
-    const navigateToIndividualCategory = (forumCategoryId: number) => {
-        props.history.push(`/overview/course/${props.currentCourseId}/forum/category/${forumCategoryId}`);
+    const navigateToIndividualCategory = (forumCategoryId: number | null) => {
+        if (forumCategoryId !== null)
+        {
+            props.history.push(`/overview/course/${props.currentCourseId}/forum/category/${forumCategoryId}`);
+        }
     }
 
     const mapCategories = (forumCategories: ForumCategory[]) => {

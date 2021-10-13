@@ -17,22 +17,42 @@ import ForumPostList from './components/ForumPostList';
 import {
     ForumContainer
 } from "./ForumElements";
+import { LayoutContainer } from '../CourseViewer/CourseViewerElements';
+import Sidebar from '../CourseViewer/Sidebar/Sidebar';
+import { LayoutContentPage } from '../../components/LayoutElements';
+import { getMyAccount } from '../../apis/Account/AccountApis';
+import { getCourseWithoutEnrollmentByCourseId } from '../../apis/Course/CourseApis';
+import {Account } from '../../apis/Entities/Account';
+import { Course } from '../../apis/Entities/Course';
 
 
 function ForumPage(props: any) {
 
-    const loggedInAccountId = window.sessionStorage.getItem("loggedInAccountId");
+    const loggedInAccountId = window.sessionStorage.getItem("loggedInAccountId") || "";
+    const currentCourseId = parseInt(props.match.params.courseId);
+    const [loading, setLoading] = useState<Boolean>(true);
+
+    const [currentUser, setCurrentUser] = useState<Account>();
+    const [currentCourse, setCurrentCourse] = useState<Course>();
     const [isIndexPage, setIsIndexPage] = useState<Boolean>();
-    const [currentCourseId, setCurrentCourseId] = useState<number>();
     const [currentForumCategory, setCurrentForumCategory] = useState<ForumCategory>();
     const [currentForumThread, setCurrentForumThread] = useState<ForumThread>();
-
 
     const history = useHistory();
 
     useEffect(() => {
-        const courseId = parseInt(props.match.params.courseId);
-        setCurrentCourseId(courseId);
+        setLoading(true);
+        getMyAccount(parseInt(loggedInAccountId)).then(receivedAccount => {
+            setCurrentUser(receivedAccount);
+        });
+        getCourseWithoutEnrollmentByCourseId(currentCourseId).then(receivedCourse => {
+            console.log(receivedCourse)
+            setCurrentCourse(receivedCourse);
+        });
+        setLoading(false);
+    }, [loggedInAccountId, currentCourseId])
+
+    useEffect(() => {
         if(props.match.params.forumCategoryId != undefined){
             getForumCategoryByForumCategoryId(props.match.params.forumCategoryId)
             .then((res) => {
@@ -54,14 +74,14 @@ function ForumPage(props: any) {
 
     // To update isIndexPage
     useEffect(() => {
-        setIsIndexPage(history.location.pathname === `/overview/course/${parseInt(props.match.params.courseId)}/forum/`);
+        setIsIndexPage(history.location.pathname === `/overview/course/${parseInt(props.match.params.courseId)}/forum`);
     }, [history.location.pathname])
 
     const ForumBreadcrumbItems = [
         {
             name: "Forum",
             subpath: "/forum",
-            fullpath: `/overview/course/${props.match.params.courseId}/forum/`
+            fullpath: `/overview/course/${props.match.params.courseId}/forum`
         },
         {
             name: `${currentForumCategory?.name}`,
@@ -79,43 +99,62 @@ function ForumPage(props: any) {
         props.callOpenSnackBar(snackbarObject.message, snackbarObject.type);
     }
 
+    const isCurrentUserCourseTutor = () => {
+        if (currentUser && currentCourse) {
+            return currentCourse.tutor.accountId === currentUser?.accountId;
+        } else {
+            return false;
+        }
+    }
+
     return (
-        <ForumContainer>
-            <Breadcrumbs aria-label="profile-breadcrumb" style={{ marginBottom: "1rem" }}>
-                {
-                    ForumBreadcrumbItems.map((bcitem) => {
-                        if (history.location.pathname.includes(bcitem.subpath)) {
-                            const color = history.location.pathname === bcitem.fullpath ? "primary" : "inherit";
-                            return (<Link key={bcitem.fullpath} color={color} href={bcitem.fullpath}>{bcitem.name}</Link>);
-                        }
-                        else {
-                            return "";
-                        }
-                    })
-                }
-            </Breadcrumbs>
-            {isIndexPage && 
-            <ForumCategoryList history={history} 
-            onCallSnackbar={handleCallSnackbar} 
-            currentCourseId={props.match.params.courseId} />
-            }
+        <>
+            { !loading && currentCourse && currentUser &&
+                <LayoutContainer>
+                    {/* HAX DUPLICATION OF SIDEBAR make sure to update props etc. of this side bar if the one in course viewer is updated*/}
+                    <Sidebar course={currentCourse} account={currentUser} isTutorView={isCurrentUserCourseTutor()}/>
+                    <LayoutContentPage showSideBar style={{ paddingRight: "8rem"}}>
+                        <ForumContainer>
+                            <Breadcrumbs aria-label="profile-breadcrumb" style={{ marginBottom: "1rem" }}>
+                                {
+                                    ForumBreadcrumbItems.map((bcitem) => {
+                                        if (history.location.pathname.includes(bcitem.subpath)) {
+                                            const color = history.location.pathname === bcitem.fullpath ? "primary" : "inherit";
+                                            return (<Link key={bcitem.fullpath} color={color} href={bcitem.fullpath}>{bcitem.name}</Link>);
+                                        }
+                                        else {
+                                            return "";
+                                        }
+                                    })
+                                }
+                            </Breadcrumbs>
 
-            {
-            !isIndexPage && history.location.pathname.includes("category") && !history.location.pathname.includes("thread") && 
-            <ForumThreadList history={history} 
-            onCallSnackbar={handleCallSnackbar} 
-            currentCourseId={props.match.params.courseId} currentForumCategoryId={props.match.params.forumCategoryId} 
-            />
-            }
+                            {isIndexPage &&
+                            <ForumCategoryList history={history}
+                                               onCallSnackbar={handleCallSnackbar}
+                                               currentCourseId={props.match.params.courseId} />
+                            }
 
-            {
-            !isIndexPage && history.location.pathname.includes("thread") && 
-            <ForumPostList history={history} 
-            currentCourseId={props.match.params.courseId} currentForumCategoryId={props.match.params.forumCategoryId} currentForumThreadId={props.match.params.forumThreadId} 
-            onCallSnackbar={handleCallSnackbar} />
-            }
+                            { !isIndexPage && history.location.pathname.includes("category") && !history.location.pathname.includes("thread") &&
+                            <ForumThreadList history={history}
+                                             onCallSnackbar={handleCallSnackbar}
+                                             currentCourseId={props.match.params.courseId} currentForumCategoryId={props.match.params.forumCategoryId}
+                            />
+                            }
 
-        </ForumContainer>
+                            { !isIndexPage && history.location.pathname.includes("thread") &&
+                            <ForumPostList history={history}
+                                           currentCourseId={props.match.params.courseId} currentForumCategoryId={props.match.params.forumCategoryId} currentForumThreadId={props.match.params.forumThreadId}
+                                           onCallSnackbar={handleCallSnackbar} />
+                            }
+
+                        </ForumContainer>
+                    </LayoutContentPage>
+                </LayoutContainer>
+            }
+        </>
+
+
     );
 }
 

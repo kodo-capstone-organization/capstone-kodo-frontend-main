@@ -16,7 +16,7 @@ import { Button } from "../../values/ButtonElements";
 
 
 export const ForumContainer = styled.div`
-    padding: 2rem;
+    padding: 2rem 0 2rem 2rem;
     font-family: "Roboto", sans-serif;
     font-size: ${fontSizes.CONTENT};
     > * {

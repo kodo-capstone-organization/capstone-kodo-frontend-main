@@ -36,7 +36,6 @@ function ForumCategoryModal(props: any) {
     const [courseId, setCourseId] = useState<number>();
     const [modalType, setModalType] = useState<string>("");
     const [forumCategoryToSubmit, setForumCategoryToSubmit] = useState<ForumCategory>();
-    const [isDisabled, setIsDisabled] = useState<boolean>(false);
 
     useEffect(() => {
         setCourseId(props.courseId);
@@ -58,17 +57,20 @@ function ForumCategoryModal(props: any) {
     };
 
     const handleCreateConfirm = () => {
-        const createNewForumCategoryReq: CreateNewForumCategoryReq = {
-            name,
-            description,
-            courseId
+        if (courseId)
+        {
+            const createNewForumCategoryReq: CreateNewForumCategoryReq = {
+                name,
+                description,
+                courseId
+            }
+            createNewForumCategory(createNewForumCategoryReq).then((res) => {
+                props.onForumCategoryChange({ message: "Forum Category Creation Succeeded", type: "success" });
+            }).catch((err) => {
+                props.onForumCategoryChange({ message: `Forum Category Creation Failed: ${err.response.data.message}`, type: "error" });
+            })
+            setOpen(false);
         }
-        createNewForumCategory(createNewForumCategoryReq).then((res) => {
-            props.onForumCategoryChange({ message: "Forum Category Creation Succeeded", type: "success" });
-        }).catch((err) => {
-            props.onForumCategoryChange({ message: `Forum Category Creation Failed: ${err.response.data.message}`, type: "error" });
-        })
-        setOpen(false);
     }
 
     const handleEditConfirm = () => {
@@ -85,12 +87,15 @@ function ForumCategoryModal(props: any) {
     }
 
     const handleDeleteConfirm = () => {
-        deleteForumCategory(forumCategoryToSubmit.forumCategoryId).then((res) => {
-            props.onForumCategoryChange({ message: "Forum Category Delete Success", type: "success" });
-        }).catch((err) => {
-            props.onForumCategoryChange({ message: "Forum Category Delete Failed", type: "error" });
-        });
-        setOpen(false);
+        if (forumCategoryToSubmit && forumCategoryToSubmit.forumCategoryId !== null)
+        {
+            deleteForumCategory(forumCategoryToSubmit.forumCategoryId).then((res) => {
+                props.onForumCategoryChange({ message: "Forum Category Delete Success", type: "success" });
+            }).catch((err) => {
+                props.onForumCategoryChange({ message: "Forum Category Delete Failed", type: "error" });
+            });
+            setOpen(false);
+        }
     }
 
     return (
@@ -166,7 +171,7 @@ function ForumCategoryModal(props: any) {
             {
                 modalType === "EDIT" &&
                 <>
-                    <ListItemIcon disabled={isDisabled} onClick={handleOpen} >
+                    <ListItemIcon onClick={handleOpen} >
                         <EditIcon /> Edit Category
                     </ListItemIcon>
                     <Dialog open={open} onClose={handleClose} maxWidth={"lg"}>
@@ -200,7 +205,7 @@ function ForumCategoryModal(props: any) {
             {
                 modalType === "DELETE" &&
                 <>
-                    <ListItemIcon disabled={isDisabled} onClick={handleOpen} >
+                    <ListItemIcon onClick={handleOpen} >
                         <DeleteIcon /> Delete Category
                     </ListItemIcon>
                     <Dialog open={open} onClose={handleClose} maxWidth={"lg"}>

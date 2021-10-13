@@ -3,13 +3,13 @@ import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import {
+    Breadcrumbs,
     Chip,
     Grid,
-    TextField,
     Input,
     InputLabel,
-    Breadcrumbs,
-    Link
+    Link,
+    TextField,
 } from "@material-ui/core";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
@@ -19,6 +19,7 @@ import {
     Draggable
 } from 'react-beautiful-dnd';
 
+import { Course } from '../../apis/Entities/Course';
 import { Quiz } from './../../apis/Entities/Quiz';
 import { QuizQuestion } from "../../apis/Entities/QuizQuestion";
 import { QuizQuestionOption } from "../../apis/Entities/QuizQuestionOption";
@@ -32,7 +33,6 @@ import {
 } from "../../apis/Quiz/QuizApis";
 import {
     getAllQuizQuestionsByQuizId,
-    getQuizQuestionByQuizQuestionId
 } from "../../apis/QuizQuestion/QuizQuestionApis";
 import {
     getCourseByContentId
@@ -248,7 +248,7 @@ function QuizBuilderPage(props: any) {
         var updatedQuizQuestionArray = [];
         if (updatedQuizQuestion === null) {
             // question deletion
-            updatedQuizQuestionArray = quizQuestionArray.filter((q, qId) => q.draggableId !== parseInt(index));
+            updatedQuizQuestionArray = quizQuestionArray.filter((q, qId) => q.draggableId !== index);
         } else {
             // question update
             updatedQuizQuestionArray = quizQuestionArray.map((q, qId) => {
@@ -282,7 +282,7 @@ function QuizBuilderPage(props: any) {
         setQuizQuestionArray(arrayWtihDraggableId);
     }
 
-    const handleOnDragEnd = (result) => {
+    const handleOnDragEnd = (result: any) => {
         //update state
         var items = quizQuestionArray;
         // console.log("items before", items);

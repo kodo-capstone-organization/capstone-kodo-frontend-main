@@ -57,11 +57,6 @@ export const RouteItemsWithoutSidePadding = [
         component: LiveKodoSessionPage
     },
     {
-        path: "/forum/:courseId",
-        isDynamic: true,
-        component: ForumPage
-    },
-    {
         path: "/forum/:courseId/category/:forumCategoryId",
         isDynamic: true,
         component: ForumPage // nested page
