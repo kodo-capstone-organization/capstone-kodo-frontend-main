@@ -11,8 +11,6 @@ let myInterval: NodeJS.Timer;
 
 function ParticipantItem (props: any) {
 
-    const audioContext = new AudioContext();
-    const soundProcessor = new SoundProcessor(audioContext);
     const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
 
     useEffect(() => {
@@ -27,12 +25,16 @@ function ParticipantItem (props: any) {
             }, 500) // Every 0.5 seconds
         }
 
-        return () => {
-            clearInterval(peerInterval)
-        }
+        // return () => {
+        //     clearInterval(peerInterval)
+        // }
     }, [props.receiver])
 
     useEffect(() => {
+
+        const audioContext = new AudioContext();
+        const soundProcessor = new SoundProcessor(audioContext);
+
         // If this participant is the current user
         if (props.myLocalStream !== null && props.myLocalStream !== undefined) {
             soundProcessor.connectToSource(props.myLocalStream, function(e: any) {
@@ -48,10 +50,8 @@ function ParticipantItem (props: any) {
             });
         }
 
-        //
         return () => {
             clearInterval(myInterval)
-            soundProcessor.stop()
         }
 
     }, [props.myLocalStream])
