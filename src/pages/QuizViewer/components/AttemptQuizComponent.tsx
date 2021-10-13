@@ -1,24 +1,21 @@
 import { useEffect, useState } from "react";
-import { Prompt } from 'react-router';
 import { useHistory } from "react-router-dom";
 
 import
-    {
-        Grid,
-        Divider
-    } from "@material-ui/core";
+{
+    Grid,
+    Divider
+} from "@material-ui/core";
 
-import { Course } from "../../../apis/Entities/Course";
 import { CreateNewStudentAttemptReq } from "../../../apis/Entities/StudentAttempt";
-import { Lesson } from "../../../apis/Entities/Lesson";
 import { Quiz } from "../../../apis/Entities/Quiz";
 import { QuizQuestion } from "../../../apis/Entities/QuizQuestion";
 
 import { createNewStudentAttempt } from "../../../apis/StudentAttempt/StudentAttemptApis";
 import { getAllQuizQuestionsByQuizId } from "../../../apis/QuizQuestion/QuizQuestionApis";
-import { getCourseByEnrolledContentId } from "../../../apis/Course/CourseApis";
-import { getEnrolledContentByEnrolledContentId } from "../../../apis/EnrolledContent/EnrolledContentApis";
-import { getLessonByEnrolledContentId } from "../../../apis/Lesson/LessonApis";
+import { getEnrolledContentByEnrolledContentIdAndAccountId } from "../../../apis/EnrolledContent/EnrolledContentApis";
+import { getEnrolledCourseByEnrolledCourseIdAndAccountId } from "../../../apis/EnrolledCourse/EnrolledCourseApis"
+import { getEnrolledLessonByEnrolledLessonIdAndAccountId } from "../../../apis/EnrolledLesson/EnrolledLessonApis"
 import { getQuizByQuizId } from "../../../apis/Quiz/QuizApis";
 
 import
@@ -36,10 +33,14 @@ import QuizAttemptTimer from "./QuizAttemptTimer";
 import QuizTimedOutModal from "./QuizTimedOutModal";
 
 import { Button } from "../../../values/ButtonElements";
+import { EnrolledContent } from "../../../apis/Entities/EnrolledContent";
 
 
 function AttemptQuizComponent(props: any)
 {
+    const enrolledLessonId = props.enrolledLessonId;
+    const enrolledCourseId = props.enrolledCourseId;
+    const enrolledContentId = props.enrolledContentId;   
 
     const [quiz, setQuiz] = useState<Quiz>();
     const [quizQuestionArray, setQuizQuestionArray] = useState<QuizQuestion[]>();
@@ -51,41 +52,64 @@ function AttemptQuizComponent(props: any)
 
     const history = useHistory();
     const [timeout, setTimeout] = useState<boolean>(false);
-    const [hasSubmitted, setHasSubmitted] = useState<boolean>(false);
 
+    const accountId = JSON.parse(window.sessionStorage.getItem("loggedInAccountId") || "{}");
+
+    useEffect(() => {
+        getEnrolledCourseByEnrolledCourseIdAndAccountId(enrolledCourseId, accountId)
+        .catch((err) => handleError(err));       
+    }, [enrolledCourseId, accountId]);
+
+    useEffect(() => {
+        getEnrolledLessonByEnrolledLessonIdAndAccountId(enrolledLessonId, accountId)
+        .catch((err) => handleError(err));      
+    }, [enrolledLessonId, accountId]);
 
     useEffect(() =>
     {
-        if (props.enrolledContentId !== undefined)
+        getEnrolledContentByEnrolledContentIdAndAccountId(enrolledContentId, accountId)
+        .then((enrolledContent: EnrolledContent) =>
         {
-            console.log(props.enrolledContentId)
-            getEnrolledContentByEnrolledContentId(props.enrolledContentId)
-                .then(res =>
-                {
-                    console.log("Success in getEnrolledContentByEnrolledContentId", res);
-                    const quizId = res.parentContent.contentId;
-                    getQuizByQuizId(quizId)
-                        .then(res =>
-                        {
-                            setQuiz(res);
-                            console.log(res.timeLimit);
-                            setInitialMinutes(parseInt(`${res.timeLimit.charAt(3)}${res.timeLimit.charAt(4)}`));
-                            setInitalSeconds(parseInt(`${res.timeLimit.charAt(6)}${res.timeLimit.charAt(7)}`));
-                            console.log("Success in getQuizByQuizId", res);
-                        })
-                        .catch(err => { console.log("Error in getQuizByQuizId", err); })
-                    getAllQuizQuestionsByQuizId(quizId).then((res) =>
-                    {
-                        setQuizQuestionArray(res)
-                        console.log("Success in getAllQuizQuestionsByQuizId", res);
-                    }).catch((err) => { console.log("error:getAllQuizQuestionsByQuizId", err) });
-                })
-                .catch(err =>
-                {
-                    console.log("Error in getEnrolledContentByEnrolledContentId", err);
-                })
+            const quizId = enrolledContent.parentContent.contentId;
+            retrieveQuiz(quizId);
+            retrieveAllQuizQuestions(quizId);
+        })
+        .catch(err => handleError(err));
+    }, [enrolledContentId, accountId]);
+
+    function retrieveQuiz(quizId: number): void {
+        getQuizByQuizId(quizId)
+        .then((quiz: Quiz) =>
+        {
+            setQuiz(quiz);
+            setInitialMinutes(parseInt(`${quiz.timeLimit.charAt(3)}${quiz.timeLimit.charAt(4)}`));
+            setInitalSeconds(parseInt(`${quiz.timeLimit.charAt(6)}${quiz.timeLimit.charAt(7)}`));
+        })
+        .catch(err => handleError(err));
+    }
+
+    function retrieveAllQuizQuestions(quizId: number): void {
+        getAllQuizQuestionsByQuizId(quizId)
+        .then((res) => setQuizQuestionArray(res))
+        .catch((err) => handleError(err));
+    }
+
+    function handleError(err: any): void {
+        const errorDataObj = createErrorDataObj(err);
+        props.callOpenSnackBar("Error in retrieving quiz", "error");
+        history.push({ pathname: "/invalidpage", state: { errorData: errorDataObj }})
+    }
+
+    function createErrorDataObj(err: any): any {
+        const errorDataObj = { 
+            message1: 'Unable to view quiz',
+            message2: err.response.data.message,
+            errorStatus: err.response.status,
+            returnPath: '/progresspage'
         }
-    }, [props.enrolledContentId]);
+
+        return errorDataObj;
+    }
 
     const handleAttemptAnswer = (optionArray: number[][], questionIndex: number) =>
     {
@@ -125,7 +149,7 @@ function AttemptQuizComponent(props: any)
 
     }
 
-    const handleTimeOut = (isTimedOut: boolean) =>
+    const handleTimeOut = () =>
     {
         var newQuizQuestionOptionIdList = quizQuestionOptionIdList;
         quizQuestionArray?.map((q, qId) =>

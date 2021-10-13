@@ -24,7 +24,6 @@ function ForumThreadModal(props: any) {
     const [description, setDescription] = useState<string>("");
     const [modalType, setModalType] = useState<string>("");
     const [forumCategoryToSubmit, setForumCategoryToSubmit] = useState<ForumCategory>();
-    const [isDisabled, setIsDisabled] = useState<boolean>(false);
     const loggedInAccountId = window.sessionStorage.getItem("loggedInAccountId");
 
 
@@ -48,7 +47,9 @@ function ForumThreadModal(props: any) {
     };
 
     const handleCreateConfirm = () => {
-        if (loggedInAccountId != null) {
+        if (loggedInAccountId != null 
+            && forumCategoryToSubmit
+            && forumCategoryToSubmit.forumCategoryId !== null) {
             const createNewForumThreadReq: CreateNewForumThreadReq = {
                 name,
                 description,
@@ -148,7 +149,7 @@ function ForumThreadModal(props: any) {
             {
                 modalType === "EDIT" &&
                 <>
-                    <ListItemIcon disabled={isDisabled} onClick={handleOpen}>
+                    <ListItemIcon onClick={handleOpen}>
                         <EditIcon />
                     </ListItemIcon>
                     <Dialog open={open} onClose={handleClose} maxWidth={"lg"}>
@@ -182,7 +183,7 @@ function ForumThreadModal(props: any) {
             {
                 modalType === "DELETE" &&
                 <>
-                    <ListItemIcon disabled={isDisabled} onClick={handleOpen}>
+                    <ListItemIcon onClick={handleOpen}>
                         <DeleteIcon />
                     </ListItemIcon>
                     <Dialog open={open} onClose={handleClose} maxWidth={"lg"}>

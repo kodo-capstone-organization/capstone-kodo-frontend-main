@@ -3,15 +3,12 @@ import { withRouter } from "react-router";
 
 import { useHistory } from "react-router-dom";
 
-import { Account } from "../../../apis/Entities/Account";
 import { EnrolledContent } from "../../../apis/Entities/EnrolledContent";
 import { EnrolledCourse } from "../../../apis/Entities/EnrolledCourse";
 import { EnrolledLesson } from "../../../apis/Entities/EnrolledLesson";
 
-import { getAccountByEnrolledCourseId } from "../../../apis/Account/AccountApis";
-import { getAccountByEnrolledLessonId } from "../../../apis/Account/AccountApis";
-import { getEnrolledCourseByEnrolledCourseId } from "../../../apis/EnrolledCourse/EnrolledCourseApis";
-import { getEnrolledLessonByEnrolledLessonId } from "../../../apis/EnrolledLesson/EnrolledLessonApis";
+import { getEnrolledCourseByEnrolledCourseIdAndAccountId } from "../../../apis/EnrolledCourse/EnrolledCourseApis"
+import { getEnrolledLessonByEnrolledLessonIdAndAccountId } from "../../../apis/EnrolledLesson/EnrolledLessonApis"
 
 import { 
   LessonViewerContainerElement,
@@ -41,53 +38,40 @@ function LessonViewer(props: any) {
   const history = useHistory();
 
   useEffect(() => {
-    if (accountId !== null 
-        && enrolledCourseId !== null)
-    {
-      getAccountByEnrolledCourseId(enrolledCourseId).then((account: Account) => {
-        if (account.accountId !== accountId)
-        {
-          history.push('/progresspage');  
-        }
-      })
-      .catch((err) => {
-        history.push('/progresspage');
-      });
-      getEnrolledCourseByEnrolledCourseId(enrolledCourseId).then((enrolledCourse: EnrolledCourse) => {
-        setEnrolledCourse(enrolledCourse);
-      });
-      setLoading(false);
-    }
-    else
-    {
-      history.push('/progresspage');
-    }
-  }, [enrolledCourseId]);
+    setLoading(true);
+    getEnrolledCourseByEnrolledCourseIdAndAccountId(enrolledCourseId, accountId)
+    .then((enrolledCourse: EnrolledCourse) => setEnrolledCourse(enrolledCourse))
+    .catch((err) => handleError(err));    
+    setLoading(false);   
+  }, [enrolledCourseId, accountId]);
 
   useEffect(() => {
-    if (accountId !== null 
-      && enrolledLessonId !== null)
-    {
-      getAccountByEnrolledLessonId(enrolledLessonId).then((account: Account) => {
-        if (account.accountId !== accountId)
-        {
-          history.push('/progresspage');  
-        }
-      })
-      .catch((err) => {
-        history.push('/progresspage');
-      });
-      getEnrolledLessonByEnrolledLessonId(enrolledLessonId).then((enrolledLesson: EnrolledLesson) => {
-        setEnrolledLesson(enrolledLesson);
-        setEnrolledContents(enrolledLesson.enrolledContents);
-      });
-      setLoading(false);
+    setLoading(true);
+    getEnrolledLessonByEnrolledLessonIdAndAccountId(enrolledLessonId, accountId)
+    .then((enrolledLesson: EnrolledLesson) => {
+      setEnrolledLesson(enrolledLesson);
+      setEnrolledContents(enrolledLesson.enrolledContents);
+    })
+    .catch((err) => handleError(err));      
+    setLoading(false);   
+  }, [enrolledLessonId, accountId]);
+
+  function handleError(err: any): void {
+    const errorDataObj = createErrorDataObj(err);
+    props.callOpenSnackBar("Error in retrieving lesson", "error");
+    history.push({ pathname: "/invalidpage", state: { errorData: errorDataObj }})
+  }
+
+  function createErrorDataObj(err: any): any {
+    const errorDataObj = { 
+        message1: 'Unable to view lesson',
+        message2: err.response.data.message,
+        errorStatus: err.response.status,
+        returnPath: '/progresspage'
     }
-    else
-    {
-      history.push('/progresspage');
-    }
-  }, [enrolledLessonId]);
+
+    return errorDataObj;
+  }
 
   function previousLessonCompleted(): boolean {
     let allEnrolledLessons = enrolledCourse?.enrolledLessons;

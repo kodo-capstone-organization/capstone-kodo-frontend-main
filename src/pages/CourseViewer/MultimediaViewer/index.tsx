@@ -13,12 +13,14 @@ import Tooltip from '@material-ui/core/Tooltip';
 
 import { Course } from "../../../apis/Entities/Course";
 import { EnrolledContent } from "../../../apis/Entities/EnrolledContent";
+import { EnrolledCourse } from "../../../apis/Entities/EnrolledCourse";
+import { EnrolledLesson } from "../../../apis/Entities/EnrolledLesson";
 import { Lesson } from "../../../apis/Entities/Lesson";
 import { Multimedia } from "../../../apis/Entities/Multimedia";
 
-import { getEnrolledContentByEnrolledContentId } from "../../../apis/EnrolledContent/EnrolledContentApis"
-import { getEnrolledCourseByEnrolledCourseId } from "../../../apis/EnrolledCourse/EnrolledCourseApis";
-import { getEnrolledLessonByEnrolledLessonId } from "../../../apis/EnrolledLesson/EnrolledLessonApis";
+import { getEnrolledContentByEnrolledContentIdAndAccountId } from "../../../apis/EnrolledContent/EnrolledContentApis";
+import { getEnrolledCourseByEnrolledCourseIdAndAccountId } from "../../../apis/EnrolledCourse/EnrolledCourseApis"
+import { getEnrolledLessonByEnrolledLessonIdAndAccountId } from "../../../apis/EnrolledLesson/EnrolledLessonApis"
 import { setDateTimeOfCompletionOfEnrolledContentByEnrolledContentId } from "../../../apis/EnrolledContent/EnrolledContentApis";
 
 import {
@@ -45,8 +47,8 @@ import {
 import { colours } from "../../../values/Colours";
 import { Button } from "../../../values/ButtonElements";
 
-
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
+
 
 function MultimediaViewer(props: any) {
 
@@ -59,20 +61,49 @@ function MultimediaViewer(props: any) {
   const [currentCourse, setCourse] = useState<Course>();
   const [currentEnrolledContent, setEnrolledContent] = useState<EnrolledContent>();
 
+  const accountId = JSON.parse(window.sessionStorage.getItem("loggedInAccountId") || "{}");
+
   let history = useHistory();
 
   useEffect(() => {
-    getEnrolledCourseByEnrolledCourseId(enrolledCourseId).then(enrolledCourse => {
-      setCourse(enrolledCourse.parentCourse);
-    })
-    getEnrolledLessonByEnrolledLessonId(enrolledLessonId).then(enrolledLesson => {
-      setLesson(enrolledLesson.parentLesson);
-    })    
-    getEnrolledContentByEnrolledContentId(enrolledContentId).then(enrolledContent => {
-      setEnrolledContent(enrolledContent);
-      setMultimedia(enrolledContent.parentContent as Multimedia);
-    });    
-  }, [enrolledCourseId, enrolledLessonId, enrolledContentId]);
+    getEnrolledCourseByEnrolledCourseIdAndAccountId(enrolledCourseId, accountId)
+    .then((enrolledCourse: EnrolledCourse) => setCourse(enrolledCourse.parentCourse))
+    .catch((err) => handleError(err));       
+  }, [enrolledCourseId, accountId]);
+
+  useEffect(() => {
+      getEnrolledLessonByEnrolledLessonIdAndAccountId(enrolledLessonId, accountId)
+      .then((enrolledLesson: EnrolledLesson) => setLesson(enrolledLesson.parentLesson))
+      .catch((err) => handleError(err));      
+  }, [enrolledLessonId, accountId]);
+
+  useEffect(() =>
+  {
+      getEnrolledContentByEnrolledContentIdAndAccountId(enrolledContentId, accountId)
+      .then((enrolledContent: EnrolledContent) =>
+      {
+        setEnrolledContent(enrolledContent);
+        setMultimedia(enrolledContent.parentContent as Multimedia);
+      })
+      .catch(err => handleError(err));
+  }, [enrolledContentId, accountId]);
+
+  function handleError(err: any): void {
+    const errorDataObj = createErrorDataObj(err);
+    props.callOpenSnackBar("Error in retrieving multimedia", "error");
+    history.push({ pathname: "/invalidpage", state: { errorData: errorDataObj }})
+  }
+
+  function createErrorDataObj(err: any): any {
+    const errorDataObj = { 
+        message1: 'Unable to view multimedia',
+        message2: err.response.data.message,
+        errorStatus: err.response.status,
+        returnPath: '/progresspage'
+    }
+
+    return errorDataObj;
+  }
 
   function getUrlForDocument() {
     return `https://docs.google.com/gview?url=https://storage.googleapis.com/capstone-kodo-bucket/${currentMultimedia?.urlFilename}&embedded=true`
