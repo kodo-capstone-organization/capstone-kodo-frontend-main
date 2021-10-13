@@ -193,6 +193,7 @@ function LiveKodoSessionPage(props: any) {
                 audioRef: peerConns.get(newPeerId)?.audioRef,
                 mediaStream: event.streams[0] // Updating this
             })))
+
             setFireEffect(true)
         };
 
@@ -449,6 +450,7 @@ function LiveKodoSessionPage(props: any) {
                             myAccountId={myAccountId}
                             amIMuted={amIMuted}
                             peerConns={peerConns}
+                            myLocalStream={localStream}
                         />
                         <Stage
                             peerConns={peerConns}

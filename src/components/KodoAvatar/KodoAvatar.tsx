@@ -27,7 +27,7 @@ function KodoAvatar(props: any) {
             style={{
                 height: props.small ?  "5rem" : "8rem",
                 width: props.small ?  "5rem" : "8rem",
-                border: props.showRing ? "solid lightblue" : ""
+                border: props.showRing ? "solid lightblue" : "solid white"
             }}
         >
             <KodoAvatarInitials>

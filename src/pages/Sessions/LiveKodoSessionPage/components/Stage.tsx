@@ -16,6 +16,7 @@ function Stage(props: any) {
             peerConns keys: { Array.from(peerConns.keys()).join(", ") }
             <br/>
             dataChannelStatus: {props.dataChannelConnected? "connected" : "not connected"}
+            <br/>
         </StageContainer>
     )
 }

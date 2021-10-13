@@ -18,31 +18,24 @@ function ParticipantsPanel(props: any) {
         })
     }, [peerConns.size, props.myAccountId])
 
-    const isParticipantSpeaking = (accountId: number) => {
-        
-        if (isParticipantMuted(accountId)) {
-            return false;
-        }
-        
-        if (accountId === props.myAccountId) {
-            return amISpeaking();
-        } else {
-            return isPeerSpeaking(accountId)
-        }
-    }  
-    
-    const amISpeaking = () => {
-        // TODO: Check local stream
-        return false;
-    }
-    
-    const isPeerSpeaking = (participantId: number) => {
-        // TODO: Search through peerConns and check their audio stream
-        return false;
-    }
-
     const isParticipantMuted = (accountId: number) => {
         return accountId === props.myAccountId ? props.amIMuted : peerConns.get(accountId)?.isMuted
+    }
+    
+    const getParticipantReceiver = (accountId: number) => {
+        if (accountId === props.myAccountId) {
+            return null;
+        } else {
+            return peerConns?.get(accountId)?.rtcPeerConnection?.getReceivers()[0] || null;
+        }
+    }
+    
+    const getMyLocalStream = (accountId: number) => {
+        if (accountId === props.myAccountId) {
+            return props.myLocalStream;
+        } else {
+            return null;
+        }
     }
 
     return (
@@ -56,7 +49,8 @@ function ParticipantsPanel(props: any) {
                             key={participant.accountId}
                             participant={participant}
                             isMuted={isParticipantMuted(participant.accountId)}
-                            isSpeaking={isParticipantSpeaking(participant.accountId)}
+                            receiver={getParticipantReceiver(participant.accountId)}
+                            myLocalStream={getMyLocalStream(participant.accountId)}
                         />
                     </Grid>
                 ))}
