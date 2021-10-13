@@ -76,7 +76,7 @@ function LiveKodoSessionPage(props: any) {
             navigator.mediaDevices.getUserMedia(mediaConstraints).then(stream => { localStream = stream })
 
             // 2 - Connect this user to websocket signalling server + attach listeners
-            conn = new WebSocket(`ws://capstone-kodo-webrtc.herokuapp.com/socket/${sessionDetails?.sessionId}`);
+            conn = new WebSocket(`wss://capstone-kodo-webrtc.herokuapp.com/socket/${sessionDetails?.sessionId}`);
 
             // 3 - Attach onmessage event listener to websocket connection
             conn.onmessage = function(msg) {
