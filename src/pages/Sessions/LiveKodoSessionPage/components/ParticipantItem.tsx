@@ -16,14 +16,6 @@ function ParticipantItem (props: any) {
     const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
 
     useEffect(() => {
-        return () => {
-            clearInterval(peerInterval)
-            clearInterval(myInterval)
-            soundProcessor.stop();
-        }
-    }, [])
-
-    useEffect(() => {
         // If this participant is a remote peer
         if (props.receiver !== null) {
             peerInterval = setInterval(() => {
@@ -33,6 +25,10 @@ function ParticipantItem (props: any) {
                     setIsSpeaking(ssrc.audioLevel > 0.003); // Speaking threshold
                 }
             }, 500) // Every 0.5 seconds
+        }
+
+        return () => {
+            clearInterval(peerInterval)
         }
     }, [props.receiver])
 
@@ -50,6 +46,12 @@ function ParticipantItem (props: any) {
                     setIsSpeaking(currentNumba > 0.003);
                 }, 500);
             });
+        }
+
+        //
+        return () => {
+            clearInterval(myInterval)
+            soundProcessor.stop()
         }
 
     }, [props.myLocalStream])
