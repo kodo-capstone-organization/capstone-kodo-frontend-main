@@ -49,7 +49,6 @@ function ForumThreadList(props: any) {
     useEffect(() => {
         setLoading(true);
         if (props.currentForumCategoryId != undefined) {
-            console.log('props here in thread list');
             getForumCategoryByForumCategoryId(props.currentForumCategoryId).then((res) => {
                 setForumCategory(res);
             }).catch((err) => {
@@ -69,21 +68,6 @@ function ForumThreadList(props: any) {
             props.onCallSnackbar({ message: "Failure here", type: "error" })
         })
     }, [props.currentForumCategoryId]);
-
-    const handleCallSnackbar = (snackbarObject: any) => {
-        if (forumCategory && forumCategory.forumCategoryId !== null) {
-            if (snackbarObject.type === "success") {
-                getForumCategoryByForumCategoryId(forumCategory.forumCategoryId).then((res) => {
-                    setForumCategory(res);
-                    setForumThreads(res.forumThreads);
-                    console.log("new thread", res.forumThreads);
-                }).catch((err) => {
-                    console.log("Failed", err);
-                });
-            }
-            props.onCallSnackbar(snackbarObject);
-        }
-    }
 
     const navigateToThread = (forumThreadId: number) => {
         if (forumCategory !== undefined) {
@@ -113,9 +97,9 @@ function ForumThreadList(props: any) {
         search = search.toLowerCase();
         if (search != "") {
             const sorted = forumThreads
-                .filter((thread) => thread.name.toLowerCase().includes(search) 
-                || thread.description.toLowerCase().includes(search) 
-                || thread.account.name.toLowerCase().includes(search));
+                .filter((thread) => thread.name.toLowerCase().includes(search)
+                    || thread.description.toLowerCase().includes(search)
+                    || thread.account.name.toLowerCase().includes(search));
             setForumThreads(sorted);
         } else {
             getAllForumThreadsByForumCategoryId(props.currentForumCategoryId).then((res) => {
@@ -150,18 +134,25 @@ function ForumThreadList(props: any) {
     };
 
     const handleDeleteThread = () => {
+        setLoading(true);
         if (menuInfo.accountId === loggedInAccountId || course?.tutor.accountId === loggedInAccountId) {
             deleteForumThread(menuInfo.forumThreadId)
                 .then((res) => {
                     if (forumCategory && forumCategory.forumCategoryId !== null) {
-                    props.onCallSnackbar({ message: "Thread Deleted Successfully", type: "success" })
-                    getForumCategoryByForumCategoryId(forumCategory.forumCategoryId).then((res) => {
-                        setForumCategory(res);
-                        setForumThreads(res.forumThreads);
-                    }).catch((err) => {
-                        props.onCallSnackbar({ message: "Failure", type: "error" })
-                    })
-                    }   
+                        props.onCallSnackbar({ message: "Thread Deleted Successfully", type: "success" })
+                        getForumCategoryByForumCategoryId(forumCategory.forumCategoryId).then((res) => {
+                            setForumCategory(res);
+                            setForumThreads(res.forumThreads);
+                        }).catch((err) => {
+                            props.onCallSnackbar({ message: "Failure", type: "error" })
+                        });
+                        getAllForumThreadsByForumCategoryId(forumCategory.forumCategoryId).then((res) => {
+                            setForumThreads(res);
+                            setLoading(false);
+                        }).catch((err) => {
+                            props.onCallSnackbar({ message: "Failure here", type: "error" })
+                        });
+                    }
                 }).catch((err) => {
                     props.onCallSnackbar({ message: err.response.data.message, type: "error" })
 
@@ -171,52 +162,77 @@ function ForumThreadList(props: any) {
         }
     }
 
+    const handleCallSnackbar = (snackbarObject: any) => {
+        setLoading(true);
+        console.log("come to handleCallSnackbar");
+        if (forumCategory && forumCategory.forumCategoryId !== null) {
+            if (snackbarObject.type === "success") {
+                getForumCategoryByForumCategoryId(forumCategory.forumCategoryId).then((res) => {
+                    setForumCategory(res);
+                    setForumThreads(res.forumThreads);
+                }).catch((err) => {
+                    console.log("Failed", err);
+                });
+                getAllForumThreadsByForumCategoryId(forumCategory.forumCategoryId).then((res) => {
+                    setForumThreads(res);
+                    setLoading(false);
+                }).catch((err) => {
+                    props.onCallSnackbar({ message: "Failure here", type: "error" })
+                })
+            }
+        }
+        props.onCallSnackbar(snackbarObject);
+    }
+
+
     const mapThreads = (forumThreads: ForumThread[]) => {
         return (
             <div>
                 <ForumTextField placeholder="Search By Name, Description, Author..." id="mytextfield" value={searchValue} variant="outlined"
-                    onChange={(e: any) => filterByNameDescAuthor(e.target.value)}  style={{width:"500px"}}/>
+                    onChange={(e: any) => filterByNameDescAuthor(e.target.value)} style={{ width: "500px" }} />
                 {forumThreads.map(function (thread, threadId) {
                     return (
                         <>
-                            <ForumThreadCard key={thread.forumThreadId}>
-                                <ForumAvatar alt="Remy Sharp" src={thread.account.displayPictureUrl} />
-                                <Typography variant="body1" component="div" style={{ marginLeft: "20px", width: "500px" }}>
-                                    <Link onClick={() => navigateToThread(thread.forumThreadId)}>{thread.name}</Link>
-                                    <br />
-                                    {formatDate(thread.timeStamp)}  |  {thread.account.name}
-                                </Typography>
-                                <Typography variant="body1" component="div" style={{ marginRight: "auto" }}>
-                                    {thread.forumPosts.length} Replies
-                                    <ForumIcon />
-                                </Typography>
-                                <div>
-                                    <IconButton
-                                        id="basic-button"
-                                        aria-controls="basic-menu"
-                                        aria-haspopup="true"
-                                        aria-expanded={open ? 'true' : undefined}
-                                        onClick={(e) => handleMenuOpen(e, thread.forumThreadId, thread.account.accountId)}
-                                    >
-                                        <MoreVertIcon />
-                                    </IconButton>
-                                    <Menu
-                                        id="basic-menu"
-                                        anchorEl={anchorEl}
-                                        open={open}
-                                        onClose={handleMenuClose}
-                                        MenuListProps={{
-                                            'aria-labelledby': 'basic-button',
-                                        }}
-                                    >
-                                        <MenuItem>
-                                            <ListItemIcon onClick={handleDeleteThread}>
-                                                <DeleteIcon /> Delete
-                                            </ListItemIcon>
-                                        </MenuItem>
-                                    </Menu>
-                                </div>
-                            </ForumThreadCard>
+                            {
+                                <ForumThreadCard key={threadId}>
+                                    <ForumAvatar alt="Remy Sharp" src={thread.account.displayPictureUrl} />
+                                    <Typography variant="body1" component="div" style={{ marginLeft: "20px", width: "500px" }}>
+                                        <Link onClick={() => navigateToThread(thread.forumThreadId)}>{thread.name}</Link>
+                                        <br />
+                                        {formatDate(thread.timeStamp)}  |  {thread.account.name}
+                                    </Typography>
+                                    <Typography variant="body1" component="div" style={{ marginRight: "auto" }}>
+                                        {thread.forumPosts.length} Replies
+                                        <ForumIcon />
+                                    </Typography>
+                                    <div>
+                                        <IconButton
+                                            id="basic-button"
+                                            aria-controls="basic-menu"
+                                            aria-haspopup="true"
+                                            aria-expanded={open ? 'true' : undefined}
+                                            onClick={(e) => handleMenuOpen(e, thread.forumThreadId, thread.account.accountId)}
+                                        >
+                                            <MoreVertIcon />
+                                        </IconButton>
+                                        <Menu
+                                            id="basic-menu"
+                                            anchorEl={anchorEl}
+                                            open={open}
+                                            onClose={handleMenuClose}
+                                            MenuListProps={{
+                                                'aria-labelledby': 'basic-button',
+                                            }}
+                                        >
+                                            <MenuItem>
+                                                <ListItemIcon onClick={handleDeleteThread}>
+                                                    <DeleteIcon /> Delete
+                                                </ListItemIcon>
+                                            </MenuItem>
+                                        </Menu>
+                                    </div>
+                                </ForumThreadCard>
+                            }
                         </>
                     );
                 })}
@@ -266,7 +282,8 @@ function ForumThreadList(props: any) {
                 }
 
                 <ForumThreadCardContent>
-                    {mapThreads(forumThreads)}
+                    {/* previous runtime error was caused here when threads were mapped when length = 0 */}
+                    {forumThreads.length > 0 && mapThreads(forumThreads)}
                     <EmptyStateContainer threadsExist={forumThreads.length > 0}>
                         <Typography>No threads currently 🥺</Typography>
                         <ForumThreadModal modalType={"EMPTY"} courseId={props.courseId} forumCategory={forumCategory} onForumThreadChange={handleCallSnackbar} />

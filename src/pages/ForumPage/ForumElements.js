@@ -57,7 +57,7 @@ export const ForumCardContent = styled(CardContent)`
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    background-color: ${colours.WHITE};
+    background-color: ${colours.GRAY7};
     color: ${colours.GRAY2};
     align-items: center;
     padding: 2rem !important;
@@ -80,7 +80,7 @@ export const ForumThreadCardContent = styled(CardContent)`
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    background-color: ${colours.WHITE};
+    background-color: ${colours.GRAY7};
     color: ${colours.GRAY2};
     align-items: center;
     padding: 2rem !important;

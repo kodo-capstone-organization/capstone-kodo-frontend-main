@@ -68,7 +68,9 @@ function ForumPage(props: any) {
             getForumCategoryByForumCategoryId(props.match.params.forumCategoryId)
             .then((res) => {
                 setCurrentForumCategory(res);
-            }).catch((err) => handleError(err));
+            }).catch((err) => {
+                handleCallSnackbar({message: err.response.data.message, type:"error"});
+            });
         }
         if(props.match.params.forumThreadId != undefined){
             getForumThreadByForumThreadId(props.match.params.forumThreadId)
@@ -76,7 +78,7 @@ function ForumPage(props: any) {
                 setCurrentForumThread(res);
             }).catch((err) => handleError(err));
         }
-    }, [props.match.params]);
+    }, [props.match.params.forumCategoryId, props.match.params.forumThreadId]);
 
     // To update isIndexPage
     useEffect(() => {
