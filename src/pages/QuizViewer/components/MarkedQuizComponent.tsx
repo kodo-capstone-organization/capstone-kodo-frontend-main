@@ -117,7 +117,8 @@ function MarkedQuizComponent(props: any) {
             message1: 'Unable to view student attempt',
             message2: err.response.data.message,
             errorStatus: err.response.status,
-            returnPath: '/progresspage'
+            returnPath: '/progresspage',
+            returnText: 'Progress Page'
         }
 
         return errorDataObj;

@@ -196,8 +196,9 @@ function CourseBuilderPage(props: any) {
             message1: 'Unable to view course builder',
             message2: err.response.data.message,
             errorStatus: err.response.status,
-            returnPath: '/profile'
-        }
+            returnPath: '/profile',
+            returnText: 'Profile'
+        }   
     
         return errorDataObj;
     }

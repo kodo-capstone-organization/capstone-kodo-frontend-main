@@ -42,7 +42,8 @@ function TutorView(props: any) {
         message1: 'Unable to view course',
         message2: err.response.data.message,
         errorStatus: err.response.status,
-        returnPath: '/browsecourse'
+        returnPath: '/browsecourse',
+        returnText: 'Browse Course'
     }
 
     return errorDataObj;

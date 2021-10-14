@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { withRouter } from "react-router";
+import { useHistory } from "react-router-dom";
 
 import { Account } from "../../../apis/Entities/Account";
 import { Course } from "../../../apis/Entities/Course";
@@ -30,21 +31,42 @@ import { Button } from "../../../values/ButtonElements";
 
 
 function CoursePreviewPage(props: any) {
+  
   const courseId = props.match.params.courseId;
+  const accountId = JSON.parse(window.sessionStorage.getItem("loggedInAccountId") || "{}");
+
   const [currentUser, setUser] = useState<Account>();
   const [currentCourse, setCourse] = useState<Course>();
-  const accountId = JSON.parse(
-    window.sessionStorage.getItem("loggedInAccountId") || "{}"
-  );
+
+  const history = useHistory();
 
   useEffect(() => {
     getCourseWithoutEnrollmentByCourseId(courseId).then(receivedCourse => {
       setCourse(receivedCourse);
-    });
+    })
+    .catch((err) => handleError(err));
     getMyAccount(accountId).then(receivedAccount => {
       setUser(receivedAccount);
     });
-  }, []);
+  }, [courseId, accountId]);
+
+  function handleError(err: any): void {
+    const errorDataObj = createErrorDataObj(err);
+    props.callOpenSnackBar("Error in retrieving course", "error");
+    history.push({ pathname: "/invalidpage", state: { errorData: errorDataObj }})
+  }
+
+  function createErrorDataObj(err: any): any {
+    const errorDataObj = { 
+        message1: 'Unable to view course',
+        message2: err.response.data.message,
+        errorStatus: err.response.status,
+        returnPath: '/browsecourse',
+        returnText: 'Browse Course'
+    }
+
+    return errorDataObj;
+  }
 
   const invokeStripeSessionCreation = () => {
     if (currentCourse !== undefined && currentUser !== undefined) {
