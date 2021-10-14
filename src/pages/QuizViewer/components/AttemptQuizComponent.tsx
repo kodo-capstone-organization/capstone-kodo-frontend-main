@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 
 import {
-Grid,
-Divider
+    Grid,
+    Divider
 } from "@material-ui/core";
 
 import { CreateNewStudentAttemptReq } from "../../../apis/Entities/StudentAttempt";
@@ -18,12 +18,12 @@ import { getEnrolledLessonByEnrolledLessonIdAndAccountId } from "../../../apis/E
 import { getQuizByQuizId } from "../../../apis/Quiz/QuizApis";
 
 import {
-QuizCard,
-QuizCardContent,
-QuizCardFooter,
-QuizCardHeader,
-QuizQuestionCard,
-QuizViewerCardContent
+    QuizCard,
+    QuizCardContent,
+    QuizCardFooter,
+    QuizCardHeader,
+    QuizQuestionCard,
+    QuizViewerCardContent
 } from "../QuizViewerElements";
 
 import AttemptQuizOptionsComponent from "./AttemptQuizOptionsComponent";
@@ -41,7 +41,9 @@ function AttemptQuizComponent(props: any) {
 
     const [quiz, setQuiz] = useState<Quiz>();
     const [quizQuestionArray, setQuizQuestionArray] = useState<QuizQuestion[]>();
+    const [unshuffledQuizQuestionIdArray, setUnshuffledQuizQuestionIdArray] = useState<any[]>();
     const [quizQuestionOptionIdList, setQuizQuestionOptionIdList] = useState<number[][][]>([]);
+    const [unshuffledQuizQuestionOptionIdList, setUnshuffledQuizQuestionOptionIdList] = useState<any[][][]>();
     const [initialSeconds, setInitalSeconds] = useState<number>();
     const [initialMinutes, setInitialMinutes] = useState<number>();
 
@@ -84,7 +86,15 @@ function AttemptQuizComponent(props: any) {
 
     function retrieveAllQuizQuestions(quizId: number): void {
         getAllQuizQuestionsByQuizId(quizId)
-            .then((res) => setQuizQuestionArray(res))
+            .then((res) => {
+                var unshuffledQuestionIds : any[] = [];
+                res.map((question) => {
+                    unshuffledQuestionIds.concat([question.quizQuestionId])
+                })
+                console.log("unshuffledQuestionIdArray", unshuffledQuestionIds);
+                setUnshuffledQuizQuestionIdArray(unshuffledQuestionIds);
+                setQuizQuestionArray(res)
+            })
             .catch((err) => handleError(err));
     }
 
@@ -173,8 +183,8 @@ function AttemptQuizComponent(props: any) {
 
     return (
         <>
-            {initialSeconds != undefined && <QuizAttemptTimer initialSeconds={initialSeconds} initialMinutes={initialMinutes} onTimeOut={handleTimeOut} />}
-            <QuizTimedOutModal open={timeout} enrolledContentId={props.enrolledContentId} callOpenSnackBar={props.callOpenSnackBar} createNewStudentAttemptReq={createNewStudentAttemptReq} />
+            {/* {initialSeconds != undefined && <QuizAttemptTimer initialSeconds={initialSeconds} initialMinutes={initialMinutes} onTimeOut={handleTimeOut} />}
+            <QuizTimedOutModal open={timeout} enrolledContentId={props.enrolledContentId} callOpenSnackBar={props.callOpenSnackBar} createNewStudentAttemptReq={createNewStudentAttemptReq} /> */}
             <QuizCard>
                 <QuizCardHeader
                     title="Quiz Information"
