@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { useHistory } from "react-router";
 
@@ -48,16 +48,19 @@ import { EnrolledCourse } from "../../../apis/Entities/EnrolledCourse";
 import { EnrolledLesson } from '../../../apis/Entities/EnrolledLesson';
 
 import { setCourseRatingByEnrolledCourseId } from "../../../apis/EnrolledCourse/EnrolledCourseApis";
-import { getEnrolledCourseByStudentIdAndCourseId } from "../../../apis/EnrolledCourse/EnrolledCourseApis";
+import { getEnrolledCourseByCourseIdAndAccountId } from "../../../apis/EnrolledCourse/EnrolledCourseApis";
 import { getCourseRatingByCourseId } from "../../../apis/Course/CourseApis";
+import { getAccountByCourseId } from "../../../apis/Account/AccountApis";
 
 import KodoAvatar from "../../../components/KodoAvatar/KodoAvatar";
 
 import { Button } from '../../../values/ButtonElements';
 
 function StudentView(props: any) {
+ 
+  const courseId = props.courseId;
+
   const [course, setCourse] = useState<Course>();
-  const [account, setAccount] = useState<Account>();
 
   const [enrolledCourse, setEnrolledCourse] = useState<EnrolledCourse>();
   const [steps, setSteps] = useState<EnrolledLesson[]>([]);
@@ -65,26 +68,33 @@ function StudentView(props: any) {
   const [courseRating, setCourseRating] = useState<number>(0);
   const [studentRating, setStudentRating] = useState<number>(0);
   const [activeStep, setActiveStep] = useState<number>(0);  
-  
+  const [tutor, setTutor] = useState<Account>();
+
   const [loading, setLoading] = useState<Boolean>(true);
 
   const history = useHistory();
 
+  const accountId = JSON.parse(
+    window.sessionStorage.getItem("loggedInAccountId") || "{}"
+  );
+
   useEffect(() => {
-    setLoading(true);
-    setCourse(props.course);
-    setAccount(props.account);
-    getEnrolledCourseByStudentIdAndCourseId(props.account.accountId, props.course.courseId)
+    setLoading(true);    
+    getEnrolledCourseByCourseIdAndAccountId(courseId, accountId)
     .then((enrolledCourse: EnrolledCourse) => {
       setEnrolledCourse(enrolledCourse);
+      setCourse(enrolledCourse.parentCourse);
+      props.setCourse(enrolledCourse.parentCourse);
       setStudentRating(enrolledCourse.courseRating)
       setSteps(enrolledCourse.enrolledLessons);
       initialiseActiveStep(enrolledCourse);
     })
-    .catch((err: any) => {
-      console.log(err);
-    });
-    getCourseRatingByCourseId(props.course.courseId)
+    .catch((err) => handleError(err));    
+    getAccountByCourseId(courseId)
+    .then((account: Account) => {
+      setTutor(account)
+    })
+    getCourseRatingByCourseId(courseId)
     .then((courseRating: number) => {
       setCourseRating(courseRating);
     })
@@ -92,7 +102,27 @@ function StudentView(props: any) {
       console.log(err);
     });    
     setLoading(false);
-  }, [props.course, props.account]);
+  }, [courseId, accountId]);
+
+  function handleError(err: any): void {
+    if (err.response.data !== undefined)
+    {
+      const errorDataObj = createErrorDataObj(err);
+      props.callOpenSnackBar("Error in retrieving course", "error");
+      history.push({ pathname: "/invalidpage", state: { errorData: errorDataObj }})
+    }
+  }
+
+  function createErrorDataObj(err: any): any {
+    const errorDataObj = { 
+        message1: 'Unable to view course',
+        message2: err.response.data.message,
+        errorStatus: err.response.status,
+        returnPath: '/browsecourse'
+    }
+
+    return errorDataObj;
+  }
 
   const initialiseActiveStep = (receivedEnrolledCourse: EnrolledCourse) => {
     var proxyActiveStep = 0 // to set stepper
@@ -118,7 +148,6 @@ function StudentView(props: any) {
   const useStyles = makeStyles((theme: Theme) =>
     createStyles({
       root: {
-        // width: '100%',
         width: '900px',
       },
       button: {
@@ -164,10 +193,10 @@ function StudentView(props: any) {
       fontSize: 20,
     },
   });
+
   const StepIcon = (props: StepIconProps) => {
     const classes = StepIconStyles();
     const { active, completed } = props;
-    console.log(props)
     return (
       <div
         className={clsx(classes.root, {
@@ -194,7 +223,7 @@ function StudentView(props: any) {
         <StudentContainer>
           <PageHeading>
             <CourseTitle>{course?.name}</CourseTitle>
-            <TutorTitle>by {course?.tutor.name}</TutorTitle>
+            <TutorTitle>by {tutor?.name}</TutorTitle>
           </PageHeading>
 
           <div className={classes.root}>
@@ -226,14 +255,16 @@ function StudentView(props: any) {
 
 
           <CardTitle>This course is taught by:</CardTitle>
+          { tutor &&
           <TutorDetails>
-            <KodoAvatar name={course?.tutor.name} displayPictureURL={course?.tutor.displayPictureUrl || ""}/>
+            <KodoAvatar name={tutor.name} displayPictureURL={tutor.displayPictureUrl || ""}/>
             <TutorText>
-              <TutorName>{course?.tutor.name}</TutorName>
-              <TutorName><i>@{course?.tutor.username}</i></TutorName>
-              <TutorDepartment>{course?.tutor.email}</TutorDepartment>
+              <TutorName>{tutor.name}</TutorName>
+              <TutorName><i>@{tutor.username}</i></TutorName>
+              <TutorDepartment>{tutor.email}</TutorDepartment>
             </TutorText>
           </TutorDetails>
+          }
           <RatingCard>
             <RatingTitle>Passing Requirement</RatingTitle>
             <RatingDescription>You need to pass all graded quizzes to complete this course</RatingDescription>

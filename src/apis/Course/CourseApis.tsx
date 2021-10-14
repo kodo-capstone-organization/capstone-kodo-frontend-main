@@ -128,6 +128,14 @@ export async function getCourseWithoutEnrollmentByCourseId(courseId: number): Pr
     return httpClient.get<undefined, Course>(getParameters);
 }
 
+export async function getCourseWithoutEnrollmentByCourseIdAndAccountId(courseId: number, accountId: number): Promise<Course> {
+    const getParameters: IHttpClientRequestParameters<undefined> = {
+        url: `/course/getCourseWithoutEnrollmentByCourseIdAndAccountId/${courseId}/${accountId}`
+    }
+
+    return httpClient.get<undefined, Course>(getParameters);
+}
+
 export async function getCourseRatingByCourseId(courseId: number): Promise<number> {
     const getParameters: IHttpClientRequestParameters<undefined> = {
         url: `/course/getCourseRatingByCourseId/${courseId}`
@@ -136,3 +144,18 @@ export async function getCourseRatingByCourseId(courseId: number): Promise<numbe
     return httpClient.get<undefined, number>(getParameters);
 }
 
+export async function isTutorByCourseIdAndAccountId(courseId: number, accountId: number): Promise<boolean> {
+    const getParameters: IHttpClientRequestParameters<undefined> = {
+        url: `/course/isTutorByCourseIdAndAccountId/${courseId}/${accountId}`
+    }
+
+    return httpClient.get<undefined, boolean>(getParameters);
+}
+
+export async function isStudentByCourseIdAndAccountId(courseId: number, accountId: number): Promise<boolean> {
+    const getParameters: IHttpClientRequestParameters<undefined> = {
+        url: `/course/isStudentByCourseIdAndAccountId/${courseId}/${accountId}`
+    }
+
+    return httpClient.get<undefined, boolean>(getParameters);
+}

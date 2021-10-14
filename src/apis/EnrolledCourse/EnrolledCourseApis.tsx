@@ -18,6 +18,14 @@ export async function getEnrolledCourseByEnrolledCourseIdAndAccountId(enrolledCo
     return httpClient.get<undefined, EnrolledCourse>(getParameters);
 }
 
+export async function getEnrolledCourseByCourseIdAndAccountId(courseId: number, accountId: number): Promise<EnrolledCourse> {
+    const getParameters: IHttpClientRequestParameters<undefined> = {
+        url: `/enrolledCourse/getEnrolledCourseByCourseIdAndAccountId/${courseId}/${accountId}`
+    }
+
+    return httpClient.get<undefined, EnrolledCourse>(getParameters);
+}
+
 export async function getEnrolledCourseByStudentIdAndCourseId(studentId: number, courseId: number): Promise<EnrolledCourse> {
     const getParameters: IHttpClientRequestParameters<undefined> = {
         url: `/enrolledCourse/getEnrolledCourseByStudentIdAndCourseId/${studentId}/${courseId}`

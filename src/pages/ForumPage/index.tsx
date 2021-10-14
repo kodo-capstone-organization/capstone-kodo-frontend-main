@@ -6,6 +6,8 @@ import {
 } from '@material-ui/core';
 
 import { getForumThreadByForumThreadId, getForumCategoryByForumCategoryId } from "../../apis/Forum/ForumApis";
+import { isStudentByCourseIdAndAccountId } from "../../apis/Course/CourseApis";
+import { isTutorByCourseIdAndAccountId } from "../../apis/Course/CourseApis";
 
 import { ForumCategory } from '../../apis/Entities/ForumCategory';
 import { ForumThread } from '../../apis/Entities/ForumThread';
@@ -28,6 +30,9 @@ import { Course } from '../../apis/Entities/Course';
 
 function ForumPage(props: any) {
 
+    const [isTutor, setIsTutor] = useState<Boolean>();
+    const [isStudent, setIsStudent] = useState<Boolean>();
+
     const loggedInAccountId = window.sessionStorage.getItem("loggedInAccountId") || "";
     const currentCourseId = parseInt(props.match.params.courseId);
     const [loading, setLoading] = useState<Boolean>(true);
@@ -49,6 +54,12 @@ function ForumPage(props: any) {
             console.log(receivedCourse)
             setCurrentCourse(receivedCourse);
         });
+        isTutorByCourseIdAndAccountId(currentCourseId, parseInt(loggedInAccountId))
+        .then((tmpIsTutor: boolean) => setIsTutor(tmpIsTutor))
+        .catch((err) => handleError(err));
+        isStudentByCourseIdAndAccountId(currentCourseId, parseInt(loggedInAccountId))
+        .then((tmpIsStudent: boolean) => setIsStudent(tmpIsStudent))
+        .catch((err) => handleError(err));
         setLoading(false);
     }, [loggedInAccountId, currentCourseId])
 
@@ -95,6 +106,23 @@ function ForumPage(props: any) {
         }
     ]
 
+    function handleError(err: any): void {
+        const errorDataObj = createErrorDataObj(err);
+        props.callOpenSnackBar("Error in retrieving course", "error");
+        history.push({ pathname: "/invalidpage", state: { errorData: errorDataObj }})
+    }
+    
+    function createErrorDataObj(err: any): any {
+        const errorDataObj = { 
+            message1: 'Unable to view course',
+            message2: err.response.data.message,
+            errorStatus: err.response.status,
+            returnPath: '/browsecourse'
+        }
+
+        return errorDataObj;
+    }
+
     const handleCallSnackbar = (snackbarObject: any) => {
         props.callOpenSnackBar(snackbarObject.message, snackbarObject.type);
     }
@@ -112,7 +140,7 @@ function ForumPage(props: any) {
             { !loading && currentCourse && currentUser &&
                 <LayoutContainer>
                     {/* HAX DUPLICATION OF SIDEBAR make sure to update props etc. of this side bar if the one in course viewer is updated*/}
-                    <Sidebar course={currentCourse} account={currentUser} isTutorView={isCurrentUserCourseTutor()}/>
+                    <Sidebar course={currentCourse} isTutor={isTutor} isStudent={isStudent} />
                     <LayoutContentPage showSideBar style={{ paddingRight: "8rem"}}>
                         <ForumContainer>
                             <Breadcrumbs aria-label="profile-breadcrumb" style={{ marginBottom: "1rem" }}>
