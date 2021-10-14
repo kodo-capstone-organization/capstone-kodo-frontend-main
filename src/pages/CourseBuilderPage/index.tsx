@@ -4,7 +4,7 @@ import { useHistory } from "react-router-dom";
 import { Box, Grid, TextField, Chip, InputAdornment, Dialog, DialogTitle, DialogActions, DialogContent, Breadcrumbs, Link} from "@material-ui/core";
 import { CourseBuilderCard, CourseBuilderCardHeader, CourseBuilderContainer, CourseBuilderContent, MessageContainer } from "./CourseBuilderElements";
 import LessonPlan from "./components/LessonPlan";
-import { getCourseWithoutEnrollmentByCourseId, updateCourse, toggleEnrollmentActiveStatus } from './../../apis/Course/CourseApis';
+import { getCourseWithoutEnrollmentByCourseId, updateCourse, toggleReviewRequestStatus } from './../../apis/Course/CourseApis';
 import { Tag } from "../../apis/Entities/Tag";
 import { UpdateCourseReq, Course } from "../../apis/Entities/Course";
 import { Autocomplete } from "@material-ui/lab";
@@ -34,7 +34,7 @@ function CourseBuilderPage(props: any) {
 
     const [tagLibrary, setTagLibrary] = useState<Tag[]>([]);
     const [bannerImageFile, setBannerImageFile] = useState<File>(new File([""], ""));
-    const [isToggleActiveEnrollmentDialogOpen, setIsToggleActiveEnrollmentDialogOpen] = useState<boolean>(false);
+    const [isToggleRequestReviewDialogOpen, setIsToggleRequestReviewDialogOpen] = useState<boolean>(false);
     const [courseFormData, setCourseFormData] = useReducer(formReducer, {});
     const [isTutorOfCourse, setIsTutorOfCourse] = useState<boolean>(false);
     let [errors, setErrors] = useState<IErrors<boolean>>({
@@ -157,12 +157,12 @@ function CourseBuilderPage(props: any) {
             })
     }
 
-    const handleOpenToggleEnrollmentDialog = () => {
-        setIsToggleActiveEnrollmentDialogOpen(true)
+    const handleOpenToggleRequestReviewDialog = () => {
+        setIsToggleRequestReviewDialogOpen(true)
     }
 
-    const handleCloseToggleEnrollmentDialog = () => {
-        setIsToggleActiveEnrollmentDialogOpen(false)
+    const handleCloseToggleRequestReviewDialog = () => {
+        setIsToggleRequestReviewDialogOpen(false)
     }
     
     const handleToggleConfirmation = () => {
@@ -170,23 +170,19 @@ function CourseBuilderPage(props: any) {
         
         if (myAccountId !== null)
         {
-            toggleEnrollmentActiveStatus(courseFormData.courseId, parseInt(myAccountId))
+            toggleReviewRequestStatus(courseFormData.courseId, parseInt(myAccountId))
                 .then((res: any) => {
                     // Display success message, refresh page
-                    props.callOpenSnackBar("Course successfully published", "success")
+                    props.callOpenSnackBar("Successfully requested for review", "success")
                     window.location.reload();
                 })
-                .catch(error => { props.callOpenSnackBar(`Error in publishing course: ${error}`, "error") });
+                .catch(error => { props.callOpenSnackBar(`Error in requesting for review for course: ${error}`, "error") });
         }
         else
         {
             // No account ID found in local storage. Redirect to login
             history.push('/login')
         }
-    }
-
-    const  getToggleKeyword = () => {
-        return courseFormData.isEnrollmentActive ? "Unpublish" : "Publish"
     }
 
     const handleError = (err: any) => {
@@ -232,28 +228,34 @@ function CourseBuilderPage(props: any) {
                     title="Course Information"
                     action={
                         <>
-                            {courseFormData.isEnrollmentActive &&
+                            {courseFormData.isEnrollmentActive ?
                                 <>
                                     <Chip variant="outlined" size="small" label="Published" style={{ color: "green", border: "1px solid green" }} deleteIcon={<DoneIcon style={{ color: "green" }} />} onDelete={() => ("")}/>
                                     &nbsp;&nbsp;
                                     <Chip variant="outlined" size="small" label="View Mode" style={{ color: "blue", border: "1px solid blue" }} disabled />
-                                </>
-                            }
-                            {!courseFormData.isEnrollmentActive && <Chip variant="outlined"  size="small" label="Publish This Course" color="secondary" onClick={handleOpenToggleEnrollmentDialog} deleteIcon={<PublishIcon color="secondary" />} onDelete={() => ("")} />}
+                                </>  
+                                : courseFormData.isReviewRequested ? 
+                                    <>
+                                        <Chip variant="outlined"  size="small" label="Pending Review" style={{ color: "red", border: "1px solid red" }} disabled />
+                                        &nbsp;&nbsp; 
+                                        <Chip variant="outlined" size="small" label="View Mode" style={{ color: "blue", border: "1px solid blue" }} disabled />
+                                    </>
+                                    :
+                                    <Chip variant="outlined"  size="small" label="Request for Review" color="secondary" onClick={handleOpenToggleRequestReviewDialog} deleteIcon={<PublishIcon color="secondary" />} onDelete={() => ("")} />}
                         </>
                     }
                 />        
                 <CourseBuilderContent>
                     <Grid container spacing={3}>
                         <Grid item xs={12}>
-                            <TextField disabled={courseFormData.isEnrollmentActive} required error={errors['name']} id="standard-basic" fullWidth label="Name" name="name" value={courseFormData.name} onChange={handleFormDataChange}/>
+                            <TextField disabled={courseFormData.isReviewRequested} required error={errors['name']} id="standard-basic" fullWidth label="Name" name="name" value={courseFormData.name} onChange={handleFormDataChange}/>
                         </Grid>
                         <Grid item xs={12}>
-                            <TextField disabled={courseFormData.isEnrollmentActive} id="standard-basic" fullWidth multiline maxRows={3} name="description" label="Description" value={courseFormData.description} onChange={handleFormDataChange}/>
+                            <TextField disabled={courseFormData.isReviewRequested} id="standard-basic" fullWidth multiline maxRows={3} name="description" label="Description" value={courseFormData.description} onChange={handleFormDataChange}/>
                         </Grid>
                         <Grid item xs={12}>
                             <TextField
-                                disabled={courseFormData.isEnrollmentActive}
+                                disabled={courseFormData.isReviewRequested}
                                 fullWidth
                                 label="Price"
                                 name="price"
@@ -270,7 +272,7 @@ function CourseBuilderPage(props: any) {
                         </Grid>
                         <Grid item xs={12}>
                             <Autocomplete
-                                disabled={courseFormData.isEnrollmentActive}
+                                disabled={courseFormData.isReviewRequested}
                                 multiple
                                 options={tagLibrary.map((option) => option.title)}
                                 defaultValue={courseFormData.courseTags.map((tag: Tag) => tag.title)}
@@ -284,13 +286,13 @@ function CourseBuilderPage(props: any) {
                                     <TextField {...params} id="standard-basic" label="Tags"/>
                                 )}/>
                         </Grid>
-                        <Grid item xs={courseFormData.isEnrollmentActive ? 12 : 10}>
+                        <Grid item xs={courseFormData.isReviewRequested ? 12 : 10}>
                             <TextField id="standard-basic" fullWidth disabled value={courseFormData.bannerPictureFileName} label="Banner Image"></TextField>
                         </Grid>
-                        { !courseFormData.isEnrollmentActive &&
+                        { !courseFormData.isReviewRequested &&
                             <>
                                 <Grid item xs={2}>
-                                    <Button disabled={courseFormData.isEnrollmentActive} variant="contained" component="label" big>
+                                    <Button disabled={courseFormData.isReviewRequested} variant="contained" component="label" big>
                                         Change Banner Image
                                         <input
                                             id="banner-image-upload"
@@ -304,8 +306,8 @@ function CourseBuilderPage(props: any) {
                                 <Grid container spacing={3} justifyContent="flex-end">
                                     <Box m={1} pt={2}>
                                         <Button
-                                            disabled={courseFormData.isEnrollmentActive}
-                                            primary={!courseFormData.isEnrollmentActive}
+                                            disabled={courseFormData.isReviewRequested}
+                                            primary={!courseFormData.isReviewRequested}
                                             big
                                             onClick={handleUpdateCourse}>
                                             Update Course Information
@@ -318,24 +320,24 @@ function CourseBuilderPage(props: any) {
                 </CourseBuilderContent>
             </CourseBuilderCard>
             <CourseBuilderCard id="lesson-plan">
-                <LessonPlan isEnrollmentActive={courseFormData.isEnrollmentActive} courseFormData={courseFormData} lessons={courseFormData.lessons} handleFormDataChange={handleFormDataChange} courseId={courseId} callOpenSnackBar={props.callOpenSnackBar}/>
+                <LessonPlan isEnrollmentActive={courseFormData.isReviewRequested} courseFormData={courseFormData} lessons={courseFormData.lessons} handleFormDataChange={handleFormDataChange} courseId={courseId} callOpenSnackBar={props.callOpenSnackBar}/>
             </CourseBuilderCard>
             {/* Toggle Enrollment Course Dialog */}
-            <Dialog fullWidth open={isToggleActiveEnrollmentDialogOpen} onClose={handleCloseToggleEnrollmentDialog} aria-labelledby="toggle-dialog">
+            <Dialog fullWidth open={isToggleRequestReviewDialogOpen} onClose={handleCloseToggleRequestReviewDialog} aria-labelledby="toggle-dialog">
 
                 <DialogTitle id="toggle-dialog-title">
-                    { getToggleKeyword() } {courseFormData.name}?
+                    Request for review to publish {courseFormData.name}?
                 </DialogTitle>
                 <DialogContent>
-                    { courseFormData.isEnrollmentActive &&  <>You should not be able to see this.</> }
-                    { !courseFormData.isEnrollmentActive &&  <>Users will be able to browse and enroll into your course. However, once this course is published, you <i>can no longer edit its content nor unpublish it.</i></> }
+                    { courseFormData.isReviewRequested &&  <>You should not be able to see this.</> }
+                    { !courseFormData.isReviewRequested &&  <>A Kodo Admin will review this course and publish it once it's approved. Users will be able to browse and enroll into your course. However, once you request for a review, you <i>can no longer edit its content nor unpublish it.</i></> }
                 </DialogContent>
                 <br/>
                 <DialogActions>
-                    <Button onClick={handleCloseToggleEnrollmentDialog}>
+                    <Button onClick={handleCloseToggleRequestReviewDialog}>
                         Cancel
                     </Button>
-                    <Button onClick={handleToggleConfirmation} disabled={courseFormData.isEnrollmentActive} primary>
+                    <Button onClick={handleToggleConfirmation} disabled={courseFormData.isReviewRequested} primary>
                         Confirm
                     </Button>
                 </DialogActions>
