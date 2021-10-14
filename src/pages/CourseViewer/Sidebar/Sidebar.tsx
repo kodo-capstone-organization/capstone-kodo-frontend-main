@@ -16,14 +16,17 @@ import {
   Forum,
   RightArrow,
 } from "./SidebarElements";
-import { Account } from "../../../apis/Entities/Account";
+
 import { useLocation } from "react-router";
 
 function Sidebar(props: any) {
 
+  const isTutor = props.isTutor;  
+  const isStudent = props.isStudent;
+  const accountId = JSON.parse(window.sessionStorage.getItem("loggedInAccountId") || "{}");
+
   const [course, setCourse] = useState<Course>();
   const [lessons, setLessons] = useState<Lesson[]>();
-  const [account, setAccount] = useState<Account>();
 
   const [enrolledCourse, setEnrolledCourse] = useState<EnrolledCourse>();
   const [enrolledLessons, setEnrolledLessons] = useState<EnrolledLesson[]>();
@@ -31,18 +34,17 @@ function Sidebar(props: any) {
   const location = useLocation();
 
   useEffect(() => {
-    setCourse(props.course);
-    setLessons(props.course.lessons);
-    setAccount(props.account);
-    getEnrolledCourseByStudentIdAndCourseId(props.account.accountId, props.course.courseId)
+    setCourse(props.course);    
+    setLessons(props.course.lessons)
+    if (isStudent)
+    {
+      getEnrolledCourseByStudentIdAndCourseId(accountId, props.course.courseId)
       .then((enrolledCourse: EnrolledCourse) => {
         setEnrolledCourse(enrolledCourse);
         setEnrolledLessons(enrolledCourse.enrolledLessons);
       })
-      .catch((err: any) => {
-        console.log(err);
-      });
-  }, [props.course, props.account]);
+    }
+  }, [props.course, accountId, isTutor, isStudent]);
 
   const handleImageError = (e: any) => {
     e.target.onerror = null;
@@ -51,34 +53,34 @@ function Sidebar(props: any) {
 
   const showStudentView = () => {
     return (
-      (!props.isTutorView && enrolledCourse && enrolledLessons) &&
-      enrolledLessons.map(enrolledLesson => {
-        return (
-          <LessonLink
-            to={`/overview/course/${enrolledCourse.enrolledCourseId}/lesson/${enrolledLesson.enrolledLessonId}`}
-            key={enrolledLesson.enrolledLessonId}
-          >
-            <RightArrow /> Week {enrolledLesson.parentLesson.sequence}
-          </LessonLink>
-        );
-      })
+      (!isTutor && enrolledCourse && enrolledLessons) &&
+        enrolledLessons.map(enrolledLesson => {
+          return (
+            <LessonLink
+              to={`/overview/course/${enrolledCourse.enrolledCourseId}/lesson/${enrolledLesson.enrolledLessonId}`}
+              key={enrolledLesson.enrolledLessonId}
+            >
+              <RightArrow /> Week {enrolledLesson.parentLesson.sequence}
+            </LessonLink>
+          );
+        })
     );
   }
 
   const showTutorView = () => {
     return (
-      (props.isTutorView && course && lessons) &&
-      lessons.map(lesson => {
-        return (
-          <LessonLink
-            to={`/overview/course/${course.courseId}/lessonstatistics/${lesson.lessonId}`}
-            key={lesson.lessonId}
-            className={isLessonLinkActive(lesson.lessonId.toString()) ? "active" : ""}
-          >
-            <RightArrow /> Week {lesson.sequence}
-          </LessonLink>
-        );
-      })
+      (isTutor && course && lessons) &&
+        lessons.map(lesson => {
+          return (
+            <LessonLink
+              to={`/overview/course/${course.courseId}/lessonstatistics/${lesson.lessonId}`}
+              key={lesson.lessonId}
+              className={isLessonLinkActive(lesson.lessonId.toString()) ? "active" : ""}
+            >
+              <RightArrow /> Week {lesson.sequence}
+            </LessonLink>
+          );
+        })
     );
   }
 
@@ -87,13 +89,11 @@ function Sidebar(props: any) {
   }
 
   const isLessonLinkActive = (lessonId: string) => {
-
-    if (props.isTutorView) {
+    if (isTutor) {
       return location.pathname.includes(`/lessonstatistics/${lessonId}`)
-    } else {
+    } else if (isStudent) {
       return location.pathname.includes(`lesson/${lessonId}`)
     }
-
   }
 
   const isForumLinkActive = () => {
