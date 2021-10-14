@@ -23,7 +23,7 @@ function ForumCategoryList(props: any) {
 
     const [courseId, setCourseId] = useState<number>();
     const [forumCategories, setForumCategories] = useState<ForumCategory[]>([]);
-    const [actionsDisabled, setActionsDisabled] = useState<boolean>(true);    
+    const [actionsDisabled, setActionsDisabled] = useState<boolean>(true);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [loading, setLoading] = useState<boolean>();
     const [menuInfo, setMenuInfo] = useState<any>();
@@ -45,7 +45,7 @@ function ForumCategoryList(props: any) {
                 Object.assign(q, { id: q.forumCategoryId })
                 return q;
             });
-            
+
             setForumCategories(res);
             setLoading(false);
         }).catch((err) => {
@@ -81,8 +81,7 @@ function ForumCategoryList(props: any) {
     }
 
     const navigateToIndividualCategory = (forumCategoryId: number | null) => {
-        if (forumCategoryId !== null)
-        {
+        if (forumCategoryId !== null) {
             props.history.push(`/overview/course/${props.currentCourseId}/forum/category/${forumCategoryId}`);
         }
     }
@@ -99,38 +98,43 @@ function ForumCategoryList(props: any) {
                                 </Typography>
                                 <Typography variant="body1" component="div" style={{ marginRight: "auto" }}>
                                     {category.forumThreads?.length} Threads
-                                <ForumIcon />
+                                    <ForumIcon />
                                 </Typography>
-                                {
-                                    !actionsDisabled &&
-                                    <>
-                                        <IconButton
-                                            id="basic-button"
-                                            aria-controls="basic-menu"
-                                            aria-haspopup="true"
-                                            aria-expanded={open ? 'true' : undefined}
-                                            onClick={(e)=>handleMenuOpen(e, category)}
-                                        >
-                                            <MoreVertIcon />
-                                        </IconButton>
-                                        <Menu
-                                            id="basic-menu"
-                                            anchorEl={anchorEl}
-                                            open={open}
-                                            onClose={handleMenuClose}
-                                            MenuListProps={{
-                                                'aria-labelledby': 'basic-button',
-                                            }}
-                                        >
-                                            <MenuItem key={categoryId}>
-                                                <ForumCategoryModal modalType={"EDIT"} courseId={props.courseId} onForumCategoryChange={handleCallSnackbar} forumCategory={menuInfo} />
-                                            </MenuItem>
-                                            <MenuItem key={categoryId}>
-                                                <ForumCategoryModal modalType={"DELETE"} courseId={props.courseId} onForumCategoryChange={handleCallSnackbar} forumCategory={menuInfo} />
-                                            </MenuItem>
-                                        </Menu>
-                                    </>
-                                }
+                                <>
+                                    <IconButton
+                                        id="basic-button"
+                                        aria-controls="basic-menu"
+                                        aria-haspopup="true"
+                                        aria-expanded={open ? 'true' : undefined}
+                                        onClick={(e) => handleMenuOpen(e, category)}
+                                    >
+                                        <MoreVertIcon />
+                                    </IconButton>
+                                    <Menu
+                                        id="basic-menu"
+                                        anchorEl={anchorEl}
+                                        open={open}
+                                        onClose={handleMenuClose}
+                                        MenuListProps={{
+                                            'aria-labelledby': 'basic-button',
+                                        }}
+                                    >
+                                        {
+                                            !actionsDisabled &&
+                                            <>
+                                                <MenuItem >
+                                                    <ForumCategoryModal modalType={"EDIT"} courseId={props.courseId} onForumCategoryChange={handleCallSnackbar} forumCategory={menuInfo} />
+                                                </MenuItem>
+                                                <MenuItem >
+                                                    <ForumCategoryModal modalType={"DELETE"} courseId={props.courseId} onForumCategoryChange={handleCallSnackbar} forumCategory={menuInfo} />
+                                                </MenuItem>
+                                            </>
+                                        }
+                                        {/* <MenuItem >
+                                            <ForumCategoryModal modalType={"REPORT"} courseId={props.courseId} onForumCategoryChange={handleCallSnackbar} forumCategory={menuInfo} />
+                                        </MenuItem> */}
+                                    </Menu>
+                                </>
                             </ForumThreadCard>
                         </>
                     );

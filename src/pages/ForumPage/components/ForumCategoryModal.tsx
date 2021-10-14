@@ -98,6 +98,19 @@ function ForumCategoryModal(props: any) {
         }
     }
 
+    // const handleReportConfirm = () => {
+    //     const forumCategory: ForumCategory = Object.assign(forumCategoryToSubmit, { isREported: true });
+    //     const updateForumCategoryReq: UpdateForumCategoryReq = {
+    //         forumCategory
+    //     }
+    //     updateForumCategory(updateForumCategoryReq).then((res) => {
+    //         props.onForumCategoryChange({ message: "Forum Category Report Succeeded", type: "success" });
+    //     }).catch((err) => {
+    //         props.onForumCategoryChange({ message: "Forum Category Report Failed", type: "error" });
+    //     })
+    //     setOpen(false);
+    // }
+
     return (
         <>
             {
@@ -220,6 +233,25 @@ function ForumCategoryModal(props: any) {
                     </Dialog>
                 </>
             }
+
+{/* {
+                modalType === "REPORT" &&
+                <>
+                    <ListItemIcon onClick={handleOpen} >
+                        <DeleteIcon /> Report Category
+                    </ListItemIcon>
+                    <Dialog open={open} onClose={handleClose} maxWidth={"lg"}>
+                        <DialogTitle>Report Forum Category</DialogTitle>
+                        <DialogContent>
+                            Are you sure you want to report: {name} ?
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={handleClose}>Cancel</Button>
+                            <Button primary onClick={handleReportConfirm}>Confirm</Button>
+                        </DialogActions>
+                    </Dialog>
+                </>
+            } */}
 
         </>
     )

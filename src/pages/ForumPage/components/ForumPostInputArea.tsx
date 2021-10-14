@@ -8,7 +8,8 @@ import {
     IconButton,
     TextField,
     Typography,
-    Divider
+    Divider,
+    Chip
 } from "@material-ui/core";
 
 import { Account } from "../../../apis/Entities/Account";
@@ -19,6 +20,8 @@ import { ForumThread } from '../../../apis/Entities/ForumThread';
 import { createNewForumPost, createNewForumPostReply, deleteForumThread, deleteForumPost } from "../../../apis/Forum/ForumApis";
 import { getCourseByCourseId } from '../../../apis/Course/CourseApis';
 import { getMyAccount } from "../../../apis/Account/AccountApis";
+
+import ForumPostModal from './ForumPostModal';
 
 import {
     ForumPostCardContent,
@@ -133,53 +136,57 @@ function ForumPostInputArea(props: any) {
         setMessage("");
     }
 
-    const handleDeletePost = () => {
-        if (postType === "POST") {
-            if (forumThread !== undefined) {
-                if (forumThread.account.accountId === loggedInAccountId
-                    || course?.tutor.accountId === loggedInAccountId) {
-                    //deleting a thread
-                    props.history.push(`/overview/course/${courseId}/forum/category/${currentForumCategoryId}`);
-                    deleteForumThread(forumThread.forumThreadId)
-                        .then((res) => {
-                            props.onForumPostChange({ message: "Forum Thread Deletion Succeeded", type: "success" });
-                        }).catch((err) => {
-                            props.onForumPostChange({ message: err.response.data.message, type: "error" });
-                        })
-                } else {
-                    props.onForumPostChange({ message: "You are not the author of this thread/post.", type: "error" });
-                }
-            }
-        } else if (postType === "REPLY" || postType === "GENERAL") {
-            if (parentForumPost !== undefined && parentForumPost.forumPostId !== null) {
-                if (parentForumPost.account.accountId === loggedInAccountId
-                    || course?.tutor.accountId === loggedInAccountId) {
-                    // deleting a post
-                    deleteForumPost(parentForumPost.forumPostId)
-                        .then((res) => {
-                            props.onForumPostChange({ message: "Forum Post Deletion Succeeded", type: "success" });
-                        }).catch((err) => {
-                            props.onForumPostChange({ message: err.response.data.message, type: "error" });
-                        })
-                } else {
-                    props.onForumPostChange({ message: "You are not the author of this thread/post.", type: "error" });
-                }
-            }
-        }
-        handleCancel();
-    }
+    // const handleDeletePost = () => {
+    //     if (postType === "POST") {
+    //         if (forumThread !== undefined) {
+    //             if (forumThread.account.accountId === loggedInAccountId
+    //                 || course?.tutor.accountId === loggedInAccountId) {
+    //                 //deleting a thread
+    //                 props.history.push(`/overview/course/${courseId}/forum/category/${currentForumCategoryId}`);
+    //                 deleteForumThread(forumThread.forumThreadId)
+    //                     .then((res) => {
+    //                         props.onForumPostChange({ message: "Forum Thread Deletion Succeeded", type: "success" });
+    //                     }).catch((err) => {
+    //                         props.onForumPostChange({ message: err.response.data.message, type: "error" });
+    //                     })
+    //             } else {
+    //                 props.onForumPostChange({ message: "You are not the author of this thread/post.", type: "error" });
+    //             }
+    //         }
+    //     } else if (postType === "REPLY" || postType === "GENERAL") {
+    //         if (parentForumPost !== undefined && parentForumPost.forumPostId !== null) {
+    //             if (parentForumPost.account.accountId === loggedInAccountId
+    //                 || course?.tutor.accountId === loggedInAccountId) {
+    //                 // deleting a post
+    //                 deleteForumPost(parentForumPost.forumPostId)
+    //                     .then((res) => {
+    //                         props.onForumPostChange({ message: "Forum Post Deletion Succeeded", type: "success" });
+    //                     }).catch((err) => {
+    //                         props.onForumPostChange({ message: err.response.data.message, type: "error" });
+    //                     })
+    //             } else {
+    //                 props.onForumPostChange({ message: "You are not the author of this thread/post.", type: "error" });
+    //             }
+    //         }
+    //     }
+    //     handleCancel();
+    // }
 
-    const handleDeleteReply = (forumPost: ForumPost) => {
-        if (forumPost.account.accountId === loggedInAccountId && forumPost.forumPostId !== null) {
-            deleteForumPost(forumPost.forumPostId)
-                .then((res) => {
-                    props.onForumPostChange({ message: "Forum Post Deletion Succeeded", type: "success" });
-                }).catch((err) => {
-                    props.onForumPostChange({ message: err.response.data.message, type: "error" });
-                })
-        } else {
-            props.onForumPostChange({ message: "You are not the author of this thread/post.", type: "error" });
-        }
+    // const handleDeleteReply = (forumPost: ForumPost) => {
+    //     if (forumPost.account.accountId === loggedInAccountId && forumPost.forumPostId !== null) {
+    //         deleteForumPost(forumPost.forumPostId)
+    //             .then((res) => {
+    //                 props.onForumPostChange({ message: "Forum Post Deletion Succeeded", type: "success" });
+    //             }).catch((err) => {
+    //                 props.onForumPostChange({ message: err.response.data.message, type: "error" });
+    //             })
+    //     } else {
+    //         props.onForumPostChange({ message: "You are not the author of this thread/post.", type: "error" });
+    //     }
+    // }
+
+    const handleCallSnackbar = (snackbarObject: any) => {
+        props.onForumPostChange(snackbarObject);
     }
 
     const handleSeeReplies = () => {
@@ -203,6 +210,10 @@ function ForumPostInputArea(props: any) {
                                     <ForumAvatar alt="Remy Sharp" src={post.account.displayPictureUrl} />
                                     <Typography variant="body1" component="div" style={{ marginLeft: "20px" }}>
                                         Posted By {post.account.name} on {formatDate(post.timeStamp)}
+                                        {
+                                            post.isReported &&
+                                            <Chip label="Reported" color="secondary" />
+                                        }
                                     </Typography>
                                 </ForumPostReplyCardContent>
                                 <Divider />
@@ -212,9 +223,13 @@ function ForumPostInputArea(props: any) {
                                     </Typography>
                                 </ForumPostReplyCardContent>
                                 <Divider />
-                                <IconButton onClick={() => handleDeleteReply(post)} style={{ width: "fit-content", marginInlineStart: "auto", fontSize: "unset" }}>
+                                {/* <IconButton onClick={() => handleDeleteReply(post)} style={{ width: "fit-content", marginInlineStart: "auto", fontSize: "unset" }}>
                                     <DeleteIcon /> Delete
-                                </IconButton>
+                                </IconButton> */}
+                                <div style={{ display: "flex" }}>
+                                    <ForumPostModal forumPost={post} modalType={"DELETEREPLY"} onForumPostChange={handleCallSnackbar} />
+                                    <ForumPostModal forumPost={parentForumPost} modalType={"REPORTREPLY"} onForumPostChange={handleCallSnackbar} />
+                                </div>
                             </ForumPostReplyCard>
                         </>
                     );
@@ -238,9 +253,12 @@ function ForumPostInputArea(props: any) {
                             <IconButton onClick={handleMakeReply} style={{ width: "fit-content", fontSize: "unset" }}>
                                 <ReplyIcon /> Reply
                             </IconButton>
-                            <IconButton onClick={handleDeletePost} style={{ width: "fit-content", fontSize: "unset" }}>
+                            {/* <IconButton onClick={handleDeletePost} style={{ width: "fit-content", fontSize: "unset" }}>
                                 <DeleteIcon /> Delete
-                            </IconButton>
+                            </IconButton> */}
+                            <ForumPostModal forumPost={parentForumPost} modalType={"DELETEPARENTPOST"} onForumPostChange={handleCallSnackbar} />
+                            <ForumPostModal forumPost={parentForumPost} modalType={"REPORTPARENTPOST"} onForumPostChange={handleCallSnackbar} />
+
                         </>
                     }
                     {
@@ -249,9 +267,10 @@ function ForumPostInputArea(props: any) {
                             <IconButton onClick={handleMakeReply} style={{ width: "fit-content", marginInlineStart: "auto", fontSize: "unset" }}>
                                 <ReplyIcon /> Reply
                             </IconButton>
-                            <IconButton onClick={handleDeletePost} style={{ width: "fit-content", fontSize: "unset" }}>
+                            {/* <IconButton onClick={handleDeletePost} style={{ width: "fit-content", fontSize: "unset" }}>
                                 <DeleteIcon /> Delete
-                            </IconButton>
+                            </IconButton> */}
+                            {/* <ForumPostModal forumThread={forumThread} modalType={"DELETEOTHER"} /> */}
                         </>
                     }
                 </div>

@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 
 import {
-    Divider, Typography, CircularProgress, colors
+    Divider, Typography, CircularProgress, Chip
 } from '@material-ui/core';
 
 import { ForumThread } from '../../../apis/Entities/ForumThread';
-import { ForumPostWithRepliesResp } from '../../../apis/Entities/ForumPost';
+import { ForumPostWithRepliesResp, ForumPost } from '../../../apis/Entities/ForumPost';
 
 import {
     getForumThreadByForumThreadId,
@@ -25,7 +25,7 @@ function ForumPostList(props: any) {
 
     const [courseId, setCourseId] = useState<number>();
     const [forumThread, setForumThread] = useState<ForumThread>();
-    const [forumPosts, setForumPosts] = useState<ForumPostWithRepliesResp[]>([]);
+    const [forumPosts, setForumPosts] = useState<ForumPost[]>([]);
     const [currentForumCategoryId, setCurrentForumCategoryId] = useState<number>();
     const [loading, setLoading] = useState<boolean>();
 
@@ -69,7 +69,7 @@ function ForumPostList(props: any) {
         return d.toDateString() + ', ' + d.toLocaleTimeString();
     }
 
-    const mapPosts = (forumPosts: ForumPostWithRepliesResp[]) => {
+    const mapPosts = (forumPosts: ForumPost[]) => {
         return (
             <div>
                 {forumPosts.map(function (post, postId) {
@@ -83,6 +83,10 @@ function ForumPostList(props: any) {
                                             RE: {forumThread.name}
                                             <br />
                                             Posted By {post.account.name} on {formatDate(post.timeStamp)}
+                                            {
+                                                post.isReported &&
+                                                <Chip label="Reported" color="secondary"/>
+                                            }
                                         </Typography>
                                     </ForumPostCardContent>
                                 }

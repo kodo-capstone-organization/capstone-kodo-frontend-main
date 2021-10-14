@@ -31,3 +31,7 @@ export interface ForumPostWithRepliesResp {
     account : Account,
     replies: ForumPostWithRepliesResp[]
 }
+
+export interface UpdateForumPostReq {
+    forumPost: ForumPost
+}
