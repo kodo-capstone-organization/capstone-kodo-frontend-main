@@ -36,9 +36,9 @@ export async function getAllEnrolledLessonsByLessonId(lessonId: number): Promise
     return httpClient.get<undefined, EnrolledLesson[]>(getParameters);
 }
 
-export async function getAllEnrolledLessonsWithStudentNameByParentLessonId(lessonId: number): Promise<EnrolledLessonWithStudentName[]> {
+export async function getAllEnrolledLessonsWithStudentNameByCourseIdAndLessonIdAndAccountId(courseId: number, lessonId: number, accountId: number): Promise<EnrolledLessonWithStudentName[]> {
     const getParameters: IHttpClientRequestParameters<undefined> = {
-        url: `/enrolledLesson/getAllEnrolledLessonsWithStudentNameByParentLessonId/${lessonId}`
+        url: `/enrolledLesson/getAllEnrolledLessonsWithStudentNameByCourseIdAndLessonIdAndAccountId/${courseId}/${lessonId}/${accountId}`
     }
 
     return httpClient.get<undefined, EnrolledLessonWithStudentName[]>(getParameters);

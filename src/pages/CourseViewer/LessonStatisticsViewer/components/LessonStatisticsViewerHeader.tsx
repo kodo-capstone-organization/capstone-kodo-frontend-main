@@ -42,23 +42,11 @@ function LessonStatisticsViewerHeader(props: any) {
             <>
                 { enrolledLessons &&
                     <LessonStatisticsViewerText>
-                        Total Number of Students Who Completed Lesson: {completedLessons}
+                        Total Number of Students Who Completed Lesson: {completedLessons} / {enrolledLessons.length}
                     </LessonStatisticsViewerText>
                 }
             </>
         );
-    }
-
-    const showTotalNumberOfStudentsEnrolled = () => {
-        return (
-            <>
-                { enrolledLessons &&
-                    <LessonStatisticsViewerText>
-                        Total Number of Students Enrolled: {enrolledLessons.length}
-                    </LessonStatisticsViewerText>
-                }
-            </>
-        )
     }
 
     return (
@@ -69,7 +57,6 @@ function LessonStatisticsViewerHeader(props: any) {
                     <LessonStatisticsViewerCardContent>
                         <LessonStatisticsViewerColumn>
                         { showTotalNumberOfCompletedLessons() }
-                        { showTotalNumberOfStudentsEnrolled() }
                         </LessonStatisticsViewerColumn>
                     </LessonStatisticsViewerCardContent>
                 </LessonStatisticsViewerCard>

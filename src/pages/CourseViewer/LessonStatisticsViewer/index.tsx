@@ -6,8 +6,8 @@ import { Course } from "../../../apis/Entities/Course";
 import { Lesson } from "../../../apis/Entities/Lesson";
 import { EnrolledLessonWithStudentName } from "../../../apis/Entities/EnrolledLesson";
 
-import { getAllEnrolledLessonsWithStudentNameByParentLessonId } from "../../../apis/EnrolledLesson/EnrolledLessonApis";
-import { getCourseWithoutEnrollmentByCourseId } from "../../../apis/Course/CourseApis";
+import { getAllEnrolledLessonsWithStudentNameByCourseIdAndLessonIdAndAccountId } from "../../../apis/EnrolledLesson/EnrolledLessonApis";
+import { getCourseWithoutEnrollmentByCourseIdAndAccountId } from "../../../apis/Course/CourseApis";
 import { isStudentByCourseIdAndAccountId } from "../../../apis/Course/CourseApis";
 import { isTutorByCourseIdAndAccountId } from "../../../apis/Course/CourseApis";
 
@@ -23,7 +23,7 @@ import { LayoutContentPage } from "../../../components/LayoutElements";
 function LessonStatisticsViewer(props: any) {
 
     const courseId = props.match.params.courseId;
-    const lessonId = props.match.params.lessonId;
+    const lessonId = parseInt(props.match.params.lessonId);
     const accountId = JSON.parse(window.sessionStorage.getItem("loggedInAccountId") || "{}");
 
     const [isTutor, setIsTutor] = useState<Boolean>();
@@ -44,32 +44,26 @@ function LessonStatisticsViewer(props: any) {
         isStudentByCourseIdAndAccountId(courseId, accountId)
         .then((tmpIsStudent: boolean) => setIsStudent(tmpIsStudent))
         .catch((err) => handleError(err));
-        getCourseWithoutEnrollmentByCourseId(courseId).then(course => {
-            setCourse(course);
-            course.lessons.forEach((lesson) => {
-                if (lesson.lessonId === parseInt(lessonId))
-                {
-                    setLesson(lesson);
-                    return;
-                }
-            });
-        });
-        getAllEnrolledLessonsWithStudentNameByParentLessonId(lessonId).then((enrolledLessons) => {
-            setEnrolledLessons(enrolledLessons);
-            console.log(enrolledLessons);
+        getCourseWithoutEnrollmentByCourseIdAndAccountId(courseId, accountId).then((tmpCourse: Course) => {
+            setCourse(tmpCourse);      
+            setLesson(filterLessonByLessonId(tmpCourse, lessonId) as Lesson);
         })
+        .catch((err) => handleError(err));
+        getAllEnrolledLessonsWithStudentNameByCourseIdAndLessonIdAndAccountId(courseId, lessonId, accountId)
+        .then((tmpEnrolledLessons: EnrolledLessonWithStudentName[]) => setEnrolledLessons(tmpEnrolledLessons))
+        .catch((err) => handleError(err));
         setLoading(false);
     }, [accountId, courseId, lessonId]);
 
     function handleError(err: any): void {
         const errorDataObj = createErrorDataObj(err);
-        props.callOpenSnackBar("Error in retrieving course", "error");
+        props.callOpenSnackBar("Error in retrieving lesson statistics", "error");
         history.push({ pathname: "/invalidpage", state: { errorData: errorDataObj }})
     }
     
     function createErrorDataObj(err: any): any {
         const errorDataObj = { 
-            message1: 'Unable to view course',
+            message1: 'Unable to view lesson statistics',
             message2: err.response.data.message,
             errorStatus: err.response.status,
             returnPath: '/browsecourse'
@@ -77,10 +71,21 @@ function LessonStatisticsViewer(props: any) {
 
         return errorDataObj;
     }
+    
+    function filterLessonByLessonId(course: Course, lessonId: number): Lesson {        
+        for (const lesson of course.lessons)
+        {
+            if (lesson.lessonId === lessonId)
+            {
+                return lesson as Lesson;
+            }
+        }
+        return null as any;
+    }
 
     return (
         <>
-            { (!loading && course) &&       
+            { (!loading && course && lesson && enrolledLessons) &&       
                 <>     
                     <div style={{ display: "flex", flexDirection: "row"}}>
                         <Sidebar course={course} isTutor={isTutor} isStudent={isStudent} />
