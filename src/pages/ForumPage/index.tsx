@@ -68,18 +68,13 @@ function ForumPage(props: any) {
             getForumCategoryByForumCategoryId(props.match.params.forumCategoryId)
             .then((res) => {
                 setCurrentForumCategory(res);
-                console.log("getForumCategoryByForumCategoryId", typeof res);
-            }).catch((err) => {
-                handleCallSnackbar({message: err.response.data.message, type:"error"});
-            });
+            }).catch((err) => handleError(err));
         }
         if(props.match.params.forumThreadId != undefined){
             getForumThreadByForumThreadId(props.match.params.forumThreadId)
             .then((res) => {
                 setCurrentForumThread(res);
-            }).catch((err) => {
-                handleCallSnackbar({message: err.response.data.message, type:"error"});
-            });
+            }).catch((err) => handleError(err));
         }
     }, [props.match.params]);
 
@@ -108,17 +103,17 @@ function ForumPage(props: any) {
 
     function handleError(err: any): void {
         const errorDataObj = createErrorDataObj(err);
-        props.callOpenSnackBar("Error in retrieving course", "error");
+        props.callOpenSnackBar("Error in retrieving forum", "error");
         history.push({ pathname: "/invalidpage", state: { errorData: errorDataObj }})
     }
     
     function createErrorDataObj(err: any): any {
         const errorDataObj = { 
-            message1: 'Unable to view course',
+            message1: 'Unable to view forum',
             message2: err.response.data.message,
             errorStatus: err.response.status,
-            returnPath: '/browsecourse',
-            returnText: 'Browse Courses'
+            returnPath: '/profile',
+            returnText: 'My Profile'
         }
 
         return errorDataObj;
