@@ -16,6 +16,7 @@ export interface Course {
   courseTags: Tag[];
   bannerPictureFileName: string;
   isEnrollmentActive: boolean;
+  isReviewRequested: boolean;
   courseRating: number;
 }
 

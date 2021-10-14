@@ -120,6 +120,14 @@ export async function toggleEnrollmentActiveStatus(courseId: number, requestingA
     return httpClient.delete<undefined, ToggleCourseResp>(deleteParameters);
 }
 
+export async function toggleReviewRequestStatus(courseId: number, requestingAccountId: number): Promise<ToggleCourseResp> {
+    const deleteParameters: IHttpClientRequestParameters<undefined> = {
+        url: `/course/toggleReviewRequestStatus/${courseId}&${requestingAccountId}`
+    }
+
+    return httpClient.delete<undefined, ToggleCourseResp>(deleteParameters);
+}
+
 export async function getCourseWithoutEnrollmentByCourseId(courseId: number): Promise<Course> {
     const getParameters: IHttpClientRequestParameters<undefined> = {
         url: `/course/getCourseWithoutEnrollmentByCourseId/${courseId}`
