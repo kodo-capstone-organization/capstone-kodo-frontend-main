@@ -282,7 +282,8 @@ function ForumThreadList(props: any) {
                 }
 
                 <ForumThreadCardContent>
-                    {forumThreads !== [] && mapThreads(forumThreads)}
+                    {/* previous runtime error was caused here when threads were mapped when length = 0 */}
+                    {forumThreads.length > 0 && mapThreads(forumThreads)}
                     <EmptyStateContainer threadsExist={forumThreads.length > 0}>
                         <Typography>No threads currently 🥺</Typography>
                         <ForumThreadModal modalType={"EMPTY"} courseId={props.courseId} forumCategory={forumCategory} onForumThreadChange={handleCallSnackbar} />

@@ -57,7 +57,7 @@ function ForumPage(props: any) {
             getForumCategoryByForumCategoryId(props.match.params.forumCategoryId)
             .then((res) => {
                 setCurrentForumCategory(res);
-                console.log("getForumCategoryByForumCategoryId", typeof res);
+                console.log("getForumCategoryByForumCategoryId in index", props.match.params);
             }).catch((err) => {
                 handleCallSnackbar({message: err.response.data.message, type:"error"});
             });
@@ -70,7 +70,7 @@ function ForumPage(props: any) {
                 handleCallSnackbar({message: err.response.data.message, type:"error"});
             });
         }
-    }, [props.match.params]);
+    }, [props.match.params.forumCategoryId, props.match.params.forumThreadId]);
 
     // To update isIndexPage
     useEffect(() => {

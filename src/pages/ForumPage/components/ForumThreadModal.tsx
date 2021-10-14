@@ -115,7 +115,7 @@ function ForumThreadModal(props: any) {
             {
                 modalType === "EMPTY" &&
                 <>
-                    <Button onClick={handleOpen}>
+                    <Button onClick={handleOpen} primary>
                         Start A Thread
             </Button>
                     <Dialog open={open} onClose={handleClose} maxWidth={"lg"}>

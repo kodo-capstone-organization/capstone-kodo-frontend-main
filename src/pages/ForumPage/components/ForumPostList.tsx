@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import {
-    Divider, Typography, CircularProgress
+    Divider, Typography, CircularProgress, colors
 } from '@material-ui/core';
 
 import { ForumThread } from '../../../apis/Entities/ForumThread';
@@ -16,6 +16,7 @@ import {
     ForumCardHeader, ForumCardContent, ForumCard, ForumPostCard,
     ForumPostCardContent, ForumAvatar
 } from "../ForumElements";
+import { colours } from "../../../values/Colours";
 
 import ForumPostInputArea from './ForumPostInputArea';
 
@@ -92,7 +93,7 @@ function ForumPostList(props: any) {
                                     </Typography>
                                 </ForumPostCardContent>
                                 <Divider />
-                                <ForumPostInputArea postType={"REPLY"} history={props.history} courseId={courseId} forumPost={post} onForumPostChange={handleCallSnackbar} />
+                                <ForumPostInputArea postType={"GENERAL"} history={props.history} courseId={courseId} forumPost={post} onForumPostChange={handleCallSnackbar} />
                             </ForumPostCard>
                         </>
                     );
@@ -149,9 +150,9 @@ function ForumPostList(props: any) {
                     }
                 </ForumCardContent>
 
-                <body id="replies" style={{marginLeft:"350px"}}>
+                <ForumCardContent>
                     Replies
-                </body>
+                </ForumCardContent>
 
                 <ForumCardContent>
                     {forumThread != undefined && mapPosts(forumPosts)}

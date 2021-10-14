@@ -45,16 +45,16 @@ function ForumPostInputArea(props: any) {
     const loggedInAccountId = JSON.parse(window.sessionStorage.getItem("loggedInAccountId") || "{}");
 
     useEffect(() => {
-        if(props.forumThread != undefined){
+        if (props.forumThread != undefined) {
             setForumThread(props.forumThread);
         }
-        if(props.forumPost != undefined){
+        if (props.forumPost != undefined) {
             setParentForumPost(props.forumPost);
         }
         if (props.forumPost != undefined) {
             setChildForumPosts(props.forumPost?.replies);
         }
-        if(props.postType != undefined){
+        if (props.postType != undefined) {
             setPostType(props.postType);
         }
         setCurrentForumCategoryId(props.currentForumCategoryId);
@@ -69,6 +69,7 @@ function ForumPostInputArea(props: any) {
         }).catch((err) => {
             console.log("Failed", err);
         });
+        console.log("props in input area", props)
     }, [props]);
 
     const handleOpen = () => {
@@ -94,17 +95,17 @@ function ForumPostInputArea(props: any) {
                 accountId: loggedInAccountId,
                 forumThreadId: forumThread.forumThreadId
             }
-            console.log("createNewForumPostReq", createNewForumPostReq);
             createNewForumPost(createNewForumPostReq)
                 .then((res) => {
                     props.onForumPostChange({ message: "Forum Thread Reply Succeeded", type: "success" });
                 }).catch((err) => {
                     props.onForumPostChange({ message: err.response.data.message, type: "error" });
                 });
-        } else if ((postType === "REPLY" || postType === "VIEW") 
-                    && myAccount !== undefined 
-                    && parentForumPost !== undefined
-                    && parentForumPost.forumPostId !== null
+            handleCancel();
+        } else if ((postType === "REPLY" || postType === "GENERAL")
+            && myAccount !== undefined
+            && parentForumPost !== undefined
+            && parentForumPost.forumPostId !== null
         ) {
             const newForumPostReply: ForumPost = {
                 forumPostId: null,
@@ -112,7 +113,7 @@ function ForumPostInputArea(props: any) {
                 timeStamp: new Date(),
                 isReported: false,
                 reasonForReport: null,
-                replies: [],      
+                replies: [],
                 parentForumPost: null,
                 account: myAccount,
             }
@@ -129,13 +130,13 @@ function ForumPostInputArea(props: any) {
                     props.onForumPostChange({ message: err.response.data.message, type: "error" });
                 })
         }
-        handleCancel();
+        setMessage("");
     }
 
     const handleDeletePost = () => {
         if (postType === "POST") {
             if (forumThread !== undefined) {
-                if (forumThread.account.accountId === loggedInAccountId 
+                if (forumThread.account.accountId === loggedInAccountId
                     || course?.tutor.accountId === loggedInAccountId) {
                     //deleting a thread
                     props.history.push(`/overview/course/${courseId}/forum/category/${currentForumCategoryId}`);
@@ -145,11 +146,11 @@ function ForumPostInputArea(props: any) {
                         }).catch((err) => {
                             props.onForumPostChange({ message: err.response.data.message, type: "error" });
                         })
-                    } else {
-                        props.onForumPostChange({ message: "You are not the author of this thread/post.", type: "error" });
-                    }
+                } else {
+                    props.onForumPostChange({ message: "You are not the author of this thread/post.", type: "error" });
                 }
-        } else if (postType === "REPLY") {
+            }
+        } else if (postType === "REPLY" || postType === "GENERAL") {
             if (parentForumPost !== undefined && parentForumPost.forumPostId !== null) {
                 if (parentForumPost.account.accountId === loggedInAccountId
                     || course?.tutor.accountId === loggedInAccountId) {
@@ -182,12 +183,12 @@ function ForumPostInputArea(props: any) {
     }
 
     const handleSeeReplies = () => {
-        setPostType("VIEW");
         handleOpen();
         console.log("handleSeeReplies");
     }
 
     const handleMakeReply = () => {
+        setPostType("REPLY");
         handleOpen();
     }
 
@@ -229,7 +230,7 @@ function ForumPostInputArea(props: any) {
                 !isOpen &&
                 <div style={{ display: "flex" }}>
                     {
-                        postType === "REPLY" &&
+                        postType === "GENERAL" &&
                         <>
                             <IconButton disabled={childForumPosts.length < 1} onClick={handleSeeReplies} style={{ width: "fit-content", marginInlineStart: "auto", fontSize: "unset" }}>
                                 <QuestionAnswerIcon /> {childForumPosts.length} Replies
@@ -255,7 +256,7 @@ function ForumPostInputArea(props: any) {
 
             {/* For viewing replies */}
             {
-                isOpen && postType === "VIEW" &&
+                isOpen && postType === "GENERAL" &&
                 <>
                     <div style={{ margin: "20px 0px 0px 20px" }}>
                         Replies
