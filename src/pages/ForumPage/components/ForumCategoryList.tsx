@@ -26,6 +26,7 @@ function ForumCategoryList(props: any) {
     const [actionsDisabled, setActionsDisabled] = useState<boolean>(true);    
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [loading, setLoading] = useState<boolean>();
+    const [menuInfo, setMenuInfo] = useState<any>();
 
     const loggedInAccountId = JSON.parse(window.sessionStorage.getItem("loggedInAccountId") || "{}");
     const open = Boolean(anchorEl);
@@ -53,8 +54,9 @@ function ForumCategoryList(props: any) {
         console.log("loading", false);
     }, [props.currentCourseId]);
 
-    const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    const handleMenuOpen = (event: React.MouseEvent<HTMLElement>, category: ForumCategory) => {
         setAnchorEl(event.currentTarget);
+        setMenuInfo(category);
     };
 
     const handleMenuClose = () => {
@@ -107,7 +109,7 @@ function ForumCategoryList(props: any) {
                                             aria-controls="basic-menu"
                                             aria-haspopup="true"
                                             aria-expanded={open ? 'true' : undefined}
-                                            onClick={handleMenuOpen}
+                                            onClick={(e)=>handleMenuOpen(e, category)}
                                         >
                                             <MoreVertIcon />
                                         </IconButton>
@@ -120,11 +122,11 @@ function ForumCategoryList(props: any) {
                                                 'aria-labelledby': 'basic-button',
                                             }}
                                         >
-                                            <MenuItem>
-                                                <ForumCategoryModal modalType={"EDIT"} courseId={props.courseId} onForumCategoryChange={handleCallSnackbar} forumCategory={category} />
+                                            <MenuItem key={categoryId}>
+                                                <ForumCategoryModal modalType={"EDIT"} courseId={props.courseId} onForumCategoryChange={handleCallSnackbar} forumCategory={menuInfo} />
                                             </MenuItem>
-                                            <MenuItem>
-                                                <ForumCategoryModal modalType={"DELETE"} courseId={props.courseId} onForumCategoryChange={handleCallSnackbar} forumCategory={category} />
+                                            <MenuItem key={categoryId}>
+                                                <ForumCategoryModal modalType={"DELETE"} courseId={props.courseId} onForumCategoryChange={handleCallSnackbar} forumCategory={menuInfo} />
                                             </MenuItem>
                                         </Menu>
                                     </>
