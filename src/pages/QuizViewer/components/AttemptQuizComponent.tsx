@@ -99,7 +99,8 @@ function AttemptQuizComponent(props: any) {
             message1: 'Unable to view quiz',
             message2: err.response.data.message,
             errorStatus: err.response.status,
-            returnPath: '/progresspage'
+            returnPath: '/progresspage',
+            returnText: 'My Progress'
         }
 
         return errorDataObj;

@@ -66,7 +66,8 @@ function LessonStatisticsViewer(props: any) {
             message1: 'Unable to view lesson statistics',
             message2: err.response.data.message,
             errorStatus: err.response.status,
-            returnPath: '/browsecourse'
+            returnPath: '/browsecourse',
+            returnText: 'Browse Courses'
         }
 
         return errorDataObj;
