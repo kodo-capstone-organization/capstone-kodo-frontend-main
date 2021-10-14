@@ -238,6 +238,9 @@ function ForumPostInputArea(props: any) {
                             <IconButton onClick={handleMakeReply} style={{ width: "fit-content", fontSize: "unset" }}>
                                 <ReplyIcon /> Reply
                             </IconButton>
+                            <IconButton onClick={handleDeletePost} style={{ width: "fit-content", fontSize: "unset" }}>
+                                <DeleteIcon /> Delete
+                            </IconButton>
                         </>
                     }
                     {
@@ -246,11 +249,11 @@ function ForumPostInputArea(props: any) {
                             <IconButton onClick={handleMakeReply} style={{ width: "fit-content", marginInlineStart: "auto", fontSize: "unset" }}>
                                 <ReplyIcon /> Reply
                             </IconButton>
+                            <IconButton onClick={handleDeletePost} style={{ width: "fit-content", fontSize: "unset" }}>
+                                <DeleteIcon /> Delete
+                            </IconButton>
                         </>
                     }
-                    <IconButton onClick={handleDeletePost} style={{ width: "fit-content", fontSize: "unset" }}>
-                        <DeleteIcon /> Delete
-                    </IconButton>
                 </div>
             }
 
