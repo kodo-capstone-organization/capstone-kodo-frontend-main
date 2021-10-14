@@ -119,7 +119,7 @@ function StudentView(props: any) {
         message2: err.response.data.message,
         errorStatus: err.response.status,
         returnPath: '/browsecourse',
-        returnText: 'Browse Course'
+        returnText: 'Browse Courses'
     }
 
     return errorDataObj;

@@ -197,7 +197,7 @@ function CourseBuilderPage(props: any) {
             message2: err.response.data.message,
             errorStatus: err.response.status,
             returnPath: '/profile',
-            returnText: 'Profile'
+            returnText: 'My Profile'
         }   
     
         return errorDataObj;

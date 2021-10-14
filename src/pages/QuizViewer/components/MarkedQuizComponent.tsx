@@ -118,7 +118,7 @@ function MarkedQuizComponent(props: any) {
             message2: err.response.data.message,
             errorStatus: err.response.status,
             returnPath: '/progresspage',
-            returnText: 'Progress Page'
+            returnText: 'My Progress'
         }
 
         return errorDataObj;
