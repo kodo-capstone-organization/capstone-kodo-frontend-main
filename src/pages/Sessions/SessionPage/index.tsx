@@ -37,6 +37,8 @@ const formReducer = (state: any, event: any) => {
     }
 }
 
+let interval: NodeJS.Timer;
+
 function SessionPage(props: any) {
 
     const accountId = parseInt(window.sessionStorage.getItem("loggedInAccountId") || "");
@@ -72,6 +74,18 @@ function SessionPage(props: any) {
         // Reset forms
         setCreateSessionForm({ reset: true, isErrorForm: false })
         setCreateSessionFormErrors({ reset: true, isErrorForm: true })
+    }, [])
+
+    // Ensure that the session list is periodically updated to the latest session list
+    useEffect(() => {
+        interval = setInterval(() => getInvitedSessions(accountId).then((receivedSessions: InvitedSessionResp[]) => {
+            console.log("fetched the latest session list")
+            setMyInvitedSessions(receivedSessions)
+        }), 5000)
+
+        return () => {
+            clearInterval(interval)
+        };
     }, [])
 
     useEffect(() => {
