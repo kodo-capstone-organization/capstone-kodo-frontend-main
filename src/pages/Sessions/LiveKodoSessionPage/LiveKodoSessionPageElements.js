@@ -19,6 +19,7 @@ export const TopSessionBar = styled.div`
     align-items: center;
     height: 5%;
     background-color: ${colours.GRAY7};
+    border-bottom: 1px solid ${colours.BLUE2};
 `;
 
 export const MainSessionWrapper = styled.div`

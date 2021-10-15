@@ -441,10 +441,13 @@ function LiveKodoSessionPage(props: any) {
                         <audio key={pcRtcInfo.mediaStream?.id} ref={pcRtcInfo.audioRef} muted={pcRtcInfo.isMuted} autoPlay />
                     ))}
                     <TopSessionBar>
-                        <strong>{sessionDetails?.sessionName} ({sessionDetails?.sessionId}) · Time_Elapsed</strong>
+                        <strong>{sessionDetails?.sessionName}</strong> &nbsp;&nbsp; (Session ID: {sessionDetails?.sessionId})
                     </TopSessionBar>
-                    <Button to="#" onClick={() => send({event: null, data: "helloWord"})}>SEND</Button>
-                    <Button to="#" onClick={() => craftAndSendCallEventMessage(`hello from ${myAccountId}`)}>SEND VIA DATACHANNEL</Button>
+                    { /*
+                        <Button to="#" onClick={() => send({event: null, data: "helloWord"})}>SEND</Button>
+                        <Button to="#" onClick={() => craftAndSendCallEventMessage(`hello from ${myAccountId}`)}>SEND VIA DATACHANNEL</Button>
+                    */}
+
                     <MainSessionWrapper>
                         <ParticipantsPanel
                             myAccountId={myAccountId}

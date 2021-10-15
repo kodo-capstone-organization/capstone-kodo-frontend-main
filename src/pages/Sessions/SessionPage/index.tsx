@@ -76,7 +76,7 @@ function SessionPage(props: any) {
         interval = setInterval(() => getInvitedSessions(accountId).then((receivedSessions: InvitedSessionResp[]) => {
             console.log("fetched the latest session list")
             setMyInvitedSessions(receivedSessions)
-        }), 5000)
+        }), 1000)
 
         return () => {
             clearInterval(interval)
