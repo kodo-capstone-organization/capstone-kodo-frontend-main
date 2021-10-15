@@ -24,7 +24,7 @@ import Sidebar from '../CourseViewer/Sidebar/Sidebar';
 import { LayoutContentPage } from '../../components/LayoutElements';
 import { getMyAccount } from '../../apis/Account/AccountApis';
 import { getCourseWithoutEnrollmentByCourseId } from '../../apis/Course/CourseApis';
-import {Account } from '../../apis/Entities/Account';
+import { Account } from '../../apis/Entities/Account';
 import { Course } from '../../apis/Entities/Course';
 
 
@@ -51,7 +51,6 @@ function ForumPage(props: any) {
             setCurrentUser(receivedAccount);
         });
         getCourseWithoutEnrollmentByCourseId(currentCourseId).then(receivedCourse => {
-            console.log(receivedCourse)
             setCurrentCourse(receivedCourse);
         });
         isTutorByCourseIdAndAccountId(currentCourseId, parseInt(loggedInAccountId))
@@ -64,7 +63,7 @@ function ForumPage(props: any) {
     }, [loggedInAccountId, currentCourseId])
 
     useEffect(() => {
-        if(props.match.params.forumCategoryId != undefined){
+        if (props.match.params.forumCategoryId != undefined) {
             getForumCategoryByForumCategoryId(props.match.params.forumCategoryId)
             .then((res) => {
                 setCurrentForumCategory(res);
@@ -72,7 +71,7 @@ function ForumPage(props: any) {
                 handleCallSnackbar({message: err.response.data.message, type:"error"});
             });
         }
-        if(props.match.params.forumThreadId != undefined){
+        if (props.match.params.forumThreadId != undefined) {
             getForumThreadByForumThreadId(props.match.params.forumThreadId)
             .then((res) => {
                 setCurrentForumThread(res);
@@ -135,7 +134,7 @@ function ForumPage(props: any) {
 
     return (
         <>
-            { !loading && currentCourse && currentUser &&
+            {!loading && currentCourse && currentUser &&
                 <LayoutContainer>
                     {/* HAX DUPLICATION OF SIDEBAR make sure to update props etc. of this side bar if the one in course viewer is updated*/}
                     <Sidebar course={currentCourse} isTutor={isTutor} isStudent={isStudent} />
@@ -156,22 +155,24 @@ function ForumPage(props: any) {
                             </Breadcrumbs>
 
                             {isIndexPage &&
-                            <ForumCategoryList history={history}
-                                               onCallSnackbar={handleCallSnackbar}
-                                               currentCourseId={props.match.params.courseId} />
+                                <ForumCategoryList key={"categoryList"}
+                                                    history={history}
+                                                    onCallSnackbar={handleCallSnackbar}
+                                                    currentCourseId={props.match.params.courseId} />
                             }
 
-                            { !isIndexPage && history.location.pathname.includes("category") && !history.location.pathname.includes("thread") &&
-                            <ForumThreadList history={history}
-                                             onCallSnackbar={handleCallSnackbar}
-                                             currentCourseId={props.match.params.courseId} currentForumCategoryId={props.match.params.forumCategoryId}
-                            />
+                            {!isIndexPage && history.location.pathname.includes("category") && !history.location.pathname.includes("thread") &&
+                                <ForumThreadList key={"threadList"}
+                                                history={history}
+                                                onCallSnackbar={handleCallSnackbar}
+                                                currentCourseId={props.match.params.courseId} currentForumCategoryId={props.match.params.forumCategoryId}/>
                             }
 
-                            { !isIndexPage && history.location.pathname.includes("thread") &&
-                            <ForumPostList history={history}
-                                           currentCourseId={props.match.params.courseId} currentForumCategoryId={props.match.params.forumCategoryId} currentForumThreadId={props.match.params.forumThreadId}
-                                           onCallSnackbar={handleCallSnackbar} />
+                            {!isIndexPage && history.location.pathname.includes("thread") &&
+                                <ForumPostList key={"postList"}
+                                                history={history}
+                                                currentCourseId={props.match.params.courseId} currentForumCategoryId={props.match.params.forumCategoryId} currentForumThreadId={props.match.params.forumThreadId}
+                                                onCallSnackbar={handleCallSnackbar} />
                             }
 
                         </ForumContainer>

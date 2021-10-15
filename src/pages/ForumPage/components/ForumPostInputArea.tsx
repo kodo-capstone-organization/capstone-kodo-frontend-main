@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 
-import DeleteIcon from '@material-ui/icons/Delete';
 import QuestionAnswerIcon from "@material-ui/icons/QuestionAnswer";
 import ReplyIcon from '@material-ui/icons/Reply';
 
@@ -8,23 +7,25 @@ import {
     IconButton,
     TextField,
     Typography,
-    Divider
+    Divider,
+    Chip
 } from "@material-ui/core";
 
 import { Account } from "../../../apis/Entities/Account";
-import { Course } from "../../../apis/Entities/Course";
 import { ForumPost, CreateNewForumPostReq, CreateNewForumPostReplyReq } from '../../../apis/Entities/ForumPost';
 import { ForumThread } from '../../../apis/Entities/ForumThread';
 
-import { createNewForumPost, createNewForumPostReply, deleteForumThread, deleteForumPost } from "../../../apis/Forum/ForumApis";
-import { getCourseByCourseId } from '../../../apis/Course/CourseApis';
+import { createNewForumPost, createNewForumPostReply } from "../../../apis/Forum/ForumApis";
 import { getMyAccount } from "../../../apis/Account/AccountApis";
+
+import ForumPostModal from './ForumPostModal';
 
 import {
     ForumPostCardContent,
     ForumAvatar,
     ForumPostReplyCard,
-    ForumPostReplyCardContent
+    ForumPostReplyCardContent,
+    ForumReportedChip
 } from "../ForumElements";
 
 import { Button } from "../../../values/ButtonElements";
@@ -36,40 +37,33 @@ function ForumPostInputArea(props: any) {
     const [forumThread, setForumThread] = useState<ForumThread>();
     const [parentForumPost, setParentForumPost] = useState<ForumPost>();
     const [childForumPosts, setChildForumPosts] = useState<ForumPost[]>([]);
-    const [currentForumCategoryId, setCurrentForumCategoryId] = useState<number>();
-    const [courseId, setCourseId] = useState<number>();
-    const [course, setCourse] = useState<Course>();
+    // const [currentForumCategoryId, setCurrentForumCategoryId] = useState<number>();
+    // const [courseId, setCourseId] = useState<number>();
+    // const [course, setCourse] = useState<Course>();
     const [postType, setPostType] = useState<string>();
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [myAccount, setMyAccount] = useState<Account>();
     const loggedInAccountId = JSON.parse(window.sessionStorage.getItem("loggedInAccountId") || "{}");
 
     useEffect(() => {
-        if (props.forumThread != undefined) {
+        if (props.forumThread !== undefined) {
             setForumThread(props.forumThread);
         }
-        if (props.forumPost != undefined) {
+        if (props.forumPost !== undefined) {
             setParentForumPost(props.forumPost);
         }
-        if (props.forumPost != undefined) {
+        if (props.forumPost !== undefined) {
             setChildForumPosts(props.forumPost?.replies);
+            console.log("props.forumPost?.replies", props.forumPost?.replies);
         }
-        if (props.postType != undefined) {
+        if (props.postType !== undefined) {
             setPostType(props.postType);
         }
-        setCurrentForumCategoryId(props.currentForumCategoryId);
-        setCourseId(props.courseId);
-        getCourseByCourseId(props.courseId).then((res) => {
-            setCourse(res);
-        }).catch((err) => {
-            console.log("Failed", err);
-        });
         getMyAccount(loggedInAccountId).then((res) => {
             setMyAccount(res);
         }).catch((err) => {
             console.log("Failed", err);
         });
-        console.log("props in input area", props)
     }, [props]);
 
     const handleOpen = () => {
@@ -111,7 +105,7 @@ function ForumPostInputArea(props: any) {
                 forumPostId: null,
                 message,
                 timeStamp: new Date(),
-                isReported: false,
+                reported: false,
                 reasonForReport: null,
                 replies: [],
                 parentForumPost: null,
@@ -133,53 +127,8 @@ function ForumPostInputArea(props: any) {
         setMessage("");
     }
 
-    const handleDeletePost = () => {
-        if (postType === "POST") {
-            if (forumThread !== undefined) {
-                if (forumThread.account.accountId === loggedInAccountId
-                    || course?.tutor.accountId === loggedInAccountId) {
-                    //deleting a thread
-                    props.history.push(`/overview/course/${courseId}/forum/category/${currentForumCategoryId}`);
-                    deleteForumThread(forumThread.forumThreadId)
-                        .then((res) => {
-                            props.onForumPostChange({ message: "Forum Thread Deletion Succeeded", type: "success" });
-                        }).catch((err) => {
-                            props.onForumPostChange({ message: err.response.data.message, type: "error" });
-                        })
-                } else {
-                    props.onForumPostChange({ message: "You are not the author of this thread/post.", type: "error" });
-                }
-            }
-        } else if (postType === "REPLY" || postType === "GENERAL") {
-            if (parentForumPost !== undefined && parentForumPost.forumPostId !== null) {
-                if (parentForumPost.account.accountId === loggedInAccountId
-                    || course?.tutor.accountId === loggedInAccountId) {
-                    // deleting a post
-                    deleteForumPost(parentForumPost.forumPostId)
-                        .then((res) => {
-                            props.onForumPostChange({ message: "Forum Post Deletion Succeeded", type: "success" });
-                        }).catch((err) => {
-                            props.onForumPostChange({ message: err.response.data.message, type: "error" });
-                        })
-                } else {
-                    props.onForumPostChange({ message: "You are not the author of this thread/post.", type: "error" });
-                }
-            }
-        }
-        handleCancel();
-    }
-
-    const handleDeleteReply = (forumPost: ForumPost) => {
-        if (forumPost.account.accountId === loggedInAccountId && forumPost.forumPostId !== null) {
-            deleteForumPost(forumPost.forumPostId)
-                .then((res) => {
-                    props.onForumPostChange({ message: "Forum Post Deletion Succeeded", type: "success" });
-                }).catch((err) => {
-                    props.onForumPostChange({ message: err.response.data.message, type: "error" });
-                })
-        } else {
-            props.onForumPostChange({ message: "You are not the author of this thread/post.", type: "error" });
-        }
+    const handleCallSnackbar = (snackbarObject: any) => {
+        props.onForumPostChange(snackbarObject);
     }
 
     const handleSeeReplies = () => {
@@ -204,6 +153,10 @@ function ForumPostInputArea(props: any) {
                                     <Typography variant="body1" component="div" style={{ marginLeft: "20px" }}>
                                         Posted By {post.account.name} on {formatDate(post.timeStamp)}
                                     </Typography>
+                                    {
+                                        post.reported &&
+                                        <ForumReportedChip label="Reported" color="secondary" reported={post.reported} />
+                                    }
                                 </ForumPostReplyCardContent>
                                 <Divider />
                                 <ForumPostReplyCardContent>
@@ -212,9 +165,10 @@ function ForumPostInputArea(props: any) {
                                     </Typography>
                                 </ForumPostReplyCardContent>
                                 <Divider />
-                                <IconButton onClick={() => handleDeleteReply(post)} style={{ width: "fit-content", marginInlineStart: "auto", fontSize: "unset" }}>
-                                    <DeleteIcon /> Delete
-                                </IconButton>
+                                <div style={{ display: "flex" }}>
+                                    <ForumPostModal forumPost={post} modalType={"DELETEREPLY"} onForumPostChange={handleCallSnackbar} />
+                                    <ForumPostModal forumPost={post} modalType={"REPORTREPLY"} onForumPostChange={handleCallSnackbar} />
+                                </div>
                             </ForumPostReplyCard>
                         </>
                     );
@@ -238,9 +192,12 @@ function ForumPostInputArea(props: any) {
                             <IconButton onClick={handleMakeReply} style={{ width: "fit-content", fontSize: "unset" }}>
                                 <ReplyIcon /> Reply
                             </IconButton>
-                            <IconButton onClick={handleDeletePost} style={{ width: "fit-content", fontSize: "unset" }}>
+                            {/* <IconButton onClick={handleDeletePost} style={{ width: "fit-content", fontSize: "unset" }}>
                                 <DeleteIcon /> Delete
-                            </IconButton>
+                            </IconButton> */}
+                            <ForumPostModal forumPost={parentForumPost} modalType={"DELETEPARENTPOST"} onForumPostChange={handleCallSnackbar} />
+                            <ForumPostModal forumPost={parentForumPost} modalType={"REPORTPARENTPOST"} onForumPostChange={handleCallSnackbar} />
+
                         </>
                     }
                     {
@@ -249,9 +206,10 @@ function ForumPostInputArea(props: any) {
                             <IconButton onClick={handleMakeReply} style={{ width: "fit-content", marginInlineStart: "auto", fontSize: "unset" }}>
                                 <ReplyIcon /> Reply
                             </IconButton>
-                            <IconButton onClick={handleDeletePost} style={{ width: "fit-content", fontSize: "unset" }}>
+                            {/* <IconButton onClick={handleDeletePost} style={{ width: "fit-content", fontSize: "unset" }}>
                                 <DeleteIcon /> Delete
-                            </IconButton>
+                            </IconButton> */}
+                            {/* <ForumPostModal forumThread={forumThread} modalType={"DELETEOTHER"} /> */}
                         </>
                     }
                 </div>
@@ -275,12 +233,12 @@ function ForumPostInputArea(props: any) {
 
             {/* For creating replies */}
             {
-                isOpen && myAccount != undefined &&
+                isOpen && myAccount !== undefined &&
                 <>
                     <ForumPostCardContent>
                         <ForumAvatar alt="Remy Sharp" src={myAccount.displayPictureUrl} />
                         <Typography variant="body1" component="div" style={{ marginLeft: "20px" }}>
-                            RE: {parentForumPost != undefined ? parentForumPost.message : forumThread?.name}
+                            RE: {parentForumPost !== undefined ? parentForumPost.message : forumThread?.name}
                             <br />
                             Posting as {myAccount.name}
                         </Typography>

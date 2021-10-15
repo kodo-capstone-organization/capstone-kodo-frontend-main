@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 
 import {
-    Divider, Typography, CircularProgress, colors
+    Divider, Typography, CircularProgress, Chip
 } from '@material-ui/core';
 
 import { ForumThread } from '../../../apis/Entities/ForumThread';
-import { ForumPostWithRepliesResp } from '../../../apis/Entities/ForumPost';
+import { ForumPost } from '../../../apis/Entities/ForumPost';
 
 import {
     getForumThreadByForumThreadId,
@@ -14,9 +14,8 @@ import {
 
 import {
     ForumCardHeader, ForumCardContent, ForumCard, ForumPostCard,
-    ForumPostCardContent, ForumAvatar
+    ForumPostCardContent, ForumAvatar, ForumReportedChip
 } from "../ForumElements";
-import { colours } from "../../../values/Colours";
 
 import ForumPostInputArea from './ForumPostInputArea';
 
@@ -25,7 +24,7 @@ function ForumPostList(props: any) {
 
     const [courseId, setCourseId] = useState<number>();
     const [forumThread, setForumThread] = useState<ForumThread>();
-    const [forumPosts, setForumPosts] = useState<ForumPostWithRepliesResp[]>([]);
+    const [forumPosts, setForumPosts] = useState<ForumPost[]>([]);
     const [currentForumCategoryId, setCurrentForumCategoryId] = useState<number>();
     const [loading, setLoading] = useState<boolean>();
 
@@ -33,7 +32,7 @@ function ForumPostList(props: any) {
         setLoading(true);
         setCourseId(props.currentCourseId);
         setCurrentForumCategoryId(props.currentForumCategoryId);
-        if (props.currentForumThreadId != undefined) {
+        if (props.currentForumThreadId !== undefined) {
             getForumThreadByForumThreadId(parseInt(props.currentForumThreadId)).then((res) => {
                 setForumThread(res);
             }).catch((err) => {
@@ -69,7 +68,7 @@ function ForumPostList(props: any) {
         return d.toDateString() + ', ' + d.toLocaleTimeString();
     }
 
-    const mapPosts = (forumPosts: ForumPostWithRepliesResp[]) => {
+    const mapPosts = (forumPosts: ForumPost[]) => {
         return (
             <div>
                 {forumPosts.map(function (post, postId) {
@@ -84,6 +83,10 @@ function ForumPostList(props: any) {
                                             <br />
                                             Posted By {post.account.name} on {formatDate(post.timeStamp)}
                                         </Typography>
+                                        {
+                                            post.reported &&
+                                            <ForumReportedChip label="Reported" color="secondary" reported={post.reported} />
+                                        }
                                     </ForumPostCardContent>
                                 }
                                 <Divider />
@@ -128,7 +131,7 @@ function ForumPostList(props: any) {
 
                 <ForumCardContent>
                     {
-                        forumThread != undefined &&
+                        forumThread !== undefined &&
                         <ForumPostCard name="parentThread">
                             <ForumPostCardContent>
                                 <ForumAvatar alt="Remy Sharp" src={forumThread.account.displayPictureUrl} />
@@ -155,7 +158,7 @@ function ForumPostList(props: any) {
                 </ForumCardContent>
 
                 <ForumCardContent>
-                    {forumThread != undefined && mapPosts(forumPosts)}
+                    {forumThread !== undefined && mapPosts(forumPosts)}
                 </ForumCardContent>
             </ForumCard>
         );

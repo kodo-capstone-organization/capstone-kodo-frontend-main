@@ -7,7 +7,8 @@ import {
     CardContent,
     CardHeader, 
     Avatar,
-    OutlinedInput
+    OutlinedInput,
+    Chip
 } from "@material-ui/core";
 
 import { fontSizes } from "../../values/FontSizes";
@@ -165,4 +166,10 @@ export const ForumPostReplyCardContent = styled(CardContent)`
     color: ${colours.GRAY2};
     padding: 2rem !important;
     padding: ${({ removePadTop }) => (removePadTop ? "0 2rem 2rem 2rem !important" : "2rem !important")};
+`;
+
+export const ForumReportedChip = styled(Chip)`
+    margin-inline-start: auto;
+    display: ${({ reported }) =>
+    reported ? "unset" : "none"};
 `;

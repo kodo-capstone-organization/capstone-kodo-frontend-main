@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { createMuiTheme } from "@material-ui/core";
+import { createTheme } from "@material-ui/core";
 
 
 import {
@@ -18,7 +18,7 @@ import { Button } from "../../../values/ButtonElements";
 import { ForumCategory, CreateNewForumCategoryReq, UpdateForumCategoryReq } from '../../../apis/Entities/ForumCategory';
 import { createNewForumCategory, updateForumCategory, deleteForumCategory } from "../../../apis/Forum/ForumApis";
 
-const themeInstance = createMuiTheme({
+const themeInstance = createTheme({
     overrides: {
         MuiIconButton: {
             root: {
@@ -57,8 +57,7 @@ function ForumCategoryModal(props: any) {
     };
 
     const handleCreateConfirm = () => {
-        if (courseId)
-        {
+        if (courseId) {
             const createNewForumCategoryReq: CreateNewForumCategoryReq = {
                 name,
                 description,
@@ -87,8 +86,7 @@ function ForumCategoryModal(props: any) {
     }
 
     const handleDeleteConfirm = () => {
-        if (forumCategoryToSubmit && forumCategoryToSubmit.forumCategoryId !== null)
-        {
+        if (forumCategoryToSubmit && forumCategoryToSubmit.forumCategoryId !== null) {
             deleteForumCategory(forumCategoryToSubmit.forumCategoryId).then((res) => {
                 props.onForumCategoryChange({ message: "Forum Category Delete Success", type: "success" });
             }).catch((err) => {
@@ -98,6 +96,19 @@ function ForumCategoryModal(props: any) {
         }
     }
 
+    // const handleReportConfirm = () => {
+    //     const forumCategory: ForumCategory = Object.assign(forumCategoryToSubmit, { isREported: true });
+    //     const updateForumCategoryReq: UpdateForumCategoryReq = {
+    //         forumCategory
+    //     }
+    //     updateForumCategory(updateForumCategoryReq).then((res) => {
+    //         props.onForumCategoryChange({ message: "Forum Category Report Succeeded", type: "success" });
+    //     }).catch((err) => {
+    //         props.onForumCategoryChange({ message: "Forum Category Report Failed", type: "error" });
+    //     })
+    //     setOpen(false);
+    // }
+
     return (
         <>
             {
@@ -105,7 +116,7 @@ function ForumCategoryModal(props: any) {
                 <>
                     <IconButton aria-label="settings" color="primary" onClick={handleOpen}>
                         <AddIcon /> &nbsp; Add Category
-            </IconButton>
+                    </IconButton>
                     <Dialog open={open} onClose={handleClose} maxWidth={"lg"}>
                         <DialogTitle>Create Forum Category</DialogTitle>
                         <DialogContent>
@@ -137,9 +148,9 @@ function ForumCategoryModal(props: any) {
             {
                 modalType === "EMPTY" &&
                 <>
-                    <IconButton aria-label="settings" color="primary" onClick={handleOpen}>
+                    <Button primary onClick={handleOpen}>
                         <AddIcon /> &nbsp; Start A Category
-            </IconButton>
+                    </Button>
                     <Dialog open={open} onClose={handleClose} maxWidth={"lg"}>
                         <DialogTitle>Create Forum Category</DialogTitle>
                         <DialogContent>
@@ -220,6 +231,25 @@ function ForumCategoryModal(props: any) {
                     </Dialog>
                 </>
             }
+
+            {/* {
+                modalType === "REPORT" &&
+                <>
+                    <ListItemIcon onClick={handleOpen} >
+                        <DeleteIcon /> Report Category
+                    </ListItemIcon>
+                    <Dialog open={open} onClose={handleClose} maxWidth={"lg"}>
+                        <DialogTitle>Report Forum Category</DialogTitle>
+                        <DialogContent>
+                            Are you sure you want to report: {name} ?
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={handleClose}>Cancel</Button>
+                            <Button primary onClick={handleReportConfirm}>Confirm</Button>
+                        </DialogActions>
+                    </Dialog>
+                </>
+            } */}
 
         </>
     )

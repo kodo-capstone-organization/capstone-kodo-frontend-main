@@ -3,7 +3,7 @@ import { httpClient } from "../HttpClient/HttpClient";
 import { transformToBlob } from "./../../utils/BlobCreator";
 import { ForumCategory, CreateNewForumCategoryReq, UpdateForumCategoryReq } from "../Entities/ForumCategory";
 import { ForumThread, CreateNewForumThreadReq } from "../Entities/ForumThread";
-import { ForumPost, CreateNewForumPostReq, CreateNewForumPostReplyReq, ForumPostWithRepliesResp } from "../Entities/ForumPost";
+import { ForumPost, CreateNewForumPostReq, CreateNewForumPostReplyReq, ForumPostWithRepliesResp, UpdateForumPostReq } from "../Entities/ForumPost";
 
 // FORUM CATEGORY //
 
@@ -134,11 +134,11 @@ export async function createNewForumPostReply(createNewForumPostReplyReq: Create
     return httpClient.post<FormData, ForumPost>(postParameters)
 }
 
-export async function getAllForumPostsByForumThreadId(forumThreadId: number): Promise<ForumPostWithRepliesResp[]> {
+export async function getAllForumPostsByForumThreadId(forumThreadId: number): Promise<ForumPost[]> {
     const getParameters: IHttpClientRequestParameters<undefined> = {
         url: `/forumPost/getAllForumPostsByForumThreadId/${forumThreadId}`
     }
-    return httpClient.get<undefined, ForumPostWithRepliesResp[]>(getParameters)
+    return httpClient.get<undefined, ForumPost[]>(getParameters)
 }
 
 export async function deleteForumPost(forumPostId: number): Promise<boolean> {
@@ -147,4 +147,17 @@ export async function deleteForumPost(forumPostId: number): Promise<boolean> {
     }
 
     return httpClient.delete<undefined, boolean>(deleteParameters);
+}
+
+export async function updateForumPost(updateForumPostReq: UpdateForumPostReq): Promise<ForumPost> {
+    const formData = new FormData();
+
+    formData.append('forumPost', transformToBlob(updateForumPostReq));
+
+    const postParameters: IHttpClientRequestParameters<FormData> = {
+        url: '/forumPost/updateForumPost',
+        payload: formData
+    }
+
+    return httpClient.put<FormData, ForumPost>(postParameters)
 }

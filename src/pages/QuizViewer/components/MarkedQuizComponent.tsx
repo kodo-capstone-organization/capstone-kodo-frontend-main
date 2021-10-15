@@ -18,7 +18,7 @@ import {
     TableHead,
     TableRow,
     ThemeProvider,
-    createMuiTheme,
+    createTheme,
 } from "@material-ui/core";
 
 import { Quiz } from "../../../apis/Entities/Quiz";
@@ -43,7 +43,7 @@ import {
     QuizViewerCardContent,
 } from "../QuizViewerElements";
 
-const themeInstance = createMuiTheme({
+const themeInstance = createTheme({
     overrides: {
         MuiTableRow: {
             root: {
@@ -103,6 +103,7 @@ function MarkedQuizComponent(props: any) {
             setStudentAttempt(studentAttempt);
             setQuiz(studentAttempt.quiz);
             setStudentAttemptQuestions(studentAttempt.studentAttemptQuestions);
+            console.log("studentAttempt", studentAttempt);
         }).catch((err) => handleError(err));        
     }, [studentAttemptId, accountId]);
 
