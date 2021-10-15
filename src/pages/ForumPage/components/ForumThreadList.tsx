@@ -6,7 +6,7 @@ import SortByAlphaIcon from '@material-ui/icons/SortByAlpha';
 import DeleteIcon from '@material-ui/icons/Delete';
 import {
     IconButton, Typography, Link, Menu,
-    MenuItem, ListItemIcon, CircularProgress, OutlinedInput
+    MenuItem, ListItemIcon, CircularProgress
 } from '@material-ui/core';
 
 import { ForumCategory } from '../../../apis/Entities/ForumCategory';
@@ -48,7 +48,7 @@ function ForumThreadList(props: any) {
 
     useEffect(() => {
         setLoading(true);
-        if (props.currentForumCategoryId != undefined) {
+        if (props.currentForumCategoryId !== undefined) {
             getForumCategoryByForumCategoryId(props.currentForumCategoryId).then((res) => {
                 setForumCategory(res);
             }).catch((err) => {
@@ -95,7 +95,7 @@ function ForumThreadList(props: any) {
 
     const filterByNameDescAuthor = (search: string) => {
         search = search.toLowerCase();
-        if (search != "") {
+        if (search !== "") {
             const sorted = forumThreads
                 .filter((thread) => thread.name.toLowerCase().includes(search)
                     || thread.description.toLowerCase().includes(search)

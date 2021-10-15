@@ -22,7 +22,7 @@ import Sidebar from '../CourseViewer/Sidebar/Sidebar';
 import { LayoutContentPage } from '../../components/LayoutElements';
 import { getMyAccount } from '../../apis/Account/AccountApis';
 import { getCourseWithoutEnrollmentByCourseId } from '../../apis/Course/CourseApis';
-import {Account } from '../../apis/Entities/Account';
+import { Account } from '../../apis/Entities/Account';
 import { Course } from '../../apis/Entities/Course';
 
 
@@ -53,22 +53,22 @@ function ForumPage(props: any) {
     }, [loggedInAccountId, currentCourseId])
 
     useEffect(() => {
-        if(props.match.params.forumCategoryId != undefined){
+        if (props.match.params.forumCategoryId != undefined) {
             getForumCategoryByForumCategoryId(props.match.params.forumCategoryId)
-            .then((res) => {
-                setCurrentForumCategory(res);
-                console.log("getForumCategoryByForumCategoryId in index", props.match.params);
-            }).catch((err) => {
-                handleCallSnackbar({message: err.response.data.message, type:"error"});
-            });
+                .then((res) => {
+                    setCurrentForumCategory(res);
+                    console.log("getForumCategoryByForumCategoryId in index", props.match.params);
+                }).catch((err) => {
+                    handleCallSnackbar({ message: err.response.data.message, type: "error" });
+                });
         }
-        if(props.match.params.forumThreadId != undefined){
+        if (props.match.params.forumThreadId != undefined) {
             getForumThreadByForumThreadId(props.match.params.forumThreadId)
-            .then((res) => {
-                setCurrentForumThread(res);
-            }).catch((err) => {
-                handleCallSnackbar({message: err.response.data.message, type:"error"});
-            });
+                .then((res) => {
+                    setCurrentForumThread(res);
+                }).catch((err) => {
+                    handleCallSnackbar({ message: err.response.data.message, type: "error" });
+                });
         }
     }, [props.match.params.forumCategoryId, props.match.params.forumThreadId]);
 
@@ -109,11 +109,11 @@ function ForumPage(props: any) {
 
     return (
         <>
-            { !loading && currentCourse && currentUser &&
+            {!loading && currentCourse && currentUser &&
                 <LayoutContainer>
                     {/* HAX DUPLICATION OF SIDEBAR make sure to update props etc. of this side bar if the one in course viewer is updated*/}
-                    <Sidebar course={currentCourse} account={currentUser} isTutorView={isCurrentUserCourseTutor()}/>
-                    <LayoutContentPage showSideBar style={{ paddingRight: "8rem"}}>
+                    <Sidebar course={currentCourse} account={currentUser} isTutorView={isCurrentUserCourseTutor()} />
+                    <LayoutContentPage showSideBar style={{ paddingRight: "8rem" }}>
                         <ForumContainer>
                             <Breadcrumbs aria-label="profile-breadcrumb" style={{ marginBottom: "1rem" }}>
                                 {
@@ -130,22 +130,24 @@ function ForumPage(props: any) {
                             </Breadcrumbs>
 
                             {isIndexPage &&
-                            <ForumCategoryList history={history}
-                                               onCallSnackbar={handleCallSnackbar}
-                                               currentCourseId={props.match.params.courseId} />
+                                <ForumCategoryList key={"categoryList"}
+                                                    history={history}
+                                                    onCallSnackbar={handleCallSnackbar}
+                                                    currentCourseId={props.match.params.courseId} />
                             }
 
-                            { !isIndexPage && history.location.pathname.includes("category") && !history.location.pathname.includes("thread") &&
-                            <ForumThreadList history={history}
-                                             onCallSnackbar={handleCallSnackbar}
-                                             currentCourseId={props.match.params.courseId} currentForumCategoryId={props.match.params.forumCategoryId}
-                            />
+                            {!isIndexPage && history.location.pathname.includes("category") && !history.location.pathname.includes("thread") &&
+                                <ForumThreadList key={"threadList"}
+                                                history={history}
+                                                onCallSnackbar={handleCallSnackbar}
+                                                currentCourseId={props.match.params.courseId} currentForumCategoryId={props.match.params.forumCategoryId}/>
                             }
 
-                            { !isIndexPage && history.location.pathname.includes("thread") &&
-                            <ForumPostList history={history}
-                                           currentCourseId={props.match.params.courseId} currentForumCategoryId={props.match.params.forumCategoryId} currentForumThreadId={props.match.params.forumThreadId}
-                                           onCallSnackbar={handleCallSnackbar} />
+                            {!isIndexPage && history.location.pathname.includes("thread") &&
+                                <ForumPostList key={"postList"}
+                                                history={history}
+                                                currentCourseId={props.match.params.courseId} currentForumCategoryId={props.match.params.forumCategoryId} currentForumThreadId={props.match.params.forumThreadId}
+                                                onCallSnackbar={handleCallSnackbar} />
                             }
 
                         </ForumContainer>

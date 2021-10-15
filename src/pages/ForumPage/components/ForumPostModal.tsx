@@ -6,15 +6,13 @@ import {
     DialogContent,
     DialogTitle,
     IconButton,
-    TextField,
-    ListItemIcon
+    TextField
 } from "@material-ui/core";
 import DeleteIcon from '@material-ui/icons/Delete';
 import FlagIcon from '@material-ui/icons/Flag';
 import { Button } from "../../../values/ButtonElements";
 import { deleteForumPost, updateForumPost } from "../../../apis/Forum/ForumApis";
 import { ForumPost, UpdateForumPostReq } from "../../../apis/Entities/ForumPost";
-import { ForumThread } from "../../../apis/Entities/ForumThread";
 
 
 function ForumPostModal(props: any) {
@@ -30,10 +28,10 @@ function ForumPostModal(props: any) {
     useEffect(() => {
         // setCourseId(props.courseId);
         setModalType(props.modalType);
-        if (props.forumPost != undefined) {
+        if (props.forumPost !== undefined) {
             setForumPost(props.forumPost);
         }
-        // if (props.forumThread != undefined) {
+        // if (props.forumThread !== undefined) {
         //     setForumThread(props.forumThread);
         // }
     }, [props, open])
@@ -47,7 +45,7 @@ function ForumPostModal(props: any) {
     };
 
     const handleDeleteConfirm = () => {
-        if (forumPost != undefined && forumPost.account.accountId === loggedInAccountId && forumPost.forumPostId !== null) {
+        if (forumPost !== undefined && forumPost.account.accountId === loggedInAccountId && forumPost.forumPostId !== null) {
             deleteForumPost(forumPost.forumPostId)
                 .then((res) => {
                     props.onForumPostChange({ message: "Forum Post Deletion Succeeded", type: "success" });
@@ -113,6 +111,7 @@ function ForumPostModal(props: any) {
                                     label="Reason For Report"
                                     value={reasonForReport}
                                     variant="outlined"
+                                    onChange={(e)=> setReasonForReport(e.target.value)}
                                 />
                             </DialogContent>
                             <DialogActions>
@@ -164,6 +163,7 @@ function ForumPostModal(props: any) {
                                     label="Reason For Report"
                                     value={reasonForReport}
                                     variant="outlined"
+                                    onChange={(e)=> setReasonForReport(e.target.value)}
                                 />
                             </DialogContent>
                             <DialogActions>

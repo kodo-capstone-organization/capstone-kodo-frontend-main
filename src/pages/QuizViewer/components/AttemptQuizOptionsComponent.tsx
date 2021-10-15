@@ -29,7 +29,6 @@ function AttemptQuizOptionsComponent(props: any) {
         if (props.question) {
             setQuestion(props.question);
             setQuestionIndex(props.index);
-            console.log(props.question);
         }
     }, [props.question])
 
@@ -151,7 +150,7 @@ function AttemptQuizOptionsComponent(props: any) {
                                     </TableCell>
                                     <TableCell component="th" scope="row" align="right">
                                         <Select
-                                            value={rightSelected[index]}
+                                            value={rightSelected[index] != undefined ? rightSelected[index] : ""}
                                             onChange={(e) => handleSelectorChange(e, index)}
                                         >
                                             {

@@ -5,7 +5,7 @@ import {
 } from '@material-ui/core';
 
 import { ForumThread } from '../../../apis/Entities/ForumThread';
-import { ForumPostWithRepliesResp, ForumPost } from '../../../apis/Entities/ForumPost';
+import { ForumPost } from '../../../apis/Entities/ForumPost';
 
 import {
     getForumThreadByForumThreadId,
@@ -16,7 +16,6 @@ import {
     ForumCardHeader, ForumCardContent, ForumCard, ForumPostCard,
     ForumPostCardContent, ForumAvatar
 } from "../ForumElements";
-import { colours } from "../../../values/Colours";
 
 import ForumPostInputArea from './ForumPostInputArea';
 
@@ -33,7 +32,7 @@ function ForumPostList(props: any) {
         setLoading(true);
         setCourseId(props.currentCourseId);
         setCurrentForumCategoryId(props.currentForumCategoryId);
-        if (props.currentForumThreadId != undefined) {
+        if (props.currentForumThreadId !== undefined) {
             getForumThreadByForumThreadId(parseInt(props.currentForumThreadId)).then((res) => {
                 setForumThread(res);
             }).catch((err) => {
@@ -85,7 +84,7 @@ function ForumPostList(props: any) {
                                             Posted By {post.account.name} on {formatDate(post.timeStamp)}
                                             {
                                                 post.isReported &&
-                                                <Chip label="Reported" color="secondary"/>
+                                                <Chip label="Reported" color="secondary" />
                                             }
                                         </Typography>
                                     </ForumPostCardContent>
@@ -132,7 +131,7 @@ function ForumPostList(props: any) {
 
                 <ForumCardContent>
                     {
-                        forumThread != undefined &&
+                        forumThread !== undefined &&
                         <ForumPostCard name="parentThread">
                             <ForumPostCardContent>
                                 <ForumAvatar alt="Remy Sharp" src={forumThread.account.displayPictureUrl} />
@@ -159,7 +158,7 @@ function ForumPostList(props: any) {
                 </ForumCardContent>
 
                 <ForumCardContent>
-                    {forumThread != undefined && mapPosts(forumPosts)}
+                    {forumThread !== undefined && mapPosts(forumPosts)}
                 </ForumCardContent>
             </ForumCard>
         );

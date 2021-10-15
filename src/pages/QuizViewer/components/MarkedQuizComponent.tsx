@@ -18,7 +18,7 @@ import {
     TableHead,
     TableRow,
     ThemeProvider,
-    createMuiTheme,
+    createTheme,
 } from "@material-ui/core";
 
 import { Quiz } from "../../../apis/Entities/Quiz";
@@ -43,7 +43,7 @@ import {
     QuizViewerCardContent,
 } from "../QuizViewerElements";
 
-const themeInstance = createMuiTheme({
+const themeInstance = createTheme({
     overrides: {
         MuiTableRow: {
             root: {

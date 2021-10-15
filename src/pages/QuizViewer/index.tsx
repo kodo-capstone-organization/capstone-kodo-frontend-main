@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 
-import { createMuiTheme } from "@material-ui/core";
+import { createTheme } from "@material-ui/core";
 
 import {
     QuizContainer,
@@ -15,7 +15,7 @@ import MarkedQuizComponent from "./components/MarkedQuizComponent";
 import AttemptQuizComponent from "./components/AttemptQuizComponent";
 
 
-const themeInstance = createMuiTheme({
+const themeInstance = createTheme({
     overrides: {
         MuiTableRow: {
             root: {
@@ -74,7 +74,7 @@ function QuizViewer(props: any) {
         <>
             <QuizContainer>
                 {viewMode && <MarkedQuizComponent enrolledCourseId={enrolledCourseId} enrolledLessonId={enrolledLessonId} studentAttemptId={studentAttemptId} callOpenSnackBar={props.callOpenSnackBar} />}
-                {attemptMode && <AttemptQuizComponent enrolledCourseId={enrolledCourseId} enrolledLessonId={enrolledLessonId} enrolledContentId={enrolledContentId} callOpenSnackBar={props.callOpenSnackBar} />}
+                {attemptMode && <AttemptQuizComponent key={"attemptQuiz"} enrolledCourseId={enrolledCourseId} enrolledLessonId={enrolledLessonId} enrolledContentId={enrolledContentId} callOpenSnackBar={props.callOpenSnackBar} />}
             </QuizContainer>
         </>
     );

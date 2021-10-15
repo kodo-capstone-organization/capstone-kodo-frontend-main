@@ -41,8 +41,10 @@ function AttemptQuizComponent(props: any) {
 
     const [quiz, setQuiz] = useState<Quiz>();
     const [quizQuestionArray, setQuizQuestionArray] = useState<QuizQuestion[]>();
+    const [shuffledQuizQuestionArray, setShuffledQuizQuestionArray] = useState<QuizQuestion[]>();
     const [unshuffledQuizQuestionIdArray, setUnshuffledQuizQuestionIdArray] = useState<any[]>();
     const [quizQuestionOptionIdList, setQuizQuestionOptionIdList] = useState<number[][][]>([]);
+    const [shuffledQuizQuestionOptionIdList, setShuffledQuizQuestionOptionIdList] = useState<number[][][]>([]);
     const [unshuffledQuizQuestionOptionIdList, setUnshuffledQuizQuestionOptionIdList] = useState<any[][][]>();
     const [initialSeconds, setInitalSeconds] = useState<number>();
     const [initialMinutes, setInitialMinutes] = useState<number>();
@@ -84,15 +86,28 @@ function AttemptQuizComponent(props: any) {
             .catch(err => handleError(err));
     }
 
+    const shuffleArray = (array: any[]) => {
+        var shuffled: any[] = array;
+        for (var i = shuffled.length - 1; i > 0; i--) {
+            var j = Math.floor(Math.random() * (i + 1));
+            var temp = shuffled[i];
+            shuffled[i] = shuffled[j];
+            shuffled[j] = temp;
+        }
+        return shuffled;
+    }
+
     function retrieveAllQuizQuestions(quizId: number): void {
         getAllQuizQuestionsByQuizId(quizId)
             .then((res) => {
-                var unshuffledQuestionIds : any[] = [];
-                res.map((question) => {
-                    unshuffledQuestionIds.concat([question.quizQuestionId])
-                })
-                console.log("unshuffledQuestionIdArray", unshuffledQuestionIds);
+                console.log(res);
+                console.log("res",res);
+                var unshuffledQuestionIds: any[] = res.map((question) => question.quizQuestionId);
                 setUnshuffledQuizQuestionIdArray(unshuffledQuestionIds);
+                console.log("unshuffled",unshuffledQuestionIds);
+                const shuffledArray = shuffleArray(res.slice(0));
+                console.log("shuffled",shuffledArray);
+                setShuffledQuizQuestionArray(shuffledArray);
                 setQuizQuestionArray(res)
             })
             .catch((err) => handleError(err));
@@ -118,11 +133,11 @@ function AttemptQuizComponent(props: any) {
     const handleAttemptAnswer = (optionArray: number[][], questionIndex: number) => {
         var newQuizQuestionOptionIdList = quizQuestionOptionIdList;
         newQuizQuestionOptionIdList[questionIndex] = optionArray;
-        console.log("handleAttemptAnswer", newQuizQuestionOptionIdList);
         setQuizQuestionOptionIdList(newQuizQuestionOptionIdList);
     }
 
     const handleSubmit = () => {
+        //reassign order to submit
         var newQuizQuestionOptionIdList = quizQuestionOptionIdList;
         quizQuestionArray?.map((q, qId) => {
             if (qId in quizQuestionOptionIdList) {
@@ -208,8 +223,11 @@ function AttemptQuizComponent(props: any) {
                         <Button primary onClick={handleSubmit}>Submit Quiz</Button>
                     }
                 />
-                <QuizViewerCardContent>
+                {/* <QuizViewerCardContent>
                     {quizQuestionArray !== undefined && mapQuestionArray(quizQuestionArray)}
+                </QuizViewerCardContent> */}
+                <QuizViewerCardContent>
+                    {shuffledQuizQuestionArray !== undefined && mapQuestionArray(shuffledQuizQuestionArray)}
                 </QuizViewerCardContent>
                 <QuizCardFooter
                     action={
