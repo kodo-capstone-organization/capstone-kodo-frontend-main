@@ -14,7 +14,7 @@ import {
 
 import {
     ForumCardHeader, ForumCardContent, ForumCard, ForumPostCard,
-    ForumPostCardContent, ForumAvatar
+    ForumPostCardContent, ForumAvatar, ForumReportedChip
 } from "../ForumElements";
 
 import ForumPostInputArea from './ForumPostInputArea';
@@ -82,11 +82,11 @@ function ForumPostList(props: any) {
                                             RE: {forumThread.name}
                                             <br />
                                             Posted By {post.account.name} on {formatDate(post.timeStamp)}
-                                            {
-                                                post.isReported &&
-                                                <Chip label="Reported" color="secondary" />
-                                            }
                                         </Typography>
+                                        {
+                                            post.reported &&
+                                            <ForumReportedChip label="Reported" color="secondary" reported={post.reported} />
+                                        }
                                     </ForumPostCardContent>
                                 }
                                 <Divider />

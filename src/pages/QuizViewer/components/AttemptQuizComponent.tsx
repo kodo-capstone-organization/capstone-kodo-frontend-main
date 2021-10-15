@@ -133,13 +133,14 @@ function AttemptQuizComponent(props: any) {
     const handleAttemptAnswer = (optionArray: number[][], questionIndex: number) => {
         var newQuizQuestionOptionIdList = quizQuestionOptionIdList;
         newQuizQuestionOptionIdList[questionIndex] = optionArray;
+        console.log("newQuizQuestionOptionIdList", newQuizQuestionOptionIdList);
         setQuizQuestionOptionIdList(newQuizQuestionOptionIdList);
     }
 
     const handleSubmit = () => {
         //reassign order to submit
         var newQuizQuestionOptionIdList = quizQuestionOptionIdList;
-        quizQuestionArray?.map((q, qId) => {
+        shuffledQuizQuestionArray?.map((q, qId) => {
             if (qId in quizQuestionOptionIdList) {
             } else {
                 newQuizQuestionOptionIdList[qId] = [[]];

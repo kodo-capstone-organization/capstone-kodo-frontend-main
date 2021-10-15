@@ -150,7 +150,7 @@ function AttemptQuizOptionsComponent(props: any) {
                                     </TableCell>
                                     <TableCell component="th" scope="row" align="right">
                                         <Select
-                                            value={rightSelected[index] != undefined ? rightSelected[index] : ""}
+                                            value={rightSelected[index]}
                                             onChange={(e) => handleSelectorChange(e, index)}
                                         >
                                             {

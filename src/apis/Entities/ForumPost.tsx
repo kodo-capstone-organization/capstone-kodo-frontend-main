@@ -4,7 +4,7 @@ export interface ForumPost {
     forumPostId : (number | null),
     message : string,
     timeStamp : Date,
-    isReported : boolean,
+    reported : boolean,
     reasonForReport: (string | null),
     replies : ForumPost[],
     parentForumPost : (ForumPost | null),
@@ -33,5 +33,6 @@ export interface ForumPostWithRepliesResp {
 }
 
 export interface UpdateForumPostReq {
-    forumPost: ForumPost
+    forumPost: ForumPost,
+    reasonForReport : string
 }

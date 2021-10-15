@@ -15,7 +15,7 @@ import { Account } from "../../../apis/Entities/Account";
 import { ForumPost, CreateNewForumPostReq, CreateNewForumPostReplyReq } from '../../../apis/Entities/ForumPost';
 import { ForumThread } from '../../../apis/Entities/ForumThread';
 
-import { createNewForumPost, createNewForumPostReply} from "../../../apis/Forum/ForumApis";
+import { createNewForumPost, createNewForumPostReply } from "../../../apis/Forum/ForumApis";
 import { getMyAccount } from "../../../apis/Account/AccountApis";
 
 import ForumPostModal from './ForumPostModal';
@@ -24,7 +24,8 @@ import {
     ForumPostCardContent,
     ForumAvatar,
     ForumPostReplyCard,
-    ForumPostReplyCardContent
+    ForumPostReplyCardContent,
+    ForumReportedChip
 } from "../ForumElements";
 
 import { Button } from "../../../values/ButtonElements";
@@ -53,23 +54,16 @@ function ForumPostInputArea(props: any) {
         }
         if (props.forumPost !== undefined) {
             setChildForumPosts(props.forumPost?.replies);
+            console.log("props.forumPost?.replies", props.forumPost?.replies);
         }
         if (props.postType !== undefined) {
             setPostType(props.postType);
         }
-        // setCurrentForumCategoryId(props.currentForumCategoryId);
-        // setCourseId(props.courseId);
-        // getCourseByCourseId(props.courseId).then((res) => {
-        //     setCourse(res);
-        // }).catch((err) => {
-        //     console.log("Failed", err);
-        // });
         getMyAccount(loggedInAccountId).then((res) => {
             setMyAccount(res);
         }).catch((err) => {
             console.log("Failed", err);
         });
-        console.log("props in input area", props)
     }, [props]);
 
     const handleOpen = () => {
@@ -111,7 +105,7 @@ function ForumPostInputArea(props: any) {
                 forumPostId: null,
                 message,
                 timeStamp: new Date(),
-                isReported: false,
+                reported: false,
                 reasonForReport: null,
                 replies: [],
                 parentForumPost: null,
@@ -158,11 +152,11 @@ function ForumPostInputArea(props: any) {
                                     <ForumAvatar alt="Remy Sharp" src={post.account.displayPictureUrl} />
                                     <Typography variant="body1" component="div" style={{ marginLeft: "20px" }}>
                                         Posted By {post.account.name} on {formatDate(post.timeStamp)}
-                                        {
-                                            post.isReported &&
-                                            <Chip label="Reported" color="secondary" />
-                                        }
                                     </Typography>
+                                    {
+                                        post.reported &&
+                                        <ForumReportedChip label="Reported" color="secondary" reported={post.reported} />
+                                    }
                                 </ForumPostReplyCardContent>
                                 <Divider />
                                 <ForumPostReplyCardContent>
@@ -171,12 +165,9 @@ function ForumPostInputArea(props: any) {
                                     </Typography>
                                 </ForumPostReplyCardContent>
                                 <Divider />
-                                {/* <IconButton onClick={() => handleDeleteReply(post)} style={{ width: "fit-content", marginInlineStart: "auto", fontSize: "unset" }}>
-                                    <DeleteIcon /> Delete
-                                </IconButton> */}
                                 <div style={{ display: "flex" }}>
                                     <ForumPostModal forumPost={post} modalType={"DELETEREPLY"} onForumPostChange={handleCallSnackbar} />
-                                    <ForumPostModal forumPost={parentForumPost} modalType={"REPORTREPLY"} onForumPostChange={handleCallSnackbar} />
+                                    <ForumPostModal forumPost={post} modalType={"REPORTREPLY"} onForumPostChange={handleCallSnackbar} />
                                 </div>
                             </ForumPostReplyCard>
                         </>

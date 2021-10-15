@@ -20,7 +20,7 @@ function ForumPostModal(props: any) {
     const [open, setOpen] = useState<boolean>(false);
     const [modalType, setModalType] = useState<string>();
     const [forumPost, setForumPost] = useState<ForumPost>();
-    const [reasonForReport, setReasonForReport] = useState<string>();
+    const [reasonForReport, setReasonForReport] = useState<string>("");
 
     const loggedInAccountId = JSON.parse(window.sessionStorage.getItem("loggedInAccountId") || "{}");
 
@@ -58,14 +58,19 @@ function ForumPostModal(props: any) {
     }
 
     const handleReportConfirm = () => {
-        const updateForumPostReq: UpdateForumPostReq = {
-            forumPost: Object.assign(forumPost, { isReported: true, reasonForReport })
+        if (forumPost !== undefined) {
+            const updateForumPostReq: UpdateForumPostReq = {
+                forumPost,
+                reasonForReport
+            }
+            console.log("forumPostToSubmit", updateForumPostReq)
+            updateForumPost(updateForumPostReq).then((res) => {
+                props.onForumPostChange({ message: "Forum Post Report Succeeded", type: "success" });
+            }).catch((err) => {
+                props.onForumPostChange({ message: "Forum Post Report Failed", type: "error" });
+            })
         }
-        updateForumPost(updateForumPostReq).then((res) => {
-            props.onForumPostChange({ message: "Forum Post Report Succeeded", type: "success" });
-        }).catch((err) => {
-            props.onForumPostChange({ message: "Forum Post Report Failed", type: "error" });
-        })
+        setReasonForReport("");
         setOpen(false);
     }
 
@@ -111,7 +116,7 @@ function ForumPostModal(props: any) {
                                     label="Reason For Report"
                                     value={reasonForReport}
                                     variant="outlined"
-                                    onChange={(e)=> setReasonForReport(e.target.value)}
+                                    onChange={(e) => setReasonForReport(e.target.value)}
                                 />
                             </DialogContent>
                             <DialogActions>
@@ -163,7 +168,7 @@ function ForumPostModal(props: any) {
                                     label="Reason For Report"
                                     value={reasonForReport}
                                     variant="outlined"
-                                    onChange={(e)=> setReasonForReport(e.target.value)}
+                                    onChange={(e) => setReasonForReport(e.target.value)}
                                 />
                             </DialogContent>
                             <DialogActions>

@@ -103,6 +103,7 @@ function MarkedQuizComponent(props: any) {
             setStudentAttempt(studentAttempt);
             setQuiz(studentAttempt.quiz);
             setStudentAttemptQuestions(studentAttempt.studentAttemptQuestions);
+            console.log("studentAttempt", studentAttempt);
         }).catch((err) => handleError(err));        
     }, [studentAttemptId, accountId]);
 

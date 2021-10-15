@@ -46,7 +46,6 @@ function ForumPage(props: any) {
             setCurrentUser(receivedAccount);
         });
         getCourseWithoutEnrollmentByCourseId(currentCourseId).then(receivedCourse => {
-            console.log(receivedCourse)
             setCurrentCourse(receivedCourse);
         });
         setLoading(false);
@@ -57,7 +56,6 @@ function ForumPage(props: any) {
             getForumCategoryByForumCategoryId(props.match.params.forumCategoryId)
                 .then((res) => {
                     setCurrentForumCategory(res);
-                    console.log("getForumCategoryByForumCategoryId in index", props.match.params);
                 }).catch((err) => {
                     handleCallSnackbar({ message: err.response.data.message, type: "error" });
                 });
