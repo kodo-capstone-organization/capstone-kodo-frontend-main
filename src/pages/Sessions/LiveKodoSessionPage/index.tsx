@@ -441,7 +441,7 @@ function LiveKodoSessionPage(props: any) {
                         <audio key={pcRtcInfo.mediaStream?.id} ref={pcRtcInfo.audioRef} muted={pcRtcInfo.isMuted} autoPlay />
                     ))}
                     <TopSessionBar>
-                        <strong>{sessionDetails?.sessionName}</strong> &nbsp;&nbsp; (Session ID: {sessionDetails?.sessionId})
+                        <strong>{sessionDetails?.sessionName}</strong> &nbsp; (Session ID: {sessionDetails?.sessionId})
                     </TopSessionBar>
                     { /*
                         <Button to="#" onClick={() => send({event: null, data: "helloWord"})}>SEND</Button>
