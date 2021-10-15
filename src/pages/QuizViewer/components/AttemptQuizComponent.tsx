@@ -41,11 +41,11 @@ function AttemptQuizComponent(props: any) {
 
     const [quiz, setQuiz] = useState<Quiz>();
     const [quizQuestionArray, setQuizQuestionArray] = useState<QuizQuestion[]>();
-    const [shuffledQuizQuestionArray, setShuffledQuizQuestionArray] = useState<QuizQuestion[]>();
-    const [unshuffledQuizQuestionIdArray, setUnshuffledQuizQuestionIdArray] = useState<any[]>();
+    // const [shuffledQuizQuestionArray, setShuffledQuizQuestionArray] = useState<QuizQuestion[]>();
+    // const [unshuffledQuizQuestionIdArray, setUnshuffledQuizQuestionIdArray] = useState<any[]>();
     const [quizQuestionOptionIdList, setQuizQuestionOptionIdList] = useState<number[][][]>([]);
-    const [shuffledQuizQuestionOptionIdList, setShuffledQuizQuestionOptionIdList] = useState<number[][][]>([]);
-    const [unshuffledQuizQuestionOptionIdList, setUnshuffledQuizQuestionOptionIdList] = useState<any[][][]>();
+    // const [shuffledQuizQuestionOptionIdList, setShuffledQuizQuestionOptionIdList] = useState<number[][][]>([]);
+    // const [unshuffledQuizQuestionOptionIdList, setUnshuffledQuizQuestionOptionIdList] = useState<any[][][]>();
     const [initialSeconds, setInitalSeconds] = useState<number>();
     const [initialMinutes, setInitialMinutes] = useState<number>();
 
@@ -100,14 +100,12 @@ function AttemptQuizComponent(props: any) {
     function retrieveAllQuizQuestions(quizId: number): void {
         getAllQuizQuestionsByQuizId(quizId)
             .then((res) => {
-                console.log(res);
-                console.log("res",res);
-                var unshuffledQuestionIds: any[] = res.map((question) => question.quizQuestionId);
-                setUnshuffledQuizQuestionIdArray(unshuffledQuestionIds);
-                console.log("unshuffled",unshuffledQuestionIds);
-                const shuffledArray = shuffleArray(res.slice(0));
-                console.log("shuffled",shuffledArray);
-                setShuffledQuizQuestionArray(shuffledArray);
+                // var unshuffledQuestionIds: any[] = res.map((question) => question.quizQuestionId);
+                // setUnshuffledQuizQuestionIdArray(unshuffledQuestionIds);
+                // console.log("unshuffled",unshuffledQuestionIds);
+                // const shuffledArray = shuffleArray(res.slice(0));
+                // console.log("shuffled",shuffledArray);
+                // setShuffledQuizQuestionArray(shuffledArray);
                 setQuizQuestionArray(res)
             })
             .catch((err) => handleError(err));
@@ -139,9 +137,8 @@ function AttemptQuizComponent(props: any) {
     }
 
     const handleSubmit = () => {
-        //reassign order to submit
         var newQuizQuestionOptionIdList = quizQuestionOptionIdList;
-        shuffledQuizQuestionArray?.map((q, qId) => {
+        quizQuestionArray?.map((q, qId) => {
             if (qId in quizQuestionOptionIdList) {
             } else {
                 newQuizQuestionOptionIdList[qId] = [[]];
@@ -151,6 +148,7 @@ function AttemptQuizComponent(props: any) {
             enrolledContentId: parseInt(props.enrolledContentId),
             quizQuestionOptionIdLists: newQuizQuestionOptionIdList
         };
+        console.log("createNewStudentAttemptReq", createNewStudentAttemptReq);
         createNewStudentAttempt(createNewStudentAttemptReq)
             .then(res => {
                 props.callOpenSnackBar("Quiz Submitted Successfully", "success")
@@ -225,11 +223,8 @@ function AttemptQuizComponent(props: any) {
                         <Button primary onClick={handleSubmit}>Submit Quiz</Button>
                     }
                 />
-                {/* <QuizViewerCardContent>
-                    {quizQuestionArray !== undefined && mapQuestionArray(quizQuestionArray)}
-                </QuizViewerCardContent> */}
                 <QuizViewerCardContent>
-                    {shuffledQuizQuestionArray !== undefined && mapQuestionArray(shuffledQuizQuestionArray)}
+                    {quizQuestionArray !== undefined && mapQuestionArray(quizQuestionArray)}
                 </QuizViewerCardContent>
                 <QuizCardFooter
                     action={

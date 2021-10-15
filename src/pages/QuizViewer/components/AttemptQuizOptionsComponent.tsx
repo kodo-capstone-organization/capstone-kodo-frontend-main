@@ -15,6 +15,16 @@ import {
 
 import { QuizQuestion } from '../../../apis/Entities/QuizQuestion';
 
+const shuffleArray = (array: any[]) => {
+    var shuffled: any[] = array;
+    for (var i = shuffled.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var temp = shuffled[i];
+        shuffled[i] = shuffled[j];
+        shuffled[j] = temp;
+    }
+    return shuffled;
+}
 
 function AttemptQuizOptionsComponent(props: any) {
 
@@ -27,14 +37,12 @@ function AttemptQuizOptionsComponent(props: any) {
 
     useEffect(() => {
         if (props.question) {
-            setQuestion(props.question);
+            const shuffledOptionList = shuffleArray(props.question.quizQuestionOptions.slice(0));
+            const questionWithShuffledOptionList = Object.assign(props.question, {quizQuestionOptions: shuffledOptionList});
+            setQuestion(questionWithShuffledOptionList);
             setQuestionIndex(props.index);
         }
     }, [props.question])
-
-    // useEffect(() => {
-    //     console.log("selectedOptionArray", selectedOptionArray);
-    // }, [selectedOptionArray])
 
     const handleOptionsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const value = parseInt(event.target.value);
