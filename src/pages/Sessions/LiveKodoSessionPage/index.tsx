@@ -88,7 +88,7 @@ function LiveKodoSessionPage(props: any) {
                 switch (content.event) {
                     case "newConnection":
                         // Make sure not to add myself nor peers that I already have registered
-                        if (incomingPeerId.toString() !== myAccountId.toString() && !peerConns.has(incomingPeerId)) {
+                        if (incomingPeerId.toString() !== myAccountId.toString()) {
                             const incomingPeerConn = setupNewPeerConn(incomingPeerId);
                             console.log("NEW CONNECTION: CREATE OFFER")
                             createOffer(incomingPeerConn);
@@ -292,7 +292,7 @@ function LiveKodoSessionPage(props: any) {
                 // Create answer to offer
                 const answer = await incomingPeerConn.createAnswer(answerOptions);
                 await incomingPeerConn.setLocalDescription(answer);
-                await setPeerConns(new Map(peerConns.set(incomingPeerId, {
+                setPeerConns(new Map(peerConns.set(incomingPeerId, {
                     rtcPeerConnection: incomingPeerConn,
                     rtcDataChannel: peerConns.get(incomingPeerId)?.rtcDataChannel,
                     audioRef: peerConns.get(incomingPeerId)?.audioRef,
@@ -310,10 +310,10 @@ function LiveKodoSessionPage(props: any) {
 
     };
 
-     const handleCandidate = (incomingPeerId: number, candidate: any) => {
+    async function handleCandidate(incomingPeerId: number, candidate: any) {
         const incomingPeerConn = peerConns.get(incomingPeerId)?.rtcPeerConnection;
-        if (incomingPeerConn && incomingPeerConn?.remoteDescription?.type) {
-            incomingPeerConn?.addIceCandidate(new RTCIceCandidate(candidate));
+        if (incomingPeerConn) {
+            await incomingPeerConn?.addIceCandidate(new RTCIceCandidate(candidate));
             setPeerConns(new Map(peerConns.set(incomingPeerId, {
                 rtcPeerConnection: incomingPeerConn, 
                 rtcDataChannel: peerConns.get(incomingPeerId)?.rtcDataChannel, 
@@ -322,7 +322,7 @@ function LiveKodoSessionPage(props: any) {
                 isMuted: peerConns.get(incomingPeerId)?.isMuted
             })));
         } else {
-            console.error("Not adding icecandidate before remote description is set for peerConn with peerId", incomingPeerId)
+            console.error("Not adding icecandidate, cannot find peerConn with peerId", incomingPeerId)
         }
     };
 

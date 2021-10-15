@@ -19,7 +19,6 @@ function ParticipantItem (props: any) {
             peerInterval = setInterval(() => {
                 const [ssrc] = props.receiver.getSynchronizationSources()
                 if (ssrc) {
-                    console.log("PEER STREAM", ssrc.audioLevel);
                     setIsSpeaking(ssrc.audioLevel > 0.003); // Speaking threshold
                 }
             }, 500) // Every 0.5 seconds
@@ -44,7 +43,6 @@ function ParticipantItem (props: any) {
                 }
                 myInterval = setInterval(() => {
                     const currentNumba = parseFloat(soundProcessor.instant.toFixed(2));
-                    console.log("MY LOCAL STREAM", currentNumba)
                     setIsSpeaking(currentNumba > 0.003);
                 }, 500);
             });

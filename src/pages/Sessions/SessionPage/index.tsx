@@ -58,11 +58,6 @@ function SessionPage(props: any) {
         getMyAccount(accountId).then(receivedAccount => {
             setMyAccount(receivedAccount);
         });
-
-        // Get invited sessions
-        getInvitedSessions(accountId).then((receivedSessions: InvitedSessionResp[]) => {
-            setMyInvitedSessions(receivedSessions)
-        });
         
         // Get userlibrary
         getAllAccountsStrippedDown().then((accs: StrippedDownAccount[]) => {
