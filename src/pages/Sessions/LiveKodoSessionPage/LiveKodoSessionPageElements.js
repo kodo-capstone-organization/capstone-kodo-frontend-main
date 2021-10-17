@@ -1,6 +1,8 @@
 import styled from "styled-components";
 import { fontSizes } from "../../../values/FontSizes";
 import { colours } from "../../../values/Colours";
+import { Tabs } from "@material-ui/core";
+import Tab from "@material-ui/core/Tab";
 
 export const LiveKodoSessionContainer = styled.div`
     display: flex;
@@ -39,7 +41,6 @@ export const ParticipantsPanelContainer = styled.div`
 `;
 
 export const StageContainer = styled.div`
-    padding: 1rem;
     width: 84%;
     height: 100%;
     border-right: 1px solid ${colours.GRAY6};
@@ -63,4 +64,18 @@ export const ActionItem = styled.div`
     align-items: center;
     font-size: ${fontSizes.SUBTEXT};
     padding: 1rem 0;
+`;
+
+export const StageTabBar = styled(Tabs)`
+    background-color: ${colours.WHITE};
+    border-bottom: solid 1px ${colours.GRAY5};
+`;
+
+export const StageTab = styled(Tab)`
+    min-width: 25%;
+`;
+
+export const ActiveTabPanel = styled.div`
+    background: ${colours.GRAY7};
+    height: 100%;
 `;

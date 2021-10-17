@@ -1,22 +1,78 @@
 import { useEffect, useState } from "react";
-import { StageContainer } from "../LiveKodoSessionPageElements";
+import {ActiveTabPanel, StageContainer, StageTab, StageTabBar } from "../LiveKodoSessionPageElements";
+import CodeEditorTabPanel from "./stagetabpanels/CodeEditorTabPanel";
+import DebugInfoTabPanel from "./stagetabpanels/DebugInfoTabPanel";
+import WhiteboardTabPanel from "./stagetabpanels/WhiteboardTabPanel";
 
 function Stage(props: any) {
 
     const [peerConns, setPeerConns] = useState<Map<number, any>>(new Map());
+    const [activeTabIdx, setActiveTabIdx] = useState<number>(0);
 
     useEffect(() => {
         setPeerConns(props.peerConns)
     }, [props.peerConns.size])
 
+    const getStageTabItems = () => {
+        return [
+            {
+                // REMOVE THIS IN FINAL PRODUCTION (and edit tab indices of code editor and whiteboard)
+                myTabIdx: 0,
+                myTabName: "Debug Info (FOR DEV)",
+                tabPanelComponent:
+                    <DebugInfoTabPanel
+                        key={0}
+                        myAccountId={props.myAccountId}
+                        peerConnsKeys={Array.from(peerConns.keys()).join(", ") }
+                        dataChannelConnected={props.dataChannelConnected}
+                        sendViaWSCallback={props.sendViaWSCallback}
+                        sendCallEventViaDCCallback={props.sendCallEventViaDCCallback}
+                    />
+            },
+            {
+                myTabIdx: 1,
+                myTabName: "Code Editor",
+                tabPanelComponent: <CodeEditorTabPanel key={1} />
+            },
+            {
+                myTabIdx: 2,
+                myTabName: "Whiteboard",
+                tabPanelComponent: <WhiteboardTabPanel key={2} />
+            }
+        ]
+    }
+
+    const handleTabChange = (event: any, newActiveTabIndex: number) => {
+        setActiveTabIdx(newActiveTabIndex);
+    }
+
     return (
         <StageContainer>
-            stage
-            <br/>
-            peerConns keys: { Array.from(peerConns.keys()).join(", ") }
-            <br/>
-            dataChannelStatus: {props.dataChannelConnected? "connected" : "not connected"}
-            <br/>
+            {/*stage*/}
+            {/*<br/>*/}
+            {/*peerConns keys: { Array.from(peerConns.keys()).join(", ") }*/}
+            {/*<br/>*/}
+            {/*dataChannelStatus: {props.dataChannelConnected? "connected" : "not connected"}*/}
+            <StageTabBar
+                value={activeTabIdx}
+                indicatorColor="primary"
+                textColor="primary"
+                onChange={handleTabChange}
+            >
+                {getStageTabItems().map(tabItem => (
+                    <StageTab
+                        key={tabItem.myTabIdx}
+                        label={tabItem.myTabName}
+                        style={{ minWidth: "25%"}}
+                    />
+                ))}
+            </StageTabBar>
+            <ActiveTabPanel>
+                { getStageTabItems()
+                    .filter((tabItem) => tabItem?.myTabIdx === activeTabIdx)
+                    .map(tabItem => (tabItem.tabPanelComponent))
+                }
+            </ActiveTabPanel>
         </StageContainer>
     )
 }

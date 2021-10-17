@@ -41,6 +41,7 @@ function LiveKodoSessionPage(props: any) {
     const [fireEffect, setFireEffect] = useState<boolean>(false);
 
     useEffect(() => {
+        setSessionId(props.match.params.sessionId);
         getSessionBySessionId(props.match.params.sessionId, myAccountId)
             .then((sessionDetails: InvitedSessionResp) => {
                 setSessionDetails(sessionDetails);
@@ -356,7 +357,7 @@ function LiveKodoSessionPage(props: any) {
     const send = (receivedMessage: any) => {
         receivedMessage['peerId'] = myAccountId; // Append in peerId (i.e. my account id)
         console.log("in send (via websocket server): ", receivedMessage);
-        conn.send(JSON.stringify(receivedMessage));
+        conn?.send(JSON.stringify(receivedMessage));
     }
 
     /* * * * * * * * * * * * * * * * * * * * * * *
@@ -430,7 +431,7 @@ function LiveKodoSessionPage(props: any) {
         console.log("Closing my own websocket");
         localStream?.getTracks().forEach(track => track.stop());
         send({ event : "exit" }) // Inform peers that I am leaving
-        conn.close(); // Triggers conn.onclose cleanup function (my own exit)
+        conn?.close(); // Triggers conn.onclose cleanup function (my own exit)
     }
 
     return (
@@ -443,11 +444,6 @@ function LiveKodoSessionPage(props: any) {
                     <TopSessionBar>
                         <strong>{sessionDetails?.sessionName}</strong> &nbsp; (Session ID: {sessionDetails?.sessionId})
                     </TopSessionBar>
-                    { /*
-                        <Button to="#" onClick={() => send({event: null, data: "helloWord"})}>SEND</Button>
-                        <Button to="#" onClick={() => craftAndSendCallEventMessage(`hello from ${myAccountId}`)}>SEND VIA DATACHANNEL</Button>
-                    */}
-
                     <MainSessionWrapper>
                         <ParticipantsPanel
                             myAccountId={myAccountId}
@@ -456,8 +452,11 @@ function LiveKodoSessionPage(props: any) {
                             myLocalStream={localStream}
                         />
                         <Stage
+                            myAccountId={myAccountId}
                             peerConns={peerConns}
                             dataChannelConnected={dataChannelConnected}
+                            sendViaWSCallback={send}
+                            sendCallEventViaDCCallback={craftAndSendCallEventMessage}
                         />
                         <ActionsPanel 
                             sessionId={sessionId} 
