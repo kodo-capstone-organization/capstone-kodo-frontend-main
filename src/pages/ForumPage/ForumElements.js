@@ -67,7 +67,7 @@ export const ForumCardContent = styled(CardContent)`
 `;
 
 export const ForumThreadCard = styled(Card)`
-    width: 1200px;
+    width: -webkit-fill-available;
     border-radius : 10px;
     padding: 16px;
     display: block;
@@ -111,7 +111,7 @@ export const EmptyStateContainer = styled.div`
 `;
 
 export const ForumPostCard = styled(Card)`
-    width: 1200px;
+    width: -webkit-fill-available;
     border-radius : 10px;
     padding: 10px;
     margin: 10px;
@@ -150,7 +150,7 @@ export const ScrollLink = styled(Link)`
 `;
 
 export const ForumPostReplyCard = styled(Card)`
-    width: 1000px;
+    width: -webkit-fill-available;
     border-radius : 10px;
     padding: 10px;
     margin: auto;

@@ -14,7 +14,7 @@ import {
 
 import {
     ForumCardHeader, ForumCardContent, ForumCard, ForumPostCard,
-    ForumPostCardContent, ForumAvatar, ForumReportedChip
+    ForumPostCardContent, ForumAvatar, ForumReportedChip, ForumThreadCard
 } from "../ForumElements";
 
 import ForumPostInputArea from './ForumPostInputArea';
@@ -75,20 +75,18 @@ function ForumPostList(props: any) {
                     return (
                         <>
                             <ForumPostCard key={postId} name={post.forumPostId}>
-                                {forumThread !== undefined &&
-                                    <ForumPostCardContent>
-                                        <ForumAvatar alt="Remy Sharp" src={post.account.displayPictureUrl} />
-                                        <Typography variant="body1" component="div" style={{ marginLeft: "20px" }}>
-                                            RE: {forumThread.name}
-                                            <br />
-                                            Posted By {post.account.name} on {formatDate(post.timeStamp)}
-                                        </Typography>
-                                        {
-                                            post.reported &&
-                                            <ForumReportedChip label="Reported" color="secondary" reported={post.reported} />
-                                        }
-                                    </ForumPostCardContent>
-                                }
+                                <ForumPostCardContent>
+                                    <ForumAvatar alt="Remy Sharp" src={post.account.displayPictureUrl} />
+                                    <Typography variant="body1" component="div" style={{ marginLeft: "20px" }}>
+                                        RE: {forumThread?.name}
+                                        <br />
+                                        Posted By {post.account.name} on {formatDate(post.timeStamp)}
+                                    </Typography>
+                                    {
+                                        post.reported &&
+                                        <ForumReportedChip label="Reported" color="secondary" reported={post.reported} />
+                                    }
+                                </ForumPostCardContent>
                                 <Divider />
                                 <ForumPostCardContent>
                                     <Typography variant="body1" component="div" style={{ marginLeft: "20px" }}>
