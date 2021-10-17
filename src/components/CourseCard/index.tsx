@@ -42,12 +42,20 @@ function CourseCard(props: any) {
                 <CourseCardContent>
                     <div style={{ display: "flex", flexDirection: "row"}}>
                         <TypoGraphyCustom>{course?.name} &nbsp;</TypoGraphyCustom>
-                        { !course?.isEnrollmentActive && myCourseView &&
+                        { !course?.isEnrollmentActive && !course?.isReviewRequested && myCourseView &&
                             <Chip
                                 variant="outlined"
                                 size="small"
                                 label="Unpublished"
                                 style={{ color: "gray", border: "1px solid gray" }}
+                            />
+                        }
+                        { !course?.isEnrollmentActive && course?.isReviewRequested && myCourseView &&
+                            <Chip
+                                variant="outlined"
+                                size="small"
+                                label="Pending Review"
+                                style={{ color: "orange", border: "1px solid orange" }}
                             />
                         }
                         { isCourseCompleted &&

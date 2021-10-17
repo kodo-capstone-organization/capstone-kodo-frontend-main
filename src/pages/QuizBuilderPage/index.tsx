@@ -85,7 +85,7 @@ function QuizBuilderPage(props: any) {
         });
         getCourseByContentId(contentId).then((res: Course) => {
             console.log("Success: getCourseByContentId", res);
-            setIsDisabled(res.isEnrollmentActive);
+            setIsDisabled(res.isEnrollmentActive || res.isReviewRequested);
             setCourseId(res.courseId)
         }).catch((err) => {
             console.log(contentId)
