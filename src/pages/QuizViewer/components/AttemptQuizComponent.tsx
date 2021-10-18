@@ -198,8 +198,8 @@ function AttemptQuizComponent(props: any) {
 
     return (
         <>
-            {/* {initialSeconds != undefined && <QuizAttemptTimer initialSeconds={initialSeconds} initialMinutes={initialMinutes} onTimeOut={handleTimeOut} />}
-            <QuizTimedOutModal open={timeout} enrolledContentId={props.enrolledContentId} callOpenSnackBar={props.callOpenSnackBar} createNewStudentAttemptReq={createNewStudentAttemptReq} /> */}
+            {initialSeconds != undefined && <QuizAttemptTimer initialSeconds={initialSeconds} initialMinutes={initialMinutes} onTimeOut={handleTimeOut} />}
+            <QuizTimedOutModal open={timeout} enrolledContentId={props.enrolledContentId} callOpenSnackBar={props.callOpenSnackBar} createNewStudentAttemptReq={createNewStudentAttemptReq} />
             <QuizCard>
                 <QuizCardHeader
                     title="Quiz Information"
