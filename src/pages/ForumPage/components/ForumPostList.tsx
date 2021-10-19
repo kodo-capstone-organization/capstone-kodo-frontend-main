@@ -70,11 +70,10 @@ function ForumPostList(props: any) {
 
     const mapPosts = (forumPosts: ForumPost[]) => {
         return (
-            <div>
+            <>
                 {forumPosts.map(function (post, postId) {
                     return (
-                        <>
-                            <ForumPostCard key={postId} name={post.forumPostId}>
+                            <ForumPostCard key={postId} name={post.forumPostId} id="post parents">
                                 <ForumPostCardContent>
                                     <ForumAvatar alt="Remy Sharp" src={post.account.displayPictureUrl} />
                                     <Typography variant="body1" component="div" style={{ marginLeft: "20px" }}>
@@ -96,10 +95,9 @@ function ForumPostList(props: any) {
                                 <Divider />
                                 <ForumPostInputArea postType={"GENERAL"} history={props.history} courseId={courseId} forumPost={post} onForumPostChange={handleCallSnackbar} />
                             </ForumPostCard>
-                        </>
                     );
                 })}
-            </div>
+            </>
         );
     }
 

@@ -143,10 +143,9 @@ function ForumPostInputArea(props: any) {
 
     const mapReplies = (forumPosts: ForumPost[]) => {
         return (
-            <div>
+            <>
                 {forumPosts.map(function (post, postId) {
                     return (
-                        <>
                             <ForumPostReplyCard key={postId} name={post.forumPostId} elevation={0} variant="outlined">
                                 <ForumPostReplyCardContent>
                                     <ForumAvatar alt="Remy Sharp" src={post.account.displayPictureUrl} />
@@ -170,10 +169,9 @@ function ForumPostInputArea(props: any) {
                                     <ForumPostModal forumPost={post} modalType={"REPORTREPLY"} onForumPostChange={handleCallSnackbar} />
                                 </div>
                             </ForumPostReplyCard>
-                        </>
                     );
                 })}
-            </div>
+            </>
         );
     }
 
@@ -192,9 +190,6 @@ function ForumPostInputArea(props: any) {
                             <IconButton onClick={handleMakeReply} style={{ width: "fit-content", fontSize: "unset" }}>
                                 <ReplyIcon /> Reply
                             </IconButton>
-                            {/* <IconButton onClick={handleDeletePost} style={{ width: "fit-content", fontSize: "unset" }}>
-                                <DeleteIcon /> Delete
-                            </IconButton> */}
                             <ForumPostModal forumPost={parentForumPost} modalType={"DELETEPARENTPOST"} onForumPostChange={handleCallSnackbar} />
                             <ForumPostModal forumPost={parentForumPost} modalType={"REPORTPARENTPOST"} onForumPostChange={handleCallSnackbar} />
 
@@ -206,10 +201,6 @@ function ForumPostInputArea(props: any) {
                             <IconButton onClick={handleMakeReply} style={{ width: "fit-content", marginInlineStart: "auto", fontSize: "unset" }}>
                                 <ReplyIcon /> Reply
                             </IconButton>
-                            {/* <IconButton onClick={handleDeletePost} style={{ width: "fit-content", fontSize: "unset" }}>
-                                <DeleteIcon /> Delete
-                            </IconButton> */}
-                            {/* <ForumPostModal forumThread={forumThread} modalType={"DELETEOTHER"} /> */}
                         </>
                     }
                 </div>
@@ -222,7 +213,7 @@ function ForumPostInputArea(props: any) {
                     <div style={{ margin: "20px 0px 0px 20px" }}>
                         Replies
                     </div>
-                    <div style={{ marginLeft: "auto", display: "flex", flexDirection: "column" }}>
+                    <div style={{display: "flex", flexDirection: "column" }}>
                         <ForumPostCardContent>
                             {mapReplies(childForumPosts)}
                         </ForumPostCardContent>
