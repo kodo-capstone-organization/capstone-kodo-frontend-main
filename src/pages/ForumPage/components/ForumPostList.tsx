@@ -6,6 +6,7 @@ import {
 
 import { ForumThread } from '../../../apis/Entities/ForumThread';
 import { ForumPost } from '../../../apis/Entities/ForumPost';
+import { Course } from '../../../apis/Entities/Course';
 
 import {
     getForumThreadByForumThreadId,
@@ -18,11 +19,13 @@ import {
 } from "../ForumElements";
 
 import ForumPostInputArea from './ForumPostInputArea';
+import { getCourseByCourseId } from '../../../apis/Course/CourseApis';
 
 
 function ForumPostList(props: any) {
 
-    const [courseId, setCourseId] = useState<number>();
+    // const [courseId, setCourseId] = useState<number>();
+    const [currentCourse, setCurrentCourse] = useState<Course>();
     const [forumThread, setForumThread] = useState<ForumThread>();
     const [forumPosts, setForumPosts] = useState<ForumPost[]>([]);
     const [currentForumCategoryId, setCurrentForumCategoryId] = useState<number>();
@@ -30,7 +33,8 @@ function ForumPostList(props: any) {
 
     useEffect(() => {
         setLoading(true);
-        setCourseId(props.currentCourseId);
+        // setCourseId(props.currentCourseId);
+        setCurrentCourse(props.currentCourse);
         setCurrentForumCategoryId(props.currentForumCategoryId);
         if (props.currentForumThreadId !== undefined) {
             getForumThreadByForumThreadId(parseInt(props.currentForumThreadId)).then((res) => {
@@ -46,7 +50,7 @@ function ForumPostList(props: any) {
                 props.onCallSnackbar({ message: "Failure", type: "error" })
             });
         }
-    }, [props.currentForumCategoryId, props.currentForumThreadId, props.courseId]);
+    }, [props.currentForumCategoryId, props.currentForumThreadId, props.currentCourse]);
 
     const handleCallSnackbar = (snackbarObject: any) => {
         if (forumThread !== undefined) {
@@ -93,7 +97,7 @@ function ForumPostList(props: any) {
                                     </Typography>
                                 </ForumPostCardContent>
                                 <Divider />
-                                <ForumPostInputArea postType={"GENERAL"} history={props.history} courseId={courseId} forumPost={post} onForumPostChange={handleCallSnackbar} />
+                                <ForumPostInputArea postType={"GENERAL"} history={props.history} currentCourse={currentCourse} forumPost={post} onForumPostChange={handleCallSnackbar} />
                             </ForumPostCard>
                     );
                 })}
@@ -144,7 +148,7 @@ function ForumPostList(props: any) {
                                 </Typography>
                             </ForumPostCardContent>
                             <Divider />
-                            <ForumPostInputArea history={props.history} courseId={courseId} postType={"POST"} currentForumCategoryId={currentForumCategoryId} forumThread={forumThread} onForumPostChange={handleCallSnackbar} />
+                            <ForumPostInputArea history={props.history} currentCourse={currentCourse} postType={"POST"} currentForumCategoryId={currentForumCategoryId} forumThread={forumThread} onForumPostChange={handleCallSnackbar} />
                         </ForumPostCard>
                     }
                 </ForumCardContent>

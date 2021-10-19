@@ -14,6 +14,7 @@ import {
 import { Account } from "../../../apis/Entities/Account";
 import { ForumPost, CreateNewForumPostReq, CreateNewForumPostReplyReq } from '../../../apis/Entities/ForumPost';
 import { ForumThread } from '../../../apis/Entities/ForumThread';
+import { Course } from '../../../apis/Entities/Course';
 
 import { createNewForumPost, createNewForumPostReply } from "../../../apis/Forum/ForumApis";
 import { getMyAccount } from "../../../apis/Account/AccountApis";
@@ -38,7 +39,7 @@ function ForumPostInputArea(props: any) {
     const [parentForumPost, setParentForumPost] = useState<ForumPost>();
     const [childForumPosts, setChildForumPosts] = useState<ForumPost[]>([]);
     // const [currentForumCategoryId, setCurrentForumCategoryId] = useState<number>();
-    // const [courseId, setCourseId] = useState<number>();
+    const [currentCourse, setCurrentCourse] = useState<Course>();
     // const [course, setCourse] = useState<Course>();
     const [postType, setPostType] = useState<string>();
     const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -58,6 +59,9 @@ function ForumPostInputArea(props: any) {
         }
         if (props.postType !== undefined) {
             setPostType(props.postType);
+        }
+        if (props.currentCourse !== undefined) {
+            setCurrentCourse(props.currentCourse);
         }
         getMyAccount(loggedInAccountId).then((res) => {
             setMyAccount(res);
@@ -165,8 +169,8 @@ function ForumPostInputArea(props: any) {
                                 </ForumPostReplyCardContent>
                                 <Divider />
                                 <div style={{ display: "flex" }}>
-                                    <ForumPostModal forumPost={post} modalType={"DELETEREPLY"} onForumPostChange={handleCallSnackbar} />
-                                    <ForumPostModal forumPost={post} modalType={"REPORTREPLY"} onForumPostChange={handleCallSnackbar} />
+                                    <ForumPostModal currentCourse={currentCourse} forumPost={post} modalType={"DELETEREPLY"} onForumPostChange={handleCallSnackbar} />
+                                    <ForumPostModal currentCourse={currentCourse} forumPost={post} modalType={"REPORTREPLY"} onForumPostChange={handleCallSnackbar} />
                                 </div>
                             </ForumPostReplyCard>
                     );
@@ -190,8 +194,8 @@ function ForumPostInputArea(props: any) {
                             <IconButton onClick={handleMakeReply} style={{ width: "fit-content", fontSize: "unset" }}>
                                 <ReplyIcon /> Reply
                             </IconButton>
-                            <ForumPostModal forumPost={parentForumPost} modalType={"DELETEPARENTPOST"} onForumPostChange={handleCallSnackbar} />
-                            <ForumPostModal forumPost={parentForumPost} modalType={"REPORTPARENTPOST"} onForumPostChange={handleCallSnackbar} />
+                            <ForumPostModal currentCourse={currentCourse} forumPost={parentForumPost} modalType={"DELETEPARENTPOST"} onForumPostChange={handleCallSnackbar} />
+                            <ForumPostModal  currentCourse={currentCourse} forumPost={parentForumPost} modalType={"REPORTPARENTPOST"} onForumPostChange={handleCallSnackbar} />
 
                         </>
                     }

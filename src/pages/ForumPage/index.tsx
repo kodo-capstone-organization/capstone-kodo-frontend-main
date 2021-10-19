@@ -171,7 +171,7 @@ function ForumPage(props: any) {
                             {!isIndexPage && history.location.pathname.includes("thread") &&
                                 <ForumPostList key={"postList"}
                                                 history={history}
-                                                currentCourseId={props.match.params.courseId} currentForumCategoryId={props.match.params.forumCategoryId} currentForumThreadId={props.match.params.forumThreadId}
+                                                currentCourse={currentCourse} currentForumCategoryId={props.match.params.forumCategoryId} currentForumThreadId={props.match.params.forumThreadId}
                                                 onCallSnackbar={handleCallSnackbar} />
                             }
 

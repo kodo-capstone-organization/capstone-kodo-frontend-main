@@ -13,6 +13,7 @@ import FlagIcon from '@material-ui/icons/Flag';
 import { Button } from "../../../values/ButtonElements";
 import { deleteForumPost, updateForumPost } from "../../../apis/Forum/ForumApis";
 import { ForumPost, UpdateForumPostReq } from "../../../apis/Entities/ForumPost";
+import { Course } from '../../../apis/Entities/Course';
 
 
 function ForumPostModal(props: any) {
@@ -20,17 +21,19 @@ function ForumPostModal(props: any) {
     const [open, setOpen] = useState<boolean>(false);
     const [modalType, setModalType] = useState<string>();
     const [forumPost, setForumPost] = useState<ForumPost>();
+    const [currentCourse , setCurrentCourse] = useState<Course>();
     const [reasonForReport, setReasonForReport] = useState<string>("");
 
     const loggedInAccountId = JSON.parse(window.sessionStorage.getItem("loggedInAccountId") || "{}");
 
 
     useEffect(() => {
-        // setCourseId(props.courseId);
+        setCurrentCourse(props.currentCourse);
         setModalType(props.modalType);
         if (props.forumPost !== undefined) {
             setForumPost(props.forumPost);
         }
+        console.log(props);
         // if (props.forumThread !== undefined) {
         //     setForumThread(props.forumThread);
         // }
@@ -45,15 +48,19 @@ function ForumPostModal(props: any) {
     };
 
     const handleDeleteConfirm = () => {
-        if (forumPost !== undefined && forumPost.account.accountId === loggedInAccountId && forumPost.forumPostId !== null) {
-            deleteForumPost(forumPost.forumPostId)
-                .then((res) => {
-                    props.onForumPostChange({ message: "Forum Post Deletion Succeeded", type: "success" });
-                }).catch((err) => {
-                    props.onForumPostChange({ message: err.response.data.message, type: "error" });
-                })
+        if (forumPost !== undefined && forumPost.forumPostId !== null) {
+            if (forumPost.account.accountId === loggedInAccountId || currentCourse?.tutor.accountId === loggedInAccountId) {
+                deleteForumPost(forumPost.forumPostId)
+                    .then((res) => {
+                        props.onForumPostChange({ message: "Forum Post Deletion Succeeded", type: "success" });
+                    }).catch((err) => {
+                        props.onForumPostChange({ message: err.response.data.message, type: "error" });
+                    })
+            } else {
+                props.onForumPostChange({ message: "You are not the author of this thread/post.", type: "error" });
+            }
         } else {
-            props.onForumPostChange({ message: "You are not the author of this thread/post.", type: "error" });
+            props.onForumPostChange({ message: "Error deleting forum post.", type: "error" });
         }
     }
 
