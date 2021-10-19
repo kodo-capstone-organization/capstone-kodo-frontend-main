@@ -81,14 +81,12 @@ function QuizBuilderPage(props: any) {
                 history.push("/profile");
             }
         }).catch((err) => {
-            props.callOpenSnackBar(`Error in initialising Quiz: ${err}`, "error")
+            props.callOpenSnackBar(`Error: ${err}`, "error")
         });
         getCourseByContentId(contentId).then((res: Course) => {
-            console.log("Success: getCourseByContentId", res);
             setIsDisabled(res.isEnrollmentActive || res.isReviewRequested);
             setCourseId(res.courseId)
         }).catch((err) => {
-            console.log(contentId)
             console.log("Error: getCourseByContentId", err);
         });
         getQuizByQuizId(contentId).then((res) => {
@@ -99,11 +97,12 @@ function QuizBuilderPage(props: any) {
             setMaxAttempts(res.maxAttemptsPerStudent);
             setTimeLimitHours(`${res.timeLimit.charAt(0)}${res.timeLimit.charAt(1)}`);
             setTimeLimitMinutes(`${res.timeLimit.charAt(3)}${res.timeLimit.charAt(4)}`);
-            setTimeLimitSeconds(`${res.timeLimit.charAt(6)}${res.timeLimit.charAt(7)}`);
+            // setTimeLimitSeconds(`${res.timeLimit.charAt(6)}${res.timeLimit.charAt(7)}`);
         }).catch((err) => {
             props.callOpenSnackBar(`Error in initialising Quiz: ${err}`, "error")
         });
         getAllQuizQuestionsByQuizId(contentId).then((res) => {
+            // populating questions with draggable id
             let arrayWtihDraggableId: any = []
             var mapDraggable = 0;
             res.map((question) => {
@@ -117,16 +116,6 @@ function QuizBuilderPage(props: any) {
             props.callOpenSnackBar(`Error in initialising Quiz: ${err}`, "error")
         });
     }, [contentId]);
-
-    const handleAddNewQuestion = (newQuizQuestion: QuizQuestion) => {
-        if (quiz) {
-            const newDraggableId = draggableId + 1;
-            setDraggableId(newDraggableId);
-            newQuizQuestion = Object.assign(newQuizQuestion, { draggableId: newDraggableId, quiz });
-            quizQuestionArray.push(newQuizQuestion);
-            props.callOpenSnackBar(`Added new ${newQuizQuestion.questionType} question.`, "success")
-        }
-    }
 
     const handleNameChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setName(e.target.value);
@@ -186,7 +175,7 @@ function QuizBuilderPage(props: any) {
         }
     }
 
-    const handleAttemptChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const handleMaxAttemptChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         var value = parseInt(e.target.value);
         if (value > 100) {
             value = 100;
@@ -268,13 +257,21 @@ function QuizBuilderPage(props: any) {
         setQuizQuestionArray(arrayWtihDraggableId);
     }
 
+    const handleAddNewQuestion = (newQuizQuestion: QuizQuestion) => {
+        if (quiz) {
+            const newDraggableId = draggableId + 1;
+            setDraggableId(newDraggableId);
+            newQuizQuestion = Object.assign(newQuizQuestion, { draggableId: newDraggableId, quiz });
+            quizQuestionArray.push(newQuizQuestion);
+            props.callOpenSnackBar(`Added new ${newQuizQuestion.questionType} question.`, "success")
+        }
+    }
+
     const handleOnDragEnd = (result: any) => {
-        //update state
+        //updating draggable state
         var items = quizQuestionArray;
-        // console.log("items before", items);
         const [reorderedItem] = items.splice(result.source.index, 1);
         items = items.splice(result.destination.index, 0, reorderedItem);
-        // console.log("items after", items);
         // setQuizQuestionArray(items);
     }
 
@@ -288,11 +285,13 @@ function QuizBuilderPage(props: any) {
                 {questionArray.map(function (q, qId) {
                     return (
                         isDisabled ?
+                            // un-draggable
                             <QuizQuestionCard key={qId}>
                                 <QuizQuestionComponent disabled={isDisabled} question={q} questionIndex={qId}
                                     onUpdateQuestion={handleUpdateQuestion} onUpdateQuizQuestionOptions={handleQuizQuestionOptionUpdate} />
                             </QuizQuestionCard>
                             :
+                            // draggable
                             <Draggable key={q.draggableId.toString()} draggableId={q.draggableId.toString()} index={qId}>
                                 {(provided) => (
                                     <QuizQuestionCard ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
@@ -373,7 +372,7 @@ function QuizBuilderPage(props: any) {
                                     autoFocus
                                     fullWidth
                                     value={maxAttempts}
-                                    onChange={handleAttemptChange}
+                                    onChange={handleMaxAttemptChange}
                                     inputProps={{ min: 1, max: 100 }}
                                 />
                             </Grid>
