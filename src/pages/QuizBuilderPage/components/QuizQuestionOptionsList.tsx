@@ -23,7 +23,6 @@ function QuizQuestionOptionsList(props: any) {
 
     const [questionType, setQuestionType] = useState<string>();
     const [quizQuestionOptions, setQuizQuestionOptions] = useState<QuizQuestionOption[]>();
-    // const [correctAnswer, setCorrectAnswer] = React.useState<number>();
     const [questionIndex, setQuestionIndex] = useState<number>();
     const [isDisabled, setIsDisabled] = useState<boolean>(false);
 
@@ -33,53 +32,6 @@ function QuizQuestionOptionsList(props: any) {
             setQuestionIndex(props.questionIndex);
             setQuizQuestionOptions(props.question.quizQuestionOptions);
             setIsDisabled(props.disabled);
-            // if (props.question.quizQuestionOptions.length === 0) {
-            //     // population of options when type changes
-            //     var newQuizQuestionOptions: QuizQuestionOption[];
-            //     if (props.questionType === "TF") {
-            //         const trueOption: QuizQuestionOption = {
-            //             quizQuestionOptionId: null,
-            //             leftContent: "true",
-            //             rightContent: null,
-            //             correct: true
-            //         };
-            //         const falseOption: QuizQuestionOption = {
-            //             quizQuestionOptionId: null,
-            //             leftContent: "false",
-            //             rightContent: null,
-            //             correct: false
-            //         };
-            //         newQuizQuestionOptions = [trueOption, falseOption];
-            //         setQuizQuestionOptions(newQuizQuestionOptions);
-            //     } else if (props.questionType === "MCQ") {
-            //         const defaultOption: QuizQuestionOption = {
-            //             quizQuestionOptionId: null,
-            //             leftContent: "MCQ OPTION",
-            //             rightContent: null,
-            //             correct: true
-            //         };
-            //         const defaultOptionTwo : QuizQuestionOption = {
-            //             quizQuestionOptionId: null,
-            //             leftContent: "MCQ OPTION",
-            //             rightContent: null,
-            //             correct: false
-            //         };
-            //         newQuizQuestionOptions = [defaultOption, defaultOptionTwo];
-            //         setQuizQuestionOptions(newQuizQuestionOptions);
-            //     } else if (props.questionType === "MATCHING") {
-            //         const defaultOption: QuizQuestionOption = {
-            //             quizQuestionOptionId: null,
-            //             leftContent: "MATCHING OPTION A",
-            //             rightContent: "MATCHING OPTION B",
-            //             correct: true
-            //         };
-            //         newQuizQuestionOptions = [defaultOption, defaultOption];
-            //         setQuizQuestionOptions(newQuizQuestionOptions);
-            //     } else {
-            //         newQuizQuestionOptions = [];
-            //     }
-            //     props.onHandleQuizQuestionOptionUpdate(newQuizQuestionOptions, props.questionIndex)
-            // }
         }
     }, [props.question, props.questionType, props.disabled, props.questionIndex])
 
@@ -110,7 +62,6 @@ function QuizQuestionOptionsList(props: any) {
         });
         setQuizQuestionOptions(newQuizQuestionOptions);
         if (event.target.value !== "") {
-
             props.onHandleQuizQuestionOptionUpdate(newQuizQuestionOptions, questionIndex)
         }
     }

@@ -37,10 +37,6 @@ function CreateQuestionModal(props: any) {
         setOpen(false);
     };
 
-    // const handleConfirm = () => {
-    //     setOpen(false);
-    // }
-
     const addNewQuestion = (questionType: string) => {
         var newQuizQuestion: any;
         if (questionType === "MCQ") {
@@ -56,12 +52,18 @@ function CreateQuestionModal(props: any) {
                 rightContent: null,
                 correct: false
             };
+            const defaultOptionThree: QuizQuestionOption = {
+                quizQuestionOptionId: null,
+                leftContent: "MCQ OPTION",
+                rightContent: null,
+                correct: false
+            };
             newQuizQuestion = {
                 quizQuestionId: null,
                 content: "",
                 questionType: "MCQ",
                 marks: 1,
-                quizQuestionOptions: [newQuizQuestionOption, defaultOptionTwo, defaultOptionTwo],
+                quizQuestionOptions: [newQuizQuestionOption, defaultOptionTwo, defaultOptionThree],
             };
         }else if (questionType === "TF"){
             const newQuizQuestionOption: QuizQuestionOption = {
@@ -96,12 +98,18 @@ function CreateQuestionModal(props: any) {
                 rightContent: "MATCHING RIGHT OPTION",
                 correct: false
             };
+            const defaultOptionThree: QuizQuestionOption = {
+                quizQuestionOptionId: null,
+                leftContent: "MATCHING LEFTT OPTION",
+                rightContent: "MATCHING RIGHT OPTION",
+                correct: false
+            };
             newQuizQuestion = {
                 quizQuestionId: null,
                 content: "",
                 questionType: "MATCHING",
                 marks: 1,
-                quizQuestionOptions: [newQuizQuestionOption, defaultOptionTwo, defaultOptionTwo],
+                quizQuestionOptions: [newQuizQuestionOption, defaultOptionTwo, defaultOptionThree],
             };
         }
         props.onAddNewQuestion(newQuizQuestion);
@@ -129,7 +137,6 @@ function CreateQuestionModal(props: any) {
                     </DialogContent>
                     <DialogActions>
                         <Button onClick={handleClose}>Cancel</Button>
-                        {/* <Button onClick={handleConfirm} primary>Confirm</Button> */}
                     </DialogActions>
                 </Dialog>
             </div>

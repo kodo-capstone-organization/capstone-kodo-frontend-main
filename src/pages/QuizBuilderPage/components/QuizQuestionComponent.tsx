@@ -39,13 +39,6 @@ function QuizQuestionComponent(props: any) {
         setQuestionType(props.question.questionType)
     }, [props.question])
 
-    const handleTypeChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-        setQuestionType(event.target.value as string);
-        const newlyUpdatedQuestion = Object.assign(question, { questionType: event.target.value, quizQuestionOptions: [] })
-        console.log("newlyUpdatedQuestion", newlyUpdatedQuestion);
-        props.onUpdateQuestion(newlyUpdatedQuestion, questionIndex)
-    };
-
     const handleMarkChange = (event: React.ChangeEvent<{ value: unknown }>) => {
         setMarks(event.target.value as number);
         const newlyUpdatedQuestion = Object.assign(question, { marks: event.target.value })
@@ -122,7 +115,6 @@ function QuizQuestionComponent(props: any) {
 
                 <div>
                     {
-                        content !== undefined &&
                         <QuizBuilderTextInput disabled={isDisabled} id="question-input" label="Question" variant="standard" value={content} onChange={handleContentChange} />
                     }
                 </div>
