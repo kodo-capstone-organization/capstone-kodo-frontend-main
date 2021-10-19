@@ -33,10 +33,6 @@ function ForumPostModal(props: any) {
         if (props.forumPost !== undefined) {
             setForumPost(props.forumPost);
         }
-        console.log(props);
-        // if (props.forumThread !== undefined) {
-        //     setForumThread(props.forumThread);
-        // }
     }, [props, open])
 
     const handleOpen = () => {

@@ -55,7 +55,6 @@ function ForumPostInputArea(props: any) {
         }
         if (props.forumPost !== undefined) {
             setChildForumPosts(props.forumPost?.replies);
-            console.log("props.forumPost?.replies", props.forumPost?.replies);
         }
         if (props.postType !== undefined) {
             setPostType(props.postType);
@@ -66,7 +65,6 @@ function ForumPostInputArea(props: any) {
         getMyAccount(loggedInAccountId).then((res) => {
             setMyAccount(res);
         }).catch((err) => {
-            console.log("Failed", err);
         });
     }, [props]);
 
@@ -137,7 +135,6 @@ function ForumPostInputArea(props: any) {
 
     const handleSeeReplies = () => {
         handleOpen();
-        console.log("handleSeeReplies");
     }
 
     const handleMakeReply = () => {

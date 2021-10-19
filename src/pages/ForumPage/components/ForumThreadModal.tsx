@@ -57,7 +57,6 @@ function ForumThreadModal(props: any) {
                 accountId: parseInt(loggedInAccountId),
                 forumCategoryId: forumCategoryToSubmit.forumCategoryId
             }
-            console.log(createNewForumThreadReq);
             createNewForumThread(createNewForumThreadReq).then((res) => {
                 props.onForumThreadChange({ message: "Forum Thread Creation Succeeded", type: "success" });
             }).catch((err) => {

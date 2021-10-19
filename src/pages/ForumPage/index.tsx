@@ -5,7 +5,7 @@ import {
     Breadcrumbs, Link
 } from '@material-ui/core';
 
-import { getForumThreadByForumThreadId, getForumCategoryByForumCategoryId } from "../../apis/Forum/ForumApis";
+import { getForumThreadByForumThreadId, getForumCategoryByForumCategoryId, getAllForumCategoriesByCourseId } from "../../apis/Forum/ForumApis";
 import { isStudentByCourseIdAndAccountId } from "../../apis/Course/CourseApis";
 import { isTutorByCourseIdAndAccountId } from "../../apis/Course/CourseApis";
 
@@ -54,28 +54,28 @@ function ForumPage(props: any) {
             setCurrentCourse(receivedCourse);
         });
         isTutorByCourseIdAndAccountId(currentCourseId, parseInt(loggedInAccountId))
-        .then((tmpIsTutor: boolean) => setIsTutor(tmpIsTutor))
-        .catch((err) => handleError(err));
+            .then((tmpIsTutor: boolean) => setIsTutor(tmpIsTutor))
+            .catch((err) => handleError(err));
         isStudentByCourseIdAndAccountId(currentCourseId, parseInt(loggedInAccountId))
-        .then((tmpIsStudent: boolean) => setIsStudent(tmpIsStudent))
-        .catch((err) => handleError(err));
+            .then((tmpIsStudent: boolean) => setIsStudent(tmpIsStudent))
+            .catch((err) => handleError(err));
         setLoading(false);
     }, [loggedInAccountId, currentCourseId])
 
     useEffect(() => {
         if (props.match.params.forumCategoryId != undefined) {
             getForumCategoryByForumCategoryId(props.match.params.forumCategoryId)
-            .then((res) => {
-                setCurrentForumCategory(res);
-            }).catch((err) => {
-                handleCallSnackbar({message: err.response.data.message, type:"error"});
-            });
+                .then((res) => {
+                    setCurrentForumCategory(res);
+                }).catch((err) => {
+                    handleCallSnackbar({ message: err.response.data.message, type: "error" });
+                });
         }
         if (props.match.params.forumThreadId != undefined) {
             getForumThreadByForumThreadId(props.match.params.forumThreadId)
-            .then((res) => {
-                setCurrentForumThread(res);
-            }).catch((err) => handleError(err));
+                .then((res) => {
+                    setCurrentForumThread(res);
+                }).catch((err) => handleError(err));
         }
     }, [props.match.params.forumCategoryId, props.match.params.forumThreadId]);
 
@@ -83,6 +83,43 @@ function ForumPage(props: any) {
     useEffect(() => {
         setIsIndexPage(history.location.pathname === `/overview/course/${parseInt(props.match.params.courseId)}/forum`);
     }, [history.location.pathname])
+
+    // To check access of user
+    useEffect(() => {
+        //check access
+        var accessAllowed = true;
+        if (currentCourse !== undefined && currentUser !== undefined) {
+            // check access to category list
+            accessAllowed = accessAllowed && checkCanViewCourse(currentUser, currentCourse)
+            console.log(checkCanViewCourse(currentUser, currentCourse))
+        }
+        console.log("currentForumCategory", currentForumCategory);
+        console.log("currentForumThread", currentForumThread);
+        if (currentForumCategory !== undefined && currentForumThread !== undefined) {
+            // check access to post list
+            const listOfForumThreadId: any[] = currentForumCategory.forumThreads.map((thread) => thread.forumThreadId);
+            accessAllowed = accessAllowed && listOfForumThreadId.includes(currentForumThread?.forumThreadId)
+            console.log(listOfForumThreadId.includes(currentForumThread?.forumThreadId))
+        }
+        if (!accessAllowed) {
+            const errorDataObj = {
+                message1: 'Unable to view page',
+                message2: 'You have no access to this page',
+                errorStatus: '404',
+                returnPath: '/progresspage',
+                returnText: 'My Progress'
+            }
+            history.push({ pathname: "/invalidpage", state: { errorData: errorDataObj } })
+        }
+    }, [currentCourse, currentForumCategory, currentForumThread])
+
+    const checkCanViewCourse = (user: Account, course: Course) => {
+        var listOfCourseIds = user.courses.map((course) => course.courseId);
+        var listOfEnrolledCourseIds = user.enrolledCourses.map((enrolledCourse) => enrolledCourse.parentCourse.courseId);
+        listOfCourseIds = listOfCourseIds.concat(listOfEnrolledCourseIds);
+        return listOfCourseIds.includes(course.courseId);
+    }
+
 
     const ForumBreadcrumbItems = [
         {
@@ -105,11 +142,11 @@ function ForumPage(props: any) {
     function handleError(err: any): void {
         const errorDataObj = createErrorDataObj(err);
         props.callOpenSnackBar("Error in retrieving forum", "error");
-        history.push({ pathname: "/invalidpage", state: { errorData: errorDataObj }})
+        history.push({ pathname: "/invalidpage", state: { errorData: errorDataObj } })
     }
-    
+
     function createErrorDataObj(err: any): any {
-        const errorDataObj = { 
+        const errorDataObj = {
             message1: 'Unable to view forum',
             message2: err.response.data.message,
             errorStatus: err.response.status,
@@ -138,7 +175,7 @@ function ForumPage(props: any) {
                 <LayoutContainer>
                     {/* HAX DUPLICATION OF SIDEBAR make sure to update props etc. of this side bar if the one in course viewer is updated*/}
                     <Sidebar course={currentCourse} isTutor={isTutor} isStudent={isStudent} />
-                    <LayoutContentPage showSideBar style={{ paddingRight: "8rem"}}>
+                    <LayoutContentPage showSideBar style={{ paddingRight: "8rem" }}>
                         <ForumContainer>
                             <Breadcrumbs aria-label="profile-breadcrumb" style={{ marginBottom: "1rem" }}>
                                 {
@@ -156,23 +193,23 @@ function ForumPage(props: any) {
 
                             {isIndexPage &&
                                 <ForumCategoryList key={"categoryList"}
-                                                    history={history}
-                                                    onCallSnackbar={handleCallSnackbar}
-                                                    currentCourseId={props.match.params.courseId} />
+                                    history={history}
+                                    onCallSnackbar={handleCallSnackbar}
+                                    currentCourseId={props.match.params.courseId} />
                             }
 
                             {!isIndexPage && history.location.pathname.includes("category") && !history.location.pathname.includes("thread") &&
                                 <ForumThreadList key={"threadList"}
-                                                history={history}
-                                                onCallSnackbar={handleCallSnackbar}
-                                                currentCourseId={props.match.params.courseId} currentForumCategoryId={props.match.params.forumCategoryId}/>
+                                    history={history}
+                                    onCallSnackbar={handleCallSnackbar}
+                                    currentCourseId={props.match.params.courseId} currentForumCategoryId={props.match.params.forumCategoryId} />
                             }
 
                             {!isIndexPage && history.location.pathname.includes("thread") &&
                                 <ForumPostList key={"postList"}
-                                                history={history}
-                                                currentCourse={currentCourse} currentForumCategoryId={props.match.params.forumCategoryId} currentForumThreadId={props.match.params.forumThreadId}
-                                                onCallSnackbar={handleCallSnackbar} />
+                                    history={history}
+                                    currentCourse={currentCourse} currentForumCategoryId={props.match.params.forumCategoryId} currentForumThreadId={props.match.params.forumThreadId}
+                                    onCallSnackbar={handleCallSnackbar} />
                             }
 
                         </ForumContainer>
