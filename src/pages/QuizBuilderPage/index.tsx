@@ -28,7 +28,7 @@ import { UpdateQuizReq } from '../../apis/Entities/Quiz';
 import { getAccountByQuizId } from "../../apis/Account/AccountApis";
 
 import {
-    getQuizByQuizId,
+    getQuizByQuizIdAndAccountId,
     updateQuizWithQuizQuestionsAndQuizQuestionOptions,
 } from "../../apis/Quiz/QuizApis";
 import {
@@ -76,31 +76,22 @@ function QuizBuilderPage(props: any) {
 
 
     useEffect(() => {
-        getAccountByQuizId(contentId).then((res) => {
-            if (loggedInAccountId && res.accountId !== parseInt(loggedInAccountId)) {
-                history.push("/profile");
-            }
-        }).catch((err) => {
-            props.callOpenSnackBar(`Error: ${err}`, "error")
-        });
         getCourseByContentId(contentId).then((res: Course) => {
             setIsDisabled(res.isEnrollmentActive || res.isReviewRequested);
             setCourseId(res.courseId)
-        }).catch((err) => {
-            console.log("Error: getCourseByContentId", err);
-        });
-        getQuizByQuizId(contentId).then((res) => {
-            setQuiz(res);
-            setUpdatedQuiz(res);
-            setName(res.name);
-            setDescription(res.description);
-            setMaxAttempts(res.maxAttemptsPerStudent);
-            setTimeLimitHours(`${res.timeLimit.charAt(0)}${res.timeLimit.charAt(1)}`);
-            setTimeLimitMinutes(`${res.timeLimit.charAt(3)}${res.timeLimit.charAt(4)}`);
-            // setTimeLimitSeconds(`${res.timeLimit.charAt(6)}${res.timeLimit.charAt(7)}`);
-        }).catch((err) => {
-            props.callOpenSnackBar(`Error in initialising Quiz: ${err}`, "error")
-        });
+        }).catch(err => handleError(err));
+        if (loggedInAccountId) {
+            getQuizByQuizIdAndAccountId(contentId, parseInt(loggedInAccountId)).then((res) => {
+                setQuiz(res);
+                setUpdatedQuiz(res);
+                setName(res.name);
+                setDescription(res.description);
+                setMaxAttempts(res.maxAttemptsPerStudent);
+                setTimeLimitHours(`${res.timeLimit.charAt(0)}${res.timeLimit.charAt(1)}`);
+                setTimeLimitMinutes(`${res.timeLimit.charAt(3)}${res.timeLimit.charAt(4)}`);
+                // setTimeLimitSeconds(`${res.timeLimit.charAt(6)}${res.timeLimit.charAt(7)}`);
+            }).catch(err => handleError(err));
+        }
         getAllQuizQuestionsByQuizId(contentId).then((res) => {
             // populating questions with draggable id
             let arrayWtihDraggableId: any = []
@@ -116,6 +107,24 @@ function QuizBuilderPage(props: any) {
             props.callOpenSnackBar(`Error in initialising Quiz: ${err}`, "error")
         });
     }, [contentId]);
+
+    function handleError(err: any): void {
+        const errorDataObj = createErrorDataObj(err);
+        props.callOpenSnackBar("Error in retrieving quiz", "error");
+        history.push({ pathname: "/invalidpage", state: { errorData: errorDataObj }})
+    }
+
+    function createErrorDataObj(err: any): any {
+        const errorDataObj = {
+            message1: 'Unable to view quiz',
+            message2: err.response.data.message,
+            errorStatus: err.response.status,
+            returnPath: '/progresspage',
+            returnText: 'My Progress'
+        }
+
+        return errorDataObj;
+    }
 
     const handleNameChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setName(e.target.value);
