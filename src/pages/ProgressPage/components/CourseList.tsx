@@ -90,18 +90,23 @@ function CourseList(props: any) {
                         <Button
                           variant="outlined"
                           primary={true}
+                          style={{width:"20px"}}
                           to={`/overview/course/${enrolledCourse.enrolledCourseId}/lesson/${enrolledLesson.enrolledLessonId}`}
                         >
                           { enrolledLesson.dateTimeOfCompletion ? "View" : "Resume" }
                         </Button>
                       ) : (
-                        <Button variant="outlined" primary={false} disabled>
+                        <Button variant="outlined" 
+                        primary={false} 
+                        style={{width:"20px"}}
+                        disabled>
                           <LockIcon />
                         </Button>
                       )
                   ) : (
                       <Button
                         primary={true}
+                        style={{width:"20px"}}
                         to={`/overview/course/${enrolledCourse.enrolledCourseId}/lesson/${enrolledLesson.enrolledLessonId}`}
                       >
                         View
