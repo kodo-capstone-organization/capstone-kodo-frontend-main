@@ -158,9 +158,9 @@ function Login(props: any) {
 
         // res is the last param (though not shown in the callback) since its a binded function
         // Set to local storage
-        window.sessionStorage.setItem("loggedInAccountId", JSON.stringify(accountId));
-        window.sessionStorage.setItem("loggedInAccountUsername", username);
-        window.sessionStorage.setItem("loggedInAccountPassword", password);
+        window.sessionStorage.setItem("loggedInAccountId", props.encrypt(accountId));
+        window.sessionStorage.setItem("loggedInAccountUsername", props.encrypt(username));
+        window.sessionStorage.setItem("loggedInAccountPassword", props.encrypt(password));
         history.push('/');
         // Redirect to home "/" where the route will conditionally check if logged in or not
         // and redirect accordingly

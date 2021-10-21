@@ -11,20 +11,23 @@ import { Account } from "../../apis/Entities/Account";
 import CourseList from './components/CourseList';
 import { colours } from '../../values/Colours';
 
-function ProgressPage() {
+function ProgressPage(props: any) {
 
-    // const [enrolledCourses, setEnrolledCourses] = useState<EnrolledCourse[]>([])
     const [completedCourses, setCompletedCourses] = useState<EnrolledCourse[]>([])
     const [currentCourses, setCurrentCourses] = useState<EnrolledCourse[]>([])
     const [myAccount, setMyAccount] = useState<Account>()
     const [tab, setTab] = React.useState(0);
     const [loading, setLoading] = useState<boolean>(true);
-    const accountId = window.sessionStorage.getItem("loggedInAccountId");
+    const [accountId, setAccountId] = useState<number>();
+
+    useEffect(() => {
+        setAccountId(props.getLoggedInAccountId());
+    }, [window.sessionStorage.getItem("loggedInAccountId")]);
 
     useEffect(() => {
         setLoading(true);
-        if (accountId !== null) {
-            getMyAccount(parseInt(accountId)).then((receivedAccount: Account) => {
+        if (accountId && accountId !== null) {
+            getMyAccount(accountId).then((receivedAccount: Account) => {
                 setMyAccount(receivedAccount)
                 const updatedCompletedCourses = receivedAccount.enrolledCourses.filter(course => course.dateTimeOfCompletion !== null)
                 setCompletedCourses(updatedCompletedCourses)

@@ -192,11 +192,11 @@ function SignUp(props: any) {
             //@ts-ignore        
             createNewAccount(newUserAccount, null).then((res: Account) => {
                 props.callOpenSnackBar("Account successfully created", "success")
-                window.sessionStorage.setItem("loggedInAccountId", JSON.stringify(res.accountId));
-                window.sessionStorage.setItem("loggedInAccountUsername", username);
-                window.sessionStorage.setItem("loggedInAccountPassword", password);
+                window.sessionStorage.setItem("loggedInAccountId", props.encrypt(res.accountId));
+                window.sessionStorage.setItem("loggedInAccountUsername", props.encrypt(username));
+                window.sessionStorage.setItem("loggedInAccountPassword", props.encrypt(password));
                 history.push('/progresspage');
-            }).catch(err => {            
+            }).catch(err => {
                 setSignUpFailed(err.response.data.message)
             })
         }
