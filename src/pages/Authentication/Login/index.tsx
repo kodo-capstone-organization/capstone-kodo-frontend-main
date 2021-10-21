@@ -142,6 +142,7 @@ function Login(props: any) {
             if (res.isActive)
             {
                 loginCallback(username, password, res.accountId);
+                props.callOpenSnackBar(`Login as ${username} successfully`, "success");
             }
             else
             {
