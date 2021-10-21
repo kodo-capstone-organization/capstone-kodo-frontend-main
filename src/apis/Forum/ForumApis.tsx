@@ -38,7 +38,14 @@ export async function getForumCategoryByForumCategoryId(forumCategoryId: number)
     const getParameters: IHttpClientRequestParameters<undefined> = {
         url: `/forumCategory/getForumCategoryByForumCategoryId/${forumCategoryId}`
     }
-    return httpClient.get<undefined, ForumCategory>(getParameters)
+    return httpClient.get<undefined, ForumCategory>(getParameters);
+}
+
+export async function getForumCategoryByForumCategoryIdAndCourseId(forumCategoryId: number, courseId: number): Promise<ForumCategory> {
+    const getParameters: IHttpClientRequestParameters<undefined> = {
+        url: `/forumCategory/getForumCategoryByForumCategoryIdAndCourseId/${forumCategoryId}/${courseId}`
+    }
+    return httpClient.get<undefined, ForumCategory>(getParameters);
 }
 
 export async function getForumCategoryWithForumThreadsOnlyByForumCategoryId(forumCategoryId: number): Promise<ForumCategory> {
@@ -94,6 +101,13 @@ export async function getAllForumThreadsByForumCategoryId(forumCategoryId: numbe
 export async function getForumThreadByForumThreadId(forumThreadId: number): Promise<ForumThread> {
     const getParameters: IHttpClientRequestParameters<undefined> = {
         url: `/forumThread/getForumThreadByForumThreadId/${forumThreadId}`
+    }
+    return httpClient.get<undefined, ForumThread>(getParameters)
+}
+
+export async function getForumThreadByForumThreadIdAndCourseId(forumThreadId: number, courseId: number): Promise<ForumThread> {
+    const getParameters: IHttpClientRequestParameters<undefined> = {
+        url: `/forumThread/getForumThreadByForumThreadIdAndCourseId/${forumThreadId}/${courseId}`
     }
     return httpClient.get<undefined, ForumThread>(getParameters)
 }

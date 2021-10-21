@@ -5,7 +5,10 @@ import {
     Breadcrumbs, Link
 } from '@material-ui/core';
 
-import { getForumThreadByForumThreadId, getForumCategoryByForumCategoryId, getAllForumCategoriesByCourseId } from "../../apis/Forum/ForumApis";
+import {
+    getForumThreadByForumThreadIdAndCourseId,
+    getForumCategoryByForumCategoryIdAndCourseId
+} from "../../apis/Forum/ForumApis";
 import { isStudentByCourseIdAndAccountId } from "../../apis/Course/CourseApis";
 import { isTutorByCourseIdAndAccountId } from "../../apis/Course/CourseApis";
 
@@ -22,22 +25,22 @@ import {
 import { LayoutContainer } from '../CourseViewer/CourseViewerElements';
 import Sidebar from '../CourseViewer/Sidebar/Sidebar';
 import { LayoutContentPage } from '../../components/LayoutElements';
-import { getMyAccount } from '../../apis/Account/AccountApis';
 import { getCourseWithoutEnrollmentByCourseId } from '../../apis/Course/CourseApis';
-import { Account } from '../../apis/Entities/Account';
 import { Course } from '../../apis/Entities/Course';
 
 
 function ForumPage(props: any) {
 
+    const loggedInAccountId = parseInt(window.sessionStorage.getItem("loggedInAccountId") || "");
+
+    const courseId = parseInt(props.match.params.courseId);
+    const forumCategoryId = parseInt(props.match.params.forumCategoryId);
+    const forumThreadId = parseInt(props.match.params.forumThreadId);
+
     const [isTutor, setIsTutor] = useState<Boolean>();
     const [isStudent, setIsStudent] = useState<Boolean>();
-
-    const loggedInAccountId = window.sessionStorage.getItem("loggedInAccountId") || "";
-    const currentCourseId = parseInt(props.match.params.courseId);
     const [loading, setLoading] = useState<Boolean>(true);
 
-    const [currentUser, setCurrentUser] = useState<Account>();
     const [currentCourse, setCurrentCourse] = useState<Course>();
     const [isIndexPage, setIsIndexPage] = useState<Boolean>();
     const [currentForumCategory, setCurrentForumCategory] = useState<ForumCategory>();
@@ -46,80 +49,52 @@ function ForumPage(props: any) {
     const history = useHistory();
 
     useEffect(() => {
-        setLoading(true);
-        getMyAccount(parseInt(loggedInAccountId)).then(receivedAccount => {
-            setCurrentUser(receivedAccount);
-        });
-        getCourseWithoutEnrollmentByCourseId(currentCourseId).then(receivedCourse => {
-            setCurrentCourse(receivedCourse);
-        });
-        isTutorByCourseIdAndAccountId(currentCourseId, parseInt(loggedInAccountId))
-            .then((tmpIsTutor: boolean) => setIsTutor(tmpIsTutor))
-            .catch((err) => handleError(err));
-        isStudentByCourseIdAndAccountId(currentCourseId, parseInt(loggedInAccountId))
-            .then((tmpIsStudent: boolean) => setIsStudent(tmpIsStudent))
-            .catch((err) => handleError(err));
-        setLoading(false);
-    }, [loggedInAccountId, currentCourseId])
+        if (!isNaN(loggedInAccountId) && !isNaN(courseId)) {
+            setLoading(true);
+            getCourseWithoutEnrollmentByCourseId(courseId).then(receivedCourse => {
+                setCurrentCourse(receivedCourse);
+            });
+            isTutorByCourseIdAndAccountId(courseId, loggedInAccountId)
+                .then((tmpIsTutor: boolean) => setIsTutor(tmpIsTutor))
+                .catch((err) => handleError(err));
+            isStudentByCourseIdAndAccountId(courseId, loggedInAccountId)
+                .then((tmpIsStudent: boolean) => setIsStudent(tmpIsStudent))
+                .catch((err) => handleError(err));
+            setLoading(false);
+        }
+    }, [loggedInAccountId, courseId])
 
     useEffect(() => {
-        if (props.match.params.forumCategoryId != undefined) {
-            getForumCategoryByForumCategoryId(props.match.params.forumCategoryId)
-                .then((res) => {
-                    setCurrentForumCategory(res);
-                }).catch((err) => {
-                    handleCallSnackbar({ message: err.response.data.message, type: "error" });
-                });
+        if (!isNaN(forumCategoryId) && !isNaN(courseId)) {
+            getForumCategoryByForumCategoryIdAndCourseId(forumCategoryId, courseId)
+                .then((tmpForumCategory) => setCurrentForumCategory(tmpForumCategory))
+                .catch((err) => handleError(err));
         }
-        if (props.match.params.forumThreadId != undefined) {
-            getForumThreadByForumThreadId(props.match.params.forumThreadId)
-                .then((res) => {
-                    setCurrentForumThread(res);
-                }).catch((err) => handleError(err));
+    }, [forumCategoryId, courseId]);
+
+    useEffect(() => {
+        if (!isNaN(forumThreadId) && !isNaN(courseId)) {
+            getForumThreadByForumThreadIdAndCourseId(forumThreadId, courseId)
+                .then((tmpForumThread) => setCurrentForumThread(tmpForumThread))
+                .catch((err) => handleError(err));
         }
-    }, [props.match.params.forumCategoryId, props.match.params.forumThreadId]);
+    }, [forumThreadId, courseId]);
+
+    useEffect(() => {
+        if (isTutor !== undefined && isStudent !== undefined)
+        {
+            if (!isTutor && !isStudent) {
+                secondaryHandleError()
+            }
+        }
+    }, [isTutor, isStudent])
 
     // To update isIndexPage
     useEffect(() => {
-        setIsIndexPage(history.location.pathname === `/overview/course/${parseInt(props.match.params.courseId)}/forum`);
+        if (!isNaN(courseId)) {
+            setIsIndexPage(history.location.pathname === `/overview/course/${courseId}/forum`);
+        }
     }, [history.location.pathname])
-
-    // To check access of user
-    useEffect(() => {
-        //check access
-        var accessAllowed = true;
-        if (currentCourse !== undefined && currentUser !== undefined) {
-            // check access to category list
-            accessAllowed = accessAllowed && checkCanViewCourse(currentUser, currentCourse)
-            console.log(checkCanViewCourse(currentUser, currentCourse))
-        }
-        console.log("currentForumCategory", currentForumCategory);
-        console.log("currentForumThread", currentForumThread);
-        if (currentForumCategory !== undefined && currentForumThread !== undefined) {
-            // check access to post list
-            const listOfForumThreadId: any[] = currentForumCategory.forumThreads.map((thread) => thread.forumThreadId);
-            accessAllowed = accessAllowed && listOfForumThreadId.includes(currentForumThread?.forumThreadId)
-            console.log(listOfForumThreadId.includes(currentForumThread?.forumThreadId))
-        }
-        if (!accessAllowed) {
-            const errorDataObj = {
-                message1: 'Unable to view page',
-                message2: 'You have no access to this page',
-                errorStatus: '404',
-                returnPath: '/progresspage',
-                returnText: 'My Progress'
-            }
-            history.push({ pathname: "/invalidpage", state: { errorData: errorDataObj } })
-        }
-    }, [currentCourse, currentForumCategory, currentForumThread])
-
-    const checkCanViewCourse = (user: Account, course: Course) => {
-        var listOfCourseIds = user.courses.map((course) => course.courseId);
-        var listOfEnrolledCourseIds = user.enrolledCourses.map((enrolledCourse) => enrolledCourse.parentCourse.courseId);
-        listOfCourseIds = listOfCourseIds.concat(listOfEnrolledCourseIds);
-        return listOfCourseIds.includes(course.courseId);
-    }
-
 
     const ForumBreadcrumbItems = [
         {
@@ -157,21 +132,25 @@ function ForumPage(props: any) {
         return errorDataObj;
     }
 
+    function secondaryHandleError(): void {
+        const errorDataObj = {
+            message1: 'Unable to view forum',
+            message2: '',
+            errorStatus: 403,
+            returnPath: '/profile',
+            returnText: 'My Profile'
+        }
+        props.callOpenSnackBar("Error in retrieving forum", "error");
+        history.push({ pathname: "/invalidpage", state: { errorData: errorDataObj }})
+    }
+
     const handleCallSnackbar = (snackbarObject: any) => {
         props.callOpenSnackBar(snackbarObject.message, snackbarObject.type);
     }
 
-    const isCurrentUserCourseTutor = () => {
-        if (currentUser && currentCourse) {
-            return currentCourse.tutor.accountId === currentUser?.accountId;
-        } else {
-            return false;
-        }
-    }
-
     return (
         <>
-            {!loading && currentCourse && currentUser &&
+            {!loading && currentCourse &&
                 <LayoutContainer>
                     {/* HAX DUPLICATION OF SIDEBAR make sure to update props etc. of this side bar if the one in course viewer is updated*/}
                     <Sidebar course={currentCourse} isTutor={isTutor} isStudent={isStudent} />

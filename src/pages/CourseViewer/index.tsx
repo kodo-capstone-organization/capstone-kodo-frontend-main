@@ -73,7 +73,8 @@ function CourseOverview(props: any) {
       message1: 'Unable to view course',
       message2: '',
       errorStatus: 403,
-      returnPath: '/browsecourse'
+      returnPath: '/browsecourse',
+      returnText: 'Browse Courses'
     }
     props.callOpenSnackBar("Error in retrieving course", "error");
     history.push({ pathname: "/invalidpage", state: { errorData: errorDataObj }})
