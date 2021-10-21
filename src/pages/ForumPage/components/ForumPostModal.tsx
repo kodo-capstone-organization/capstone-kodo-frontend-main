@@ -23,6 +23,7 @@ function ForumPostModal(props: any) {
     const [forumPost, setForumPost] = useState<ForumPost>();
     const [currentCourse , setCurrentCourse] = useState<Course>();
     const [reasonForReport, setReasonForReport] = useState<string>("");
+    const [isFormError, setIsFormError] = useState<boolean>(false);
 
     const loggedInAccountId = JSON.parse(window.sessionStorage.getItem("loggedInAccountId") || "{}");
 
@@ -37,10 +38,14 @@ function ForumPostModal(props: any) {
 
     const handleOpen = () => {
         setOpen(true);
+        setIsFormError(false);
+        setReasonForReport("");
     };
 
     const handleClose = () => {
         setOpen(false);
+        setIsFormError(false);
+        setReasonForReport("");
     };
 
     const handleDeleteConfirm = () => {
@@ -58,10 +63,14 @@ function ForumPostModal(props: any) {
         } else {
             props.onForumPostChange({ message: "Error deleting forum post.", type: "error" });
         }
+        handleClose();
     }
 
     const handleReportConfirm = () => {
-        if (forumPost !== undefined) {
+        if(reasonForReport.length === 0){
+            const isReasonEmpty = reasonForReport.length === 0;
+            setIsFormError(isReasonEmpty);
+        } else if (forumPost !== undefined) {
             const updateForumPostReq: UpdateForumPostReq = {
                 forumPost,
                 reasonForReport
@@ -72,9 +81,8 @@ function ForumPostModal(props: any) {
             }).catch((err) => {
                 props.onForumPostChange({ message: "Forum Post Report Failed", type: "error" });
             })
+            handleClose();
         }
-        setReasonForReport("");
-        setOpen(false);
     }
 
     return (
@@ -120,6 +128,7 @@ function ForumPostModal(props: any) {
                                     value={reasonForReport}
                                     variant="outlined"
                                     onChange={(e) => setReasonForReport(e.target.value)}
+                                    error={isFormError}
                                 />
                             </DialogContent>
                             <DialogActions>
@@ -172,6 +181,7 @@ function ForumPostModal(props: any) {
                                     value={reasonForReport}
                                     variant="outlined"
                                     onChange={(e) => setReasonForReport(e.target.value)}
+                                    error={isFormError}
                                 />
                             </DialogContent>
                             <DialogActions>

@@ -14,8 +14,11 @@ import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { Button } from "../../../values/ButtonElements";
 import { CreateNewForumThreadReq } from '../../../apis/Entities/ForumThread';
+import { Course } from '../../../apis/Entities/Course';
 import { ForumCategory } from '../../../apis/Entities/ForumCategory';
-import { createNewForumThread } from "../../../apis/Forum/ForumApis";
+import { createNewForumThread, deleteForumThread } from "../../../apis/Forum/ForumApis";
+import { setCourseRatingByEnrolledCourseId } from '../../../apis/EnrolledCourse/EnrolledCourseApis';
+import { getCourseByCourseId } from '../../../apis/Course/CourseApis';
 
 function ForumThreadModal(props: any) {
 
@@ -23,13 +26,20 @@ function ForumThreadModal(props: any) {
     const [name, setName] = useState<string>("");
     const [description, setDescription] = useState<string>("");
     const [modalType, setModalType] = useState<string>("");
+    const [course, setCourse] = useState<Course>();
     const [forumCategoryToSubmit, setForumCategoryToSubmit] = useState<ForumCategory>();
     const loggedInAccountId = window.sessionStorage.getItem("loggedInAccountId");
+    const [formIsValidObj, setFormIsValidObj] = useState<any>({ name: false, description: false });
 
 
     useEffect(() => {
         setForumCategoryToSubmit(props.forumCategory);
         setModalType(props.modalType);
+        getCourseByCourseId(props.courseId).then((res) => {
+            setCourse(res);
+        }).catch((err) => {
+            console.log("error getting course", err);
+        })
         if (props.modalType === "EDIT" || props.modalType === "DELETE") {
             setName(props.forumCategory.name);
             setDescription(props.forumCategory.description);
@@ -47,7 +57,11 @@ function ForumThreadModal(props: any) {
     };
 
     const handleCreateConfirm = () => {
-        if (loggedInAccountId != null 
+        if (name.length === 0 || description.length === 0) {
+            const isNameEmpty = name.length === 0;
+            const isDescEmpty = description.length === 0;
+            setFormIsValidObj({ name: isNameEmpty, description: isDescEmpty });
+        } else if (loggedInAccountId != null
             && forumCategoryToSubmit
             && forumCategoryToSubmit.forumCategoryId !== null) {
             const createNewForumThreadReq: CreateNewForumThreadReq = {
@@ -72,6 +86,20 @@ function ForumThreadModal(props: any) {
     }
 
     const handleDeleteConfirm = () => {
+        if (course !== undefined && loggedInAccountId !== null) {
+            if (props.menuInfo.accountId === parseInt(loggedInAccountId) || course?.tutor.accountId === parseInt(loggedInAccountId) ) {
+                console.log("made it")
+                deleteForumThread(props.menuInfo.forumThreadId)
+                    .then((res) => {
+                        props.onForumThreadChange({ message: "Forum Thread Deletion Succeeded", type: "success" });
+                    }).catch((err) => {
+                        props.onForumThreadChange({ message: err.response.data.message, type: "error" })
+
+                    })
+            } else {
+                props.onForumThreadChange({ message: "You are not the author of this thread", type: "error" })
+            }
+        }
         setOpen(false);
     }
 
@@ -82,7 +110,7 @@ function ForumThreadModal(props: any) {
                 <>
                     <IconButton aria-label="settings" color="primary" onClick={handleOpen}>
                         <AddIcon /> &nbsp; Add Thread
-            </IconButton>
+                    </IconButton>
                     <Dialog open={open} onClose={handleClose} maxWidth={"lg"}>
                         <DialogTitle>Create Forum Thread</DialogTitle>
                         <DialogContent>
@@ -93,6 +121,7 @@ function ForumThreadModal(props: any) {
                                 label="Name"
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
+                                error={formIsValidObj.name}
                             />
                             <TextField
                                 required
@@ -101,6 +130,7 @@ function ForumThreadModal(props: any) {
                                 label="Description"
                                 value={description}
                                 onChange={(e) => setDescription(e.target.value)}
+                                error={formIsValidObj.description}
                             />
                         </DialogContent>
                         <DialogActions>
@@ -116,7 +146,7 @@ function ForumThreadModal(props: any) {
                 <>
                     <Button onClick={handleOpen} primary>
                         Start A Thread
-            </Button>
+                    </Button>
                     <Dialog open={open} onClose={handleClose} maxWidth={"lg"}>
                         <DialogTitle>Create Forum Thread</DialogTitle>
                         <DialogContent>
@@ -127,6 +157,7 @@ function ForumThreadModal(props: any) {
                                 label="Name"
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
+                                error={formIsValidObj.name}
                             />
                             <TextField
                                 required
@@ -135,6 +166,7 @@ function ForumThreadModal(props: any) {
                                 label="Description"
                                 value={description}
                                 onChange={(e) => setDescription(e.target.value)}
+                                error={formIsValidObj.description}
                             />
                         </DialogContent>
                         <DialogActions>
@@ -146,47 +178,13 @@ function ForumThreadModal(props: any) {
             }
 
             {
-                modalType === "EDIT" &&
-                <>
-                    <ListItemIcon onClick={handleOpen}>
-                        <EditIcon />
-                    </ListItemIcon>
-                    <Dialog open={open} onClose={handleClose} maxWidth={"lg"}>
-                        <DialogTitle>Edit Forum Category</DialogTitle>
-                        <DialogContent>
-                            <TextField
-                                required
-                                fullWidth
-                                id="outlined-required"
-                                label="Name"
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                            />
-                            <TextField
-                                required
-                                fullWidth
-                                id="outlined-required"
-                                label="Description"
-                                value={description}
-                                onChange={(e) => setDescription(e.target.value)}
-                            />
-                        </DialogContent>
-                        <DialogActions>
-                            <Button onClick={handleClose}>Cancel</Button>
-                            <Button primary onClick={handleEditConfirm}>Confirm</Button>
-                        </DialogActions>
-                    </Dialog>
-                </>
-            }
-
-            {
                 modalType === "DELETE" &&
                 <>
                     <ListItemIcon onClick={handleOpen}>
-                        <DeleteIcon />
+                        <DeleteIcon /> Delete
                     </ListItemIcon>
                     <Dialog open={open} onClose={handleClose} maxWidth={"lg"}>
-                        <DialogTitle>Delete Forum Category</DialogTitle>
+                        <DialogTitle>Delete Forum Thread</DialogTitle>
                         <DialogContent>
                             Are you sure you want to delete: {name} ?
                         </DialogContent>

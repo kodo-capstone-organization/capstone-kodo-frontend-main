@@ -95,6 +95,12 @@ function ForumCategoryList(props: any) {
                             <ForumThreadCard key={categoryId}>
                                 <Typography variant="body1" component="div" style={{ marginLeft: "20px", width: "500px" }}>
                                     <Link onClick={() => navigateToIndividualCategory(category.forumCategoryId)}>{category.name}</Link>
+                                    <br />
+                                    <div style={{overflow: "hidden", textOverflow: "ellipsis", width: '400px'}}>
+                                    <Typography variant="caption">
+                                        {category.description}
+                                    </Typography>
+                                    </div>
                                 </Typography>
                                 <Typography variant="body1" component="div" style={{ marginRight: "auto" }}>
                                     {category.forumThreads?.length} Threads
@@ -107,6 +113,7 @@ function ForumCategoryList(props: any) {
                                         aria-haspopup="true"
                                         aria-expanded={open ? 'true' : undefined}
                                         onClick={(e) => handleMenuOpen(e, category)}
+                                        disabled={actionsDisabled}
                                     >
                                         <MoreVertIcon />
                                     </IconButton>

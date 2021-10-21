@@ -38,8 +38,8 @@ function ForumPage(props: any) {
     const [loading, setLoading] = useState<Boolean>(true);
 
     const [currentUser, setCurrentUser] = useState<Account>();
-    const [currentCourse, setCurrentCourse] = useState<Course>();
     const [isIndexPage, setIsIndexPage] = useState<Boolean>();
+    const [currentCourse, setCurrentCourse] = useState<Course>();
     const [currentForumCategory, setCurrentForumCategory] = useState<ForumCategory>();
     const [currentForumThread, setCurrentForumThread] = useState<ForumThread>();
 
@@ -62,6 +62,7 @@ function ForumPage(props: any) {
         setLoading(false);
     }, [loggedInAccountId, currentCourseId])
 
+    // get selected category and thread
     useEffect(() => {
         if (props.match.params.forumCategoryId != undefined) {
             getForumCategoryByForumCategoryId(props.match.params.forumCategoryId)
@@ -96,7 +97,7 @@ function ForumPage(props: any) {
         console.log("currentForumCategory", currentForumCategory);
         console.log("currentForumThread", currentForumThread);
         if (currentForumCategory !== undefined && currentForumThread !== undefined) {
-            // check access to post list
+            // check access to thread list
             const listOfForumThreadId: any[] = currentForumCategory.forumThreads.map((thread) => thread.forumThreadId);
             accessAllowed = accessAllowed && listOfForumThreadId.includes(currentForumThread?.forumThreadId)
             console.log(listOfForumThreadId.includes(currentForumThread?.forumThreadId))

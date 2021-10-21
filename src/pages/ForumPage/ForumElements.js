@@ -79,7 +79,7 @@ export const ForumThreadCard = styled(Card)`
 
 export const ForumThreadCardContent = styled(CardContent)`
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     flex-wrap: wrap;
     background-color: ${colours.GRAY7};
     color: ${colours.GRAY2};
