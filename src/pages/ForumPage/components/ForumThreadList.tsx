@@ -35,6 +35,7 @@ function ForumThreadList(props: any) {
     const [course, setCourse] = useState<Course>();
     const [forumCategory, setForumCategory] = useState<ForumCategory>();
     const [forumThreads, setForumThreads] = useState<ForumThread[]>([]);
+    const [forumThreadsOriginal, setForumThreadsOriginal] = useState<ForumThread[]>([]);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [menuInfo, setMenuInfo] = useState<any>();
     const [loading, setLoading] = useState<boolean>();
@@ -47,6 +48,7 @@ function ForumThreadList(props: any) {
     const open = Boolean(anchorEl);
 
     useEffect(() => {
+        console.log("props", props);
         setLoading(true);
         if (props.currentForumCategoryId !== undefined) {
             getForumCategoryByForumCategoryId(props.currentForumCategoryId).then((res) => {
@@ -56,6 +58,7 @@ function ForumThreadList(props: any) {
             })
             getAllForumThreadsByForumCategoryId(props.currentForumCategoryId).then((res) => {
                 setForumThreads(res);
+                setForumThreadsOriginal(res);
                 setLoading(false);
             }).catch((err) => {
                 props.onCallSnackbar({ message: "Failure here", type: "error" })
@@ -133,43 +136,14 @@ function ForumThreadList(props: any) {
         setMenuInfo(null);
     };
 
-    const handleDeleteThread = () => {
-        setLoading(true);
-        if (menuInfo.accountId === loggedInAccountId || course?.tutor.accountId === loggedInAccountId) {
-            deleteForumThread(menuInfo.forumThreadId)
-                .then((res) => {
-                    if (forumCategory && forumCategory.forumCategoryId !== null) {
-                        props.onCallSnackbar({ message: "Thread Deleted Successfully", type: "success" })
-                        getForumCategoryByForumCategoryId(forumCategory.forumCategoryId).then((res) => {
-                            setForumCategory(res);
-                            setForumThreads(res.forumThreads);
-                        }).catch((err) => {
-                            props.onCallSnackbar({ message: "Failure", type: "error" })
-                        });
-                        getAllForumThreadsByForumCategoryId(forumCategory.forumCategoryId).then((res) => {
-                            setForumThreads(res);
-                            setLoading(false);
-                        }).catch((err) => {
-                            props.onCallSnackbar({ message: "Failure here", type: "error" })
-                        });
-                    }
-                }).catch((err) => {
-                    props.onCallSnackbar({ message: err.response.data.message, type: "error" })
-
-                })
-        } else {
-            props.onCallSnackbar({ message: "You are not the author of this thread", type: "error" })
-        }
-    }
-
     const handleCallSnackbar = (snackbarObject: any) => {
         setLoading(true);
-        console.log("come to handleCallSnackbar");
         if (forumCategory && forumCategory.forumCategoryId !== null) {
             if (snackbarObject.type === "success") {
                 getForumCategoryByForumCategoryId(forumCategory.forumCategoryId).then((res) => {
                     setForumCategory(res);
                     setForumThreads(res.forumThreads);
+                    setForumThreadsOriginal(res.forumThreads);
                 }).catch((err) => {
                     console.log("Failed", err);
                 });
@@ -179,6 +153,8 @@ function ForumThreadList(props: any) {
                 }).catch((err) => {
                     props.onCallSnackbar({ message: "Failure here", type: "error" })
                 })
+            } else {
+                setLoading(false);
             }
         }
         props.onCallSnackbar(snackbarObject);
@@ -188,8 +164,6 @@ function ForumThreadList(props: any) {
     const mapThreads = (forumThreads: ForumThread[]) => {
         return (
             <div>
-                <ForumTextField placeholder="Search By Name, Description, Author..." id="mytextfield" value={searchValue} variant="outlined"
-                    onChange={(e: any) => filterByNameDescAuthor(e.target.value)} style={{ width: "500px" }} />
                 {forumThreads.map(function (thread, threadId) {
                     return (
                         <>
@@ -199,6 +173,11 @@ function ForumThreadList(props: any) {
                                     <Typography variant="body1" component="div" style={{ marginLeft: "20px", width: "500px" }}>
                                         <Link onClick={() => navigateToThread(thread.forumThreadId)}>{thread.name}</Link>
                                         <br />
+                                        <div style={{ overflow: "hidden", textOverflow: "ellipsis", width: '400px' }}>
+                                            <Typography variant="caption">
+                                                {thread.description}
+                                            </Typography>
+                                        </div>
                                         {formatDate(thread.timeStamp)}  |  {thread.account.name}
                                     </Typography>
                                     <Typography variant="body1" component="div" style={{ marginRight: "auto" }}>
@@ -225,9 +204,8 @@ function ForumThreadList(props: any) {
                                             }}
                                         >
                                             <MenuItem>
-                                                <ListItemIcon onClick={handleDeleteThread}>
-                                                    <DeleteIcon /> Delete
-                                                </ListItemIcon>
+                                                <ForumThreadModal modalType={"DELETE"} menuInfo={menuInfo} courseId={course?.courseId} forumCategory={forumCategory} onForumThreadChange={handleCallSnackbar} />
+
                                             </MenuItem>
                                         </Menu>
                                     </div>
@@ -252,7 +230,7 @@ function ForumThreadList(props: any) {
                                 <ForumButton onClick={sortAtoZ}><SortByAlphaIcon /></ForumButton>
                                 <ForumButton onClick={sortOldestFirst}>Sort Old to New</ForumButton>
                                 <ForumButton onClick={sortNewestFirst}>Sort New to Old</ForumButton>
-                                <ForumThreadModal modalType={"CREATE"} courseId={props.courseId} forumCategory={forumCategory} onForumThreadChange={handleCallSnackbar} />
+                                <ForumThreadModal modalType={"CREATE"} courseId={course?.courseId} forumCategory={forumCategory} onForumThreadChange={handleCallSnackbar} />
                             </>
                         }
                     />
@@ -275,18 +253,25 @@ function ForumThreadList(props: any) {
                                 <ForumButton onClick={sortAtoZ}><SortByAlphaIcon /></ForumButton>
                                 <ForumButton onClick={sortOldestFirst}>Sort Old to New</ForumButton>
                                 <ForumButton onClick={sortNewestFirst}>Sort New to Old</ForumButton>
-                                <ForumThreadModal modalType={"CREATE"} courseId={props.courseId} forumCategory={forumCategory} onForumThreadChange={handleCallSnackbar} />
+                                <ForumThreadModal modalType={"CREATE"} courseId={course?.courseId} forumCategory={forumCategory} onForumThreadChange={handleCallSnackbar} />
                             </>
                         }
                     />
                 }
 
                 <ForumThreadCardContent>
+                    <div>
+                        <ForumTextField placeholder="Search By Name, Description, Author..." id="mytextfield" value={searchValue} variant="outlined"
+                            onChange={(e: any) => filterByNameDescAuthor(e.target.value)} style={{ width: "500px" }} />
+                    </div>
                     {/* previous runtime error was caused here when threads were mapped when length = 0 */}
-                    {forumThreads.length > 0 && mapThreads(forumThreads)}
-                    <EmptyStateContainer threadsExist={forumThreads.length > 0}>
+                    {
+                        forumThreads.length > 0 &&
+                        mapThreads(forumThreads)
+                    }
+                    <EmptyStateContainer threadsExist={forumThreadsOriginal.length > 0}>
                         <Typography>No threads currently 🥺</Typography>
-                        <ForumThreadModal modalType={"EMPTY"} courseId={props.courseId} forumCategory={forumCategory} onForumThreadChange={handleCallSnackbar} />
+                        <ForumThreadModal modalType={"EMPTY"} courseId={course?.courseId} forumCategory={forumCategory} onForumThreadChange={handleCallSnackbar} />
                     </EmptyStateContainer>
                 </ForumThreadCardContent>
             </ForumCard>

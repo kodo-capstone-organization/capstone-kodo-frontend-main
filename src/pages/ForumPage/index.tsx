@@ -41,8 +41,8 @@ function ForumPage(props: any) {
     const [isStudent, setIsStudent] = useState<Boolean>();
     const [loading, setLoading] = useState<Boolean>(true);
 
-    const [currentCourse, setCurrentCourse] = useState<Course>();
     const [isIndexPage, setIsIndexPage] = useState<Boolean>();
+    const [currentCourse, setCurrentCourse] = useState<Course>();
     const [currentForumCategory, setCurrentForumCategory] = useState<ForumCategory>();
     const [currentForumThread, setCurrentForumThread] = useState<ForumThread>();
 
@@ -64,6 +64,7 @@ function ForumPage(props: any) {
         }
     }, [loggedInAccountId, courseId])
 
+    // get selected category and thread
     useEffect(() => {
         if (!isNaN(forumCategoryId) && !isNaN(courseId)) {
             getForumCategoryByForumCategoryIdAndCourseId(forumCategoryId, courseId)
@@ -84,7 +85,7 @@ function ForumPage(props: any) {
         if (isTutor !== undefined && isStudent !== undefined)
         {
             if (!isTutor && !isStudent) {
-                secondaryHandleError()
+                secondaryHandleError();
             }
         }
     }, [isTutor, isStudent])

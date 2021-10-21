@@ -10,6 +10,7 @@ import {
     InputLabel,
     Link,
     TextField,
+    Fab
 } from "@material-ui/core";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
@@ -111,7 +112,7 @@ function QuizBuilderPage(props: any) {
     function handleError(err: any): void {
         const errorDataObj = createErrorDataObj(err);
         props.callOpenSnackBar("Error in retrieving quiz", "error");
-        history.push({ pathname: "/invalidpage", state: { errorData: errorDataObj }})
+        history.push({ pathname: "/invalidpage", state: { errorData: errorDataObj } })
     }
 
     function createErrorDataObj(err: any): any {
@@ -435,6 +436,9 @@ function QuizBuilderPage(props: any) {
                     </QuizBuilderCardContent>
                 </QuizCard>
             </QuizContainer>
+            {/* <Fab variant="extended">
+                Save Quiz
+            </Fab> */}
         </>
     )
 }

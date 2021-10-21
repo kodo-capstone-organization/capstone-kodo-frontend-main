@@ -33,6 +33,7 @@ function ForumCategoryModal(props: any) {
     const [open, setOpen] = useState<boolean>(false);
     const [name, setName] = useState<string>("");
     const [description, setDescription] = useState<string>("");
+    const [formIsValidObj, setFormIsValidObj] = useState<any>({ name: false, description: false });
     const [courseId, setCourseId] = useState<number>();
     const [modalType, setModalType] = useState<string>("");
     const [forumCategoryToSubmit, setForumCategoryToSubmit] = useState<ForumCategory>();
@@ -57,13 +58,20 @@ function ForumCategoryModal(props: any) {
     };
 
     const handleCreateConfirm = () => {
-        if (courseId) {
+        if (name.length === 0 || description.length === 0) {
+            const isNameEmpty = name.length === 0;
+            const isDescEmpty = description.length === 0;
+            setFormIsValidObj({ name: isNameEmpty, description: isDescEmpty });
+        }
+        else if (courseId) {
             const createNewForumCategoryReq: CreateNewForumCategoryReq = {
                 name,
                 description,
                 courseId
             }
             createNewForumCategory(createNewForumCategoryReq).then((res) => {
+                setName("");
+                setDescription("");
                 props.onForumCategoryChange({ message: "Forum Category Creation Succeeded", type: "success" });
             }).catch((err) => {
                 props.onForumCategoryChange({ message: `Forum Category Creation Failed: ${err.response.data.message}`, type: "error" });
@@ -73,16 +81,24 @@ function ForumCategoryModal(props: any) {
     }
 
     const handleEditConfirm = () => {
-        const forumCategory: ForumCategory = Object.assign(forumCategoryToSubmit, { name, description });
-        const updateForumCategoryReq: UpdateForumCategoryReq = {
-            forumCategory
+        if (name.length === 0 || description.length === 0) {
+            const isNameEmpty = name.length === 0;
+            const isDescEmpty = description.length === 0;
+            setFormIsValidObj({ name: isNameEmpty, description: isDescEmpty });
+        } else {
+            const forumCategory: ForumCategory = Object.assign(forumCategoryToSubmit, { name, description });
+            const updateForumCategoryReq: UpdateForumCategoryReq = {
+                forumCategory
+            }
+            updateForumCategory(updateForumCategoryReq).then((res) => {
+                setName("");
+                setDescription("");
+                props.onForumCategoryChange({ message: "Forum Category Update Succeeded", type: "success" });
+            }).catch((err) => {
+                props.onForumCategoryChange({ message: "Forum Category Update Failed", type: "error" });
+            })
+            setOpen(false);
         }
-        updateForumCategory(updateForumCategoryReq).then((res) => {
-            props.onForumCategoryChange({ message: "Forum Category Update Succeeded", type: "success" });
-        }).catch((err) => {
-            props.onForumCategoryChange({ message: "Forum Category Update Failed", type: "error" });
-        })
-        setOpen(false);
     }
 
     const handleDeleteConfirm = () => {
@@ -95,19 +111,6 @@ function ForumCategoryModal(props: any) {
             setOpen(false);
         }
     }
-
-    // const handleReportConfirm = () => {
-    //     const forumCategory: ForumCategory = Object.assign(forumCategoryToSubmit, { isREported: true });
-    //     const updateForumCategoryReq: UpdateForumCategoryReq = {
-    //         forumCategory
-    //     }
-    //     updateForumCategory(updateForumCategoryReq).then((res) => {
-    //         props.onForumCategoryChange({ message: "Forum Category Report Succeeded", type: "success" });
-    //     }).catch((err) => {
-    //         props.onForumCategoryChange({ message: "Forum Category Report Failed", type: "error" });
-    //     })
-    //     setOpen(false);
-    // }
 
     return (
         <>
@@ -127,6 +130,7 @@ function ForumCategoryModal(props: any) {
                                 label="Name"
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
+                                error={formIsValidObj.name}
                             />
                             <TextField
                                 required
@@ -135,6 +139,7 @@ function ForumCategoryModal(props: any) {
                                 label="Description"
                                 value={description}
                                 onChange={(e) => setDescription(e.target.value)}
+                                error={formIsValidObj.description}
                             />
                         </DialogContent>
                         <DialogActions>
@@ -195,6 +200,7 @@ function ForumCategoryModal(props: any) {
                                 label="Name"
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
+                                error={formIsValidObj.name}
                             />
                             <TextField
                                 required
@@ -203,6 +209,7 @@ function ForumCategoryModal(props: any) {
                                 label="Description"
                                 value={description}
                                 onChange={(e) => setDescription(e.target.value)}
+                                error={formIsValidObj.description}
                             />
                         </DialogContent>
                         <DialogActions>

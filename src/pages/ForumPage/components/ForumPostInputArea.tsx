@@ -84,6 +84,8 @@ function ForumPostInputArea(props: any) {
     }
 
     const handleCreateConfirm = () => {
+        console.log("postType", postType);
+        console.log("forumThread", forumThread);
         if (postType === "POST" && forumThread !== undefined) {
             const createNewForumPostReq: CreateNewForumPostReq = {
                 message,
@@ -199,7 +201,7 @@ function ForumPostInputArea(props: any) {
                     {
                         postType === "POST" &&
                         <>
-                            <IconButton onClick={handleMakeReply} style={{ width: "fit-content", marginInlineStart: "auto", fontSize: "unset" }}>
+                            <IconButton onClick={handleOpen} style={{ width: "fit-content", marginInlineStart: "auto", fontSize: "unset" }}>
                                 <ReplyIcon /> Reply
                             </IconButton>
                         </>
@@ -209,7 +211,7 @@ function ForumPostInputArea(props: any) {
 
             {/* For viewing replies */}
             {
-                isOpen && postType === "GENERAL" &&
+                isOpen && postType === "GENERAL" && childForumPosts.length > 0 &&
                 <>
                     <div style={{ margin: "20px 0px 0px 20px" }}>
                         Replies
