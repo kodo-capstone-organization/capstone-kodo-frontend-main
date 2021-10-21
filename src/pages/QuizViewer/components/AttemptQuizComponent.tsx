@@ -148,7 +148,6 @@ function AttemptQuizComponent(props: any) {
             enrolledContentId: parseInt(props.enrolledContentId),
             quizQuestionOptionIdLists: newQuizQuestionOptionIdList
         };
-        console.log("createNewStudentAttemptReq", createNewStudentAttemptReq);
         createNewStudentAttempt(createNewStudentAttemptReq)
             .then(res => {
                 props.callOpenSnackBar("Quiz Submitted Successfully", "success")
@@ -158,7 +157,6 @@ function AttemptQuizComponent(props: any) {
             .catch(err => {
                 props.callOpenSnackBar("There was an error in submitting the quiz", "error")
             });
-
     }
 
     const handleTimeOut = () => {
@@ -199,7 +197,7 @@ function AttemptQuizComponent(props: any) {
     return (
         <>
             {initialSeconds != undefined && <QuizAttemptTimer initialSeconds={initialSeconds} initialMinutes={initialMinutes} onTimeOut={handleTimeOut} />}
-            <QuizTimedOutModal open={timeout} enrolledContentId={props.enrolledContentId} callOpenSnackBar={props.callOpenSnackBar} createNewStudentAttemptReq={createNewStudentAttemptReq} />
+            <QuizTimedOutModal open={timeout} handleSubmit={handleSubmit} />
             <QuizCard>
                 <QuizCardHeader
                     title="Quiz Information"
