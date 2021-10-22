@@ -35,11 +35,13 @@ function ForumThreadModal(props: any) {
     useEffect(() => {
         setForumCategoryToSubmit(props.forumCategory);
         setModalType(props.modalType);
-        getCourseByCourseId(props.courseId).then((res) => {
-            setCourse(res);
-        }).catch((err) => {
-            console.log("error getting course", err);
-        })
+        if (props.courseId) {
+            getCourseByCourseId(props.courseId).then((res) => {
+                setCourse(res);
+            }).catch((err) => {
+                console.log("error getting course", err);
+            })
+        }
         if (props.modalType === "EDIT" || props.modalType === "DELETE") {
             setName(props.forumCategory.name);
             setDescription(props.forumCategory.description);
@@ -87,20 +89,18 @@ function ForumThreadModal(props: any) {
 
     const handleDeleteConfirm = () => {
         if (course !== undefined && loggedInAccountId !== null) {
-            if (props.menuInfo.accountId === parseInt(loggedInAccountId) || course?.tutor.accountId === parseInt(loggedInAccountId) ) {
-                console.log("made it")
+            if (props.menuInfo.accountId === parseInt(loggedInAccountId) || course?.tutor.accountId === parseInt(loggedInAccountId)) {
                 deleteForumThread(props.menuInfo.forumThreadId)
                     .then((res) => {
                         props.onForumThreadChange({ message: "Forum Thread Deletion Succeeded", type: "success" });
+                        props.handleMenuClose();
                     }).catch((err) => {
                         props.onForumThreadChange({ message: err.response.data.message, type: "error" })
-
                     })
             } else {
                 props.onForumThreadChange({ message: "You are not the author of this thread", type: "error" })
             }
         }
-        setOpen(false);
     }
 
     return (

@@ -204,8 +204,7 @@ function ForumThreadList(props: any) {
                                             }}
                                         >
                                             <MenuItem>
-                                                <ForumThreadModal modalType={"DELETE"} menuInfo={menuInfo} courseId={course?.courseId} forumCategory={forumCategory} onForumThreadChange={handleCallSnackbar} />
-
+                                                <ForumThreadModal modalType={"DELETE"} menuInfo={menuInfo} courseId={course?.courseId} forumCategory={forumCategory} onForumThreadChange={handleCallSnackbar} handleMenuClose={handleMenuClose} />
                                             </MenuItem>
                                         </Menu>
                                     </div>
