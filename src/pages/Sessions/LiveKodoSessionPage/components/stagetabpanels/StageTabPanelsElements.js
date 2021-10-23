@@ -5,3 +5,8 @@ import { colours } from "../../../../../values/Colours";
 export const DebugInfoPanelWrapper = styled.div`
     padding: 1.5rem;
 `;
+
+export const WhiteboardPanelWrapper = styled.div`
+    height: inherit;
+    width: inherit;
+`;

@@ -37,7 +37,11 @@ function Stage(props: any) {
             {
                 myTabIdx: 2,
                 myTabName: "Whiteboard",
-                tabPanelComponent: <WhiteboardTabPanel key={2} />
+                tabPanelComponent: 
+                    <WhiteboardTabPanel 
+                        key={2} 
+                        sendWhiteboardEventViaDCCallback={props.sendWhiteboardEventViaDCCallback}
+                    />
             }
         ]
     }

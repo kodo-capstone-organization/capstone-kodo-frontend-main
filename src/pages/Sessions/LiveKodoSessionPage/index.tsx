@@ -1,5 +1,5 @@
 import React, { useEffect, createRef, useState, RefObject } from 'react'
-import {CallEvent, InvitedSessionResp, KodoDataChannelMessage, KodoSessionEvent, KodoSessionEventType } from '../../../apis/Entities/Session';
+import {CallEvent, InvitedSessionResp, KodoDataChannelMessage, KodoSessionEvent, KodoSessionEventType, WhiteboardEvent } from '../../../apis/Entities/Session';
 import { endSession, getSessionBySessionId } from '../../../apis/Session/SessionApis';
 import { Button } from '../../../values/ButtonElements';
 import ActionsPanel from './components/ActionsPanel';
@@ -391,6 +391,14 @@ function LiveKodoSessionPage(props: any) {
         }
         return craftAndSendDcMessage(newCallEvent, KodoSessionEventType.CALL)
     }
+    
+    const craftAndSendWhiteboardEventMessage = (encodedCanvasData?: string, cursorLocation?: string) => {
+        const newWhiteboardEvent: WhiteboardEvent = {
+            encodedCanvasData: encodedCanvasData ? encodedCanvasData : "",
+            cursorLocation: cursorLocation ? cursorLocation : ""
+        }
+        return craftAndSendDcMessage(newWhiteboardEvent, KodoSessionEventType.WHITEBOARD)
+    }
 
     /* * * * * * * * * * * * * * * * * * * * * * *
      * [RECEIVING] Data channel message handling   *
@@ -458,6 +466,7 @@ function LiveKodoSessionPage(props: any) {
                             dataChannelConnected={dataChannelConnected}
                             sendViaWSCallback={send}
                             sendCallEventViaDCCallback={craftAndSendCallEventMessage}
+                            sendWhiteboardEventViaDCCallback={craftAndSendWhiteboardEventMessage}
                         />
                         <ActionsPanel 
                             sessionId={sessionId} 
