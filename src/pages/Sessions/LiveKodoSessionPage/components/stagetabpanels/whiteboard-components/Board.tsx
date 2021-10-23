@@ -95,8 +95,8 @@ function Board (props: any) {
 
             const onPaint = function() {
                 ctx?.beginPath();
-                ctx?.lineTo(mouse.x, mouse.y)
                 ctx?.moveTo(last_mouse.x, last_mouse.y);
+                ctx?.lineTo(mouse.x, mouse.y);
                 ctx?.closePath();
                 ctx?.stroke();
 
