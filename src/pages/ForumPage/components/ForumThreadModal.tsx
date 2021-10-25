@@ -43,10 +43,11 @@ function ForumThreadModal(props: any) {
             })
         }
         if (props.modalType === "EDIT" || props.modalType === "DELETE") {
-            setName(props.forumCategory.name);
+            const forumThreadName = props.forumCategory.forumThreads.filter((forumThread: any) => forumThread.forumThreadId === props.menuInfo.forumThreadId).pop()?.name
+            setName(forumThreadName);
             setDescription(props.forumCategory.description);
         }
-    }, [props, open])
+    }, [props.forumCategory, props.modalType, props.courseId, open])
 
     const handleOpen = () => {
         setOpen(true);
