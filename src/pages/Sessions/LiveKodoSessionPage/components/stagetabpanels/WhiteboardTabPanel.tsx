@@ -17,9 +17,11 @@ function WhiteboardTabPanel (props: any) {
     return (
         <WhiteboardPanelWrapper>
             <Tools
-                style={{ top: "0", zIndex: 100, display: "flex", justifyContent: "center" }}
+                style={{ top: "0", zIndex: 100, display: "flex", justifyContent: "center"}}
                 activeTool={activeTool}
                 setActiveTool={setActiveTool}
+                toolProperties={toolProperties}
+                setToolProperties={setToolProperties}
             />
             <Board
                 style={{ width: "inherit", height: "inherit" }}
@@ -27,8 +29,6 @@ function WhiteboardTabPanel (props: any) {
                 toolProperties={toolProperties}
                 sendWhiteboardEventViaDCCallback={props.sendWhiteboardEventViaDCCallback}
             />
-            {/* TODO should be hovering on top at the bottom of the container */}
-
         </WhiteboardPanelWrapper>
     )
 }

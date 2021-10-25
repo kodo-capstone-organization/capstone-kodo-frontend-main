@@ -4,7 +4,6 @@ import { colours } from '../../../../../../values/Colours';
 function Board (props: any) {
 
     // timeout;
-
     // var interval = setInterval(function(){
     //     if (isDrawing) {
     //         return;
@@ -21,8 +20,9 @@ function Board (props: any) {
     //         image.src = canvasData;
     //     }
     // }, 200)
-    let canvas: HTMLCanvasElement | null = document.querySelector('#board');
+
     let timeout: NodeJS.Timeout;
+    let canvas: HTMLCanvasElement | null = document.querySelector('#board');
     let ctx: CanvasRenderingContext2D | null;
     const [isDrawing, setIsDrawing] = useState<boolean>(false); // whether i am currently drawing
     const [canvasData, setCanvasData] = useState<any>(props.canvasData);
@@ -31,12 +31,9 @@ function Board (props: any) {
     const [cursorImagePath, setCursorImagePath] = useState<string>("");
 
     useEffect(() => {
-        drawOnCanvas();
-    }, [])
-
-    useEffect(() => {
         if (canvas === null) {
             canvas = document.querySelector('#board');
+            drawOnCanvas(true);
         }
     }, [canvas])
 
@@ -58,35 +55,27 @@ function Board (props: any) {
                 setCursorImagePath("/cursors/pen_cursor.svg");
                 break;
         }
+
+        // Call this again
         drawOnCanvas();
-    }, [props.activeTool])
+    }, [props.activeTool, props.toolProperties.lineWidth, props.toolProperties.strokeStyle])
 
-    useEffect(() => {
-
-        /* {
-                selectedTool: SelectedToolType
-                color?: x
-                radius?: x
-                thickness?: x
-                fontSize: x
-            }
-         */
-        
-    }, [props.toolState])
-
-    const drawOnCanvas = () => {
+    const drawOnCanvas = (isInit: boolean = false) => {
         if (canvas) {
             ctx = canvas.getContext('2d');
 
-            // Fit canvas
-            // Make it visually fill the positioned parent
-            canvas.style.width ='100%';
-            canvas.style.height='100%';
-            // ...then set the internal size to match
-            canvas.width  = canvas.offsetWidth;
-            canvas.height = canvas.offsetHeight;
+            if (isInit) {
+                // First time ever setting up canvas,
+                // Make it visually fill the positioned parent
+                canvas.style.width = '100%';
+                canvas.style.height= '100%';
+                // ...then set the internal size to match
+                canvas.width  = canvas.offsetWidth;
+                canvas.height = canvas.offsetHeight;
+            }
 
             console.log("right before checking for ctx")
+
             if (ctx) {
                 console.log("IN SETTING")
                 /* Paintbrush settings Work */
@@ -135,7 +124,6 @@ function Board (props: any) {
             };
         }
     }
-
 
     return (
         <div
