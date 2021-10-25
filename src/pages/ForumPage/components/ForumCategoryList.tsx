@@ -133,7 +133,7 @@ function ForumCategoryList(props: any) {
                                                     <ForumCategoryModal modalType={"EDIT"} courseId={props.courseId} onForumCategoryChange={handleCallSnackbar} forumCategory={menuInfo} />
                                                 </MenuItem>
                                                 <MenuItem >
-                                                    <ForumCategoryModal modalType={"DELETE"} courseId={props.courseId} onForumCategoryChange={handleCallSnackbar} forumCategory={menuInfo} />
+                                                    <ForumCategoryModal modalType={"DELETE"} courseId={props.courseId} onForumCategoryChange={handleCallSnackbar} forumCategory={menuInfo} handleMenuClose={handleMenuClose} />
                                                 </MenuItem>
                                             </>
                                         }
