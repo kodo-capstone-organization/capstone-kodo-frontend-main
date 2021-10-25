@@ -28,6 +28,7 @@ function WhiteboardTabPanel (props: any) {
                 activeTool={activeTool}
                 toolProperties={toolProperties}
                 sendWhiteboardEventViaDCCallback={props.sendWhiteboardEventViaDCCallback}
+                incomingCanvasData={props.incomingCanvasData}
             />
         </WhiteboardPanelWrapper>
     )

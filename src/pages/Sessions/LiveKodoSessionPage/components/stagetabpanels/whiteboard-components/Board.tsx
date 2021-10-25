@@ -25,7 +25,6 @@ function Board (props: any) {
     let canvas: HTMLCanvasElement | null = document.querySelector('#board');
     let ctx: CanvasRenderingContext2D | null;
     const [isDrawing, setIsDrawing] = useState<boolean>(false); // whether i am currently drawing
-    const [canvasData, setCanvasData] = useState<any>(props.canvasData);
 
     // Tool states
     const [cursorImagePath, setCursorImagePath] = useState<string>("");
@@ -38,8 +37,8 @@ function Board (props: any) {
     }, [canvas])
 
     useEffect(() => {
-        setCanvasData(props.canvasData)
-    }, [props.canvasData])
+        drawOnCanvas(false, true);
+    }, [props.incomingCanvasData])
 
     useEffect(() => {
         console.log(props.activeTool)
@@ -60,10 +59,9 @@ function Board (props: any) {
         drawOnCanvas();
     }, [props.activeTool, props.toolProperties.lineWidth, props.toolProperties.strokeStyle])
 
-    const drawOnCanvas = (isInit: boolean = false) => {
+    const drawOnCanvas = (isInit: boolean = false, setIncomingCanvas: boolean = false) => {
         if (canvas) {
             ctx = canvas.getContext('2d');
-
             if (isInit) {
                 // First time ever setting up canvas,
                 // Make it visually fill the positioned parent
@@ -74,54 +72,60 @@ function Board (props: any) {
                 canvas.height = canvas.offsetHeight;
             }
 
-            console.log("right before checking for ctx")
-
-            if (ctx) {
-                console.log("IN SETTING")
-                /* Paintbrush settings Work */
-                ctx.lineWidth = props.toolProperties.lineWidth;
-                ctx.lineJoin = 'round';
-                ctx.lineCap = 'round';
-                ctx.strokeStyle = props.toolProperties.strokeStyle;
-            }
-
-            let mouse = {x: 0, y: 0};
-            let last_mouse = {x: 0, y: 0};
-
-            /* Mouse Capturing Work */
-            canvas.addEventListener('mousemove', function(e) {
-                last_mouse.x = mouse.x;
-                last_mouse.y = mouse.y;
-                mouse.x = e.pageX- this.offsetLeft;
-                mouse.y = e.pageY - this.offsetTop;
-            }, false);
-
-            canvas.addEventListener('mousedown', function(e) {
-                canvas?.addEventListener('mousemove', onPaint, false);
-            }, false);
-
-            canvas.addEventListener('mouseup', function() {
-                canvas?.removeEventListener('mousemove', onPaint, false);
-            }, false);
-
-            const onPaint = function() {
-                console.log(ctx?.lineWidth)
-                console.log(ctx?.strokeStyle)
-
-                ctx?.beginPath();
-                ctx?.moveTo(last_mouse.x, last_mouse.y);
-                ctx?.lineTo(mouse.x, mouse.y);
-                ctx?.closePath();
-                ctx?.stroke();
-
-                if (timeout != undefined) {
-                    clearTimeout(timeout);
+            if (!setIncomingCanvas) {
+                if (ctx) {
+                    /* Paintbrush settings Work */
+                    ctx.lineWidth = props.toolProperties.lineWidth;
+                    ctx.lineJoin = 'round';
+                    ctx.lineCap = 'round';
+                    ctx.strokeStyle = props.toolProperties.strokeStyle;
                 }
-                timeout = setTimeout(function(){
-                    var base64ImageData = canvas?.toDataURL("image/png");
-                    props.sendWhiteboardEventViaDCCallback(base64ImageData);
-                }, 1000)
-            };
+
+                let mouse = {x: 0, y: 0};
+                let last_mouse = {x: 0, y: 0};
+
+                /* Mouse Capturing Work */
+                canvas.addEventListener('mousemove', function(e) {
+                    last_mouse.x = mouse.x;
+                    last_mouse.y = mouse.y;
+                    mouse.x = e.pageX- this.offsetLeft;
+                    mouse.y = e.pageY - this.offsetTop;
+                }, false);
+
+                canvas.addEventListener('mousedown', function(e) {
+                    canvas?.addEventListener('mousemove', onPaint, false);
+                }, false);
+
+                canvas.addEventListener('mouseup', function() {
+                    canvas?.removeEventListener('mousemove', onPaint, false);
+                }, false);
+
+                const onPaint = function() {
+                    ctx?.beginPath();
+                    ctx?.moveTo(last_mouse.x, last_mouse.y);
+                    ctx?.lineTo(mouse.x, mouse.y);
+                    ctx?.closePath();
+                    ctx?.stroke();
+
+                    if (timeout != undefined) {
+                        clearTimeout(timeout);
+                    }
+                    timeout = setTimeout(function(){
+                        var base64ImageData = canvas?.toDataURL("image/png");
+                        props.sendWhiteboardEventViaDCCallback(base64ImageData);
+                    }, 500)
+                };
+            } else {
+                let peerCanvasDataImage = new Image();
+                peerCanvasDataImage.src = props.incomingCanvasData;
+                peerCanvasDataImage.onload = function() {
+                    console.log("image onload")
+                    if (ctx) {
+                        console.log("RECEIVED PEER CANVAS, DRAWING NOW")
+                        ctx.drawImage(peerCanvasDataImage, 0, 0);
+                    }
+                };
+            }
         }
     }
 

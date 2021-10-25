@@ -39,6 +39,9 @@ function LiveKodoSessionPage(props: any) {
     const [peerConns, setPeerConns] = useState<Map<number, RTCInfo>>(new Map());
     const [amIMuted, setAmIMuted] = useState<boolean>(false);
     const [fireEffect, setFireEffect] = useState<boolean>(false);
+    
+    // Whiteboard States
+    const [newWhiteboardOrEditorDcMessage, setNewWhiteboardOrEditorDcMessage] = useState<KodoDataChannelMessage>();
 
     useEffect(() => {
         setSessionId(props.match.params.sessionId);
@@ -214,10 +217,9 @@ function LiveKodoSessionPage(props: any) {
             console.log("datachannel onmessage IN JOINER SIDE:", dcMessage);
             if (dcMessage.eventType === KodoSessionEventType.CALL) {
                 handleIncomingDataChannelCallEvent(dcMessage);
-            } else if (dcMessage.eventType === KodoSessionEventType.WHITEBOARD) {
-                // TODO: (probably wanna prop into stage > whiteboard component to handle)
-            } else if (dcMessage.eventType === KodoSessionEventType.EDITOR) {
-                // TODO: (probably wanna prop into stage > editor component to handle)
+            } else if (dcMessage.eventType === KodoSessionEventType.WHITEBOARD || dcMessage.eventType === KodoSessionEventType.EDITOR) {
+                // Propped into stage child to be handled there
+                setNewWhiteboardOrEditorDcMessage(dcMessage)
             } else {
                 console.error("invalid eventType on datachannel message received");
             }
@@ -420,6 +422,15 @@ function LiveKodoSessionPage(props: any) {
             isMuted: callEvent.isMuted
         })));
     }
+    
+    const handleIncomingDataChannelWhiteboardEvent = (dcMessage: KodoDataChannelMessage) => {
+        const incomingPeerId = dcMessage.peerId;
+        const whiteboardEvent: WhiteboardEvent = dcMessage.event; // typecasting
+
+        // Printing message
+        console.log(whiteboardEvent.encodedCanvasData);
+
+    }
 
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
      * Action callbacks (Propped into ActionsPanel to be called from there)  *
@@ -467,6 +478,7 @@ function LiveKodoSessionPage(props: any) {
                             sendViaWSCallback={send}
                             sendCallEventViaDCCallback={craftAndSendCallEventMessage}
                             sendWhiteboardEventViaDCCallback={craftAndSendWhiteboardEventMessage}
+                            newIncomingDcMessage={newWhiteboardOrEditorDcMessage}
                         />
                         <ActionsPanel 
                             sessionId={sessionId} 
