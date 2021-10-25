@@ -15,7 +15,7 @@ import { getAllQuizQuestionsByQuizId } from "../../../apis/QuizQuestion/QuizQues
 import { getEnrolledContentByEnrolledContentIdAndAccountId } from "../../../apis/EnrolledContent/EnrolledContentApis";
 import { getEnrolledCourseByEnrolledCourseIdAndAccountId } from "../../../apis/EnrolledCourse/EnrolledCourseApis"
 import { getEnrolledLessonByEnrolledLessonIdAndAccountId } from "../../../apis/EnrolledLesson/EnrolledLessonApis"
-import { getQuizByQuizId } from "../../../apis/Quiz/QuizApis";
+import { getQuizByEnrolledContentIdAndAccountId } from "../../../apis/Quiz/QuizApis";
 
 import {
     QuizCard,
@@ -67,49 +67,17 @@ function AttemptQuizComponent(props: any) {
     }, [enrolledLessonId, accountId]);
 
     useEffect(() => {
-        getEnrolledContentByEnrolledContentIdAndAccountId(enrolledContentId, accountId)
-            .then((enrolledContent: EnrolledContent) => {
-                const quizId = enrolledContent.parentContent.contentId;
-                retrieveQuiz(quizId);
-                retrieveAllQuizQuestions(quizId);
-            })
-            .catch(err => handleError(err));
-    }, [enrolledContentId, accountId]);
-
-    function retrieveQuiz(quizId: number): void {
-        getQuizByQuizId(quizId)
+        getQuizByEnrolledContentIdAndAccountId(enrolledContentId, accountId)
             .then((quiz: Quiz) => {
-                setQuiz(quiz);
-                setInitialMinutes(parseInt(`${quiz.timeLimit.charAt(3)}${quiz.timeLimit.charAt(4)}`));
-                setInitalSeconds(parseInt(`${quiz.timeLimit.charAt(6)}${quiz.timeLimit.charAt(7)}`));
-            })
-            .catch(err => handleError(err));
-    }
-
-    const shuffleArray = (array: any[]) => {
-        var shuffled: any[] = array;
-        for (var i = shuffled.length - 1; i > 0; i--) {
-            var j = Math.floor(Math.random() * (i + 1));
-            var temp = shuffled[i];
-            shuffled[i] = shuffled[j];
-            shuffled[j] = temp;
-        }
-        return shuffled;
-    }
-
-    function retrieveAllQuizQuestions(quizId: number): void {
-        getAllQuizQuestionsByQuizId(quizId)
-            .then((res) => {
-                // var unshuffledQuestionIds: any[] = res.map((question) => question.quizQuestionId);
-                // setUnshuffledQuizQuestionIdArray(unshuffledQuestionIds);
-                // console.log("unshuffled",unshuffledQuestionIds);
-                // const shuffledArray = shuffleArray(res.slice(0));
-                // console.log("shuffled",shuffledArray);
-                // setShuffledQuizQuestionArray(shuffledArray);
-                setQuizQuestionArray(res)
-            })
-            .catch((err) => handleError(err));
-    }
+                getAllQuizQuestionsByQuizId(quiz.contentId).then((quizQuestions: QuizQuestion[]) => {
+                    console.log(quiz);
+                    setQuiz(quiz);
+                    setQuizQuestionArray(quizQuestions);
+                    setInitialMinutes(parseInt(`${quiz.timeLimit.charAt(3)}${quiz.timeLimit.charAt(4)}`));
+                    setInitalSeconds(parseInt(`${quiz.timeLimit.charAt(6)}${quiz.timeLimit.charAt(7)}`));
+                }).catch(err => handleError(err));
+            }).catch(err => handleError(err));
+    }, [enrolledContentId, accountId]);
 
     function handleError(err: any): void {
         const errorDataObj = createErrorDataObj(err);

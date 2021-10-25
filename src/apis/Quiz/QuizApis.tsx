@@ -27,6 +27,14 @@ export async function getQuizByQuizIdAndAccountId(quizId: number, accountId: num
     return httpClient.get<undefined, Quiz>(getParameters);
 }
 
+export async function getQuizByEnrolledContentIdAndAccountId(enrolledContentId: number, accountId: number): Promise<Quiz> {
+    const getParameters: IHttpClientRequestParameters<undefined> = {
+        url: `/quiz/getQuizByEnrolledContentIdAndAccountId/${enrolledContentId}/${accountId}`
+    }
+
+    return httpClient.get<undefined, Quiz>(getParameters);
+}
+
 export async function updateQuizWithQuizQuestionsAndQuizQuestionOptions(updateQuizReq: UpdateQuizReq): Promise<Quiz> {
     const formData = new FormData();
 
