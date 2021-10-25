@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
+import { colours } from '../../../../../../values/Colours';
 
 function Board (props: any) {
 
     // timeout;
-    // socket = io.connect("http://localhost:5000");
 
     // var interval = setInterval(function(){
     //     if (isDrawing) {
@@ -21,20 +21,45 @@ function Board (props: any) {
     //         image.src = canvasData;
     //     }
     // }, 200)
-
+    let canvas: HTMLCanvasElement | null = document.querySelector('#board');
     let timeout: NodeJS.Timeout;
     let ctx: CanvasRenderingContext2D | null;
     const [isDrawing, setIsDrawing] = useState<boolean>(false); // whether i am currently drawing
     const [canvasData, setCanvasData] = useState<any>(props.canvasData);
-    const [activeTool, setActiveTool] = useState<any>();
+
+    // Tool states
+    const [cursorImagePath, setCursorImagePath] = useState<string>("");
 
     useEffect(() => {
         drawOnCanvas();
     }, [])
 
     useEffect(() => {
+        if (canvas === null) {
+            canvas = document.querySelector('#board');
+        }
+    }, [canvas])
+
+    useEffect(() => {
         setCanvasData(props.canvasData)
     }, [props.canvasData])
+
+    useEffect(() => {
+        console.log(props.activeTool)
+        switch (props.activeTool) {
+            case "pen":
+                setCursorImagePath("/cursors/pen_cursor.svg");
+                break;
+            case "eraser":
+                setCursorImagePath("/cursors/eraser_cursor.svg");
+                break;
+            default:
+                // default to pen
+                setCursorImagePath("/cursors/pen_cursor.svg");
+                break;
+        }
+        drawOnCanvas();
+    }, [props.activeTool])
 
     useEffect(() => {
 
@@ -50,7 +75,6 @@ function Board (props: any) {
     }, [props.toolState])
 
     const drawOnCanvas = () => {
-        let canvas: HTMLCanvasElement | null = document.querySelector('#board');
         if (canvas) {
             ctx = canvas.getContext('2d');
 
@@ -62,6 +86,16 @@ function Board (props: any) {
             canvas.width  = canvas.offsetWidth;
             canvas.height = canvas.offsetHeight;
 
+            console.log("right before checking for ctx")
+            if (ctx) {
+                console.log("IN SETTING")
+                /* Paintbrush settings Work */
+                ctx.lineWidth = props.toolProperties.lineWidth;
+                ctx.lineJoin = 'round';
+                ctx.lineCap = 'round';
+                ctx.strokeStyle = props.toolProperties.strokeStyle;
+            }
+
             let mouse = {x: 0, y: 0};
             let last_mouse = {x: 0, y: 0};
 
@@ -69,21 +103,9 @@ function Board (props: any) {
             canvas.addEventListener('mousemove', function(e) {
                 last_mouse.x = mouse.x;
                 last_mouse.y = mouse.y;
-
-                console.log("offset", this.offsetTop)
                 mouse.x = e.pageX- this.offsetLeft;
                 mouse.y = e.pageY - this.offsetTop;
-
             }, false);
-
-
-            if (ctx) {
-                /* Paintbrush settings Work */
-                ctx.lineWidth = 10; // fixed first
-                ctx.lineJoin = 'round';
-                ctx.lineCap = 'round';
-                ctx.strokeStyle = "green";
-            }
 
             canvas.addEventListener('mousedown', function(e) {
                 canvas?.addEventListener('mousemove', onPaint, false);
@@ -94,6 +116,9 @@ function Board (props: any) {
             }, false);
 
             const onPaint = function() {
+                console.log(ctx?.lineWidth)
+                console.log(ctx?.strokeStyle)
+
                 ctx?.beginPath();
                 ctx?.moveTo(last_mouse.x, last_mouse.y);
                 ctx?.lineTo(mouse.x, mouse.y);
@@ -113,7 +138,10 @@ function Board (props: any) {
 
 
     return (
-        <div style={{ height: "inherit", width: "inherit"}} className="sketch" id="sketch">
+        <div
+            style={{ height: "inherit", width: "inherit", cursor: `url(${cursorImagePath}), auto` }}
+            className="sketch" id="sketch"
+        >
             <canvas className="board" id="board" />
         </div>
 

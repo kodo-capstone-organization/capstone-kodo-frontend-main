@@ -7,6 +7,8 @@ export const DebugInfoPanelWrapper = styled.div`
 `;
 
 export const WhiteboardPanelWrapper = styled.div`
+    display: flex;
+    flex-direction: column;
     height: inherit;
     width: inherit;
 `;
