@@ -174,6 +174,9 @@ function LiveKodoSessionPage(props: any) {
     }, [fireEffect])
 
     const setupNewPeerConn = (newPeerId: number) => {
+        // Clear any existing info about the old peer conn
+        peerConns.delete(newPeerId)
+
         // Create new peer connection
         const newPeerConn = new RTCPeerConnection(rtcConfiguration)
 
