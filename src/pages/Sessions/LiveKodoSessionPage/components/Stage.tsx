@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { KodoSessionEventType } from "../../../../apis/Entities/Session";
 import {ActiveTabPanel, StageContainer, StageTab, StageTabBar } from "../LiveKodoSessionPageElements";
 import CodeEditorTabPanel from "./stagetabpanels/CodeEditorTabPanel";
 import DebugInfoTabPanel from "./stagetabpanels/DebugInfoTabPanel";
@@ -9,9 +10,19 @@ function Stage(props: any) {
     const [peerConns, setPeerConns] = useState<Map<number, any>>(new Map());
     const [activeTabIdx, setActiveTabIdx] = useState<number>(0);
 
+    const [incomingCanvasData, setIncomingCanvasData] = useState<string>();
+
     useEffect(() => {
         setPeerConns(props.peerConns)
     }, [props.peerConns.size])
+
+    useEffect(() => {
+        if (props.newIncomingDcMessage?.eventType === KodoSessionEventType.WHITEBOARD) {
+            setIncomingCanvasData(props.newIncomingDcMessage?.event?.encodedCanvasData)
+        }
+        // TODO Editor
+
+    }, [props.newIncomingDcMessage])
 
     const getStageTabItems = () => {
         return [
@@ -37,7 +48,12 @@ function Stage(props: any) {
             {
                 myTabIdx: 2,
                 myTabName: "Whiteboard",
-                tabPanelComponent: <WhiteboardTabPanel key={2} />
+                tabPanelComponent: 
+                    <WhiteboardTabPanel 
+                        key={2} 
+                        sendWhiteboardEventViaDCCallback={props.sendWhiteboardEventViaDCCallback}
+                        incomingCanvasData={incomingCanvasData}
+                    />
             }
         ]
     }
