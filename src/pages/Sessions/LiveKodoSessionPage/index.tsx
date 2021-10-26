@@ -370,8 +370,8 @@ function LiveKodoSessionPage(props: any) {
     const sendDataChannelMessage = (dcMessage: KodoDataChannelMessage) => {
         console.log("in sendDataChannelMessage (via datachannel) to all other peers")
         peerConns.forEach((rtcInfo: RTCInfo) => {
-            // Only send message to connections that are still connected
-            if (rtcInfo.rtcPeerConnection?.connectionState === "connected") {
+            // Only send message to connections that are still connected and datachannel still open
+            if (rtcInfo.rtcPeerConnection?.connectionState === "connected" && rtcInfo.rtcDataChannel?.readyState === "open") {
                 rtcInfo.rtcDataChannel?.send(JSON.stringify(dcMessage));
             }      
         })
