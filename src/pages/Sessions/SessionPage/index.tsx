@@ -5,12 +5,12 @@ import MUIButton from '@material-ui/core/Button';
 import { Button } from '../../../values/ButtonElements';
 import TextField from '@material-ui/core/TextField';
 import PermPhoneMsgIcon from '@material-ui/icons/PermPhoneMsg';
-import { createSession, getInvitedSessions } from '../../../apis/Session/SessionApis';
-import { Account, StrippedDownAccount } from '../../../apis/Entities/Account';
-import {getAllAccountsStrippedDown, getMyAccount } from '../../../apis/Account/AccountApis';
+import { createSession, getInvitedSessions } from '../../../apis/SessionApis';
+import { Account, StrippedDownAccount } from '../../../Entities/Account';
+import {getAllAccountsStrippedDown, getMyAccount } from '../../../apis/AccountApis';
 import { Autocomplete } from '@material-ui/lab';
 import { colours } from '../../../values/Colours';
-import { CreateSessionReq, InvitedSessionResp } from '../../../apis/Entities/Session';
+import { CreateSessionReq, InvitedSessionResp } from '../../../Entities/Session';
 
 const formReducer = (state: any, event: any) => {
     if(event.reset) {

@@ -21,14 +21,14 @@ import {
     createTheme,
 } from "@material-ui/core";
 
-import { Quiz } from "../../../apis/Entities/Quiz";
-import { StudentAttempt } from "../../../apis/Entities/StudentAttempt";
-import { StudentAttemptQuestion } from "../../../apis/Entities/StudentAttemptQuestion";
-import { StudentAttemptAnswer } from "../../../apis/Entities/StudentAttemptAnswer";
+import { Quiz } from "../../../Entities/Quiz";
+import { StudentAttempt } from "../../../Entities/StudentAttempt";
+import { StudentAttemptQuestion } from "../../../Entities/StudentAttemptQuestion";
+import { StudentAttemptAnswer } from "../../../Entities/StudentAttemptAnswer";
 
-import { getEnrolledCourseByEnrolledCourseIdAndAccountId } from "../../../apis/EnrolledCourse/EnrolledCourseApis"
-import { getEnrolledLessonByEnrolledLessonIdAndAccountId } from "../../../apis/EnrolledLesson/EnrolledLessonApis"
-import { getStudentAttemptByStudentAttemptIdAndAccountId } from "../../../apis/StudentAttempt/StudentAttemptApis";
+import { getEnrolledCourseByEnrolledCourseIdAndAccountId } from "../../../apis/EnrolledCourseApis"
+import { getEnrolledLessonByEnrolledLessonIdAndAccountId } from "../../../apis/EnrolledLessonApis"
+import { getStudentAttemptByStudentAttemptIdAndAccountId } from "../../../apis/StudentAttemptApis";
 
 import {
     ArrowBackward,

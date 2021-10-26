@@ -1,8 +1,8 @@
-import { IHttpClientRequestParameters } from "./../HttpClient/IHttpClientRequestParameters";
+import { IHttpClientRequestParameters } from "./HttpClientApis/IHttpClientRequestParameters";
 import { Course, RecommendedCoursesWithTags, ToggleCourseResp, UpdateCourseReq } from "../Entities/Course";
-import { httpClient } from "../HttpClient/HttpClient";
+import { httpClient } from "./HttpClientApis/HttpClient";
 import { CreateNewCourseReq } from "../Entities/Course";
-import { transformToBlob } from "../../utils/BlobCreator";
+import { transformToBlob } from "../utils/BlobCreator";
 
 export async function getAllCourses(): Promise<Course[]> {
     const getParameters: IHttpClientRequestParameters<undefined> = {

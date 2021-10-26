@@ -11,13 +11,13 @@ import {
     Chip
 } from "@material-ui/core";
 
-import { Account } from "../../../apis/Entities/Account";
-import { ForumPost, CreateNewForumPostReq, CreateNewForumPostReplyReq } from '../../../apis/Entities/ForumPost';
-import { ForumThread } from '../../../apis/Entities/ForumThread';
-import { Course } from '../../../apis/Entities/Course';
+import { Account } from "../../../Entities/Account";
+import { ForumPost, CreateNewForumPostReq, CreateNewForumPostReplyReq } from '../../../Entities/ForumPost';
+import { ForumThread } from '../../../Entities/ForumThread';
+import { Course } from '../../../Entities/Course';
 
-import { createNewForumPost, createNewForumPostReply } from "../../../apis/Forum/ForumApis";
-import { getMyAccount } from "../../../apis/Account/AccountApis";
+import { createNewForumPost, createNewForumPostReply } from "../../../apis/ForumApis";
+import { getMyAccount } from "../../../apis/AccountApis";
 
 import ForumPostModal from './ForumPostModal';
 

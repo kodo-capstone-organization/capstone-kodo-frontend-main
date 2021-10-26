@@ -2,11 +2,11 @@ import { useState, useEffect } from "react";
 
 import { useHistory } from "react-router-dom";
 
-import { Content } from "../../../../apis/Entities/Content";
-import { EnrolledContent } from "../../../../apis/Entities/EnrolledContent";
-import { EnrolledCourse } from "../../../../apis/Entities/EnrolledCourse";
-import { EnrolledLesson } from "../../../../apis/Entities/EnrolledLesson";
-import { Quiz } from "../../../../apis/Entities/Quiz";
+import { Content } from "../../../../Entities/Content";
+import { EnrolledContent } from "../../../../Entities/EnrolledContent";
+import { EnrolledCourse } from "../../../../Entities/EnrolledCourse";
+import { EnrolledLesson } from "../../../../Entities/EnrolledLesson";
+import { Quiz } from "../../../../Entities/Quiz";
 
 import { 
     BtnWrapper,

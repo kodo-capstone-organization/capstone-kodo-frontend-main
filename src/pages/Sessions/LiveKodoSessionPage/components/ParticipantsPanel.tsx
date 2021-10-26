@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { getSomeAccountsStrippedDown } from '../../../../apis/Account/AccountApis';
+import { getSomeAccountsStrippedDown } from '../../../../apis/AccountApis';
 import { ParticipantsPanelContainer } from '../LiveKodoSessionPageElements';
-import { StrippedDownAccount } from '../../../../apis/Entities/Account';
+import { StrippedDownAccount } from '../../../../Entities/Account';
 import ParticipantItem from './ParticipantItem';
 import { Grid } from '@material-ui/core';
 

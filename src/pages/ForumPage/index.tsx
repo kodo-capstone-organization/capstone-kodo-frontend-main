@@ -8,12 +8,12 @@ import {
 import {
     getForumThreadByForumThreadIdAndCourseId,
     getForumCategoryByForumCategoryIdAndCourseId
-} from "../../apis/Forum/ForumApis";
-import { isStudentByCourseIdAndAccountId } from "../../apis/Course/CourseApis";
-import { isTutorByCourseIdAndAccountId } from "../../apis/Course/CourseApis";
+} from "../../apis/ForumApis";
+import { isStudentByCourseIdAndAccountId } from "../../apis/CourseApis";
+import { isTutorByCourseIdAndAccountId } from "../../apis/CourseApis";
 
-import { ForumCategory } from '../../apis/Entities/ForumCategory';
-import { ForumThread } from '../../apis/Entities/ForumThread';
+import { ForumCategory } from '../../Entities/ForumCategory';
+import { ForumThread } from '../../Entities/ForumThread';
 
 import ForumCategoryList from './components/ForumCategoryList';
 import ForumThreadList from './components/ForumThreadList';
@@ -25,8 +25,8 @@ import {
 import { LayoutContainer } from '../CourseViewer/CourseViewerElements';
 import Sidebar from '../CourseViewer/Sidebar/Sidebar';
 import { LayoutContentPage } from '../../components/LayoutElements';
-import { getCourseWithoutEnrollmentByCourseId } from '../../apis/Course/CourseApis';
-import { Course } from '../../apis/Entities/Course';
+import { getCourseWithoutEnrollmentByCourseId } from '../../apis/CourseApis';
+import { Course } from '../../Entities/Course';
 
 
 function ForumPage(props: any) {

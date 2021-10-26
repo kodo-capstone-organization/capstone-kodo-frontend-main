@@ -6,16 +6,16 @@ import {
     Divider
 } from "@material-ui/core";
 
-import { CreateNewStudentAttemptReq } from "../../../apis/Entities/StudentAttempt";
-import { Quiz } from "../../../apis/Entities/Quiz";
-import { QuizQuestion } from "../../../apis/Entities/QuizQuestion";
+import { CreateNewStudentAttemptReq } from "../../../Entities/StudentAttempt";
+import { Quiz } from "../../../Entities/Quiz";
+import { QuizQuestion } from "../../../Entities/QuizQuestion";
 
-import { createNewStudentAttempt } from "../../../apis/StudentAttempt/StudentAttemptApis";
-import { getAllQuizQuestionsByQuizId } from "../../../apis/QuizQuestion/QuizQuestionApis";
-import { getEnrolledContentByEnrolledContentIdAndAccountId } from "../../../apis/EnrolledContent/EnrolledContentApis";
-import { getEnrolledCourseByEnrolledCourseIdAndAccountId } from "../../../apis/EnrolledCourse/EnrolledCourseApis"
-import { getEnrolledLessonByEnrolledLessonIdAndAccountId } from "../../../apis/EnrolledLesson/EnrolledLessonApis"
-import { getQuizByEnrolledContentIdAndAccountId } from "../../../apis/Quiz/QuizApis";
+import { createNewStudentAttempt } from "../../../apis/StudentAttemptApis";
+import { getAllQuizQuestionsByQuizId } from "../../../apis/QuizQuestionApis";
+import { getEnrolledContentByEnrolledContentIdAndAccountId } from "../../../apis/EnrolledContentApis";
+import { getEnrolledCourseByEnrolledCourseIdAndAccountId } from "../../../apis/EnrolledCourseApis"
+import { getEnrolledLessonByEnrolledLessonIdAndAccountId } from "../../../apis/EnrolledLessonApis"
+import { getQuizByEnrolledContentIdAndAccountId } from "../../../apis/QuizApis";
 
 import {
     QuizCard,
@@ -31,7 +31,7 @@ import QuizAttemptTimer from "./QuizAttemptTimer";
 import QuizTimedOutModal from "./QuizTimedOutModal";
 
 import { Button } from "../../../values/ButtonElements";
-import { EnrolledContent } from "../../../apis/Entities/EnrolledContent";
+import { EnrolledContent } from "../../../Entities/EnrolledContent";
 
 
 function AttemptQuizComponent(props: any) {

@@ -5,9 +5,9 @@ import {
   TutorContainer,
 } from "./TutorViewElements";
 
-import { Course } from "../../../apis/Entities/Course";
+import { Course } from "../../../Entities/Course";
 
-import { getCourseWithoutEnrollmentByCourseIdAndAccountId } from "../../../apis/Course/CourseApis";
+import { getCourseWithoutEnrollmentByCourseIdAndAccountId } from "../../../apis/CourseApis";
 
 import TutorViewHeader from "./components/TutorViewHeader";
 import TutorViewStudentsProgress from "./components/TutorViewStudentsProgress/TutorViewStudentsProgress";

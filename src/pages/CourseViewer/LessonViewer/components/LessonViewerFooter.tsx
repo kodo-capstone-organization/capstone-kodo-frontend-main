@@ -2,9 +2,9 @@ import { useState, useEffect } from "react";
 
 import { Link } from '@material-ui/core';
 
-import { EnrolledCourse } from "../../../../apis/Entities/EnrolledCourse";
-import { EnrolledLesson } from "../../../../apis/Entities/EnrolledLesson";
-import { Lesson } from "../../../../apis/Entities/Lesson";
+import { EnrolledCourse } from "../../../../Entities/EnrolledCourse";
+import { EnrolledLesson } from "../../../../Entities/EnrolledLesson";
+import { Lesson } from "../../../../Entities/Lesson";
 
 import {
     ArrowBackward,

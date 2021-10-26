@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
 
-import { Course } from "../../../../apis/Entities/Course";
+import { Course } from "../../../../Entities/Course";
 
 import Rating from '@material-ui/lab/Rating';
 import Tooltip from '@material-ui/core/Tooltip';
 
-import { Account } from "../../../../apis/Entities/Account";
+import { Account } from "../../../../Entities/Account";
 
-import { getAccountByCourseId } from "../../../../apis/Account/AccountApis";
-import { getCourseRatingByCourseId } from "../../../../apis/Course/CourseApis";
+import { getAccountByCourseId } from "../../../../apis/AccountApis";
+import { getCourseRatingByCourseId } from "../../../../apis/CourseApis";
 
 import {
     CourseTitle,

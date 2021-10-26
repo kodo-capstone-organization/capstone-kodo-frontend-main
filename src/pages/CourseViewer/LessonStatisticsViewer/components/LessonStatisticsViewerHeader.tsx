@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
-import { Lesson } from "../../../../apis/Entities/Lesson";
-import { EnrolledLessonWithStudentName } from "../../../../apis/Entities/EnrolledLesson";
+import { Lesson } from "../../../../Entities/Lesson";
+import { EnrolledLessonWithStudentName } from "../../../../Entities/EnrolledLesson";
 
 import { 
     LessonStatisticsViewerCard,

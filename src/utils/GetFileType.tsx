@@ -1,4 +1,4 @@
-import { MultimediaType } from "../apis/Entities/Multimedia"
+import { MultimediaType } from "../Entities/Multimedia"
 
 export function getFileType(filename: string): MultimediaType {
     const fileType = filename.split('.').pop()

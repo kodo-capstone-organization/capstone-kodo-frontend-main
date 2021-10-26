@@ -2,14 +2,14 @@ import { useEffect, useState } from "react";
 import { withRouter } from "react-router";
 import { useHistory } from "react-router-dom";
 
-import { Course } from "../../../apis/Entities/Course";
-import { Lesson } from "../../../apis/Entities/Lesson";
-import { EnrolledLessonWithStudentName } from "../../../apis/Entities/EnrolledLesson";
+import { Course } from "../../../Entities/Course";
+import { Lesson } from "../../../Entities/Lesson";
+import { EnrolledLessonWithStudentName } from "../../../Entities/EnrolledLesson";
 
-import { getAllEnrolledLessonsWithStudentNameByCourseIdAndLessonIdAndAccountId } from "../../../apis/EnrolledLesson/EnrolledLessonApis";
-import { getCourseWithoutEnrollmentByCourseIdAndAccountId } from "../../../apis/Course/CourseApis";
-import { isStudentByCourseIdAndAccountId } from "../../../apis/Course/CourseApis";
-import { isTutorByCourseIdAndAccountId } from "../../../apis/Course/CourseApis";
+import { getAllEnrolledLessonsWithStudentNameByCourseIdAndLessonIdAndAccountId } from "../../../apis/EnrolledLessonApis";
+import { getCourseWithoutEnrollmentByCourseIdAndAccountId } from "../../../apis/CourseApis";
+import { isStudentByCourseIdAndAccountId } from "../../../apis/CourseApis";
+import { isTutorByCourseIdAndAccountId } from "../../../apis/CourseApis";
 
 import Sidebar from "../Sidebar/Sidebar";
 

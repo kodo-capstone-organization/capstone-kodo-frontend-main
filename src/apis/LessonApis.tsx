@@ -1,7 +1,7 @@
-import { IHttpClientRequestParameters } from "./../HttpClient/IHttpClientRequestParameters";
+import { IHttpClientRequestParameters } from "./HttpClientApis/IHttpClientRequestParameters";
 import { Lesson } from "../Entities/Lesson";
-import { httpClient } from "../HttpClient/HttpClient";
-import { transformToBlob } from "./../../utils/BlobCreator";
+import { httpClient } from "./HttpClientApis/HttpClient";
+import { transformToBlob } from "../utils/BlobCreator";
 
 export async function getLessonByLessonId(lessonId: number): Promise<Lesson> {
     const getParameters: IHttpClientRequestParameters<undefined> = {

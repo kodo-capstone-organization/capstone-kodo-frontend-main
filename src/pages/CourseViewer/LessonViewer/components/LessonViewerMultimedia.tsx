@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 
-import { Content } from "../../../../apis/Entities/Content";
-import { EnrolledContent } from "../../../../apis/Entities/EnrolledContent";
-import { EnrolledCourse } from "../../../../apis/Entities/EnrolledCourse";
-import { EnrolledLesson } from "../../../../apis/Entities/EnrolledLesson";
-import { Multimedia } from "../../../../apis/Entities/Multimedia";
+import { Content } from "../../../../Entities/Content";
+import { EnrolledContent } from "../../../../Entities/EnrolledContent";
+import { EnrolledCourse } from "../../../../Entities/EnrolledCourse";
+import { EnrolledLesson } from "../../../../Entities/EnrolledLesson";
+import { Multimedia } from "../../../../Entities/Multimedia";
 
 import { 
     CheckIcon,

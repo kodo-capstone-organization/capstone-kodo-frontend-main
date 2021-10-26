@@ -1,7 +1,7 @@
 import Typography from "@material-ui/core/Typography";
 import { useState, useEffect } from "react";
 
-import { Course } from "../../../../apis/Entities/Course";
+import { Course } from "../../../../Entities/Course";
 
 import CourseCard from "../../../../components/CourseCard";
 import { BlankStateContainer } from "../../../MyProfilePage/ProfileElements";

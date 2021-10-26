@@ -1,8 +1,8 @@
 import { Paper, Table, TableBody, TableCell, TableContainer, TableRow, Toolbar } from "@material-ui/core";
 import { useState } from "react";
 import { useEffect } from "react";
-import { GroupedByMonthsTransaction, Transaction } from "../../../../apis/Entities/Transaction";
-import { getAllPaymentsByAccountId } from "../../../../apis/Transaction/TransactionApis";
+import { GroupedByMonthsTransaction, Transaction } from "../../../../Entities/Transaction";
+import { getAllPaymentsByAccountId } from "../../../../apis/TransactionApis";
 import { colours } from "../../../../values/Colours";
 import { BlankStateContainer } from "../../ProfileElements";
 

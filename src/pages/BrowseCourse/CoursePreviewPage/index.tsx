@@ -2,13 +2,13 @@ import { useEffect, useState } from "react";
 import { withRouter } from "react-router";
 import { useHistory } from "react-router-dom";
 
-import { Account } from "../../../apis/Entities/Account";
-import { Course } from "../../../apis/Entities/Course";
-import { StripePaymentReq } from "../../../apis/Entities/Stripe"
+import { Account } from "../../../Entities/Account";
+import { Course } from "../../../Entities/Course";
+import { StripePaymentReq } from "../../../Entities/Stripe"
 
-import { createStripeSession } from "../../../apis/Stripe/StripeApis";
-import { getCourseWithoutEnrollmentByCourseId } from "../../../apis/Course/CourseApis";
-import { getMyAccount } from "../../../apis/Account/AccountApis";
+import { createStripeSession } from "../../../apis/StripeApis";
+import { getCourseWithoutEnrollmentByCourseId } from "../../../apis/CourseApis";
+import { getMyAccount } from "../../../apis/AccountApis";
 
 import {
   CourseDescription,

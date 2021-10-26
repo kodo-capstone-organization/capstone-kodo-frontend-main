@@ -12,10 +12,10 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import IconButton from '@material-ui/core/IconButton';
 
-import { Account } from '../../../apis/Entities/Account';
+import { Account } from '../../../Entities/Account';
 
-import { DeactivateAccountResponse } from '../../../apis/Entities/Deactivate';
-import { login, reactivateAccount } from '../../../apis/Account/AccountApis';
+import { DeactivateAccountResponse } from '../../../Entities/Deactivate';
+import { login, reactivateAccount } from '../../../apis/AccountApis';
 
 import { Button } from "../../../values/ButtonElements";
 import Visibility from '@material-ui/icons/Visibility';

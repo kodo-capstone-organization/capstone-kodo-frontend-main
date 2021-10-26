@@ -11,10 +11,10 @@ import {
     AddQuestionByTypeButton
 } from "../QuizBuilderElements";
 
-import { QuizQuestion } from '../../../apis/Entities/QuizQuestion';
-import { QuizQuestionOption } from "../../../apis/Entities/QuizQuestionOption";
+import { QuizQuestion } from '../../../Entities/QuizQuestion';
+import { QuizQuestionOption } from "../../../Entities/QuizQuestionOption";
 
-import { getAllQuizQuestionsByTutorId } from "../../../apis/QuizQuestion/QuizQuestionApis";
+import { getAllQuizQuestionsByTutorId } from "../../../apis/QuizQuestionApis";
 
 import { Button } from "../../../values/ButtonElements";
 

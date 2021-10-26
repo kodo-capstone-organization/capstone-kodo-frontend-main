@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import { withRouter } from "react-router";
 import { useHistory } from "react-router-dom";
 
-import { Course } from "../../apis/Entities/Course";
+import { Course } from "../../Entities/Course";
 
-import { isStudentByCourseIdAndAccountId } from "../../apis/Course/CourseApis";
-import { isTutorByCourseIdAndAccountId } from "../../apis/Course/CourseApis";
+import { isStudentByCourseIdAndAccountId } from "../../apis/CourseApis";
+import { isTutorByCourseIdAndAccountId } from "../../apis/CourseApis";
 
 import Sidebar from "./Sidebar/Sidebar";
 import TutorView from "./TutorView/TutorView";

@@ -3,12 +3,12 @@ import { withRouter } from "react-router";
 
 import { useHistory } from "react-router-dom";
 
-import { EnrolledContent } from "../../../apis/Entities/EnrolledContent";
-import { EnrolledCourse } from "../../../apis/Entities/EnrolledCourse";
-import { EnrolledLesson } from "../../../apis/Entities/EnrolledLesson";
+import { EnrolledContent } from "../../../Entities/EnrolledContent";
+import { EnrolledCourse } from "../../../Entities/EnrolledCourse";
+import { EnrolledLesson } from "../../../Entities/EnrolledLesson";
 
-import { getEnrolledCourseByEnrolledCourseIdAndAccountId } from "../../../apis/EnrolledCourse/EnrolledCourseApis"
-import { getEnrolledLessonByEnrolledLessonIdAndAccountId } from "../../../apis/EnrolledLesson/EnrolledLessonApis"
+import { getEnrolledCourseByEnrolledCourseIdAndAccountId } from "../../../apis/EnrolledCourseApis"
+import { getEnrolledLessonByEnrolledLessonIdAndAccountId } from "../../../apis/EnrolledLessonApis"
 
 import { 
   LessonViewerContainerElement,

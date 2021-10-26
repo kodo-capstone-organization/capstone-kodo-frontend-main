@@ -13,7 +13,7 @@ import {
     TableRow, 
 } from "@material-ui/core";
 
-import { QuizQuestion } from '../../../apis/Entities/QuizQuestion';
+import { QuizQuestion } from '../../../Entities/QuizQuestion';
 
 const shuffleArray = (array: any[]) => {
     var shuffled: any[] = array;

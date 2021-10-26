@@ -1,7 +1,7 @@
-import { IHttpClientRequestParameters } from "./../HttpClient/IHttpClientRequestParameters";
+import { IHttpClientRequestParameters } from "./HttpClientApis/IHttpClientRequestParameters";
 import { Multimedia } from "../Entities/Multimedia";
-import { httpClient } from "../HttpClient/HttpClient";
-import { transformToBlob } from "./../../utils/BlobCreator";
+import { httpClient } from "./HttpClientApis/HttpClient";
+import { transformToBlob } from "../utils/BlobCreator";
 
 export async function addNewMultimediaToLesson(lessonId: number, name: string, description: string, file: File): Promise<Multimedia> {
     const formData = new FormData();

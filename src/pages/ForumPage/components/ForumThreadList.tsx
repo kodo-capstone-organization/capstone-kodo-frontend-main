@@ -9,15 +9,15 @@ import {
     MenuItem, ListItemIcon, CircularProgress
 } from '@material-ui/core';
 
-import { ForumCategory } from '../../../apis/Entities/ForumCategory';
-import { ForumThread } from '../../../apis/Entities/ForumThread';
-import { Course } from '../../../apis/Entities/Course';
+import { ForumCategory } from '../../../Entities/ForumCategory';
+import { ForumThread } from '../../../Entities/ForumThread';
+import { Course } from '../../../Entities/Course';
 
 import {
     getForumCategoryWithForumThreadsOnlyByForumCategoryId as getForumCategoryByForumCategoryId,
     getAllForumThreadsByForumCategoryId,
     deleteForumThread
-} from "../../../apis/Forum/ForumApis";
+} from "../../../apis/ForumApis";
 
 import {
     ForumCardHeader, ForumCard, ForumThreadCard,
@@ -26,7 +26,7 @@ import {
 } from "../ForumElements";
 
 import ForumThreadModal from './ForumThreadModal';
-import { getCourseByCourseId } from '../../../apis/Course/CourseApis';
+import { getCourseByCourseId } from '../../../apis/CourseApis';
 
 
 function ForumThreadList(props: any) {

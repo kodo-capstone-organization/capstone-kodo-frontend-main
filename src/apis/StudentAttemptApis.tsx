@@ -1,7 +1,7 @@
-import { IHttpClientRequestParameters } from "./../HttpClient/IHttpClientRequestParameters";
+import { IHttpClientRequestParameters } from "./HttpClientApis/IHttpClientRequestParameters";
 import { StudentAttempt, CreateNewStudentAttemptReq } from "../Entities/StudentAttempt";
-import { httpClient } from "../HttpClient/HttpClient";
-import { transformToBlob } from "./../../utils/BlobCreator";
+import { httpClient } from "./HttpClientApis/HttpClient";
+import { transformToBlob } from "../utils/BlobCreator";
 const FormData = require('form-data');
 
 export async function getStudentAttemptByStudentAttemptIdAndAccountId(studentAttemptId: number, accountId: number): Promise<StudentAttempt> {

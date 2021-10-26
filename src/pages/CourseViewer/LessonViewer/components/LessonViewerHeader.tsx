@@ -6,11 +6,11 @@ import LinearProgress, { LinearProgressProps } from '@material-ui/core/LinearPro
 import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 
-import { Course } from "../../../../apis/Entities/Course";
-import { EnrolledContent } from "../../../../apis/Entities/EnrolledContent";
-import { EnrolledCourse } from "../../../../apis/Entities/EnrolledCourse";
-import { EnrolledLesson } from "../../../../apis/Entities/EnrolledLesson";
-import { Lesson } from "../../../../apis/Entities/Lesson";
+import { Course } from "../../../../Entities/Course";
+import { EnrolledContent } from "../../../../Entities/EnrolledContent";
+import { EnrolledCourse } from "../../../../Entities/EnrolledCourse";
+import { EnrolledLesson } from "../../../../Entities/EnrolledLesson";
+import { Lesson } from "../../../../Entities/Lesson";
 
 import { 
     CourseTitle,

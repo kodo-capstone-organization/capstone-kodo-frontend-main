@@ -11,17 +11,17 @@ import ReactPlayer from "react-player";
 import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
 import Tooltip from '@material-ui/core/Tooltip';
 
-import { Course } from "../../../apis/Entities/Course";
-import { EnrolledContent } from "../../../apis/Entities/EnrolledContent";
-import { EnrolledCourse } from "../../../apis/Entities/EnrolledCourse";
-import { EnrolledLesson } from "../../../apis/Entities/EnrolledLesson";
-import { Lesson } from "../../../apis/Entities/Lesson";
-import { Multimedia } from "../../../apis/Entities/Multimedia";
+import { Course } from "../../../Entities/Course";
+import { EnrolledContent } from "../../../Entities/EnrolledContent";
+import { EnrolledCourse } from "../../../Entities/EnrolledCourse";
+import { EnrolledLesson } from "../../../Entities/EnrolledLesson";
+import { Lesson } from "../../../Entities/Lesson";
+import { Multimedia } from "../../../Entities/Multimedia";
 
-import { getEnrolledContentByEnrolledContentIdAndAccountId } from "../../../apis/EnrolledContent/EnrolledContentApis";
-import { getEnrolledCourseByEnrolledCourseIdAndAccountId } from "../../../apis/EnrolledCourse/EnrolledCourseApis"
-import { getEnrolledLessonByEnrolledLessonIdAndAccountId } from "../../../apis/EnrolledLesson/EnrolledLessonApis"
-import { setDateTimeOfCompletionOfEnrolledContentByEnrolledContentId } from "../../../apis/EnrolledContent/EnrolledContentApis";
+import { getEnrolledContentByEnrolledContentIdAndAccountId } from "../../../apis/EnrolledContentApis";
+import { getEnrolledCourseByEnrolledCourseIdAndAccountId } from "../../../apis/EnrolledCourseApis"
+import { getEnrolledLessonByEnrolledLessonIdAndAccountId } from "../../../apis/EnrolledLessonApis"
+import { setDateTimeOfCompletionOfEnrolledContentByEnrolledContentId } from "../../../apis/EnrolledContentApis";
 
 import {
   CourseTitle,

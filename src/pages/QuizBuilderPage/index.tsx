@@ -20,24 +20,24 @@ import {
     Draggable
 } from 'react-beautiful-dnd';
 
-import { Course } from '../../apis/Entities/Course';
-import { Quiz } from './../../apis/Entities/Quiz';
-import { QuizQuestion } from "../../apis/Entities/QuizQuestion";
-import { QuizQuestionOption } from "../../apis/Entities/QuizQuestionOption";
-import { UpdateQuizReq } from '../../apis/Entities/Quiz';
+import { Course } from '../../Entities/Course';
+import { Quiz } from '../../Entities/Quiz';
+import { QuizQuestion } from "../../Entities/QuizQuestion";
+import { QuizQuestionOption } from "../../Entities/QuizQuestionOption";
+import { UpdateQuizReq } from '../../Entities/Quiz';
 
-import { getAccountByQuizId } from "../../apis/Account/AccountApis";
+import { getAccountByQuizId } from "../../apis/AccountApis";
 
 import {
     getQuizByQuizIdAndAccountId,
     updateQuizWithQuizQuestionsAndQuizQuestionOptions,
-} from "../../apis/Quiz/QuizApis";
+} from "../../apis/QuizApis";
 import {
     getAllQuizQuestionsByQuizId,
-} from "../../apis/QuizQuestion/QuizQuestionApis";
+} from "../../apis/QuizQuestionApis";
 import {
     getCourseByContentId
-} from "../../apis/Course/CourseApis";
+} from "../../apis/CourseApis";
 
 import {
     QuizBuilderCardContent,

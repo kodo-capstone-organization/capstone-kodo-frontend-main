@@ -1,5 +1,5 @@
-import { IHttpClientRequestParameters } from "./../HttpClient/IHttpClientRequestParameters";
-import { httpClient } from "../HttpClient/HttpClient";
+import { IHttpClientRequestParameters } from "./HttpClientApis/IHttpClientRequestParameters";
+import { httpClient } from "./HttpClientApis/HttpClient";
 import { QuizQuestion } from "../Entities/QuizQuestion";
 
 export async function getAllQuizQuestionsByQuizId(quizId: number): Promise<QuizQuestion[]> {

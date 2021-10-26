@@ -42,14 +42,14 @@ import {
 import { 
   Multimedia, 
   MultimediaType 
-} from '../../../apis/Entities/Multimedia';
+} from '../../../Entities/Multimedia';
 
-import { Lesson } from '../../../apis/Entities/Lesson';
+import { Lesson } from '../../../Entities/Lesson';
 import { 
   addNewMultimediaToLesson,   
   deleteMultimediasFromLesson,
   updateMultimedia 
-} from '../../../apis/Multimedia/MultimediaApis';
+} from '../../../apis/MultimediaApis';
 
 import { 
   ACCEPTABLE_FILE_TYPE, 

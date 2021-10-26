@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { KodoSessionEventType } from "../../../../apis/Entities/Session";
+import { KodoSessionEventType } from "../../../../Entities/Session";
 import {ActiveTabPanel, StageContainer, StageTab, StageTabBar } from "../LiveKodoSessionPageElements";
 import CodeEditorTabPanel from "./stagetabpanels/CodeEditorTabPanel";
 import DebugInfoTabPanel from "./stagetabpanels/DebugInfoTabPanel";

@@ -7,18 +7,18 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import LocalAtmIcon from '@material-ui/icons/LocalAtm';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import ReceiptIcon from '@material-ui/icons/Receipt';
-import { Account } from "../../../apis/Entities/Account";
+import { Account } from "../../../Entities/Account";
 import { Button } from '../../../values/ButtonElements';
-import { createNewCourse } from '../../../apis/Course/CourseApis';
-import { Course } from '../../../apis/Entities/Course';
+import { createNewCourse } from '../../../apis/CourseApis';
+import { Course } from '../../../Entities/Course';
 import Chip from '@material-ui/core/Chip';
-import { createStripeAccount } from '../../../apis/Stripe/StripeApis';
-import { EnrolledCourse } from '../../../apis/Entities/EnrolledCourse';
+import { createStripeAccount } from '../../../apis/StripeApis';
+import { EnrolledCourse } from '../../../Entities/EnrolledCourse';
 import { CourseWrapper } from '../../BrowseCourse/BrowseCoursePage/BrowseCourseElements';
 import CourseCard from '../../../components/CourseCard';
 import { Autocomplete } from '@material-ui/lab';
-import { Tag } from '../../../apis/Entities/Tag';
-import { getAllTags } from '../../../apis/Tag/TagApis';
+import { Tag } from '../../../Entities/Tag';
+import { getAllTags } from '../../../apis/TagApis';
 import KodoAvatar from '../../../components/KodoAvatar/KodoAvatar';
 
 

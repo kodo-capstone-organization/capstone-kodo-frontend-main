@@ -42,15 +42,15 @@ import {
   TutorTitle,
 } from "./StudentViewElements";
 
-import { Account } from "../../../apis/Entities/Account";
-import { Course } from "../../../apis/Entities/Course";
-import { EnrolledCourse } from "../../../apis/Entities/EnrolledCourse";
-import { EnrolledLesson } from '../../../apis/Entities/EnrolledLesson';
+import { Account } from "../../../Entities/Account";
+import { Course } from "../../../Entities/Course";
+import { EnrolledCourse } from "../../../Entities/EnrolledCourse";
+import { EnrolledLesson } from '../../../Entities/EnrolledLesson';
 
-import { setCourseRatingByEnrolledCourseId } from "../../../apis/EnrolledCourse/EnrolledCourseApis";
-import { getEnrolledCourseByCourseIdAndAccountId } from "../../../apis/EnrolledCourse/EnrolledCourseApis";
-import { getCourseRatingByCourseId } from "../../../apis/Course/CourseApis";
-import { getAccountByCourseId } from "../../../apis/Account/AccountApis";
+import { setCourseRatingByEnrolledCourseId } from "../../../apis/EnrolledCourseApis";
+import { getEnrolledCourseByCourseIdAndAccountId } from "../../../apis/EnrolledCourseApis";
+import { getCourseRatingByCourseId } from "../../../apis/CourseApis";
+import { getAccountByCourseId } from "../../../apis/AccountApis";
 
 import KodoAvatar from "../../../components/KodoAvatar/KodoAvatar";
 

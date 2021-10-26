@@ -1,6 +1,6 @@
-import { IHttpClientRequestParameters } from "../HttpClient/IHttpClientRequestParameters";
-import { httpClient } from "../HttpClient/HttpClient";
-import { transformToBlob } from "./../../utils/BlobCreator";
+import { IHttpClientRequestParameters } from "./HttpClientApis/IHttpClientRequestParameters";
+import { httpClient } from "./HttpClientApis/HttpClient";
+import { transformToBlob } from "../utils/BlobCreator";
 import { ForumCategory, CreateNewForumCategoryReq, UpdateForumCategoryReq } from "../Entities/ForumCategory";
 import { ForumThread, CreateNewForumThreadReq } from "../Entities/ForumThread";
 import { ForumPost, CreateNewForumPostReq, CreateNewForumPostReplyReq, ForumPostWithRepliesResp, UpdateForumPostReq } from "../Entities/ForumPost";

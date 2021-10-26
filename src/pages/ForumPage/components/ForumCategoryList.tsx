@@ -7,9 +7,9 @@ import {
     IconButton, Menu, MenuItem
 } from '@material-ui/core';
 
-import { ForumCategory } from '../../../apis/Entities/ForumCategory';
-import { getAllForumCategoriesWithForumThreadsOnlyByCourseId as getAllForumCategoriesByCourseId } from "../../../apis/Forum/ForumApis";
-import { getCourseByCourseId } from '../../../apis/Course/CourseApis';
+import { ForumCategory } from '../../../Entities/ForumCategory';
+import { getAllForumCategoriesWithForumThreadsOnlyByCourseId as getAllForumCategoriesByCourseId } from "../../../apis/ForumApis";
+import { getCourseByCourseId } from '../../../apis/CourseApis';
 
 import {
     ForumCardHeader, ForumCardContent, ForumCard,

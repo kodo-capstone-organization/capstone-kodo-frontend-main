@@ -10,15 +10,15 @@ import {
     ToggleButtonGroup
 } from "@material-ui/lab";
 
-import { Account } from "../../../apis/Entities/Account";
+import { Account } from "../../../Entities/Account";
 import { Button } from "../../../values/ButtonElements";
-import { Tag } from "../../../apis/Entities/Tag";
+import { Tag } from "../../../Entities/Tag";
 import IconButton from '@material-ui/core/IconButton';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 
-import { createNewAccount } from '../../../apis/Account/AccountApis';
-import { getAllTags } from '../../../apis/Tag/TagApis';
+import { createNewAccount } from '../../../apis/AccountApis';
+import { getAllTags } from '../../../apis/TagApis';
 
 import {
     SignUpForm,

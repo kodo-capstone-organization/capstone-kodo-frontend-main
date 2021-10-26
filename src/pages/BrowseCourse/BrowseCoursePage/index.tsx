@@ -9,19 +9,19 @@ import {
   TextField
 } from "@material-ui/core";
 
-import { Tag } from "../../../apis/Entities/Tag";
+import { Tag } from "../../../Entities/Tag";
 
-import { getAllTags } from "../../../apis/Tag/TagApis";
+import { getAllTags } from "../../../apis/TagApis";
 import {
   Course,
   RecommendedCoursesWithTags
-} from "../../../apis/Entities/Course";
+} from "../../../Entities/Course";
 
 import {
   getAllCourses,
   getAllCoursesThatArePopular,
   getCoursesToRecommend
-} from "../../../apis/Course/CourseApis";
+} from "../../../apis/CourseApis";
 
 import {
   BrowseContainer,

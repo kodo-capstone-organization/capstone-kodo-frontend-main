@@ -21,13 +21,13 @@ import {
     Chip
 } from "@material-ui/core";
 
-import { Lesson } from './../../../apis/Entities/Lesson';
+import { Lesson } from '../../../Entities/Lesson';
 
 import { 
     createNewLesson, 
     deleteLesson, 
     updateLesson 
-} from '../../../apis/Lesson/LessonApis';
+} from '../../../apis/LessonApis';
 
 import { BlankStateContainer } from '../../MyProfilePage/ProfileElements';
 

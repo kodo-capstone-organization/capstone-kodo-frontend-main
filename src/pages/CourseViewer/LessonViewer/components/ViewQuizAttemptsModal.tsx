@@ -13,9 +13,9 @@ import {
   makeStyles, 
 } from '@material-ui/core/styles';
 
-import { StudentAttempt } from "../../../../apis/Entities/StudentAttempt";
-import { StudentAttemptQuestion } from "../../../../apis/Entities/StudentAttemptQuestion";
-import { StudentAttemptAnswer } from "../../../../apis/Entities/StudentAttemptAnswer";
+import { StudentAttempt } from "../../../../Entities/StudentAttempt";
+import { StudentAttemptQuestion } from "../../../../Entities/StudentAttemptQuestion";
+import { StudentAttemptAnswer } from "../../../../Entities/StudentAttemptAnswer";
 
 import { Button } from "../../../../values/ButtonElements";
 

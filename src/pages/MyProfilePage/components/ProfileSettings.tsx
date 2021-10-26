@@ -3,12 +3,12 @@ import CloseIcon from '@material-ui/icons/Close';
 import DeactivateAccountModal from "./DeactivateAccountModal";
 import ChangePasswordModal from "./ChangePasswordModal";
 import React, { useEffect, useState } from 'react';
-import { Account } from "../../../apis/Entities/Account";
+import { Account } from "../../../Entities/Account";
 import { Autocomplete } from "@material-ui/lab";
 import { Button } from "../../../values/ButtonElements";
-import { Tag } from "../../../apis/Entities/Tag";
-import { getAllTags } from '../../../apis/Tag/TagApis';
-import { updateAccount } from '../../../apis/Account/AccountApis';
+import { Tag } from "../../../Entities/Tag";
+import { getAllTags } from '../../../apis/TagApis';
+import { updateAccount } from '../../../apis/AccountApis';
 import { useHistory } from "react-router";
 import {
     Chip, 

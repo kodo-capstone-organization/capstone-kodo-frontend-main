@@ -10,8 +10,8 @@ import {
     Chip
 } from "@material-ui/core";
 
-import { QuizQuestion } from "../../../apis/Entities/QuizQuestion";
-import { QuizQuestionOption } from '../../../apis/Entities/QuizQuestionOption';
+import { QuizQuestion } from "../../../Entities/QuizQuestion";
+import { QuizQuestionOption } from '../../../Entities/QuizQuestionOption';
 
 import QuizQuestionOptionsList from "./QuizQuestionOptionsList"
 import {

@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useHistory } from "react-router-dom";
 import { ProfileContainer,  ProfileBreadcrumbItems } from "./ProfileElements";
-import { getMyAccount } from "../../apis/Account/AccountApis";
-import { Account } from "../../apis/Entities/Account";
+import { getMyAccount } from "../../apis/AccountApis";
+import { Account } from "../../Entities/Account";
 import { Breadcrumbs, Link } from '@material-ui/core';
 import Profile from './components/Profile';
 import ProfileSettings from './components/ProfileSettings';

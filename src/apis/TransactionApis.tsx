@@ -1,6 +1,6 @@
 import { Transaction, TutorCourseEarningsResp } from "../Entities/Transaction"
-import { IHttpClientRequestParameters } from "../HttpClient/IHttpClientRequestParameters"
-import { httpClient } from "../HttpClient/HttpClient";
+import { IHttpClientRequestParameters } from "./HttpClientApis/IHttpClientRequestParameters"
+import { httpClient } from "./HttpClientApis/HttpClient";
 
 export async function getAllPaymentsByAccountId(accountId: number): Promise<Transaction[]> {
     const getParameters: IHttpClientRequestParameters<undefined> = {

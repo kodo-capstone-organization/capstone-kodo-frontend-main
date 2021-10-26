@@ -1,7 +1,7 @@
-import { IHttpClientRequestParameters } from "./../HttpClient/IHttpClientRequestParameters";
+import { IHttpClientRequestParameters } from "./HttpClientApis/IHttpClientRequestParameters";
 import { Account, CreateNewAccountReq, UpdateAccountReq, UpdateAccountPasswordReq, StrippedDownAccount } from "../Entities/Account";
-import { httpClient } from "../HttpClient/HttpClient";
-import { transformToBlob } from "./../../utils/BlobCreator";
+import { httpClient } from "./HttpClientApis/HttpClient";
+import { transformToBlob } from "../utils/BlobCreator";
 import { DeactivateAccountResponse } from "../Entities/Deactivate";
 const FormData = require('form-data');
 

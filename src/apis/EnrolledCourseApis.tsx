@@ -1,5 +1,5 @@
-import { IHttpClientRequestParameters } from "../HttpClient/IHttpClientRequestParameters";
-import { httpClient } from "../HttpClient/HttpClient";
+import { IHttpClientRequestParameters } from "./HttpClientApis/IHttpClientRequestParameters";
+import { httpClient } from "./HttpClientApis/HttpClient";
 import { EnrolledCourse, EnrolledCourseWithStudentResp } from "../Entities/EnrolledCourse";
 
 export async function getEnrolledCourseByEnrolledCourseId(enrolledCourseId: number): Promise<EnrolledCourse> {

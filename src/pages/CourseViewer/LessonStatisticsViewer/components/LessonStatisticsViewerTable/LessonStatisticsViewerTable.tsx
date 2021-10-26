@@ -12,7 +12,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 
-import { EnrolledLessonWithStudentName } from "../../../../../apis/Entities/EnrolledLesson";
+import { EnrolledLessonWithStudentName } from "../../../../../Entities/EnrolledLesson";
 
 import { Column } from "./LessonStatisticsData";
 import { Row } from "./LessonStatisticsData";

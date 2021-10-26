@@ -1,4 +1,4 @@
-import { EnrolledCourseWithStudentResp } from "../../../../../apis/Entities/EnrolledCourse";
+import { EnrolledCourseWithStudentResp } from "../../../../../Entities/EnrolledCourse";
 
 function createData(
         name: string,

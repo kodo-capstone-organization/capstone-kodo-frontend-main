@@ -1,7 +1,7 @@
-import { transformToBlob } from "../../utils/BlobCreator";
+import { transformToBlob } from "../utils/BlobCreator";
 import { CreateSessionReq, InvitedSessionResp } from "../Entities/Session";
-import { httpClient } from "../HttpClient/HttpClient";
-import { IHttpClientRequestParameters } from "../HttpClient/IHttpClientRequestParameters";
+import { httpClient } from "./HttpClientApis/HttpClient";
+import { IHttpClientRequestParameters } from "./HttpClientApis/IHttpClientRequestParameters";
 
 export async function createSession(createSessionReq: CreateSessionReq): Promise<string> {
     const formData = new FormData();

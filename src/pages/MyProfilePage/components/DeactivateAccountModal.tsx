@@ -3,14 +3,14 @@ import { useHistory } from "react-router-dom";
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import { Button } from "../../../values/ButtonElements";
-import { Account } from "../../../apis/Entities/Account";
+import { Account } from "../../../Entities/Account";
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { Chip } from '@material-ui/core';
-import { deactivateAccount } from '../../../apis/Account/AccountApis';
+import { deactivateAccount } from '../../../apis/AccountApis';
 
 function DeactivateAccountModal(props: any) {
     const [open, setOpen] = React.useState(false);

@@ -1,6 +1,6 @@
-import { EnrolledContent } from "../../../../../apis/Entities/EnrolledContent";
-import { EnrolledLessonWithStudentName } from "../../../../../apis/Entities/EnrolledLesson";
-import { StudentAttempt } from "../../../../../apis/Entities/StudentAttempt";
+import { EnrolledContent } from "../../../../../Entities/EnrolledContent";
+import { EnrolledLessonWithStudentName } from "../../../../../Entities/EnrolledLesson";
+import { StudentAttempt } from "../../../../../Entities/StudentAttempt";
 
 function isMultimedia(enrolledContent: EnrolledContent): boolean {
     // @ts-ignore

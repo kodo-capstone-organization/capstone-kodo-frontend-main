@@ -1,6 +1,6 @@
-import { Account } from "../../../apis/Entities/Account";
+import { Account } from "../../../Entities/Account";
 import { Button } from "../../../values/ButtonElements";
-import { updateAccountPassword } from '../../../apis/Account/AccountApis';
+import { updateAccountPassword } from '../../../apis/AccountApis';
 import {
     IconButton,
     Input, 
