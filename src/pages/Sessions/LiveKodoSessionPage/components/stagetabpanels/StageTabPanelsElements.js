@@ -13,11 +13,3 @@ export const WhiteboardPanelWrapper = styled.div`
     height: inherit;
     width: inherit;
 `;
-
-export const CodeEditorPanelWrapper = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    height: inherit;
-    width: inherit;
-`;
