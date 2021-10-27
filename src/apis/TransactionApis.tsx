@@ -1,4 +1,4 @@
-import { Transaction, TutorCourseEarningsResp } from "../Entities/Transaction"
+import { Transaction, TutorCourseEarningsResp } from "../entities/Transaction"
 import { IHttpClientRequestParameters } from "./HttpClientApis/IHttpClientRequestParameters"
 import { httpClient } from "./HttpClientApis/HttpClient";
 

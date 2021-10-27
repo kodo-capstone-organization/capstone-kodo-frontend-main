@@ -8,16 +8,16 @@ import InvalidPage from "./pages/InvalidPage/InvalidPage";
 
 import Layout from "./components/Layout";
 import { RouteItemsWithSidebar } from "./routeItems";
-import Login from "./pages/Authentication/Login";
-import SignUp from "./pages/Authentication/SignUp";
+import Login from "./pages/LoginPage";
+import SignUp from "./pages/SignUpPage";
 import CourseBuilderPage from "./pages/CourseBuilderPage";
 import QuizBuidlerPage from "./pages/QuizBuilderPage";
 
-import CourseOverview from "./pages/CourseViewer";
-import LessonViewerWithRouter from "./pages/CourseViewer/LessonViewer";
-import LessonStatisticsViewerWithRouter from "./pages/CourseViewer/LessonStatisticsViewer";
-import MultimediaViewerWithRouter from "./pages/CourseViewer/MultimediaViewer";
-import QuizViewer from "./pages/QuizViewer";
+import CourseOverview from "./pages/CourseViewerPage";
+import LessonViewerWithRouter from "./pages/CourseViewerPage/StudentView/LessonViewer";
+import LessonStatisticsViewerWithRouter from "./pages/CourseViewerPage/TutorView/LessonViewer";
+import MultimediaViewerWithRouter from "./pages/CourseViewerPage/StudentView/MultimediaViewer";
+import QuizViewer from "./pages/QuizViewerPage";
 import LiveKodoSessionPage from "./pages/Sessions/LiveKodoSessionPage";
 import InvalidSessionPage from "./pages/Sessions/InvalidSessionPage";
 

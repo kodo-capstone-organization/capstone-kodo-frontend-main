@@ -1,6 +1,6 @@
 import { IHttpClientRequestParameters } from "./HttpClientApis/IHttpClientRequestParameters";
 import { httpClient } from "./HttpClientApis/HttpClient";
-import { Tag } from "../Entities/Tag";
+import { Tag } from "../entities/Tag";
 
 export async function getAllTags(): Promise<Tag[]> {
     const getParameters: IHttpClientRequestParameters<undefined> = {

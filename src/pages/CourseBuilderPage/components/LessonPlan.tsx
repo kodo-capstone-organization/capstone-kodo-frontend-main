@@ -21,7 +21,7 @@ import {
     Chip
 } from "@material-ui/core";
 
-import { Lesson } from '../../../Entities/Lesson';
+import { Lesson } from '../../../entities/Lesson';
 
 import { 
     createNewLesson, 
@@ -29,7 +29,7 @@ import {
     updateLesson 
 } from '../../../apis/LessonApis';
 
-import { BlankStateContainer } from '../../MyProfilePage/ProfileElements';
+import { BlankStateContainer } from '../../ProfilePage/ProfileElements';
 
 import QuizTable from './QuizTable';
 import MultimediaTable from './MultimediaTable';

@@ -20,11 +20,11 @@ import {
     Draggable
 } from 'react-beautiful-dnd';
 
-import { Course } from '../../Entities/Course';
-import { Quiz } from '../../Entities/Quiz';
-import { QuizQuestion } from "../../Entities/QuizQuestion";
-import { QuizQuestionOption } from "../../Entities/QuizQuestionOption";
-import { UpdateQuizReq } from '../../Entities/Quiz';
+import { Course } from '../../entities/Course';
+import { Quiz } from '../../entities/Quiz';
+import { QuizQuestion } from "../../entities/QuizQuestion";
+import { QuizQuestionOption } from "../../entities/QuizQuestionOption";
+import { UpdateQuizReq } from '../../entities/Quiz';
 
 import { getAccountByQuizId } from "../../apis/AccountApis";
 

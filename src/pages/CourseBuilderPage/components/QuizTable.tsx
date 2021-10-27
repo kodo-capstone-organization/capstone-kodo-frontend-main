@@ -42,8 +42,8 @@ import {
   InputLabel
 } from '@material-ui/core';
 
-import { Quiz } from '../../../Entities/Quiz';
-import { Lesson } from '../../../Entities/Lesson';
+import { Quiz } from '../../../entities/Quiz';
+import { Lesson } from '../../../entities/Lesson';
 
 import {
   createNewBasicQuiz,

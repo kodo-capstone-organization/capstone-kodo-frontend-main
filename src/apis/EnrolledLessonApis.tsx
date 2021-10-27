@@ -1,7 +1,7 @@
 import { IHttpClientRequestParameters } from "./HttpClientApis/IHttpClientRequestParameters";
 import { httpClient } from "./HttpClientApis/HttpClient";
-import { EnrolledLesson } from "../Entities/EnrolledLesson";
-import { EnrolledLessonWithStudentName } from "../Entities/EnrolledLesson";
+import { EnrolledLesson } from "../entities/EnrolledLesson";
+import { EnrolledLessonWithStudentName } from "../entities/EnrolledLesson";
 
 
 export async function getEnrolledLesson(studentId: number, lessonId: number): Promise<EnrolledLesson> {

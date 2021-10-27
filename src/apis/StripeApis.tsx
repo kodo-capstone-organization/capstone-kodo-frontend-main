@@ -1,6 +1,6 @@
 import { httpClient } from "./HttpClientApis/HttpClient";
 import { IHttpClientRequestParameters } from "./HttpClientApis/IHttpClientRequestParameters";
-import { StripePaymentReq } from "../Entities/Stripe";
+import { StripePaymentReq } from "../entities/Stripe";
 import { transformToBlob } from "../utils/BlobCreator";
 
 const FormData = require("form-data");

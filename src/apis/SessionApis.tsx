@@ -1,5 +1,5 @@
 import { transformToBlob } from "../utils/BlobCreator";
-import { CreateSessionReq, InvitedSessionResp } from "../Entities/Session";
+import { CreateSessionReq, InvitedSessionResp } from "../entities/Session";
 import { httpClient } from "./HttpClientApis/HttpClient";
 import { IHttpClientRequestParameters } from "./HttpClientApis/IHttpClientRequestParameters";
 

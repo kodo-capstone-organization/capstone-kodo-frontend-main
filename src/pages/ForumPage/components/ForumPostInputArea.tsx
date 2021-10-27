@@ -11,10 +11,10 @@ import {
     Chip
 } from "@material-ui/core";
 
-import { Account } from "../../../Entities/Account";
-import { ForumPost, CreateNewForumPostReq, CreateNewForumPostReplyReq } from '../../../Entities/ForumPost';
-import { ForumThread } from '../../../Entities/ForumThread';
-import { Course } from '../../../Entities/Course';
+import { Account } from "../../../entities/Account";
+import { ForumPost, CreateNewForumPostReq, CreateNewForumPostReplyReq } from '../../../entities/ForumPost';
+import { ForumThread } from '../../../entities/ForumThread';
+import { Course } from '../../../entities/Course';
 
 import { createNewForumPost, createNewForumPostReply } from "../../../apis/ForumApis";
 import { getMyAccount } from "../../../apis/AccountApis";

@@ -1,8 +1,8 @@
 import { IHttpClientRequestParameters } from "./HttpClientApis/IHttpClientRequestParameters";
-import { Account, CreateNewAccountReq, UpdateAccountReq, UpdateAccountPasswordReq, StrippedDownAccount } from "../Entities/Account";
+import { Account, CreateNewAccountReq, UpdateAccountReq, UpdateAccountPasswordReq, StrippedDownAccount } from "../entities/Account";
 import { httpClient } from "./HttpClientApis/HttpClient";
 import { transformToBlob } from "../utils/BlobCreator";
-import { DeactivateAccountResponse } from "../Entities/Deactivate";
+import { DeactivateAccountResponse } from "../entities/Deactivate";
 const FormData = require('form-data');
 
 export async function login(username: string, password: string): Promise<Account> {

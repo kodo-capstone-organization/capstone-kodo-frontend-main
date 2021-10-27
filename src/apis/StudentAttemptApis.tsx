@@ -1,5 +1,5 @@
 import { IHttpClientRequestParameters } from "./HttpClientApis/IHttpClientRequestParameters";
-import { StudentAttempt, CreateNewStudentAttemptReq } from "../Entities/StudentAttempt";
+import { StudentAttempt, CreateNewStudentAttemptReq } from "../entities/StudentAttempt";
 import { httpClient } from "./HttpClientApis/HttpClient";
 import { transformToBlob } from "../utils/BlobCreator";
 const FormData = require('form-data');

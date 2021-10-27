@@ -4,9 +4,9 @@ import {
     Divider, Typography, CircularProgress, Chip
 } from '@material-ui/core';
 
-import { ForumThread } from '../../../Entities/ForumThread';
-import { ForumPost } from '../../../Entities/ForumPost';
-import { Course } from '../../../Entities/Course';
+import { ForumThread } from '../../../entities/ForumThread';
+import { ForumPost } from '../../../entities/ForumPost';
+import { Course } from '../../../entities/Course';
 
 import {
     getForumThreadByForumThreadId,

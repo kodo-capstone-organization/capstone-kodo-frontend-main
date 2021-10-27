@@ -6,11 +6,11 @@ import { Button } from '../../../values/ButtonElements';
 import TextField from '@material-ui/core/TextField';
 import PermPhoneMsgIcon from '@material-ui/icons/PermPhoneMsg';
 import { createSession, getInvitedSessions } from '../../../apis/SessionApis';
-import { Account, StrippedDownAccount } from '../../../Entities/Account';
+import { Account, StrippedDownAccount } from '../../../entities/Account';
 import {getAllAccountsStrippedDown, getMyAccount } from '../../../apis/AccountApis';
 import { Autocomplete } from '@material-ui/lab';
 import { colours } from '../../../values/Colours';
-import { CreateSessionReq, InvitedSessionResp } from '../../../Entities/Session';
+import { CreateSessionReq, InvitedSessionResp } from '../../../entities/Session';
 
 const formReducer = (state: any, event: any) => {
     if(event.reset) {

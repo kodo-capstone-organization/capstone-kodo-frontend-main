@@ -42,9 +42,9 @@ import {
 import { 
   Multimedia, 
   MultimediaType 
-} from '../../../Entities/Multimedia';
+} from '../../../entities/Multimedia';
 
-import { Lesson } from '../../../Entities/Lesson';
+import { Lesson } from '../../../entities/Lesson';
 import { 
   addNewMultimediaToLesson,   
   deleteMultimediasFromLesson,
@@ -63,10 +63,10 @@ import {
   PDFCard,
   DocumentCard,
   ImageCard,
-} from "./../../CourseViewer/MultimediaViewer/MultimediaViewerElements";
+} from "../../CourseViewerPage/StudentView/MultimediaViewer/MultimediaViewerElements";
 
 import ReactPlayer from "react-player";
-import PDFViewer from "./../../CourseViewer/MultimediaViewer/PDFViewer";
+import PDFViewer from "../../CourseViewerPage/StudentView/MultimediaViewer/PDFViewer";
 
 interface IErrors<TValue> {
   [id: string]: TValue;

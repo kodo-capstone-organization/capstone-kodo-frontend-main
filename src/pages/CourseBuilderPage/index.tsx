@@ -5,8 +5,8 @@ import { Box, Grid, TextField, Chip, InputAdornment, Dialog, DialogTitle, Dialog
 import { CourseBuilderCard, CourseBuilderCardHeader, CourseBuilderContainer, CourseBuilderContent, MessageContainer } from "./CourseBuilderElements";
 import LessonPlan from "./components/LessonPlan";
 import { getCourseWithoutEnrollmentByCourseId, updateCourse, toggleReviewRequestStatus } from '../../apis/CourseApis';
-import { Tag } from "../../Entities/Tag";
-import { UpdateCourseReq, Course } from "../../Entities/Course";
+import { Tag } from "../../entities/Tag";
+import { UpdateCourseReq, Course } from "../../entities/Course";
 import { Autocomplete } from "@material-ui/lab";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import DoneIcon from '@material-ui/icons/Done';

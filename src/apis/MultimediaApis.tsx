@@ -1,5 +1,5 @@
 import { IHttpClientRequestParameters } from "./HttpClientApis/IHttpClientRequestParameters";
-import { Multimedia } from "../Entities/Multimedia";
+import { Multimedia } from "../entities/Multimedia";
 import { httpClient } from "./HttpClientApis/HttpClient";
 import { transformToBlob } from "../utils/BlobCreator";
 

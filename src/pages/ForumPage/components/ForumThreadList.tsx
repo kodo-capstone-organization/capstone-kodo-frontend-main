@@ -9,9 +9,9 @@ import {
     MenuItem, ListItemIcon, CircularProgress
 } from '@material-ui/core';
 
-import { ForumCategory } from '../../../Entities/ForumCategory';
-import { ForumThread } from '../../../Entities/ForumThread';
-import { Course } from '../../../Entities/Course';
+import { ForumCategory } from '../../../entities/ForumCategory';
+import { ForumThread } from '../../../entities/ForumThread';
+import { Course } from '../../../entities/Course';
 
 import {
     getForumCategoryWithForumThreadsOnlyByForumCategoryId as getForumCategoryByForumCategoryId,
