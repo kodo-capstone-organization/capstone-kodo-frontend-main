@@ -60,6 +60,9 @@ function Board (props: any) {
     }, [props.activeTool, props.toolProperties.lineWidth, props.toolProperties.strokeStyle])
 
     const drawOnCanvas = (isInit: boolean = false, setIncomingCanvas: boolean = false) => {
+        let restore_array: ImageData[] = [];
+        let index = -1;
+
         if (canvas) {
             ctx = canvas.getContext('2d');
             if (isInit) {
@@ -79,6 +82,22 @@ function Board (props: any) {
                     ctx.lineJoin = 'round';
                     ctx.lineCap = 'round';
                     ctx.strokeStyle = props.toolProperties.strokeStyle;
+                    if (props.activeTool === "clear") {
+                        ctx.fillStyle = colours.GRAY7;
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                        ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    }
+                    /**if (props.activeTool === "undo") {
+                        if (index <= 0) {
+                            ctx.fillStyle = colours.GRAY7;
+                            ctx.clearRect(0, 0, canvas.width, canvas.height);
+                            ctx.fillRect(0, 0, canvas.width, canvas.height);
+                        } else {
+                            index -= 1;
+                            restore_array.pop();
+                            ctx.putImageData(restore_array[index], 0, 0)
+                        }
+                    }*/
                 }
 
                 let mouse = {x: 0, y: 0};
@@ -105,9 +124,13 @@ function Board (props: any) {
                     ctx?.moveTo(last_mouse.x, last_mouse.y);
                     ctx?.lineTo(mouse.x, mouse.y);
                     ctx?.closePath();
+                    // if (canvas && ctx && event.type === 'mouseout') {
+                    //     restore_array.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
+                    //     index += 1;
+                    // }
                     ctx?.stroke();
 
-                    if (timeout != undefined) {
+                    if (timeout !== undefined) {
                         clearTimeout(timeout);
                     }
                     timeout = setTimeout(function(){

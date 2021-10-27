@@ -2,6 +2,7 @@ import styled from "styled-components";
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import { colours } from "../../../../../../values/Colours";
 import { Paper } from "@material-ui/core";
+import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 
 export const StyledToggleButtonGroup = styled(ToggleButtonGroup)`
     margin: 1rem;
@@ -15,5 +16,9 @@ export const ToolbarPaper = styled(Paper)`
     width: 70%;
     margin: 1rem;
 `;
+
+export const CustomColor = styled(FiberManualRecordIcon)`
+    color: ${props => props.color ? props.color : "white"};
+`
     
         
