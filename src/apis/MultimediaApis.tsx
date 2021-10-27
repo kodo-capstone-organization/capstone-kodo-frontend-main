@@ -1,7 +1,7 @@
 import { IHttpClientRequestParameters } from "./HttpClientApis/IHttpClientRequestParameters";
 import { Multimedia } from "../entities/Multimedia";
 import { httpClient } from "./HttpClientApis/HttpClient";
-import { transformToBlob } from "../utils/BlobCreator";
+import { transformToBlob } from "../utils/BlobCreatorHelper";
 
 export async function addNewMultimediaToLesson(lessonId: number, name: string, description: string, file: File): Promise<Multimedia> {
     const formData = new FormData();

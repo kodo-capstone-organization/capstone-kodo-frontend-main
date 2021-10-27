@@ -1,4 +1,4 @@
-import { transformToBlob } from "../utils/BlobCreator";
+import { transformToBlob } from "../utils/BlobCreatorHelper";
 import { CreateSessionReq, InvitedSessionResp } from "../entities/Session";
 import { httpClient } from "./HttpClientApis/HttpClient";
 import { IHttpClientRequestParameters } from "./HttpClientApis/IHttpClientRequestParameters";

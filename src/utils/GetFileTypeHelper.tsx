@@ -1,6 +1,6 @@
 import { MultimediaType } from "../entities/Multimedia"
 
-export function getFileType(filename: string): MultimediaType {
+export function getFileTypeHelper(filename: string): MultimediaType {
     const fileType = filename.split('.').pop()
 
     switch (fileType) {

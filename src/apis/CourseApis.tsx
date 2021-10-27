@@ -2,7 +2,7 @@ import { IHttpClientRequestParameters } from "./HttpClientApis/IHttpClientReques
 import { Course, RecommendedCoursesWithTags, ToggleCourseResp, UpdateCourseReq } from "../entities/Course";
 import { httpClient } from "./HttpClientApis/HttpClient";
 import { CreateNewCourseReq } from "../entities/Course";
-import { transformToBlob } from "../utils/BlobCreator";
+import { transformToBlob } from "../utils/BlobCreatorHelper";
 
 export async function getAllCourses(): Promise<Course[]> {
     const getParameters: IHttpClientRequestParameters<undefined> = {

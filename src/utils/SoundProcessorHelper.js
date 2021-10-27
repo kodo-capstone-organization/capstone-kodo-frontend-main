@@ -10,7 +10,7 @@
 // instantaneous and time-decaying volumes available for inspection.
 // It also reports on the fraction of samples that were at or near
 // the top of the measurement range.
-export function SoundProcessor(context) {
+export function SoundProcessorHelper(context) {
     this.context = context;
     this.instant = 0.0;
     this.script = context.createScriptProcessor(2048, 1, 1);
@@ -26,8 +26,8 @@ export function SoundProcessor(context) {
     };
 }
 
-SoundProcessor.prototype.connectToSource = function(stream, callback) {
-    console.log('SoundProcessor connecting');
+SoundProcessorHelper.prototype.connectToSource = function(stream, callback) {
+    console.log('SoundProcessorHelper connecting');
     try {
         this.mic = this.context.createMediaStreamSource(stream);
         this.mic.connect(this.script);
@@ -44,8 +44,8 @@ SoundProcessor.prototype.connectToSource = function(stream, callback) {
     }
 };
 
-SoundProcessor.prototype.stop = function() {
-    console.log('SoundProcessor stopping');
+SoundProcessorHelper.prototype.stop = function() {
+    console.log('SoundProcessorHelper stopping');
     if (this && this.mic && this.script) {
         this.mic.disconnect();
         this.script.disconnect();

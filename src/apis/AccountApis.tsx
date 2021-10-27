@@ -1,7 +1,7 @@
 import { IHttpClientRequestParameters } from "./HttpClientApis/IHttpClientRequestParameters";
 import { Account, CreateNewAccountReq, UpdateAccountReq, UpdateAccountPasswordReq, StrippedDownAccount } from "../entities/Account";
 import { httpClient } from "./HttpClientApis/HttpClient";
-import { transformToBlob } from "../utils/BlobCreator";
+import { transformToBlob } from "../utils/BlobCreatorHelper";
 import { DeactivateAccountResponse } from "../entities/Deactivate";
 const FormData = require('form-data');
 

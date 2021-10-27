@@ -1,7 +1,7 @@
 import { IHttpClientRequestParameters } from "./HttpClientApis/IHttpClientRequestParameters";
 import { Lesson } from "../entities/Lesson";
 import { httpClient } from "./HttpClientApis/HttpClient";
-import { transformToBlob } from "../utils/BlobCreator";
+import { transformToBlob } from "../utils/BlobCreatorHelper";
 
 export async function getLessonByLessonId(lessonId: number): Promise<Lesson> {
     const getParameters: IHttpClientRequestParameters<undefined> = {

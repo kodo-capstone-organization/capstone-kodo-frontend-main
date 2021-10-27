@@ -1,7 +1,7 @@
 import { IHttpClientRequestParameters } from "./HttpClientApis/IHttpClientRequestParameters";
 import { QuizWithStudentAttemptCountResp, Quiz, UpdateQuizReq } from "../entities/Quiz";
 import { httpClient } from "./HttpClientApis/HttpClient";
-import { transformToBlob } from "../utils/BlobCreator";
+import { transformToBlob } from "../utils/BlobCreatorHelper";
 
 export async function getAllQuizzesWithStudentAttemptCountByEnrolledLessonId(enrolledLessonId: number): Promise<QuizWithStudentAttemptCountResp[]> {
     const getParameters: IHttpClientRequestParameters<undefined> = {

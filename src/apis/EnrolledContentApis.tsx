@@ -1,7 +1,7 @@
 import { IHttpClientRequestParameters } from "./HttpClientApis/IHttpClientRequestParameters";
 import { httpClient } from "./HttpClientApis/HttpClient";
 import { EnrolledContent } from "../entities/EnrolledContent";
-import { transformToBlob } from "../utils/BlobCreator";
+import { transformToBlob } from "../utils/BlobCreatorHelper";
 
 export async function setDateTimeOfCompletionOfEnrolledContentByEnrolledContentId(complete: boolean, enrolledContentId: number): Promise<EnrolledContent> {
 

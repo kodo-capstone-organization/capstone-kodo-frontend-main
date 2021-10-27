@@ -53,8 +53,8 @@ import {
 
 import { 
   ACCEPTABLE_FILE_TYPE, 
-  getFileType 
-} from '../../../utils/GetFileType';
+  getFileTypeHelper
+} from '../../../utils/GetFileTypeHelper';
 
 import { Button } from "../../../values/ButtonElements";
 
@@ -345,7 +345,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
         updatedFile.file = event.target.files[0]
 
         if (updatedFile.newFilename !== undefined) {
-          updatedFile.multimediaType = getFileType(updatedFile.newFilename)
+          updatedFile.multimediaType = getFileTypeHelper(updatedFile.newFilename)
         }
     
         break;
@@ -442,7 +442,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
                     name="type"
                     type="text"
                     fullWidth
-                    value={getFileType(newFile.file?.name === undefined ? "" : newFile.file.name)}
+                    value={getFileTypeHelper(newFile.file?.name === undefined ? "" : newFile.file.name)}
                     disabled
                   />
                 </FormControl>
@@ -678,7 +678,7 @@ export default function MultimediaTable(props: any) {
           updatedFile.file = event.target.files[0]
   
           if (updatedFile.newFilename !== undefined) {
-            updatedFile.multimediaType = getFileType(updatedFile.newFilename)
+            updatedFile.multimediaType = getFileTypeHelper(updatedFile.newFilename)
           }
       
           break;
