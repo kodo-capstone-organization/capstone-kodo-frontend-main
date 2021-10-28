@@ -28,6 +28,7 @@
     "pdfjs-dist": "^2.9.359",
     "progress": "^2.0.3",
     "react": "^17.0.2",
+    "react-app-rewired": "^2.1.8",
     "react-beautiful-dnd": "^13.1.0",
     "react-customizable-progressbar": "^1.0.3",
     "react-doc-viewer": "^0.1.5",
@@ -50,9 +51,9 @@
   },
   "proxy": "http://localhost:8080",
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
+    "test": "react-app-rewired test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
