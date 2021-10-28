@@ -104,16 +104,19 @@ function Board (props: any) {
                     canvas?.removeEventListener('mousemove', onPaint, false);
                 }, false);
 
-                const onPaint = function() {
-                    ctx?.beginPath();
-                    ctx?.moveTo(last_mouse.x, last_mouse.y);
-                    ctx?.lineTo(mouse.x, mouse.y);
-                    ctx?.closePath();
-                    // if (canvas && ctx && event.type === 'mouseout') {
-                    //     restore_array.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
-                    //     index += 1;
-                    // }
-                    ctx?.stroke();
+                const onPaint = () => {
+
+                    if (!props.isClearAllCalled) { // prevents drawing a dot when clear all is called
+                        ctx?.beginPath();
+                        ctx?.moveTo(last_mouse.x, last_mouse.y);
+                        ctx?.lineTo(mouse.x, mouse.y);
+                        ctx?.closePath();
+                        // if (canvas && ctx && event.type === 'mouseout') {
+                        //     restore_array.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
+                        //     index += 1;
+                        // }
+                        ctx?.stroke();
+                    }
 
                     if (timeout !== undefined) {
                         clearTimeout(timeout);
