@@ -108,6 +108,7 @@ function ForumCategoryModal(props: any) {
             }).catch((err) => {
                 props.onForumCategoryChange({ message: "Forum Category Delete Failed", type: "error" });
             });
+            props.handleMenuClose();
             setOpen(false);
         }
     }

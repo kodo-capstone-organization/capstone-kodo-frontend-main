@@ -4,10 +4,10 @@ import { StudentAttempt } from "./StudentAttempt";
 import { QuizQuestionOption } from "./QuizQuestionOption";
 
 export interface Quiz extends Content {
-    timeLimit: string, // Todo
-    maxAttemptsPerStudent: number,
-    quizQuestions: QuizQuestion[],
-    studentAttempts: StudentAttempt[]
+    timeLimit: string;
+    maxAttemptsPerStudent: number;
+    quizQuestions: QuizQuestion[];
+    studentAttempts: StudentAttempt[];
 }
 
 export interface QuizWithStudentAttemptCountResp {
