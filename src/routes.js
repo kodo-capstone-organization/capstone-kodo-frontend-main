@@ -17,7 +17,7 @@ import CourseOverview from "./pages/CourseViewerPage";
 import LessonViewerWithRouter from "./pages/CourseViewer/LessonViewer";
 import LessonStatisticsViewerWithRouter from "./pages/CourseViewer/LessonStatisticsViewer";
 import MultimediaViewerWithRouter from "./pages/CourseViewer/MultimediaViewer";
-import QuizViewer from "./pages/QuizViewer";
+import QuizViewer from "./pages/QuizViewerPage";
 import LiveKodoSessionPage from "./pages/Sessions/LiveKodoSessionPage";
 import InvalidSessionPage from "./pages/Sessions/InvalidSessionPage";
 
