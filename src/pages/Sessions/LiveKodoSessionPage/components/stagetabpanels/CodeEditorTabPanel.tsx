@@ -20,7 +20,9 @@ function CodeEditorTabPanel (props: any) {
     }, [props.incomingEditorData])
 
     useEffect(() => {
-        setSelectedLanguage(props.incomingSelectedLanguage)
+        if (props.incomingSelectedLanguage) {
+            setSelectedLanguage(props.incomingSelectedLanguage)
+        }
     }, [props.incomingSelectedLanguage])
 
     const handleLanguageChange = (event: any) => {
