@@ -4,7 +4,7 @@ import Board from "./whiteboard-components/Board";
 import Tools from "./whiteboard-components/Tools";
 
 const initToolProperties = {
-    strokeStyle: "green",
+    strokeStyle: "red",
     lineWidth: 10
 }
 

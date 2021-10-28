@@ -1,6 +1,6 @@
 
 import {ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
-import { useState, MouseEvent } from "react";
+import { useState, MouseEvent, useEffect } from "react";
 import { StyledToggleButtonGroup, ToolbarPaper, CustomColor } from "./WhiteboardElements";
 import BorderColorIcon from '@material-ui/icons/BorderColor';
 import CategoryIcon from '@material-ui/icons/Category';
@@ -8,21 +8,24 @@ import PaletteIcon from '@material-ui/icons/Palette';
 import Crop169Icon from '@material-ui/icons/Crop169';
 import UndoIcon from '@material-ui/icons/Undo';
 import ClearAllIcon from '@material-ui/icons/ClearAll';
-import { Divider, Slider, Typography, Tooltip, Menu, MenuItem } from "@material-ui/core";
+import { Divider, Slider, Typography, Tooltip, Menu, MenuItem, Button } from "@material-ui/core";
 import { colours } from "../../../../../../values/Colours";
+
+const paletteColours = ["red", "green", "black", "blue", "yellow"];
 
 function Tools (props: any) {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [colourPicked, setColourPicked] = useState<string>("red");
-    const colors = ["red", "green", "black", "blue", "yellow"];
 
-    const handleChangeTool = (event: any, newTool: string, newColour: string) => {
+    useEffect(() => {
+        handleChangeTool(null, props.activeTool, colourPicked);
+    }, [colourPicked])
+
+    const handleChangeTool = (event: any, newTool: string, colour: string) => {
         if (newTool !== null) {
             if (newTool === "eraser") {
                 // Special handling for eraser: Set colour to bg colour
                 handleChangeColour(null, colours.GRAY7);
-            } else if (newTool === "color") {
-                handleChangeColour(null, newColour);   
             } else {
                 // Change back to the preserved colour picker state in this component
                 handleChangeColour(null, colourPicked);
@@ -32,25 +35,17 @@ function Tools (props: any) {
         }
     }
 
-    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-        setAnchorEl(event.currentTarget);
-      };
-    
-    const handleColorPicked = (color: string) => {
-        handleChangeTool(null, "color", color);
-        handleClose();
-    }
-    
-      const handleClose = () => {
-        setAnchorEl(null);
-      };
-    
-
     const handleChangeThickness = (event: any, newValue: number | number[]) => {
         props.setToolProperties({
            ...props.toolProperties,
            lineWidth: newValue
         })
+    }
+
+    const handleColourPicked = (colourPicked: string) => {
+        // call this method again so that colour change is flushed if the tool is NOT eraser
+        setColourPicked(colourPicked)
+        handleClose();
     }
 
     const handleChangeColour = (event: any, newColour: string) => {
@@ -59,6 +54,14 @@ function Tools (props: any) {
             strokeStyle: newColour
         })
     }
+
+    const openColourMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
 
     return (
         <ToolbarPaper elevation={2}>
@@ -79,24 +82,6 @@ function Tools (props: any) {
                         <Crop169Icon />
                     </Tooltip>
                 </ToggleButton>
-                <ToggleButton value="color" aria-label="color" onClick={handleClick}>
-                    <Tooltip title="Pick a color">
-                        <PaletteIcon />
-                    </Tooltip>
-                </ToggleButton>
-                <Menu
-                    id="simple-menu"
-                    anchorEl={anchorEl}
-                    keepMounted
-                    open={Boolean(anchorEl)}
-                    onClose={handleClose}
-                >
-                    {colors.map((color, idx) => {
-                        return (
-                            <MenuItem onClick={() => handleColorPicked(color)}><CustomColor color={color}/></MenuItem>
-                        )
-                    })}
-                </Menu>
                 <ToggleButton value="shape" aria-label="shape">
                     <Tooltip title="Shape">
                         <CategoryIcon />
@@ -113,9 +98,10 @@ function Tools (props: any) {
                     </Tooltip>
                 </ToggleButton>
             </StyledToggleButtonGroup>
+
             <Divider flexItem orientation="vertical" style={{ margin: "0.5rem"}}/>
 
-            <div style={{ margin: "0 0 0 1rem"}}>
+            <div style={{ margin: "0 1rem"}}>
                 <Typography id="linewidth-slider" style={{ margin: "1rem 0 0 0"}}>
                     Thickness
                 </Typography>
@@ -129,28 +115,25 @@ function Tools (props: any) {
                     max={50}
                 />
             </div>
-
-
-            {/*<StyledToggleButtonGroup*/}
-            {/*    size="small"*/}
-            {/*    value={formats}*/}
-            {/*    onChange={handleFormat}*/}
-            {/*    aria-label="text formatting"*/}
-            {/*>*/}
-            {/*    <ToggleButton value="bold" aria-label="bold">*/}
-            {/*        <FormatBoldIcon />*/}
-            {/*    </ToggleButton>*/}
-            {/*    <ToggleButton value="italic" aria-label="italic">*/}
-            {/*        <FormatItalicIcon />*/}
-            {/*    </ToggleButton>*/}
-            {/*    <ToggleButton value="underlined" aria-label="underlined">*/}
-            {/*        <FormatUnderlinedIcon />*/}
-            {/*    </ToggleButton>*/}
-            {/*    <ToggleButton value="color" aria-label="color" disabled>*/}
-            {/*        <FormatColorFillIcon />*/}
-            {/*        <ArrowDropDownIcon />*/}
-            {/*    </ToggleButton>*/}
-            {/*</StyledToggleButtonGroup>*/}
+            <Button onClick={openColourMenu}>
+                <Tooltip title="Pick a color">
+                    <PaletteIcon stroke={ colourPicked === "yellow" ? "gray" : "" } style={{ color: colourPicked, transform: "scale(1.5)" }} />
+                </Tooltip>
+            </Button>
+            <Menu
+                id="color-menu"
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={handleClose}
+            >
+                {paletteColours.map((colour, idx) => {
+                    return (
+                        <MenuItem key={idx} onClick={() => handleColourPicked(colour)}>
+                            <CustomColor color={colour}/>
+                        </MenuItem>
+                    )
+                })}
+            </Menu>
         </ToolbarPaper>
     )
 }
