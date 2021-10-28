@@ -61,6 +61,10 @@ function LiveKodoSessionPage(props: any) {
                 props.callOpenSnackBar("Error in joining session", "error")
                 props.history.push({ pathname: "/session/invalidsession", state: { errorData: error?.response?.data }})
             })
+
+        window.sessionStorage.removeItem("canvasData");
+        window.sessionStorage.removeItem("editorData");
+        window.sessionStorage.removeItem("selectedLanguage");
         
         return () => {
             handleMyExit()
@@ -116,6 +120,9 @@ function LiveKodoSessionPage(props: any) {
                         if (incomingPeerId.toString() !== myAccountId.toString()) {
                             handleCandidate(incomingPeerId, data);
                         }
+                        break;
+                    case "broadcast":
+                        broadExistingData();
                         break;
                     case "exit":
                         handleExit(incomingPeerId);
@@ -211,6 +218,7 @@ function LiveKodoSessionPage(props: any) {
         dataChannel.onopen = function(event) {
             console.log("dataChannel.onopen IN JOINER SIDE")
             setDataChannelConnected(true);
+            send({ event : "broadcast" });
         }
 
         // when we receive a message from the other peer, printing it on the console
@@ -240,6 +248,7 @@ function LiveKodoSessionPage(props: any) {
             newDataChannel.onopen = function(event) {
                 console.log("dataChannel.onopen in CREATOR SIDE")
                 setDataChannelConnected(true);
+                send({ event : "broadcast" });
             }
             newDataChannel.onmessage = function(event) {
                 console.log("dataChannel.onmessage IN CREATOR SIDE")
@@ -312,7 +321,6 @@ function LiveKodoSessionPage(props: any) {
         } catch (e) {
             console.log("failed to create an answer: ", e)
         }
-
     };
 
     async function handleCandidate(incomingPeerId: number, candidate: any) {
@@ -462,6 +470,26 @@ function LiveKodoSessionPage(props: any) {
         localStream?.getTracks().forEach(track => track.stop());
         send({ event : "exit" }) // Inform peers that I am leaving
         conn?.close(); // Triggers conn.onclose cleanup function (my own exit)
+    }
+
+    const broadExistingData = () => {
+        console.log("Broadcasting existing data to new user")
+        craftAndSendCallEventMessage("", amIMuted);
+
+        if (window.sessionStorage.getItem("canvasData") !== "") {
+            //@ts-ignore
+            craftAndSendWhiteboardEventMessage(window.sessionStorage.getItem("canvasData"))
+        }
+
+        if (window.sessionStorage.getItem("editorData") !== "") {
+            //@ts-ignore
+            craftAndSendEditorEventMessage(window.sessionStorage.getItem("editorData"), undefined)
+        }
+
+        if (window.sessionStorage.getItem("selectedLanguage") !== "") {
+            //@ts-ignore
+            craftAndSendEditorEventMessage(undefined, window.sessionStorage.getItem("selectedLanguage"))
+        }
     }
 
     return (

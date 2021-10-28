@@ -29,6 +29,7 @@ function CodeEditorTabPanel (props: any) {
         setSelectedLanguage(event?.target?.value as string);
         // TODO send dc message to everyone that language is changed
         props.sendEditorEventViaDCCallback(undefined, event?.target?.value as string)
+        window.sessionStorage.setItem("selectedLanguage", event?.target?.value as string);
     };
 
     const editorDidMount = () => {
@@ -40,6 +41,7 @@ function CodeEditorTabPanel (props: any) {
         // TODO fire datachannel message
         setEditorCode(newCodeValue)
         props.sendEditorEventViaDCCallback(newCodeValue, undefined)
+        window.sessionStorage.setItem("editorData", newCodeValue);
     }
 
     return (

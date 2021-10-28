@@ -121,6 +121,9 @@ function Board (props: any) {
                     timeout = setTimeout(function(){
                         var base64ImageData = canvas?.toDataURL("image/png");
                         props.sendWhiteboardEventViaDCCallback(base64ImageData);
+                        if (base64ImageData) {
+                            window.sessionStorage.setItem("canvasData", base64ImageData);
+                        }
                     }, 500)
                 };
 
@@ -150,6 +153,20 @@ function Board (props: any) {
                             ctx.putImageData(restore_array[index], 0, 0)
                         }
                     }*/
+                }
+
+                // Account for users changing tab, set canvasData from sessionStorage
+                if (window.sessionStorage.getItem("canvasData") !== null) {
+                    let existingCanvasDataImage = new Image();
+
+                    //@ts-ignore
+                    existingCanvasDataImage.src = window.sessionStorage.getItem("canvasData")
+                    existingCanvasDataImage.onload = function() {
+                        if (ctx) {
+                            console.log("CHANGED TAB, RE-DRAWING NOW")
+                            ctx.drawImage(existingCanvasDataImage, 0, 0);
+                        }
+                    };
                 }
             } else {
                 let peerCanvasDataImage = new Image();
