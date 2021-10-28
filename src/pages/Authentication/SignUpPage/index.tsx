@@ -48,7 +48,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-function SignUp(props: any) {
+function SignUpPage(props: any) {
 
     const [name, setName] = useState<string>("");
     const [username, setUsername] = useState<string>("");
@@ -370,4 +370,4 @@ function SignUp(props: any) {
     )
 }
 
-export default SignUp
+export default SignUpPage

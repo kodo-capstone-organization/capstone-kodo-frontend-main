@@ -8,8 +8,8 @@ import InvalidPage from "./pages/InvalidPage/InvalidPage";
 
 import Layout from "./components/Layout";
 import { RouteItemsWithSidebar } from "./routeItems";
-import Login from "./pages/Authentication/Login";
-import SignUp from "./pages/Authentication/SignUp";
+import LoginPage from "./pages/Authentication/LoginPage";
+import SignUpPage from "./pages/Authentication/SignUpPage";
 import CourseBuilderPage from "./pages/CourseBuilderPage";
 import QuizBuidlerPage from "./pages/QuizBuilderPage";
 
@@ -81,8 +81,8 @@ function Routes() {
                         <Route path="/" component={HomePage} exact >
                             {window.sessionStorage.getItem("loggedInAccountId") ? <Redirect to="/progresspage" /> : <HomePage />}
                         </Route>
-                        <Route path="/login" render={props => <Login {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
-                        <Route path="/signup" render={props => <SignUp {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
+                        <Route path="/login" render={props => <LoginPage {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
+                        <Route path="/signup" render={props => <SignUpPage {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
                         <Route path="/invalidpage" render={props => <InvalidPage {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
                         
                         {window.sessionStorage.getItem("loggedInAccountId") ?

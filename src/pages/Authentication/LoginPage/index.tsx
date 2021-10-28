@@ -33,7 +33,7 @@ interface IErrors<TValue> {
     [id: string]: TValue;
 }
 
-function Login(props: any) {
+function LoginPage(props: any) {
 
     const [auth, setAuth] = useState(true);
     const [username, setUsername] = useState('');
@@ -286,4 +286,4 @@ function Login(props: any) {
     )
 }
 
-export default Login
+export default LoginPage
