@@ -13,7 +13,7 @@ import SignUpPage from "./pages/Authentication/SignUpPage";
 import CourseBuilderPage from "./pages/CourseBuilderPage";
 import QuizBuidlerPage from "./pages/QuizBuilderPage";
 
-import CourseOverview from "./pages/CourseViewer";
+import CourseOverview from "./pages/CourseViewerPage";
 import LessonViewerWithRouter from "./pages/CourseViewer/LessonViewer";
 import LessonStatisticsViewerWithRouter from "./pages/CourseViewer/LessonStatisticsViewer";
 import MultimediaViewerWithRouter from "./pages/CourseViewer/MultimediaViewer";
