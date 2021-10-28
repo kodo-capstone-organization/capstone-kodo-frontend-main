@@ -1,14 +1,14 @@
 
 import {ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
 import { useState, MouseEvent, useEffect } from "react";
-import { StyledToggleButtonGroup, ToolbarPaper, CustomColor } from "./WhiteboardElements";
+import { StyledToggleButtonGroup, ToolbarPaper, CustomColor, ToolbarPropertyAction, ToolbarWhiteboardAction } from "./WhiteboardElements";
 import BorderColorIcon from '@material-ui/icons/BorderColor';
 import CategoryIcon from '@material-ui/icons/Category';
 import PaletteIcon from '@material-ui/icons/Palette';
 import Crop169Icon from '@material-ui/icons/Crop169';
 import UndoIcon from '@material-ui/icons/Undo';
 import ClearAllIcon from '@material-ui/icons/ClearAll';
-import { Divider, Slider, Typography, Tooltip, Menu, MenuItem, Button } from "@material-ui/core";
+import { Divider, Slider, Typography, Tooltip, Menu, MenuItem, IconButton } from "@material-ui/core";
 import { colours } from "../../../../../../values/Colours";
 
 const paletteColours = ["red", "green", "black", "blue", "yellow"];
@@ -87,22 +87,12 @@ function Tools (props: any) {
                         <CategoryIcon />
                     </Tooltip>
                 </ToggleButton>
-                <ToggleButton value="undo" aria-label="undo">
-                    <Tooltip title="Undo">
-                        <UndoIcon />
-                    </Tooltip>
-                </ToggleButton>
-                <ToggleButton value="clear" aria-label="clear">
-                    <Tooltip title="Clear Whiteboard">
-                        <ClearAllIcon />
-                    </Tooltip>
-                </ToggleButton>
             </StyledToggleButtonGroup>
 
             <Divider flexItem orientation="vertical" style={{ margin: "0.5rem"}}/>
 
-            <div style={{ margin: "0 1rem"}}>
-                <Typography id="linewidth-slider" style={{ margin: "1rem 0 0 0"}}>
+            <ToolbarPropertyAction>
+                <Typography id="linewidth-slider-label">
                     Thickness
                 </Typography>
                 <Slider
@@ -114,26 +104,39 @@ function Tools (props: any) {
                     min={5}
                     max={50}
                 />
-            </div>
-            <Button onClick={openColourMenu}>
-                <Tooltip title="Pick a color">
-                    <PaletteIcon stroke={ colourPicked === "yellow" ? "gray" : "" } style={{ color: colourPicked, transform: "scale(1.5)" }} />
-                </Tooltip>
-            </Button>
-            <Menu
-                id="color-menu"
-                anchorEl={anchorEl}
-                open={Boolean(anchorEl)}
-                onClose={handleClose}
-            >
-                {paletteColours.map((colour, idx) => {
-                    return (
-                        <MenuItem key={idx} onClick={() => handleColourPicked(colour)}>
-                            <CustomColor color={colour}/>
-                        </MenuItem>
-                    )
-                })}
-            </Menu>
+            </ToolbarPropertyAction>
+            <ToolbarPropertyAction>
+                <Typography id="color-picker-label">
+                    Colour
+                </Typography>
+                <IconButton id="color-picker" onClick={openColourMenu} style={{ paddingTop: 0, justifySelf: "center" }}>
+                    <Tooltip title="Pick a color">
+                        <PaletteIcon stroke={ colourPicked === "yellow" ? "gray" : "" } style={{ color: colourPicked, transform: "scale(1.2)" }} />
+                    </Tooltip>
+                </IconButton>
+                <Menu id="color-menu" anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
+                    {paletteColours.map((colour, idx) => {
+                        return (
+                            <MenuItem key={idx} onClick={() => handleColourPicked(colour)}>
+                                <CustomColor color={colour}/>
+                            </MenuItem>
+                        )
+                    })}
+                </Menu>
+            </ToolbarPropertyAction>
+
+            <Divider flexItem orientation="vertical" style={{ margin: "0.5rem"}}/>
+
+            <Tooltip title="Undo">
+                <ToolbarWhiteboardAction aria-label="undo">
+                    <UndoIcon />
+                </ToolbarWhiteboardAction>
+            </Tooltip>
+            <Tooltip title="Clear Whiteboard">
+                <ToolbarWhiteboardAction aria-label="clear">
+                    <ClearAllIcon />
+                </ToolbarWhiteboardAction>
+            </Tooltip>
         </ToolbarPaper>
     )
 }
