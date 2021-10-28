@@ -54,12 +54,21 @@ function Board (props: any) {
                 setCursorImagePath("/cursors/pen_cursor.svg");
                 break;
         }
-
         // Call this again
         drawOnCanvas();
     }, [props.activeTool, props.toolProperties.lineWidth, props.toolProperties.strokeStyle])
 
-    const drawOnCanvas = (isInit: boolean = false, setIncomingCanvas: boolean = false) => {
+    useEffect(() => {
+        // If changes to true, clear the canvas
+        if (props.isClearAllCalled) {
+            // DO CLEAR ALL
+            drawOnCanvas(false, false, true)
+            // Finally, set back parent clear all state to false
+            props.setIsClearAllCalled(false);
+        }
+    }, [props.isClearAllCalled])
+
+    const drawOnCanvas = (isInit: boolean = false, setIncomingCanvas: boolean = false, isClearAll: boolean = false) => {
         let restore_array: ImageData[] = [];
         let index = -1;
 
@@ -76,30 +85,6 @@ function Board (props: any) {
             }
 
             if (!setIncomingCanvas) {
-                if (ctx) {
-                    /* Paintbrush settings Work */
-                    ctx.lineWidth = props.toolProperties.lineWidth;
-                    ctx.lineJoin = 'round';
-                    ctx.lineCap = 'round';
-                    ctx.strokeStyle = props.toolProperties.strokeStyle;
-                    if (props.activeTool === "clear") {
-                        ctx.fillStyle = colours.GRAY7;
-                        ctx.clearRect(0, 0, canvas.width, canvas.height);
-                        ctx.fillRect(0, 0, canvas.width, canvas.height);
-                    }
-                    /**if (props.activeTool === "undo") {
-                        if (index <= 0) {
-                            ctx.fillStyle = colours.GRAY7;
-                            ctx.clearRect(0, 0, canvas.width, canvas.height);
-                            ctx.fillRect(0, 0, canvas.width, canvas.height);
-                        } else {
-                            index -= 1;
-                            restore_array.pop();
-                            ctx.putImageData(restore_array[index], 0, 0)
-                        }
-                    }*/
-                }
-
                 let mouse = {x: 0, y: 0};
                 let last_mouse = {x: 0, y: 0};
 
@@ -138,6 +123,34 @@ function Board (props: any) {
                         props.sendWhiteboardEventViaDCCallback(base64ImageData);
                     }, 500)
                 };
+
+                if (ctx) {
+                    /* Paintbrush settings Work */
+                    ctx.lineWidth = props.toolProperties.lineWidth;
+                    ctx.lineJoin = 'round';
+                    ctx.lineCap = 'round';
+                    ctx.strokeStyle = props.toolProperties.strokeStyle;
+
+                    if (isClearAll) {
+                        ctx.fillStyle = colours.GRAY7;
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                        ctx.fillRect(0, 0, canvas.width, canvas.height);
+                        // NOTE: Manually call onPaint to send out empty canvas to other peers instead of relying on
+                        // mouseup / mousedown event listeners, so that the change is instant.
+                        onPaint();
+                    }
+                    /**if (isUndo) {
+                        if (index <= 0) {
+                            ctx.fillStyle = colours.GRAY7;
+                            ctx.clearRect(0, 0, canvas.width, canvas.height);
+                            ctx.fillRect(0, 0, canvas.width, canvas.height);
+                        } else {
+                            index -= 1;
+                            restore_array.pop();
+                            ctx.putImageData(restore_array[index], 0, 0)
+                        }
+                    }*/
+                }
             } else {
                 let peerCanvasDataImage = new Image();
                 peerCanvasDataImage.src = props.incomingCanvasData;

@@ -8,6 +8,7 @@ import PaletteIcon from '@material-ui/icons/Palette';
 import Crop169Icon from '@material-ui/icons/Crop169';
 import UndoIcon from '@material-ui/icons/Undo';
 import ClearAllIcon from '@material-ui/icons/ClearAll';
+import ImageIcon from '@material-ui/icons/Image';
 import { Divider, Slider, Typography, Tooltip, Menu, MenuItem, IconButton } from "@material-ui/core";
 import { colours } from "../../../../../../values/Colours";
 
@@ -62,6 +63,11 @@ function Tools (props: any) {
     const handleClose = () => {
         setAnchorEl(null);
     };
+
+    const handleClearAll = () => {
+        // "Firing" the event
+        props.setIsClearAllCalled(true);
+    }
 
     return (
         <ToolbarPaper elevation={2}>
@@ -127,13 +133,18 @@ function Tools (props: any) {
 
             <Divider flexItem orientation="vertical" style={{ margin: "0.5rem"}}/>
 
+            <Tooltip title="Insert Image">
+                <ToolbarWhiteboardAction aria-label="image">
+                    <ImageIcon />
+                </ToolbarWhiteboardAction>
+            </Tooltip>
             <Tooltip title="Undo">
                 <ToolbarWhiteboardAction aria-label="undo">
                     <UndoIcon />
                 </ToolbarWhiteboardAction>
             </Tooltip>
             <Tooltip title="Clear Whiteboard">
-                <ToolbarWhiteboardAction aria-label="clear">
+                <ToolbarWhiteboardAction onClick={handleClearAll} aria-label="clear">
                     <ClearAllIcon />
                 </ToolbarWhiteboardAction>
             </Tooltip>

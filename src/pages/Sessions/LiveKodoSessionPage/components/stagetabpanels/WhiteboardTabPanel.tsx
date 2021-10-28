@@ -13,6 +13,7 @@ function WhiteboardTabPanel (props: any) {
 
     const [activeTool, setActiveTool] = useState<string>("pen");
     const [toolProperties, setToolProperties] = useState<object>(initToolProperties);
+    const [isClearAllCalled, setIsClearAllCalled] = useState<boolean>(false);
     
     return (
         <WhiteboardPanelWrapper>
@@ -22,11 +23,14 @@ function WhiteboardTabPanel (props: any) {
                 setActiveTool={setActiveTool}
                 toolProperties={toolProperties}
                 setToolProperties={setToolProperties}
+                setIsClearAllCalled={setIsClearAllCalled}
             />
             <Board
                 style={{ width: "inherit", height: "inherit" }}
                 activeTool={activeTool}
                 toolProperties={toolProperties}
+                isClearAllCalled={isClearAllCalled}
+                setIsClearAllCalled={setIsClearAllCalled}
                 sendWhiteboardEventViaDCCallback={props.sendWhiteboardEventViaDCCallback}
                 incomingCanvasData={props.incomingCanvasData}
             />
