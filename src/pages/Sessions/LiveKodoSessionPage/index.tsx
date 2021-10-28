@@ -1,7 +1,6 @@
 import React, { useEffect, createRef, useState, RefObject } from 'react'
-import {CallEvent, InvitedSessionResp, KodoDataChannelMessage, KodoSessionEvent, KodoSessionEventType, WhiteboardEvent } from '../../../apis/Entities/Session';
+import {CallEvent, InvitedSessionResp, KodoDataChannelMessage, KodoSessionEvent, KodoSessionEventType, WhiteboardEvent, EditorEvent } from '../../../apis/Entities/Session';
 import { endSession, getSessionBySessionId } from '../../../apis/Session/SessionApis';
-import { Button } from '../../../values/ButtonElements';
 import ActionsPanel from './components/ActionsPanel';
 import ParticipantsPanel from './components/ParticipantsPanel';
 import Stage from './components/Stage';
@@ -405,6 +404,15 @@ function LiveKodoSessionPage(props: any) {
         return craftAndSendDcMessage(newWhiteboardEvent, KodoSessionEventType.WHITEBOARD)
     }
 
+    const craftAndSendEditorEventMessage = (editorData?: string, selectedLanguage?: string, cursorLocation?: string) => {
+        const newEditorEvent: EditorEvent = {
+            editorData: editorData ? editorData : undefined,
+            selectedLanguage: selectedLanguage ? selectedLanguage : undefined,
+            cursorLocation: cursorLocation ? cursorLocation : ""
+        }
+        return craftAndSendDcMessage(newEditorEvent, KodoSessionEventType.EDITOR)
+    }
+
     /* * * * * * * * * * * * * * * * * * * * * * *
      * [RECEIVING] Data channel message handling   *
      * * * * * * * * * * * * * * * * * * * * * * */
@@ -481,6 +489,7 @@ function LiveKodoSessionPage(props: any) {
                             sendViaWSCallback={send}
                             sendCallEventViaDCCallback={craftAndSendCallEventMessage}
                             sendWhiteboardEventViaDCCallback={craftAndSendWhiteboardEventMessage}
+                            sendEditorEventViaDCCallback={craftAndSendEditorEventMessage}
                             newIncomingDcMessage={newWhiteboardOrEditorDcMessage}
                         />
                         <ActionsPanel 

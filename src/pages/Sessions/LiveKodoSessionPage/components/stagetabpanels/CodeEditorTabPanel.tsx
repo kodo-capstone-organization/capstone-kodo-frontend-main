@@ -1,6 +1,6 @@
 import MonacoEditor, { monaco } from 'react-monaco-editor';
 import { FormControl, InputLabel, Menu, MenuItem, Select, Typography } from "@material-ui/core";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CodeEditorPanelWrapper, EditorTopBarGrid } from "./StageTabPanelsElements";
 
 // Monaco settings
@@ -15,9 +15,18 @@ function CodeEditorTabPanel (props: any) {
     const [isEditorLoading, setIsEditorLoading] = useState<boolean>(true);
     const [editorCode, setEditorCode] = useState<string>("");
 
+    useEffect(() => {
+        setEditorCode(props.incomingEditorData)
+    }, [props.incomingEditorData])
+
+    useEffect(() => {
+        setSelectedLanguage(props.incomingSelectedLanguage)
+    }, [props.incomingSelectedLanguage])
+
     const handleLanguageChange = (event: any) => {
         setSelectedLanguage(event?.target?.value as string);
         // TODO send dc message to everyone that language is changed
+        props.sendEditorEventViaDCCallback(undefined, event?.target?.value as string)
     };
 
     const editorDidMount = () => {
@@ -28,6 +37,7 @@ function CodeEditorTabPanel (props: any) {
     const onCodeChange = (newCodeValue: string, event: monaco.editor.IModelContentChangedEvent) => {
         // TODO fire datachannel message
         setEditorCode(newCodeValue)
+        props.sendEditorEventViaDCCallback(newCodeValue, undefined)
     }
 
     return (

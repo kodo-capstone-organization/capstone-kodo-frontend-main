@@ -11,6 +11,8 @@ function Stage(props: any) {
     const [activeTabIdx, setActiveTabIdx] = useState<number>(0);
 
     const [incomingCanvasData, setIncomingCanvasData] = useState<string>();
+    const [incomingEditorData, setIncomingEditorData] = useState<string>();
+    const [incomingSelectedLanguage, setIncomingSelectedLanguage] = useState<string>();
 
     useEffect(() => {
         setPeerConns(props.peerConns)
@@ -20,7 +22,12 @@ function Stage(props: any) {
         if (props.newIncomingDcMessage?.eventType === KodoSessionEventType.WHITEBOARD) {
             setIncomingCanvasData(props.newIncomingDcMessage?.event?.encodedCanvasData)
         }
-        // TODO Editor
+        if (props.newIncomingDcMessage?.eventType === KodoSessionEventType.EDITOR) {
+            setIncomingEditorData(props.newIncomingDcMessage?.event?.editorData)
+            if (props.newIncomingDcMessage?.event?.selectedLanguage) {
+                setIncomingSelectedLanguage(props.newIncomingDcMessage?.event?.selectedLanguage)
+            }
+        }
 
     }, [props.newIncomingDcMessage])
 
@@ -43,7 +50,11 @@ function Stage(props: any) {
             {
                 myTabIdx: 1,
                 myTabName: "Code Editor",
-                tabPanelComponent: <CodeEditorTabPanel key={1} />
+                tabPanelComponent: <CodeEditorTabPanel key={1} 
+                    sendEditorEventViaDCCallback={props.sendEditorEventViaDCCallback}
+                    incomingEditorData={incomingEditorData}
+                    incomingSelectedLanguage={incomingSelectedLanguage}
+                    />
             },
             {
                 myTabIdx: 2,

@@ -34,11 +34,12 @@ export interface CallEvent extends KodoSessionEvent {
 }
 
 export interface WhiteboardEvent extends KodoSessionEvent {
-    // TODO
     encodedCanvasData?: string
     cursorLocation?: string 
 }
 
 export interface EditorEvent extends KodoSessionEvent {
-    // TODO
+    editorData?: string
+    selectedLanguage?: string
+    cursorLocation?: string 
 }
