@@ -6,12 +6,12 @@ import { CodeEditorPanelWrapper, EditorTopBarGrid } from "./StageTabPanelsElemen
 // Monaco settings
 const options = {
     selectOnLineNumbers: true,
-    fontSize: 20
+    fontSize: 20,
 }
 
 function CodeEditorTabPanel (props: any) {
 
-    const [selectedLanguage, setSelectedLanguage] = useState<string>("python");
+    const [selectedLanguage, setSelectedLanguage] = useState<string>("javascript");
     const [isEditorLoading, setIsEditorLoading] = useState<boolean>(true);
     const [editorCode, setEditorCode] = useState<string>("");
 
@@ -45,9 +45,11 @@ function CodeEditorTabPanel (props: any) {
                         onChange={handleLanguageChange}
                         label="Language"
                     >
+                        <MenuItem value="javascript">Javascript</MenuItem>
+                        <MenuItem value="typescript">Typescript</MenuItem>
+                        <MenuItem value="html">HTML</MenuItem>
                         <MenuItem value="python">Python</MenuItem>
                         <MenuItem value="java">Java</MenuItem>
-                        <MenuItem value="javascript">Javascript</MenuItem>
                     </Select>
                 </FormControl>
             </EditorTopBarGrid>
