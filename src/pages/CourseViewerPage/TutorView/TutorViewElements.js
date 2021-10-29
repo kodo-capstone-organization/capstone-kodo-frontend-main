@@ -2,8 +2,6 @@ import styled from "styled-components";
 import { colours } from "../../../values/Colours";
 import { fontSizes } from "../../../values/FontSizes";
 import { Card, CardContent, CardHeader } from "@material-ui/core";
-import Box from "@material-ui/core/Box";
-
 
 export const TutorContainer = styled.div`
   display: flex;

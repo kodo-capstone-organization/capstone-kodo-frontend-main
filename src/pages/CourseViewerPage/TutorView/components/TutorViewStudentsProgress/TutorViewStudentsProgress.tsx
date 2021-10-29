@@ -15,11 +15,10 @@ import LinearProgress, {
   LinearProgressProps
 } from "@material-ui/core/LinearProgress";
 
+import { Course } from "../../../../../entities/Course";
+import { EnrolledCourseWithStudentResp } from "../../../../../entities/EnrolledCourse";
 
-import { Course } from "../../../../../apis/Entities/Course";
-import { EnrolledCourseWithStudentResp } from "../../../../../apis/Entities/EnrolledCourse";
-
-import { getEnrolledCoursesWithStudentCompletion } from "../../../../../apis/EnrolledCourse/EnrolledCourseApis";
+import { getEnrolledCoursesWithStudentCompletion } from "../../../../../apis/EnrolledCourseApis";
 
 import {
   TutorViewCard,

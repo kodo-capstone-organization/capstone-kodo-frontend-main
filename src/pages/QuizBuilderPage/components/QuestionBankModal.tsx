@@ -13,9 +13,9 @@ import {
     GridValueGetterParams 
 } from '@material-ui/data-grid';
 
-import { QuizQuestion } from '../../../apis/Entities/QuizQuestion';
+import { QuizQuestion } from '../../../entities/QuizQuestion';
 
-import { getAllQuizQuestionsByTutorId } from "../../../apis/QuizQuestion/QuizQuestionApis";
+import { getAllQuizQuestionsByTutorId } from "../../../apis/QuizQuestionApis";
 
 import { Button } from "../../../values/ButtonElements";
 

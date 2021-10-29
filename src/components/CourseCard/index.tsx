@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { CardMedia } from "@material-ui/core";
 import { CourseCardWrapper, CourseCardContent, TypoGraphyCustom } from "./CourseCardElements";
-import { Course } from "../../apis/Entities/Course";
+import { Course } from "../../entities/Course";
 import Chip from "@material-ui/core/Chip";
 
 function CourseCard(props: any) {

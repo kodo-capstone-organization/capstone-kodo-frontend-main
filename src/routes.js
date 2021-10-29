@@ -2,30 +2,32 @@ import React, { useState } from "react";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { Redirect } from "react-router"
 
-// Pages without sidebar
-import HomePage from "./pages/HomePage";
-import InvalidPage from "./pages/InvalidPage/InvalidPage";
-
 import Layout from "./components/Layout";
 import { RouteItemsWithSidebar } from "./routeItems";
-import LoginPage from "./pages/Authentication/LoginPage";
-import SignUpPage from "./pages/Authentication/SignUpPage";
-import CourseBuilderPage from "./pages/CourseBuilderPage";
-import QuizBuidlerPage from "./pages/QuizBuilderPage";
 
-import CourseOverview from "./pages/CourseViewerPage";
-import LessonViewerWithRouter from "./pages/CourseViewer/LessonViewer";
-import LessonStatisticsViewerWithRouter from "./pages/CourseViewer/LessonStatisticsViewer";
-import MultimediaViewerWithRouter from "./pages/CourseViewer/MultimediaViewer";
+// Pages without sidebar
+import CourseBuilderPage from "./pages/CourseBuilderPage";
+import HomePage from "./pages/HomePage";
+import InvalidPage from "./pages/InvalidPage/InvalidPage";
+import LoginPage from "./pages/LoginPage";
+import QuizBuidlerPage from "./pages/QuizBuilderPage";
 import QuizViewer from "./pages/QuizViewerPage";
-import LiveKodoSessionPage from "./pages/Sessions/LiveKodoSessionPage";
+import SignUpPage from "./pages/SignUpPage";
+
+
+// Pages with sidebar
+import CourseOverview from "./pages/CourseViewerPage";
+import ForumPage from "./pages/ForumPage";
 import InvalidSessionPage from "./pages/Sessions/InvalidSessionPage";
+import LessonStatisticsViewerWithRouter from "./pages/CourseViewerPage/TutorView/LessonViewer";
+import LessonViewerWithRouter from "./pages/CourseViewerPage/StudentView/LessonViewer";
+import LiveKodoSessionPage from "./pages/Sessions/LiveKodoSessionPage";
+import MultimediaViewerWithRouter from "./pages/CourseViewerPage/StudentView/MultimediaViewer";
 
 import Snackbar from '@material-ui/core/Snackbar';
 import Slide from '@material-ui/core/Slide';
 import Alert from '@material-ui/lab/Alert';
 import { severityList } from './values/Colours';
-import ForumPage from "./pages/ForumPage";
 
 function Routes() {
 

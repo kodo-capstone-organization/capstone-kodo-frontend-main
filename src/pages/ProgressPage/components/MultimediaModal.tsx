@@ -7,8 +7,8 @@ import {
 } from "@material-ui/core";
 import InfoIcon from '@material-ui/icons/Info';
 import { Button } from "../../../values/ButtonElements";
-import { Quiz } from "../../../apis/Entities/Quiz";
-import { Multimedia } from '../../../apis/Entities/Multimedia';
+import { Quiz } from "../../../entities/Quiz";
+import { Multimedia } from '../../../entities/Multimedia';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({

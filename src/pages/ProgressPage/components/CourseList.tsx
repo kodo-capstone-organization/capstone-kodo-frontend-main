@@ -10,9 +10,9 @@ import {
   Typography 
 } from "@material-ui/core";
 
-import { EnrolledCourse } from "../../../apis/Entities/EnrolledCourse";
-import { EnrolledLesson } from "../../../apis/Entities/EnrolledLesson";
-import { Account } from "../../../apis/Entities/Account";
+import { EnrolledCourse } from "../../../entities/EnrolledCourse";
+import { EnrolledLesson } from "../../../entities/EnrolledLesson";
+import { Account } from "../../../entities/Account";
 
 import MultimediaModal from "./MultimediaModal";
 import {

@@ -13,12 +13,12 @@ import AddIcon from '@material-ui/icons/Add';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { Button } from "../../../values/ButtonElements";
-import { CreateNewForumThreadReq } from '../../../apis/Entities/ForumThread';
-import { Course } from '../../../apis/Entities/Course';
-import { ForumCategory } from '../../../apis/Entities/ForumCategory';
-import { createNewForumThread, deleteForumThread } from "../../../apis/Forum/ForumApis";
-import { setCourseRatingByEnrolledCourseId } from '../../../apis/EnrolledCourse/EnrolledCourseApis';
-import { getCourseByCourseId } from '../../../apis/Course/CourseApis';
+import { CreateNewForumThreadReq } from '../../../entities/ForumThread';
+import { Course } from '../../../entities/Course';
+import { ForumCategory } from '../../../entities/ForumCategory';
+import { createNewForumThread, deleteForumThread } from "../../../apis/ForumApis";
+import { setCourseRatingByEnrolledCourseId } from '../../../apis/EnrolledCourseApis';
+import { getCourseByCourseId } from '../../../apis/CourseApis';
 
 function ForumThreadModal(props: any) {
 

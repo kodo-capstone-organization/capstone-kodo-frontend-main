@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
-import { Course } from "../../../apis/Entities/Course";
-import { EnrolledCourse } from "../../../apis/Entities/EnrolledCourse";
-import { EnrolledLesson } from "../../../apis/Entities/EnrolledLesson";
-import { Lesson } from "../../../apis/Entities/Lesson";
 
-import { getEnrolledCourseByStudentIdAndCourseId } from "../../../apis/EnrolledCourse/EnrolledCourseApis";
+import { Course } from "../../../entities/Course";
+import { EnrolledCourse } from "../../../entities/EnrolledCourse";
+import { EnrolledLesson } from "../../../entities/EnrolledLesson";
+import { Lesson } from "../../../entities/Lesson";
+
+import { getEnrolledCourseByStudentIdAndCourseId } from "../../../apis/EnrolledCourseApis";
 
 import {
   SidebarWrapper,

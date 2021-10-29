@@ -4,14 +4,14 @@ import {
     Divider, Typography, CircularProgress, Chip
 } from '@material-ui/core';
 
-import { ForumThread } from '../../../apis/Entities/ForumThread';
-import { ForumPost } from '../../../apis/Entities/ForumPost';
-import { Course } from '../../../apis/Entities/Course';
+import { ForumThread } from '../../../entities/ForumThread';
+import { ForumPost } from '../../../entities/ForumPost';
+import { Course } from '../../../entities/Course';
 
 import {
     getForumThreadByForumThreadId,
     getAllForumPostsByForumThreadId
-} from "../../../apis/Forum/ForumApis";
+} from "../../../apis/ForumApis";
 
 import {
     ForumCardHeader, ForumCardContent, ForumCard, ForumPostCard,
@@ -19,7 +19,7 @@ import {
 } from "../ForumElements";
 
 import ForumPostInputArea from './ForumPostInputArea';
-import { getCourseByCourseId } from '../../../apis/Course/CourseApis';
+import { getCourseByCourseId } from '../../../apis/CourseApis';
 
 
 function ForumPostList(props: any) {

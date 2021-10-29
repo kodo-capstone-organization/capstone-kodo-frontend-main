@@ -4,14 +4,14 @@ import { useHistory } from "react-router-dom";
 import { Box, Grid, TextField, Chip, InputAdornment, Dialog, DialogTitle, DialogActions, DialogContent, Breadcrumbs, Link} from "@material-ui/core";
 import { CourseBuilderCard, CourseBuilderCardHeader, CourseBuilderContainer, CourseBuilderContent, MessageContainer } from "./CourseBuilderElements";
 import LessonPlan from "./components/LessonPlan";
-import { getCourseWithoutEnrollmentByCourseId, updateCourse, toggleReviewRequestStatus } from './../../apis/Course/CourseApis';
-import { Tag } from "../../apis/Entities/Tag";
-import { UpdateCourseReq, Course } from "../../apis/Entities/Course";
+import { getCourseWithoutEnrollmentByCourseId, updateCourse, toggleReviewRequestStatus } from '../../apis/CourseApis';
+import { Tag } from "../../entities/Tag";
+import { UpdateCourseReq, Course } from "../../entities/Course";
 import { Autocomplete } from "@material-ui/lab";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import DoneIcon from '@material-ui/icons/Done';
 import PublishIcon from '@material-ui/icons/Publish';
-import { getAllTags } from '../../apis/Tag/TagApis';
+import { getAllTags } from '../../apis/TagApis';
 import { Button } from "../../values/ButtonElements";
 import CircularProgress from '@material-ui/core/CircularProgress';
 

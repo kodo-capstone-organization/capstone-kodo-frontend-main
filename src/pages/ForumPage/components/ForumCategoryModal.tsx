@@ -15,8 +15,8 @@ import AddIcon from '@material-ui/icons/Add';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { Button } from "../../../values/ButtonElements";
-import { ForumCategory, CreateNewForumCategoryReq, UpdateForumCategoryReq } from '../../../apis/Entities/ForumCategory';
-import { createNewForumCategory, updateForumCategory, deleteForumCategory } from "../../../apis/Forum/ForumApis";
+import { ForumCategory, CreateNewForumCategoryReq, UpdateForumCategoryReq } from '../../../entities/ForumCategory';
+import { createNewForumCategory, updateForumCategory, deleteForumCategory } from "../../../apis/ForumApis";
 
 const themeInstance = createTheme({
     overrides: {

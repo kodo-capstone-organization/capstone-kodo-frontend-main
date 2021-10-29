@@ -42,19 +42,19 @@ import {
 import { 
   Multimedia, 
   MultimediaType 
-} from '../../../apis/Entities/Multimedia';
+} from '../../../entities/Multimedia';
 
-import { Lesson } from '../../../apis/Entities/Lesson';
+import { Lesson } from '../../../entities/Lesson';
 import { 
   addNewMultimediaToLesson,   
   deleteMultimediasFromLesson,
   updateMultimedia 
-} from '../../../apis/Multimedia/MultimediaApis';
+} from '../../../apis/MultimediaApis';
 
 import { 
   ACCEPTABLE_FILE_TYPE, 
-  getFileType 
-} from '../../../utils/GetFileType';
+  getFileTypeHelper
+} from '../../../utils/GetFileTypeHelper';
 
 import { Button } from "../../../values/ButtonElements";
 
@@ -63,10 +63,10 @@ import {
   PDFCard,
   DocumentCard,
   ImageCard,
-} from "./../../CourseViewer/MultimediaViewer/MultimediaViewerElements";
+} from "../../CourseViewerPage/StudentView/MultimediaViewer/MultimediaViewerElements";
 
 import ReactPlayer from "react-player";
-import PDFViewer from "./../../CourseViewer/MultimediaViewer/PDFViewer";
+import PDFViewer from "../../CourseViewerPage/StudentView/MultimediaViewer/PDFViewer";
 
 interface IErrors<TValue> {
   [id: string]: TValue;
@@ -345,7 +345,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
         updatedFile.file = event.target.files[0]
 
         if (updatedFile.newFilename !== undefined) {
-          updatedFile.multimediaType = getFileType(updatedFile.newFilename)
+          updatedFile.multimediaType = getFileTypeHelper(updatedFile.newFilename)
         }
     
         break;
@@ -442,7 +442,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
                     name="type"
                     type="text"
                     fullWidth
-                    value={getFileType(newFile.file?.name === undefined ? "" : newFile.file.name)}
+                    value={getFileTypeHelper(newFile.file?.name === undefined ? "" : newFile.file.name)}
                     disabled
                   />
                 </FormControl>
@@ -678,7 +678,7 @@ export default function MultimediaTable(props: any) {
           updatedFile.file = event.target.files[0]
   
           if (updatedFile.newFilename !== undefined) {
-            updatedFile.multimediaType = getFileType(updatedFile.newFilename)
+            updatedFile.multimediaType = getFileTypeHelper(updatedFile.newFilename)
           }
       
           break;
