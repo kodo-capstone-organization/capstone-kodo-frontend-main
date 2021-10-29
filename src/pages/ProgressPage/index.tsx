@@ -5,9 +5,9 @@ import {
 } from "./ProgressElements";
 import { Breadcrumbs, Link, Tabs, Tab } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { getMyAccount } from "../../apis/Account/AccountApis";
-import { EnrolledCourse } from "../../apis/Entities/EnrolledCourse";
-import { Account } from "../../apis/Entities/Account";
+import { getMyAccount } from "../../apis/AccountApis";
+import { EnrolledCourse } from "../../entities/EnrolledCourse";
+import { Account } from "../../entities/Account";
 import CourseList from './components/CourseList';
 import { colours } from '../../values/Colours';
 

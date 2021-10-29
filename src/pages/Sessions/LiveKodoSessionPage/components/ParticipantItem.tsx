@@ -4,7 +4,7 @@ import KodoAvatar from "../../../../components/KodoAvatar/KodoAvatar";
 import { fontSizes } from "../../../../values/FontSizes";
 import MicIcon from '@material-ui/icons/Mic';
 import MicOffIcon from '@material-ui/icons/MicOff';
-import { SoundProcessor } from '../../../../utils/SoundProcessor';
+import { SoundProcessorHelper } from '../../../../utils/SoundProcessorHelper';
 
 let peerInterval: NodeJS.Timer;
 let myInterval: NodeJS.Timer;
@@ -32,7 +32,7 @@ function ParticipantItem (props: any) {
     useEffect(() => {
 
         const audioContext = new AudioContext();
-        const soundProcessor = new SoundProcessor(audioContext);
+        const soundProcessor = new SoundProcessorHelper(audioContext);
 
         // If this participant is the current user
         if (props.myLocalStream !== null && props.myLocalStream !== undefined) {

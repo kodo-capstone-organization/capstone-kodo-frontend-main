@@ -42,13 +42,13 @@ import {
   InputLabel
 } from '@material-ui/core';
 
-import { Quiz } from '../../../apis/Entities/Quiz';
-import { Lesson } from '../../../apis/Entities/Lesson';
+import { Quiz } from '../../../entities/Quiz';
+import { Lesson } from '../../../entities/Lesson';
 
 import {
   createNewBasicQuiz,
   deleteQuizzes
-} from '../../../apis/Quiz/QuizApis';
+} from '../../../apis/QuizApis';
 
 import { Button } from "../../../values/ButtonElements";
 

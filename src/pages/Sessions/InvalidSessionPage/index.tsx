@@ -1,5 +1,5 @@
 import {Breadcrumbs, Link, Typography } from "@material-ui/core";
-import { BlankStateContainer } from "../../MyProfilePage/ProfileElements";
+import { BlankStateContainer } from "../../ProfilePage/ProfileElements";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 function InvalidSessionPage(props: any) {
