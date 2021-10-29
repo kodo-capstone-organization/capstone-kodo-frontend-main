@@ -1,6 +1,7 @@
 import React, { useEffect, createRef, useState, RefObject } from 'react'
-import {CallEvent, InvitedSessionResp, KodoDataChannelMessage, KodoSessionEvent, KodoSessionEventType, WhiteboardEvent, EditorEvent } from '../../../apis/Entities/Session';
-import { endSession, getSessionBySessionId } from '../../../apis/Session/SessionApis';
+import {CallEvent, InvitedSessionResp, KodoDataChannelMessage, KodoSessionEvent, KodoSessionEventType, WhiteboardEvent, EditorEvent } from '../../../entities/Session';
+import { endSession, getSessionBySessionId } from '../../../apis/SessionApis';
+import { Button } from '../../../values/ButtonElements';
 import ActionsPanel from './components/ActionsPanel';
 import ParticipantsPanel from './components/ParticipantsPanel';
 import Stage from './components/Stage';

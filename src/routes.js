@@ -2,30 +2,32 @@ import React, { useState } from "react";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { Redirect } from "react-router"
 
-// Pages without sidebar
-import HomePage from "./pages/HomePage";
-import InvalidPage from "./pages/InvalidPage/InvalidPage";
-
 import Layout from "./components/Layout";
 import { RouteItemsWithSidebar } from "./routeItems";
-import Login from "./pages/Authentication/Login";
-import SignUp from "./pages/Authentication/SignUp";
-import CourseBuilderPage from "./pages/CourseBuilderPage";
-import QuizBuidlerPage from "./pages/QuizBuilderPage";
 
-import CourseOverview from "./pages/CourseViewer";
-import LessonViewerWithRouter from "./pages/CourseViewer/LessonViewer";
-import LessonStatisticsViewerWithRouter from "./pages/CourseViewer/LessonStatisticsViewer";
-import MultimediaViewerWithRouter from "./pages/CourseViewer/MultimediaViewer";
-import QuizViewer from "./pages/QuizViewer";
-import LiveKodoSessionPage from "./pages/Sessions/LiveKodoSessionPage";
+// Pages without sidebar
+import CourseBuilderPage from "./pages/CourseBuilderPage";
+import HomePage from "./pages/HomePage";
+import InvalidPage from "./pages/InvalidPage/InvalidPage";
+import LoginPage from "./pages/LoginPage";
+import QuizBuidlerPage from "./pages/QuizBuilderPage";
+import QuizViewer from "./pages/QuizViewerPage";
+import SignUpPage from "./pages/SignUpPage";
+
+
+// Pages with sidebar
+import CourseOverview from "./pages/CourseViewerPage";
+import ForumPage from "./pages/ForumPage";
 import InvalidSessionPage from "./pages/Sessions/InvalidSessionPage";
+import LessonStatisticsViewerWithRouter from "./pages/CourseViewerPage/TutorView/LessonViewer";
+import LessonViewerWithRouter from "./pages/CourseViewerPage/StudentView/LessonViewer";
+import LiveKodoSessionPage from "./pages/Sessions/LiveKodoSessionPage";
+import MultimediaViewerWithRouter from "./pages/CourseViewerPage/StudentView/MultimediaViewer";
 
 import Snackbar from '@material-ui/core/Snackbar';
 import Slide from '@material-ui/core/Slide';
 import Alert from '@material-ui/lab/Alert';
 import { severityList } from './values/Colours';
-import ForumPage from "./pages/ForumPage";
 
 function Routes() {
 
@@ -81,8 +83,8 @@ function Routes() {
                         <Route path="/" component={HomePage} exact >
                             {window.sessionStorage.getItem("loggedInAccountId") ? <Redirect to="/progresspage" /> : <HomePage />}
                         </Route>
-                        <Route path="/login" render={props => <Login {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
-                        <Route path="/signup" render={props => <SignUp {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
+                        <Route path="/login" render={props => <LoginPage {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
+                        <Route path="/signup" render={props => <SignUpPage {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
                         <Route path="/invalidpage" render={props => <InvalidPage {...props} callOpenSnackBar={callOpenSnackBar} />} exact />
                         
                         {window.sessionStorage.getItem("loggedInAccountId") ?

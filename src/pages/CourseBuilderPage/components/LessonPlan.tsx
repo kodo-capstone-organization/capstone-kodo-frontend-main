@@ -21,15 +21,15 @@ import {
     Chip
 } from "@material-ui/core";
 
-import { Lesson } from './../../../apis/Entities/Lesson';
+import { Lesson } from '../../../entities/Lesson';
 
 import { 
     createNewLesson, 
     deleteLesson, 
     updateLesson 
-} from '../../../apis/Lesson/LessonApis';
+} from '../../../apis/LessonApis';
 
-import { BlankStateContainer } from '../../MyProfilePage/ProfileElements';
+import { BlankStateContainer } from '../../ProfilePage/ProfileElements';
 
 import QuizTable from './QuizTable';
 import MultimediaTable from './MultimediaTable';

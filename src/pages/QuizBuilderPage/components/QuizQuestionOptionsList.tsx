@@ -15,7 +15,7 @@ import {
     TextField,
 } from "@material-ui/core";
 
-import { QuizQuestionOption } from '../../../apis/Entities/QuizQuestionOption';
+import { QuizQuestionOption } from '../../../entities/QuizQuestionOption';
 
 import { AddQuizOptionButton } from "../QuizBuilderElements";
 

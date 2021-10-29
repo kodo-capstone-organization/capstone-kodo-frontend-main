@@ -11,9 +11,9 @@ import {
 import DeleteIcon from '@material-ui/icons/Delete';
 import FlagIcon from '@material-ui/icons/Flag';
 import { Button } from "../../../values/ButtonElements";
-import { deleteForumPost, updateForumPost } from "../../../apis/Forum/ForumApis";
-import { ForumPost, UpdateForumPostReq } from "../../../apis/Entities/ForumPost";
-import { Course } from '../../../apis/Entities/Course';
+import { deleteForumPost, updateForumPost } from "../../../apis/ForumApis";
+import { ForumPost, UpdateForumPostReq } from "../../../entities/ForumPost";
+import { Course } from '../../../entities/Course';
 
 
 function ForumPostModal(props: any) {
