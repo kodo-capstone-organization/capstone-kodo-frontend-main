@@ -23,7 +23,9 @@ function Stage(props: any) {
             setIncomingCanvasData(props.newIncomingDcMessage?.event?.encodedCanvasData)
         }
         if (props.newIncomingDcMessage?.eventType === KodoSessionEventType.EDITOR) {
-            setIncomingEditorData(props.newIncomingDcMessage?.event?.editorData)
+            if (props.newIncomingDcMessage?.event?.editorData) {
+                setIncomingEditorData(props.newIncomingDcMessage?.event?.editorData)
+            }
             if (props.newIncomingDcMessage?.event?.selectedLanguage) {
                 setIncomingSelectedLanguage(props.newIncomingDcMessage?.event?.selectedLanguage)
             }
