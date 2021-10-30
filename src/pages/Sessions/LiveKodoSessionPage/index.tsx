@@ -249,7 +249,6 @@ function LiveKodoSessionPage(props: any) {
             newDataChannel.onopen = function(event) {
                 console.log("dataChannel.onopen in CREATOR SIDE")
                 setDataChannelConnected(true);
-                send({ event : "broadcast" });
             }
             newDataChannel.onmessage = function(event) {
                 console.log("dataChannel.onmessage IN CREATOR SIDE")
