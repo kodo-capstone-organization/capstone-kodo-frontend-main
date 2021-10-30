@@ -65,6 +65,7 @@ function Board (props: any) {
             drawOnCanvas(false, false, true)
             // Finally, set back parent clear all state to false
             props.setIsClearAllCalled(false);
+            window.sessionStorage.removeItem("canvasData")
         }
     }, [props.isClearAllCalled])
 
@@ -144,6 +145,17 @@ function Board (props: any) {
                         // NOTE: Manually call onPaint to send out empty canvas to other peers instead of relying on
                         // mouseup / mousedown event listeners, so that the change is instant.
                         onPaint();
+                    } else if (window.sessionStorage.getItem("canvasData") !== null) {
+                        let existingCanvasDataImage = new Image();
+
+                        //@ts-ignore
+                        existingCanvasDataImage.src = window.sessionStorage.getItem("canvasData")
+                        existingCanvasDataImage.onload = function() {
+                            if (ctx) {
+                                console.log("CHANGED TAB, RE-DRAWING NOW")
+                                ctx.drawImage(existingCanvasDataImage, 0, 0);
+                            }
+                        };
                     }
                     /**if (isUndo) {
                         if (index <= 0) {
@@ -156,20 +168,6 @@ function Board (props: any) {
                             ctx.putImageData(restore_array[index], 0, 0)
                         }
                     }*/
-                }
-
-                // Account for users changing tab, set canvasData from sessionStorage
-                if (window.sessionStorage.getItem("canvasData") !== null) {
-                    let existingCanvasDataImage = new Image();
-
-                    //@ts-ignore
-                    existingCanvasDataImage.src = window.sessionStorage.getItem("canvasData")
-                    existingCanvasDataImage.onload = function() {
-                        if (ctx) {
-                            console.log("CHANGED TAB, RE-DRAWING NOW")
-                            ctx.drawImage(existingCanvasDataImage, 0, 0);
-                        }
-                    };
                 }
             } else {
                 let peerCanvasDataImage = new Image();
