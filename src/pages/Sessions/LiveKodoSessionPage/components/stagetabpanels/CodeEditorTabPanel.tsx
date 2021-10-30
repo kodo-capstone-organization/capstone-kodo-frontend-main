@@ -16,12 +16,22 @@ function CodeEditorTabPanel (props: any) {
     const [editorCode, setEditorCode] = useState<string>("");
 
     useEffect(() => {
-        setEditorCode(props.incomingEditorData)
+        if (props.incomingEditorData) {
+            window.sessionStorage.setItem("editorData", props.incomingEditorData);
+        }
+        if (window.sessionStorage.getItem("editorData")) {
+            //@ts-ignore
+            setEditorCode(window.sessionStorage.getItem("editorData"))
+        }
     }, [props.incomingEditorData])
 
     useEffect(() => {
         if (props.incomingSelectedLanguage) {
-            setSelectedLanguage(props.incomingSelectedLanguage)
+            window.sessionStorage.setItem("selectedLanguage", props.incomingSelectedLanguage);
+        }
+        if (window.sessionStorage.getItem("selectedLanguage")) {
+            //@ts-ignore
+            setSelectedLanguage(window.sessionStorage.getItem("selectedLanguage"))
         }
     }, [props.incomingSelectedLanguage])
 
