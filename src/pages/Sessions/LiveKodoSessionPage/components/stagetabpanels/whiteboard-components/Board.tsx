@@ -38,6 +38,7 @@ function Board (props: any) {
 
     useEffect(() => {
         drawOnCanvas(false, true);
+        window.sessionStorage.setItem("canvasData", props.incomingCanvasData)
     }, [props.incomingCanvasData])
 
     useEffect(() => {
