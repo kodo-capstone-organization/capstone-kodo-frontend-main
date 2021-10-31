@@ -25,7 +25,7 @@ export const CodeEditorPanelWrapper = styled.div`
 
 export const EditorTopBarGrid = styled(Grid)`
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     align-items: center;
     padding: 0.5rem 1rem;
     background-color: ${colours.GRAY7};

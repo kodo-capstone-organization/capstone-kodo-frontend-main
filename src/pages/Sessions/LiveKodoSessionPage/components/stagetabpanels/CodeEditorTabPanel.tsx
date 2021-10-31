@@ -9,8 +9,13 @@ const options = {
     fontSize: 20,
 }
 
+const THEMES = ["vs-light", "vs-dark"]
+
+const LANGUAGES = ["javascript", "typescript", "html", "python", "java"]
+
 function CodeEditorTabPanel (props: any) {
 
+    const [selectedTheme, setSelectedTheme] = useState<string>("vs-light")
     const [selectedLanguage, setSelectedLanguage] = useState<string>("javascript");
     const [isEditorLoading, setIsEditorLoading] = useState<boolean>(true);
     const [editorCode, setEditorCode] = useState<string>("");
@@ -35,6 +40,10 @@ function CodeEditorTabPanel (props: any) {
         }
     }, [props.incomingSelectedLanguage])
 
+    const handleThemeChange = (event: any) => {
+        setSelectedTheme(event?.target?.value as string); // only change for myself
+    };
+
     const handleLanguageChange = (event: any) => {
         setSelectedLanguage(event?.target?.value as string);
         // TODO send dc message to everyone that language is changed
@@ -54,12 +63,32 @@ function CodeEditorTabPanel (props: any) {
         window.sessionStorage.setItem("editorData", newCodeValue);
     }
 
+    const capitalise = (word: string) => {
+        return word[0].toUpperCase() + word.slice(1);
+    }
+
     return (
         <CodeEditorPanelWrapper>
             <EditorTopBarGrid container>
-                <Typography variant="h6">
-                    Placeholder Code File Name
-                </Typography>
+                {/*<Typography variant="h6">*/}
+                {/*    Placeholder Code File Name*/}
+                {/*</Typography>*/}
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <FormControl variant="outlined" margin="dense" color="primary" style={{ minWidth: "120px"}}>
+                    <InputLabel id="select-theme-label">Theme</InputLabel>
+                    <Select
+                        labelId="select-theme-label"
+                        id="select-theme"
+                        value={selectedTheme}
+                        onChange={handleThemeChange}
+                        label="Theme"
+                    >
+                        { THEMES.map((theme: string) => (
+                            <MenuItem value={theme}>{theme}</MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 <FormControl variant="outlined" margin="dense" color="primary" style={{ minWidth: "120px"}}>
                     <InputLabel id="select-language-label">Language</InputLabel>
                     <Select
@@ -69,17 +98,15 @@ function CodeEditorTabPanel (props: any) {
                         onChange={handleLanguageChange}
                         label="Language"
                     >
-                        <MenuItem value="javascript">Javascript</MenuItem>
-                        <MenuItem value="typescript">Typescript</MenuItem>
-                        <MenuItem value="html">HTML</MenuItem>
-                        <MenuItem value="python">Python</MenuItem>
-                        <MenuItem value="java">Java</MenuItem>
+                        { LANGUAGES.map((language: string) => (
+                                <MenuItem value={language}>{capitalise(language)}</MenuItem>
+                        ))}
                     </Select>
                 </FormControl>
             </EditorTopBarGrid>
             <MonacoEditor
                 language={selectedLanguage}
-                theme="vs-light"
+                theme={selectedTheme}
                 value={editorCode}
                 options={options}
                 onChange={onCodeChange}
