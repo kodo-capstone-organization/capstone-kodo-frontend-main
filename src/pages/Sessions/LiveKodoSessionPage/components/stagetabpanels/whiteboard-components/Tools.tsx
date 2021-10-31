@@ -6,17 +6,20 @@ import BorderColorIcon from '@material-ui/icons/BorderColor';
 import CategoryIcon from '@material-ui/icons/Category';
 import PaletteIcon from '@material-ui/icons/Palette';
 import Crop169Icon from '@material-ui/icons/Crop169';
-import UndoIcon from '@material-ui/icons/Undo';
+import SystemUpdateAltIcon from '@material-ui/icons/SystemUpdateAlt';
 import ClearAllIcon from '@material-ui/icons/ClearAll';
 import ImageIcon from '@material-ui/icons/Image';
 import { Divider, Slider, Typography, Tooltip, Menu, MenuItem, IconButton } from "@material-ui/core";
 import { colours } from "../../../../../../values/Colours";
+import ExportWhiteboardModal from "./ExportWhiteboardModal";
 
 const paletteColours = ["red", "green", "black", "blue", "yellow"];
 
 function Tools (props: any) {
+
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [colourPicked, setColourPicked] = useState<string>("red");
+    const [isExportDialogOpen, setIsExportDialogOpen] = useState<boolean>(false);
 
     useEffect(() => {
         handleChangeTool(null, props.activeTool, colourPicked);
@@ -46,7 +49,7 @@ function Tools (props: any) {
     const handleColourPicked = (colourPicked: string) => {
         // call this method again so that colour change is flushed if the tool is NOT eraser
         setColourPicked(colourPicked)
-        handleClose();
+        handleCloseColourMenu();
     }
 
     const handleChangeColour = (event: any, newColour: string) => {
@@ -60,7 +63,7 @@ function Tools (props: any) {
         setAnchorEl(event.currentTarget);
     };
 
-    const handleClose = () => {
+    const handleCloseColourMenu = () => {
         setAnchorEl(null);
     };
 
@@ -69,6 +72,10 @@ function Tools (props: any) {
         props.setIsClearAllCalled(true);
     }
 
+    const handleOpenExportDialog = () => {
+        setIsExportDialogOpen(true)
+    }
+    
     return (
         <ToolbarPaper elevation={2}>
             <StyledToggleButtonGroup
@@ -120,11 +127,11 @@ function Tools (props: any) {
                         <PaletteIcon stroke={ colourPicked === "yellow" ? "gray" : "" } style={{ color: colourPicked, transform: "scale(1.2)" }} />
                     </Tooltip>
                 </IconButton>
-                <Menu id="color-menu" anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
+                <Menu id="color-menu" anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleCloseColourMenu}>
                     {paletteColours.map((colour, idx) => {
                         return (
                             <MenuItem key={idx} onClick={() => handleColourPicked(colour)}>
-                                <CustomColor color={colour}/>
+                                <CustomColor style={{ fill: colour }}/>
                             </MenuItem>
                         )
                     })}
@@ -138,16 +145,23 @@ function Tools (props: any) {
                     <ImageIcon />
                 </ToolbarWhiteboardAction>
             </Tooltip>
-            <Tooltip title="Undo">
-                <ToolbarWhiteboardAction aria-label="undo">
-                    <UndoIcon />
-                </ToolbarWhiteboardAction>
-            </Tooltip>
             <Tooltip title="Clear Whiteboard">
                 <ToolbarWhiteboardAction onClick={handleClearAll} aria-label="clear">
                     <ClearAllIcon />
                 </ToolbarWhiteboardAction>
             </Tooltip>
+            <Tooltip title="Export">
+                <ToolbarWhiteboardAction onClick={handleOpenExportDialog} aria-label="export">
+                    <SystemUpdateAltIcon />
+                </ToolbarWhiteboardAction>
+            </Tooltip>
+
+            <ExportWhiteboardModal
+                isExportDialogOpen={isExportDialogOpen}
+                setIsExportDialogOpen={setIsExportDialogOpen}
+                callOpenSnackBar={props.callOpenSnackBar}
+                sessionName="placeholder"
+            />
         </ToolbarPaper>
     )
 }

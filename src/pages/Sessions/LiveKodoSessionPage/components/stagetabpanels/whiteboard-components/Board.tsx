@@ -76,6 +76,8 @@ function Board (props: any) {
 
         if (canvas) {
             ctx = canvas.getContext('2d');
+
+            // Whiteboard is initiated for the first time ever
             if (isInit) {
                 // First time ever setting up canvas,
                 // Make it visually fill the positioned parent
@@ -84,8 +86,16 @@ function Board (props: any) {
                 // ...then set the internal size to match
                 canvas.width  = canvas.offsetWidth;
                 canvas.height = canvas.offsetHeight;
+
+                // Filling background
+                if (ctx) {
+                    console.log("filling on init")
+                    ctx.fillStyle = colours.GRAY7;
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                }
             }
 
+            // Changes are coming from local user's drawings
             if (!setIncomingCanvas) {
                 let mouse = {x: 0, y: 0};
                 let last_mouse = {x: 0, y: 0};
@@ -113,10 +123,6 @@ function Board (props: any) {
                         ctx?.moveTo(last_mouse.x, last_mouse.y);
                         ctx?.lineTo(mouse.x, mouse.y);
                         ctx?.closePath();
-                        // if (canvas && ctx && event.type === 'mouseout') {
-                        //     restore_array.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
-                        //     index += 1;
-                        // }
                         ctx?.stroke();
                     }
 
@@ -158,19 +164,9 @@ function Board (props: any) {
                             }
                         };
                     }
-                    /**if (isUndo) {
-                        if (index <= 0) {
-                            ctx.fillStyle = colours.GRAY7;
-                            ctx.clearRect(0, 0, canvas.width, canvas.height);
-                            ctx.fillRect(0, 0, canvas.width, canvas.height);
-                        } else {
-                            index -= 1;
-                            restore_array.pop();
-                            ctx.putImageData(restore_array[index], 0, 0)
-                        }
-                    }*/
                 }
             } else {
+                // Changes coming from peer's canvas
                 let peerCanvasDataImage = new Image();
                 peerCanvasDataImage.src = props.incomingCanvasData;
                 peerCanvasDataImage.onload = function() {

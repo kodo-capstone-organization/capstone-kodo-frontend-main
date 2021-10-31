@@ -519,6 +519,7 @@ function LiveKodoSessionPage(props: any) {
                             sendWhiteboardEventViaDCCallback={craftAndSendWhiteboardEventMessage}
                             sendEditorEventViaDCCallback={craftAndSendEditorEventMessage}
                             newIncomingDcMessage={newWhiteboardOrEditorDcMessage}
+                            callOpenSnackBar={props.callOpenSnackBar}
                         />
                         <ActionsPanel 
                             sessionId={sessionId} 

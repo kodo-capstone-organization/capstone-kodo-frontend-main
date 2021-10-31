@@ -66,6 +66,7 @@ function Stage(props: any) {
                         key={2} 
                         sendWhiteboardEventViaDCCallback={props.sendWhiteboardEventViaDCCallback}
                         incomingCanvasData={incomingCanvasData}
+                        callOpenSnackBar={props.callOpenSnackBar}
                     />
             }
         ]

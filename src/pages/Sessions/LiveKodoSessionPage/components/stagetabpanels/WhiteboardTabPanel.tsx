@@ -24,6 +24,7 @@ function WhiteboardTabPanel (props: any) {
                 toolProperties={toolProperties}
                 setToolProperties={setToolProperties}
                 setIsClearAllCalled={setIsClearAllCalled}
+                callOpenSnackBar={props.callOpenSnackBar}
             />
             <Board
                 style={{ width: "inherit", height: "inherit" }}

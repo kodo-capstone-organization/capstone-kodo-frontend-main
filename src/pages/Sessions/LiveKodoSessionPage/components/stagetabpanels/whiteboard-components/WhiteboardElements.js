@@ -28,7 +28,6 @@ export const ToolbarWhiteboardAction = styled(IconButton)`
 `;
 
 export const CustomColor = styled(FiberManualRecordIcon)`
-    color: ${props => props.color ? props.color : "white"};
 `
     
         
