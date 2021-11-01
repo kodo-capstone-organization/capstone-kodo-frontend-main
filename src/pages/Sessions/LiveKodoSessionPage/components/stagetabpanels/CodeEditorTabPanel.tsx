@@ -1,7 +1,8 @@
 import MonacoEditor, { monaco } from 'react-monaco-editor';
-import { FormControl, InputLabel, Menu, MenuItem, Select, Typography } from "@material-ui/core";
+import { FormControl, IconButton, InputLabel, Menu, MenuItem, Select, Tooltip, Typography } from "@material-ui/core";
 import { useState, useEffect } from "react";
 import { CodeEditorPanelWrapper, EditorTopBarGrid } from "./StageTabPanelsElements";
+import SystemUpdateAltIcon from '@material-ui/icons/SystemUpdateAlt';
 
 // Monaco settings
 const options = {
@@ -67,6 +68,53 @@ function CodeEditorTabPanel (props: any) {
         return word[0].toUpperCase() + word.slice(1);
     }
 
+    const getExtension = () => {
+        switch(selectedLanguage) {
+            case "javascript":
+                return "js"
+            case "typescript":
+                return "ts"
+            case "html":
+                return "html"
+            case "python":
+                return "py"
+            case "java":
+                return "java"
+            default:
+                return "js"
+        }
+    }
+
+    const getMimeType = () => {
+        switch(selectedLanguage) {
+            case "javascript":
+                return "text/javascript"
+            case "typescript":
+                return "application/x-typescript"
+            case "html":
+                return "text/html"
+            case "python":
+                return "text/x-python"
+            case "java":
+                return "text/x-java" // TODO: Check
+            default:
+                return "text/javascript"
+        }
+    }
+
+    const handleCodeEditorExport = () => {
+        const ext = getExtension();
+        const mimeType = getMimeType();
+        const editorInputBlob =  new Blob([editorCode as BlobPart], {
+            type: mimeType
+        });
+        const blobUrl = window.URL.createObjectURL(editorInputBlob);
+        const tempAnchor = document.createElement('a');
+        tempAnchor.href = blobUrl;
+        tempAnchor.download = `Editor.${ext}`;
+        tempAnchor.click();
+    }
+
     return (
         <CodeEditorPanelWrapper>
             <EditorTopBarGrid container>
@@ -99,10 +147,16 @@ function CodeEditorTabPanel (props: any) {
                         label="Language"
                     >
                         { LANGUAGES.map((language: string) => (
-                                <MenuItem value={language}>{capitalise(language)}</MenuItem>
+                                <MenuItem key={language} value={language}>{capitalise(language)}</MenuItem>
                         ))}
                     </Select>
                 </FormControl>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <Tooltip title="Export">
+                    <IconButton onClick={handleCodeEditorExport} aria-label="export">
+                        <SystemUpdateAltIcon />
+                    </IconButton>
+                </Tooltip>
             </EditorTopBarGrid>
             <MonacoEditor
                 language={selectedLanguage}
