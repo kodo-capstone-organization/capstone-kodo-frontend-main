@@ -75,7 +75,12 @@ function Tools (props: any) {
     const handleOpenExportDialog = () => {
         setIsExportDialogOpen(true)
     }
-    
+
+    const handleImageAttachment = (selectedImage: File) => {
+        // "Firing" the event
+        props.setIsNewImageAttached(true);
+    }
+
     return (
         <ToolbarPaper elevation={2}>
             <StyledToggleButtonGroup
@@ -141,8 +146,18 @@ function Tools (props: any) {
             <Divider flexItem orientation="vertical" style={{ margin: "0.5rem"}}/>
 
             <Tooltip title="Insert Image">
-                <ToolbarWhiteboardAction aria-label="image">
+                <ToolbarWhiteboardAction variant="contained"  component="label" aria-label="image">
                     <ImageIcon />
+                    <input
+                        id="image-attachment-upload"
+                        type="file"
+                        hidden
+                        accept="image/*"
+                        onChange={(e) => handleImageAttachment(
+                            // @ts-ignore
+                            e.target.files[0]
+                        )}
+                    />
                 </ToolbarWhiteboardAction>
             </Tooltip>
             <Tooltip title="Clear Whiteboard">
