@@ -198,7 +198,25 @@ function Board (props: any) {
     }
 
     const insertImage = (attImageFile: File) => {
-        // TODO
+
+        const image = new Image();
+        const reader = new FileReader();
+        
+        reader.addEventListener("load", function () {
+            // convert image file to base64 string
+            image.src = reader?.result?.toString() || "";
+        }, false);
+
+        image.onload = function(){
+            console.log("ONLOAD ATTACH IMAGE")
+            console.log(image.src)
+            // TODO: ADD IMAGE TO CANVAS
+            // ctx?.drawImage(image, 0, 0);
+        }
+
+        if (attImageFile) {
+            reader.readAsDataURL(attImageFile);
+        }
     }
 
     return (
