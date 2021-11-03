@@ -25,6 +25,7 @@ function Board (props: any) {
     let canvas: HTMLCanvasElement | null = document.querySelector('#board');
     let ctx: CanvasRenderingContext2D | null;
     const [isDrawing, setIsDrawing] = useState<boolean>(false); // whether i am currently drawing
+    const [isMovingImage, setIsMovingImage] = useState<boolean>(false);
 
     // Tool states
     const [cursorImagePath, setCursorImagePath] = useState<string>("");
@@ -69,6 +70,22 @@ function Board (props: any) {
             window.sessionStorage.removeItem("canvasData")
         }
     }, [props.isClearAllCalled])
+
+    useEffect(() => {
+        // If changes to true, add new image to the canvas
+        if (props.isNewImageAttached) {
+            // Get file
+            const attImageHTML: any = document.getElementById("image-attachment-upload")
+            const attImageFile = attImageHTML?.files[0];
+
+            // Handle the image insertion
+            console.log("Received image in board.tsx")
+            insertImage(attImageFile);
+
+            // Finally, set back parent isNewImageAttached state to false
+            props.setIsNewImageAttached(false);
+        }
+    }, [props.isNewImageAttached])
 
     const drawOnCanvas = (isInit: boolean = false, setIncomingCanvas: boolean = false, isClearAll: boolean = false) => {
         let restore_array: ImageData[] = [];
@@ -177,6 +194,28 @@ function Board (props: any) {
                     }
                 };
             }
+        }
+    }
+
+    const insertImage = (attImageFile: File) => {
+
+        const image = new Image();
+        const reader = new FileReader();
+        
+        reader.addEventListener("load", function () {
+            // convert image file to base64 string
+            image.src = reader?.result?.toString() || "";
+        }, false);
+
+        image.onload = function(){
+            console.log("ONLOAD ATTACH IMAGE")
+            console.log(image.src)
+            // TODO: ADD IMAGE TO CANVAS
+            // ctx?.drawImage(image, 0, 0);
+        }
+
+        if (attImageFile) {
+            reader.readAsDataURL(attImageFile);
         }
     }
 
