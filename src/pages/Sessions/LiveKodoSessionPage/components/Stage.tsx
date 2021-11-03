@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { KodoSessionEventType } from "../../../../entities/Session";
+import { KodoSessionEventType, EditorCursorLocation } from "../../../../entities/Session";
 import {ActiveTabPanel, StageContainer, StageTab, StageTabBar } from "../LiveKodoSessionPageElements";
 import CodeEditorTabPanel from "./stagetabpanels/CodeEditorTabPanel";
 import DebugInfoTabPanel from "./stagetabpanels/DebugInfoTabPanel";
@@ -13,10 +13,11 @@ function Stage(props: any) {
     const [incomingCanvasData, setIncomingCanvasData] = useState<string>();
     const [incomingEditorData, setIncomingEditorData] = useState<string>();
     const [incomingSelectedLanguage, setIncomingSelectedLanguage] = useState<string>();
+    const [incomingEditorCursorLocations, setIncomingEditorCursorLocations] = useState<Map<number, EditorCursorLocation>>(new Map());
 
     useEffect(() => {
         setPeerConns(props.peerConns)
-    }, [props.peerConns.size])
+    }, [props.peerConns])
 
     useEffect(() => {
         if (props.newIncomingDcMessage?.eventType === KodoSessionEventType.WHITEBOARD) {
@@ -28,6 +29,9 @@ function Stage(props: any) {
             }
             if (props.newIncomingDcMessage?.event?.selectedLanguage) {
                 setIncomingSelectedLanguage(props.newIncomingDcMessage?.event?.selectedLanguage)
+            }
+            if (props.newIncomingDcMessage?.event?.cursorLocation) {
+                setIncomingEditorCursorLocations(new Map(incomingEditorCursorLocations.set(props.newIncomingDcMessage.peerId, props.newIncomingDcMessage?.event?.cursorLocation)))
             }
         }
 
@@ -56,6 +60,8 @@ function Stage(props: any) {
                     sendEditorEventViaDCCallback={props.sendEditorEventViaDCCallback}
                     incomingEditorData={incomingEditorData}
                     incomingSelectedLanguage={incomingSelectedLanguage}
+                    peerConns={peerConns}
+                    incomingEditorCursorLocations={incomingEditorCursorLocations}
                     />
             },
             {
@@ -67,6 +73,7 @@ function Stage(props: any) {
                         sendWhiteboardEventViaDCCallback={props.sendWhiteboardEventViaDCCallback}
                         incomingCanvasData={incomingCanvasData}
                         callOpenSnackBar={props.callOpenSnackBar}
+                        peerConns={peerConns}
                     />
             }
         ]

@@ -33,3 +33,7 @@ export const paletteColours = [
 export const severityList = [
     "info", "warning", "error", "success"
 ]
+
+export const cursorColours = [
+    "#ff9900", "#ffff00", "#980000", "#ff0000", "#00ff00", "#00ffff", "#4a86e8", "#0000ff", "#9900ff", "#ff00ff"
+]

@@ -41,5 +41,10 @@ export interface WhiteboardEvent extends KodoSessionEvent {
 export interface EditorEvent extends KodoSessionEvent {
     editorData?: string
     selectedLanguage?: string
-    cursorLocation?: string 
+    cursorLocation?: EditorCursorLocation 
+}
+
+export interface EditorCursorLocation {
+    lineNumber: number
+    column: number
 }

@@ -1,11 +1,11 @@
 import React, { useEffect, createRef, useState, RefObject } from 'react'
-import {CallEvent, InvitedSessionResp, KodoDataChannelMessage, KodoSessionEvent, KodoSessionEventType, WhiteboardEvent, EditorEvent } from '../../../entities/Session';
+import {CallEvent, InvitedSessionResp, KodoDataChannelMessage, KodoSessionEvent, KodoSessionEventType, WhiteboardEvent, EditorEvent, EditorCursorLocation } from '../../../entities/Session';
 import { endSession, getSessionBySessionId } from '../../../apis/SessionApis';
-import { Button } from '../../../values/ButtonElements';
 import ActionsPanel from './components/ActionsPanel';
 import ParticipantsPanel from './components/ParticipantsPanel';
 import Stage from './components/Stage';
 import { LiveKodoSessionContainer, MainSessionWrapper, TopSessionBar } from './LiveKodoSessionPageElements';
+import { cursorColours } from '../../../values/Colours';
 
 let conn: WebSocket;
 let interval: NodeJS.Timer;
@@ -25,6 +25,7 @@ interface RTCInfo {
     mediaStream?: MediaStream
     audioRef?: RefObject<HTMLAudioElement>
     isMuted?: boolean
+    colour?: string
 }
 
 // URL: /session/<CREATE_OR_JOIN>/<SESSION_ID>
@@ -205,7 +206,8 @@ function LiveKodoSessionPage(props: any) {
                 rtcPeerConnection: peerConns.get(newPeerId)?.rtcPeerConnection,
                 rtcDataChannel: peerConns.get(newPeerId)?.rtcDataChannel,
                 audioRef: peerConns.get(newPeerId)?.audioRef,
-                mediaStream: event.streams[0] // Updating this
+                mediaStream: event.streams[0], // Updating this
+                colour: cursorColours[Array.from(peerConns.keys()).indexOf(newPeerId)]
             })))
 
             setFireEffect(true)
@@ -258,7 +260,8 @@ function LiveKodoSessionPage(props: any) {
                 rtcDataChannel: newDataChannel,
                 audioRef: peerConns.get(newPeerId)?.audioRef,
                 mediaStream:  peerConns.get(newPeerId)?.mediaStream,
-                isMuted: peerConns.get(newPeerId)?.isMuted
+                isMuted: peerConns.get(newPeerId)?.isMuted,
+                colour: cursorColours[Array.from(peerConns.keys()).indexOf(newPeerId)]
             })))
         };
 
@@ -267,7 +270,8 @@ function LiveKodoSessionPage(props: any) {
             rtcDataChannel: dataChannel,
             audioRef: createRef<HTMLAudioElement>(),
             mediaStream: new MediaStream(),
-            isMuted: false
+            isMuted: false,
+            colour: cursorColours[Array.from(peerConns.keys()).indexOf(newPeerId)]
         })))
 
         return newPeerConn
@@ -311,7 +315,8 @@ function LiveKodoSessionPage(props: any) {
                     rtcDataChannel: peerConns.get(incomingPeerId)?.rtcDataChannel,
                     audioRef: peerConns.get(incomingPeerId)?.audioRef,
                     mediaStream:  peerConns.get(incomingPeerId)?.mediaStream,
-                    isMuted: peerConns.get(incomingPeerId)?.isMuted
+                    isMuted: peerConns.get(incomingPeerId)?.isMuted,
+                    colour: cursorColours[Array.from(peerConns.keys()).indexOf(incomingPeerId)]
                 })));
                 send({ event : "answer", data : answer, sendTo: incomingPeerId });
             } else {
@@ -332,7 +337,8 @@ function LiveKodoSessionPage(props: any) {
                 rtcDataChannel: peerConns.get(incomingPeerId)?.rtcDataChannel, 
                 audioRef: peerConns.get(incomingPeerId)?.audioRef, 
                 mediaStream:  peerConns.get(incomingPeerId)?.mediaStream,
-                isMuted: peerConns.get(incomingPeerId)?.isMuted
+                isMuted: peerConns.get(incomingPeerId)?.isMuted,
+                colour: cursorColours[Array.from(peerConns.keys()).indexOf(incomingPeerId)]
             })));
         } else {
             console.error("Not adding icecandidate, cannot find peerConn with peerId", incomingPeerId)
@@ -350,7 +356,8 @@ function LiveKodoSessionPage(props: any) {
                 peerConns.get(incomingPeerId)?.rtcDataChannel,
                 audioRef: peerConns.get(incomingPeerId)?.audioRef,
                 mediaStream:  peerConns.get(incomingPeerId)?.mediaStream,
-                isMuted: peerConns.get(incomingPeerId)?.isMuted
+                isMuted: peerConns.get(incomingPeerId)?.isMuted,
+                colour: cursorColours[Array.from(peerConns.keys()).indexOf(incomingPeerId)]
             })));
         }
     };
@@ -412,11 +419,11 @@ function LiveKodoSessionPage(props: any) {
         return craftAndSendDcMessage(newWhiteboardEvent, KodoSessionEventType.WHITEBOARD)
     }
 
-    const craftAndSendEditorEventMessage = (editorData?: string, selectedLanguage?: string, cursorLocation?: string) => {
+    const craftAndSendEditorEventMessage = (editorData?: string, selectedLanguage?: string, cursorLocation?: EditorCursorLocation) => {
         const newEditorEvent: EditorEvent = {
             editorData: editorData ? editorData : undefined,
             selectedLanguage: selectedLanguage ? selectedLanguage : undefined,
-            cursorLocation: cursorLocation ? cursorLocation : ""
+            cursorLocation: cursorLocation ? cursorLocation : undefined
         }
         return craftAndSendDcMessage(newEditorEvent, KodoSessionEventType.EDITOR)
     }
@@ -438,7 +445,8 @@ function LiveKodoSessionPage(props: any) {
             rtcDataChannel: peerConns.get(incomingPeerId)?.rtcDataChannel,
             audioRef: peerConns.get(incomingPeerId)?.audioRef,
             mediaStream:  peerConns.get(incomingPeerId)?.mediaStream,
-            isMuted: callEvent.isMuted
+            isMuted: callEvent.isMuted,
+            colour: cursorColours[Array.from(peerConns.keys()).indexOf(incomingPeerId)]
         })));
     }
     
