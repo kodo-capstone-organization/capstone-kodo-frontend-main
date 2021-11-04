@@ -25,3 +25,5 @@ export function getFileTypeHelper(filename: string): MultimediaType {
 }
 
 export const ACCEPTABLE_FILE_TYPE = ".pdf, .doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document, video/*, image/*, .zip" 
+
+export const ACCEPTABLE_PROGRAMMING_FILE_TYPE = "text/javascript, .java, .py, text/html, application/x-typescript"

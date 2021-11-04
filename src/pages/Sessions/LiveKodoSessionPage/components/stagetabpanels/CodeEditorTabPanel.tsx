@@ -3,6 +3,7 @@ import { FormControl, IconButton, InputLabel, Menu, MenuItem, Select, Tooltip, T
 import { useState, useEffect, useRef } from "react";
 import { CodeEditorPanelWrapper, EditorTopBarGrid } from "./StageTabPanelsElements";
 import SystemUpdateAltIcon from '@material-ui/icons/SystemUpdateAlt';
+import PublishIcon from '@material-ui/icons/Publish';
 import { 
     Theme, 
     createStyles, 
@@ -10,6 +11,7 @@ import {
   } from '@material-ui/core/styles';
 import { ClassNameMap } from '@material-ui/core/styles/withStyles';
 import { EditorCursorLocation } from '../../../../../entities/Session';
+import { ACCEPTABLE_PROGRAMMING_FILE_TYPE } from '../../../../../utils/GetFileTypeHelper';
 
 // Monaco settings
 const options = {
@@ -210,6 +212,24 @@ function CodeEditorTabPanel (props: any) {
         }
     }
 
+    const getSelectedLanguageByFileName = (fileName: string) => {
+        const extension = fileName.split('.').pop();
+        switch(extension) {
+            case "js":
+                return "javascript"
+            case "ts":
+                return "typescript"
+            case "html":
+                return "html"
+            case "py":
+                return "python"
+            case "java":
+                return "java"
+            default:
+                return "js"
+        }
+    }
+
     const getMimeType = () => {
         switch(selectedLanguage) {
             case "javascript":
@@ -238,6 +258,21 @@ function CodeEditorTabPanel (props: any) {
         tempAnchor.href = blobUrl;
         tempAnchor.download = `Editor.${ext}`;
         tempAnchor.click();
+    }
+    
+    async function handleCodeEditorImport(event: any) {
+        const file = event.target.files.item(0);
+        if (file) {
+            const fileText = await file.text();
+            setEditorCode(fileText);
+            props.sendEditorEventViaDCCallback(fileText, undefined)
+            window.sessionStorage.setItem("editorData", fileText);
+
+            const newSelectedLanguage = getSelectedLanguageByFileName(file.name)
+            setSelectedLanguage(newSelectedLanguage)
+            props.sendEditorEventViaDCCallback(undefined, newSelectedLanguage)
+            window.sessionStorage.setItem("selectedLanguage", newSelectedLanguage);
+        } 
     }
 
     return (
@@ -277,6 +312,22 @@ function CodeEditorTabPanel (props: any) {
                     </Select>
                 </FormControl>
                 &nbsp;&nbsp;&nbsp;&nbsp;
+                <Tooltip title="Import">
+                    <>
+                    <input 
+                            accept={ACCEPTABLE_PROGRAMMING_FILE_TYPE}
+                            style={{ display: 'none' }}
+                            id="import-button-file" 
+                            type="file" 
+                            name="file"
+                            onChange={handleCodeEditorImport} />
+                    <label htmlFor="import-button-file">
+                        <IconButton component="span" aria-label="import">
+                            <PublishIcon />
+                        </IconButton>
+                    </label>
+                    </>    
+                </Tooltip>
                 <Tooltip title="Export">
                     <IconButton onClick={handleCodeEditorExport} aria-label="export">
                         <SystemUpdateAltIcon />
