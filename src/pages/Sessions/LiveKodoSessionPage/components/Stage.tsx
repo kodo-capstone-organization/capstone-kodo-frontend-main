@@ -20,19 +20,23 @@ function Stage(props: any) {
     }, [props.peerConns])
 
     useEffect(() => {
-        if (props.newIncomingDcMessage?.eventType === KodoSessionEventType.WHITEBOARD) {
-            setIncomingCanvasData(props.newIncomingDcMessage?.event?.encodedCanvasData)
-        }
 
-        if (props.newIncomingDcMessage?.eventType === KodoSessionEventType.EDITOR) {
-            if (props.newIncomingDcMessage?.event?.editorData) {
-                setIncomingEditorData(props.newIncomingDcMessage?.event?.editorData)
+        const newDCMessage = props.newIncomingDcMessage;
+
+        // New Whiteboard DC Message
+        if (newDCMessage?.eventType === KodoSessionEventType.WHITEBOARD) {
+            setIncomingCanvasData(newDCMessage?.event?.encodedCanvasData)
+        } else if (newDCMessage?.eventType === KodoSessionEventType.EDITOR) { // New Editor DC Message
+            if (newDCMessage?.event?.editorData) {
+                setIncomingEditorData(newDCMessage?.event?.editorData)
             }
             if (props.newIncomingDcMessage?.event?.selectedLanguage) {
-                setIncomingSelectedLanguage(props.newIncomingDcMessage?.event?.selectedLanguage)
+                setIncomingSelectedLanguage(newDCMessage?.event?.selectedLanguage)
             }
             if (props.newIncomingDcMessage?.event?.cursorLocation) {
-                setIncomingEditorCursorLocations(new Map(incomingEditorCursorLocations.set(props.newIncomingDcMessage.peerId, props.newIncomingDcMessage?.event?.cursorLocation)))
+                const newIncomingEditorCursorLocations = new Map(incomingEditorCursorLocations)
+                newIncomingEditorCursorLocations.set(newDCMessage.peerId, newDCMessage?.event?.cursorLocation)
+                setIncomingEditorCursorLocations(newIncomingEditorCursorLocations)
             }
         }
 
@@ -43,13 +47,15 @@ function Stage(props: any) {
             {
                 myTabIdx: 0,
                 myTabName: "Code Editor",
-                tabPanelComponent: <CodeEditorTabPanel key={0}
-                    sendEditorEventViaDCCallback={props.sendEditorEventViaDCCallback}
-                    incomingEditorData={incomingEditorData}
-                    incomingSelectedLanguage={incomingSelectedLanguage}
-                    peerConns={peerConns}
-                    incomingEditorCursorLocations={incomingEditorCursorLocations}
-                    callOpenSnackBar={props.callOpenSnackBar}
+                tabPanelComponent:
+                    <CodeEditorTabPanel
+                        key={0}
+                        sendEditorEventViaDCCallback={props.sendEditorEventViaDCCallback}
+                        incomingEditorData={incomingEditorData}
+                        incomingSelectedLanguage={incomingSelectedLanguage}
+                        peerConns={peerConns}
+                        incomingEditorCursorLocations={incomingEditorCursorLocations}
+                        callOpenSnackBar={props.callOpenSnackBar}
                     />
             },
             {

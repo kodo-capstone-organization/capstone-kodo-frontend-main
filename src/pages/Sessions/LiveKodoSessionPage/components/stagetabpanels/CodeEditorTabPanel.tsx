@@ -149,15 +149,31 @@ function CodeEditorTabPanel (props: any) {
 
     const editorDidMount = (editor: any, monaco: any) => {
         try {
-            monacoObjects.current = {
-                editor,
-                monaco
-            };
+            // Attach event listener for cursor position changing
+            editor.onDidChangeCursorPosition((e: monaco.editor.ICursorPositionChangedEvent) => {
+                // This event fires if typing in the code editor (source: 'keyboard') OR
+                // clicking on a new location (source: 'mouse')
+                console.log("My position changed event")
+                handleMyCursorLocationChange(e);
+            })
+
+            // Set ref
+            monacoObjects.current = { editor, monaco };
             setIsEditorLoading(false);
         } catch {
             console.error("boohooo, editorDidMount cannot set ref")
         }  
     };
+
+    const handleMyCursorLocationChange = (e: monaco.editor.ICursorPositionChangedEvent) => {
+        const newEditorCursorLocation: EditorCursorLocation = {
+            lineNumber: e.position.lineNumber,
+            column: e.position.column
+        }
+        // Send my updated cursor location to peers
+        props.sendEditorEventViaDCCallback(undefined, undefined, newEditorCursorLocation)
+    }
+
 
     function getColourStyleHelper(colour: string) {
         switch (colour) {
@@ -188,34 +204,27 @@ function CodeEditorTabPanel (props: any) {
     }
 
     useEffect(() => {
-        if (!monacoObjects.current) return;
+        // When a cursor location changes
+        if (monacoObjects && monacoObjects.current && props.incomingEditorCursorLocations.size > 0) {
+            const { monaco, editor } = monacoObjects.current;
 
-        const { monaco, editor } = monacoObjects.current;
-
-        let newDeltaDecorations = new Array();
-        props.incomingEditorCursorLocations.forEach((value: EditorCursorLocation, key: number) => {
-            newDeltaDecorations.push({
-                range: new monaco.Range(value.lineNumber, value.column, value.lineNumber, value.column),
-                options: {
-                    className: getColourStyleHelper(props.peerConns.get(key).colour)
-                }
+            let newDeltaDecorations = new Array();
+            props.incomingEditorCursorLocations.forEach((value: EditorCursorLocation, key: number) => {
+                newDeltaDecorations.push({
+                    range: new monaco.Range(value.lineNumber, value.column, value.lineNumber, value.column),
+                    options: {
+                        className: getColourStyleHelper(props.peerConns.get(key).colour)
+                    }
+                })
             })
-        })
-
-        editor.deltaDecorations([], newDeltaDecorations);
+            console.log(editor)
+            editor.deltaDecorations([], newDeltaDecorations);
+        }
       }, [props.incomingEditorCursorLocations]);
 
     const onCodeChange = (newCodeValue: string, event: monaco.editor.IModelContentChangedEvent) => {
-
-        const { monaco, editor } = monacoObjects.current;
-
-        const newEditorCursorLocation: EditorCursorLocation = {
-            lineNumber: editor.getPosition().lineNumber,
-            column: editor.getPosition().column
-        }
-
         // Send updated code to peers
-        props.sendEditorEventViaDCCallback(newCodeValue, undefined, newEditorCursorLocation)
+        props.sendEditorEventViaDCCallback(newCodeValue, undefined, undefined)
 
         // Set updated code to session storage
         window.sessionStorage.setItem("editorData", newCodeValue);
@@ -325,7 +334,7 @@ function CodeEditorTabPanel (props: any) {
     }
 
     const handleClickImportFromGithub = () => {
-        if (!handleValidation()) return;
+        if (!handleGithubImportValidation()) return;
 
         fetchGithubFile(githubUrl).then((fileContent) => {
 
@@ -346,7 +355,7 @@ function CodeEditorTabPanel (props: any) {
         }).catch(error => { setValidationErrorMessage(`Error in importing file via Github URL. Please check that the URL is valid and/or the file is in a public Github repository` )})
     } 
 
-    const handleValidation = () => {
+    const handleGithubImportValidation = () => {
         let formIsValid = true;
         let newValidationErrorMessage = "";
         errors = {};

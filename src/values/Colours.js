@@ -35,5 +35,10 @@ export const severityList = [
 ]
 
 export const cursorColours = [
-    "#ff9900", "#ffff00", "#980000", "#ff0000", "#00ff00", "#00ffff", "#4a86e8", "#0000ff", "#9900ff", "#ff00ff"
+    "#ff9900", 
+    "#ff0000", 
+    "#00ff00",
+    "#0000ff", 
+    "#9900ff", 
+    "#ff00ff"
 ]

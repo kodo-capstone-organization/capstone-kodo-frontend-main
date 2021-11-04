@@ -222,7 +222,8 @@ function LiveKodoSessionPage(props: any) {
                 rtcDataChannel: peerConns.get(newPeerId)?.rtcDataChannel,
                 audioRef: peerConns.get(newPeerId)?.audioRef,
                 mediaStream: event.streams[0], // Updating this
-                colour: cursorColours[Array.from(peerConns.keys()).indexOf(newPeerId)]
+                // Using modulo to loop through the 6 available cursor colors
+                colour: cursorColours[Array.from(peerConns.keys()).indexOf(newPeerId) % 6]
             })))
 
             setFireEffect(true)
