@@ -66,15 +66,22 @@ function LiveKodoSessionPage(props: any) {
                 props.history.push({ pathname: "/session/invalidsession", state: { errorData: error?.response?.data }})
             })
 
-        window.sessionStorage.removeItem("canvasData");
-        window.sessionStorage.removeItem("editorData");
-        window.sessionStorage.removeItem("selectedLanguage");
+        // On init
+        cleanUpLiveSessionStorage();
         
         return () => {
             handleMyExit()
+            cleanUpLiveSessionStorage()
             clearInterval(interval)
         };
     }, [])
+
+    const cleanUpLiveSessionStorage = () => {
+        window.sessionStorage.removeItem("canvasData");
+        window.sessionStorage.removeItem("editorData");
+        window.sessionStorage.removeItem("selectedLanguage");
+        window.sessionStorage.removeItem("selectedTheme");
+    }
 
     useEffect(() => {
         // Only if session is determined to be valid
