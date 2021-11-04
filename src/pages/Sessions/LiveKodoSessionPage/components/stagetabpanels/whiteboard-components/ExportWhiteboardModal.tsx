@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Dialog, DialogActions, DialogContent, DialogTitle, FormControl, InputLabel, MenuItem, Select } from "@material-ui/core";
 import { Button } from "../../../../../../values/ButtonElements";
 
-const EXPORT_TYPES = ["PNG", "JPEG", "PDF"]
+const EXPORT_TYPES = ["PNG", "JPEG"]
 
 function ExportWhiteboardModal(props: any) {
 
@@ -15,18 +15,12 @@ function ExportWhiteboardModal(props: any) {
     const handleExport = () => {
         const canvas: any = document.getElementById('board') || null;
         if (window.sessionStorage.getItem("canvasData") && canvas) {
-            if (type === "PDF") {
-                // TODO: Might have to explore some libraries e.g. @react-pdf/renderer
-                // https://github.com/diegomura/react-pdf
-                props.callOpenSnackBar("PDF export currently not supported", "warning")
-            } else {
-                // PNG or JPEG - Standard image types
-                const imgUrl = canvas.toDataURL(`image/${type.toLowerCase()}`)
-                const downloadLink = document.createElement('a');
-                downloadLink.setAttribute('download', `Whiteboard.${type}`);
-                downloadLink.setAttribute('href', imgUrl);
-                downloadLink.click();
-            }
+            // PNG or JPEG - Standard image types
+            const imgUrl = canvas.toDataURL(`image/${type.toLowerCase()}`)
+            const downloadLink = document.createElement('a');
+            downloadLink.setAttribute('download', `Whiteboard.${type}`);
+            downloadLink.setAttribute('href', imgUrl);
+            downloadLink.click();
         } else {
             props.callOpenSnackBar("Nothing to export as whiteboard is empty!", "error")
         }

@@ -294,6 +294,8 @@ function CodeEditorTabPanel (props: any) {
     }
 
     const handleGithubUrlChange = (event: any) => {
+        setErrors({})
+        setValidationErrorMessage("")
         setGithubUrl(event.target.value)
     }
 
@@ -316,7 +318,7 @@ function CodeEditorTabPanel (props: any) {
             props.callOpenSnackBar(`Successfully imported file from Github`, "success")
             setGithubUrl("")
             handleCloseGithubImportDialog()
-        }).catch(error => { props.callOpenSnackBar(`Error in importing file via Github URL: ${error}`, "error") })
+        }).catch(error => { setValidationErrorMessage(`Error in importing file via Github URL. Please check that the URL is valid and/or the file is in a public Github repository` )})
     } 
 
     const handleValidation = () => {
@@ -327,13 +329,15 @@ function CodeEditorTabPanel (props: any) {
         if (!githubUrl.includes("https://github.com")) {
             formIsValid = false;
             errors['githuburl'] = true;
-            newValidationErrorMessage = newValidationErrorMessage.concat("URL is not a valid Github URL. \n")
+            newValidationErrorMessage = newValidationErrorMessage.concat("Input is not a valid Github URL. \n")
         }
 
         if (!isSupportedProgrammingFile(githubUrl)) {
             formIsValid = false;
             errors['githuburl'] = true;
-            newValidationErrorMessage = newValidationErrorMessage.concat("Kodo currently does not support the following file type. \n")
+
+            const unsupportedExtension = githubUrl.split('.').pop();
+            newValidationErrorMessage = newValidationErrorMessage.concat(`Kodo currently does not support the following file type: ${unsupportedExtension}. \n`)
         }
 
         setErrors(errors);
@@ -344,15 +348,9 @@ function CodeEditorTabPanel (props: any) {
 
     return (
         <CodeEditorPanelWrapper>
-            <Dialog 
-                fullWidth
-                open={showGithubImportDialog}
-                onClose={handleCloseGithubImportDialog}
-                aria-labelledby="simple-modal-title"
-                aria-describedby="simple-modal-description"
-                >
+            <Dialog fullWidth open={showGithubImportDialog} onClose={handleCloseGithubImportDialog} >
                     <DialogTitle>Upload from Github URL</DialogTitle>
-                    <DialogContent style={{ height: '30vh' }}>
+                    <DialogContent>
                         <DialogContentText>
                             Enter the Github URL of the file to be uploaded.
                             Note: This feature only supports files from public repositories.
@@ -370,18 +368,18 @@ function CodeEditorTabPanel (props: any) {
                             onChange={handleGithubUrlChange}
                             />
                         </FormControl>
+                        <br/>
+                        <br/>
+                        {validationErrorMessage && <Alert severity="error">{validationErrorMessage}</Alert>}
                     </DialogContent>
                     <DialogActions>
                         <Button onClick={handleCloseGithubImportDialog}>
                             Cancel
                         </Button>
-                        <Button primay onClick={handleClickImportFromGithub}>
+                        <Button primary onClick={handleClickImportFromGithub}>
                             Import
                         </Button>
                     </DialogActions>
-                    <DialogContent>
-                        {validationErrorMessage && <Alert severity="error">{validationErrorMessage}</Alert>}
-                    </DialogContent>
             </Dialog>
             <EditorTopBarGrid container>
                 {/*<Typography variant="h6">*/}
@@ -418,27 +416,29 @@ function CodeEditorTabPanel (props: any) {
                     </Select>
                 </FormControl>
                 &nbsp;&nbsp;&nbsp;&nbsp;
-                <Tooltip title="Github Import">
+                <Tooltip title="Github File Import">
                     <IconButton onClick={handleGithubImport} aria-label="github-import">
                         <GitHubIcon />
                     </IconButton>
                 </Tooltip>
-                <Tooltip title="Import">
-                    <>
-                    <input 
+
+                <>
+                    <input
                             accept={ACCEPTABLE_PROGRAMMING_FILE_TYPE}
                             style={{ display: 'none' }}
-                            id="import-button-file" 
-                            type="file" 
+                            id="import-button-file"
+                            type="file"
                             name="file"
                             onChange={handleCodeEditorImport} />
                     <label htmlFor="import-button-file">
-                        <IconButton component="span" aria-label="import">
-                            <PublishIcon />
-                        </IconButton>
+                        <Tooltip title="File Import">
+                            <IconButton component="span" aria-label="import">
+                                <PublishIcon />
+                            </IconButton>
+                        </Tooltip>
                     </label>
-                    </>    
-                </Tooltip>
+                </>
+
                 <Tooltip title="Export">
                     <IconButton onClick={handleCodeEditorExport} aria-label="export">
                         <SystemUpdateAltIcon />
