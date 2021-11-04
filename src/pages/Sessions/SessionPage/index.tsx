@@ -100,7 +100,7 @@ function SessionPage(props: any) {
 
     const getUsernameById = (id: number): string => {
         const foundUser = userLibrary.find(userObj => userObj.accountId === id)
-        return foundUser?.username || "";
+        return foundUser?.username || myAccount?.username || "";
     }
 
     const handleSessionIDChange = (event: any) => {
