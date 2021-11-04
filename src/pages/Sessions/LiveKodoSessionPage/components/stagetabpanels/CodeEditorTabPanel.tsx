@@ -284,6 +284,8 @@ function CodeEditorTabPanel (props: any) {
     }
 
     const handleCloseGithubImportDialog = () => {
+        setErrors({})
+        setValidationErrorMessage("")
         setShowGithubImportDialog(false)
     }
 
