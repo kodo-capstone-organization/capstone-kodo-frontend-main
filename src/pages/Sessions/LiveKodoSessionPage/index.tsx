@@ -1,4 +1,4 @@
-import React, { useEffect, createRef, useState, RefObject } from 'react'
+import React, { useEffect, createRef, useState, RefObject, useRef } from 'react'
 import {CallEvent, InvitedSessionResp, KodoDataChannelMessage, KodoSessionEvent, KodoSessionEventType, WhiteboardEvent, EditorEvent, EditorCursorLocation } from '../../../entities/Session';
 import { endSession, getSessionBySessionId } from '../../../apis/SessionApis';
 import ActionsPanel from './components/ActionsPanel';
@@ -8,6 +8,7 @@ import { LiveKodoSessionContainer, MainSessionWrapper, TopSessionBar } from './L
 import { cursorColours } from '../../../values/Colours';
 import { appendSpacingToSessionId } from '../../../utils/SessionUrlHelper';
 import { fontSizes } from '../../../values/FontSizes';
+import { Tooltip } from '@material-ui/core';
 
 let conn: WebSocket;
 let interval: NodeJS.Timer;
@@ -45,6 +46,11 @@ function LiveKodoSessionPage(props: any) {
     
     // Whiteboard States
     const [newWhiteboardOrEditorDcMessage, setNewWhiteboardOrEditorDcMessage] = useState<KodoDataChannelMessage>();
+
+    // Special ref for amIMuted
+    const amIMutedStateRef = useRef();
+    // @ts-ignoret
+    amIMutedStateRef.current = amIMuted;
 
     useEffect(() => {
         setSessionId(appendSpacingToSessionId(props.match.params.sessionId));
@@ -482,7 +488,7 @@ function LiveKodoSessionPage(props: any) {
 
     const broadExistingData = () => {
         console.log("Broadcasting existing data to new user")
-        craftAndSendCallEventMessage("", amIMuted);
+        craftAndSendCallEventMessage("", amIMutedStateRef.current);
 
         if (window.sessionStorage.getItem("canvasData") !== "") {
             //@ts-ignore
@@ -508,8 +514,13 @@ function LiveKodoSessionPage(props: any) {
                         <audio key={pcRtcInfo.mediaStream?.id} ref={pcRtcInfo.audioRef} muted={pcRtcInfo.isMuted} autoPlay />
                     ))}
                     <TopSessionBar>
-                        <strong>{sessionDetails?.sessionName}</strong> &nbsp;
-                        · &nbsp; <span style={{ fontSize: fontSizes.SUBTEXT }}>Session ID: {sessionDetails?.sessionId}</span>
+                        <Tooltip title="Session Name">
+                            <strong>{sessionDetails?.sessionName}</strong>
+                        </Tooltip>
+                        &nbsp; · &nbsp;
+                        <Tooltip title="Session ID">
+                            <i style={{ fontSize: fontSizes.SUBTEXT }}>{sessionDetails?.sessionId}</i>
+                        </Tooltip>
                     </TopSessionBar>
                     <MainSessionWrapper>
                         <ParticipantsPanel

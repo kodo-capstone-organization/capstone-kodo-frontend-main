@@ -374,42 +374,39 @@ function CodeEditorTabPanel (props: any) {
     return (
         <CodeEditorPanelWrapper>
             <Dialog fullWidth open={showGithubImportDialog} onClose={handleCloseGithubImportDialog} >
-                    <DialogTitle>Upload from Github URL</DialogTitle>
-                    <DialogContent>
-                        <DialogContentText>
-                            Enter the Github URL of the file to be uploaded.
-                            Note: This feature only supports files from public repositories.
-                        </DialogContentText>
-                        <FormControl fullWidth margin="normal">
-                            <InputLabel htmlFor="multimedia-name">Github URL</InputLabel>
-                            <Input
-                            error={errors['githuburl']}
-                            id="github-url-name"
-                            name="name"
-                            type="text"
-                            autoFocus
-                            fullWidth
-                            value={githubUrl}
-                            onChange={handleGithubUrlChange}
-                            />
-                        </FormControl>
-                        <br/>
-                        <br/>
-                        {validationErrorMessage && <Alert severity="error">{validationErrorMessage}</Alert>}
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={handleCloseGithubImportDialog}>
-                            Cancel
-                        </Button>
-                        <Button primary onClick={handleClickImportFromGithub}>
-                            Import
-                        </Button>
-                    </DialogActions>
+                <DialogTitle>Upload from Github URL</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Enter the Github URL of the file to be uploaded.
+                        Note: This feature only supports files from public repositories.
+                    </DialogContentText>
+                    <FormControl fullWidth margin="normal">
+                        <InputLabel htmlFor="multimedia-name">Github URL</InputLabel>
+                        <Input
+                        error={errors['githuburl']}
+                        id="github-url-name"
+                        name="name"
+                        type="text"
+                        autoFocus
+                        fullWidth
+                        value={githubUrl}
+                        onChange={handleGithubUrlChange}
+                        />
+                    </FormControl>
+                    <br/>
+                    <br/>
+                    {validationErrorMessage && <Alert severity="error">{validationErrorMessage}</Alert>}
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseGithubImportDialog}>
+                        Cancel
+                    </Button>
+                    <Button primary onClick={handleClickImportFromGithub}>
+                        Import
+                    </Button>
+                </DialogActions>
             </Dialog>
             <EditorTopBarGrid container>
-                {/*<Typography variant="h6">*/}
-                {/*    Placeholder Code File Name*/}
-                {/*</Typography>*/}
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 <FormControl variant="outlined" margin="dense" color="primary" style={{ minWidth: "120px"}}>
                     <InputLabel id="select-theme-label">Theme</InputLabel>
@@ -421,7 +418,7 @@ function CodeEditorTabPanel (props: any) {
                         label="Theme"
                     >
                         { THEMES.map((theme: string) => (
-                            <MenuItem value={theme}>{theme}</MenuItem>
+                            <MenuItem key={theme} value={theme}>{theme}</MenuItem>
                         ))}
                     </Select>
                 </FormControl>
