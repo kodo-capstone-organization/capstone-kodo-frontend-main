@@ -35,7 +35,7 @@ function CodeEditorTabPanel (props: any) {
     const monacoObjects = useRef<any>(null);
 
     const [selectedTheme, setSelectedTheme] = useState<string>("vs-light")
-    const [selectedLanguage, setSelectedLanguage] = useState<string>("javascript");
+    const [selectedLanguage, setSelectedLanguage] = useState<string>("");
     const [isEditorLoading, setIsEditorLoading] = useState<boolean>(true);
     const [editorCode, setEditorCode] = useState<string>("");
     const [showGithubImportDialog, setShowGithubImportDialog] = useState<boolean>(false);
