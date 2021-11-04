@@ -40,23 +40,9 @@ function Stage(props: any) {
     const getStageTabItems = () => {
         return [
             {
-                // REMOVE THIS IN FINAL PRODUCTION (and edit tab indices of code editor and whiteboard)
                 myTabIdx: 0,
-                myTabName: "Debug Info (FOR DEV)",
-                tabPanelComponent:
-                    <DebugInfoTabPanel
-                        key={0}
-                        myAccountId={props.myAccountId}
-                        peerConnsKeys={Array.from(peerConns.keys()).join(", ") }
-                        dataChannelConnected={props.dataChannelConnected}
-                        sendViaWSCallback={props.sendViaWSCallback}
-                        sendCallEventViaDCCallback={props.sendCallEventViaDCCallback}
-                    />
-            },
-            {
-                myTabIdx: 1,
                 myTabName: "Code Editor",
-                tabPanelComponent: <CodeEditorTabPanel key={1} 
+                tabPanelComponent: <CodeEditorTabPanel key={0}
                     sendEditorEventViaDCCallback={props.sendEditorEventViaDCCallback}
                     incomingEditorData={incomingEditorData}
                     incomingSelectedLanguage={incomingSelectedLanguage}
@@ -66,17 +52,31 @@ function Stage(props: any) {
                     />
             },
             {
-                myTabIdx: 2,
+                myTabIdx: 1,
                 myTabName: "Whiteboard",
                 tabPanelComponent: 
                     <WhiteboardTabPanel 
-                        key={2} 
+                        key={1}
                         sendWhiteboardEventViaDCCallback={props.sendWhiteboardEventViaDCCallback}
                         incomingCanvasData={incomingCanvasData}
                         callOpenSnackBar={props.callOpenSnackBar}
                         peerConns={peerConns}
                     />
             }
+            // {
+            //     // REMOVE THIS IN FINAL PRODUCTION (and edit tab indices of code editor and whiteboard)
+            //     myTabIdx: 2,
+            //     myTabName: "Debug Info (FOR DEV)",
+            //     tabPanelComponent:
+            //         <DebugInfoTabPanel
+            //             key={2}
+            //             myAccountId={props.myAccountId}
+            //             peerConnsKeys={Array.from(peerConns.keys()).join(", ") }
+            //             dataChannelConnected={props.dataChannelConnected}
+            //             sendViaWSCallback={props.sendViaWSCallback}
+            //             sendCallEventViaDCCallback={props.sendCallEventViaDCCallback}
+            //         />
+            // },
         ]
     }
 
@@ -86,11 +86,6 @@ function Stage(props: any) {
 
     return (
         <StageContainer>
-            {/*stage*/}
-            {/*<br/>*/}
-            {/*peerConns keys: { Array.from(peerConns.keys()).join(", ") }*/}
-            {/*<br/>*/}
-            {/*dataChannelStatus: {props.dataChannelConnected? "connected" : "not connected"}*/}
             <StageTabBar
                 value={activeTabIdx}
                 indicatorColor="primary"
@@ -101,7 +96,7 @@ function Stage(props: any) {
                     <StageTab
                         key={tabItem.myTabIdx}
                         label={tabItem.myTabName}
-                        style={{ minWidth: "25%"}}
+                        style={{ minWidth: "50%"}}
                     />
                 ))}
             </StageTabBar>

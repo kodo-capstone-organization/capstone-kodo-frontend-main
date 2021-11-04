@@ -9,6 +9,7 @@ import Crop169Icon from '@material-ui/icons/Crop169';
 import SystemUpdateAltIcon from '@material-ui/icons/SystemUpdateAlt';
 import ClearAllIcon from '@material-ui/icons/ClearAll';
 import ImageIcon from '@material-ui/icons/Image';
+import TextFieldsIcon from '@material-ui/icons/TextFields';
 import { Divider, Slider, Typography, Tooltip, Menu, MenuItem, IconButton } from "@material-ui/core";
 import { colours } from "../../../../../../values/Colours";
 import ExportWhiteboardModal from "./ExportWhiteboardModal";
@@ -145,6 +146,12 @@ function Tools (props: any) {
 
             <Divider flexItem orientation="vertical" style={{ margin: "0.5rem"}}/>
 
+            <Tooltip title="Insert Text">
+                <ToolbarWhiteboardAction variant="contained"  component="label" aria-label="text">
+                    <TextFieldsIcon />
+                </ToolbarWhiteboardAction>
+            </Tooltip>
+
             <Tooltip title="Insert Image">
                 <ToolbarWhiteboardAction variant="contained"  component="label" aria-label="image">
                     <ImageIcon />
@@ -155,7 +162,7 @@ function Tools (props: any) {
                         accept="image/*"
                         onChange={(e) => handleImageAttachment(
                             // @ts-ignore
-                            e.target.files[0]
+                            e?.target?.files[0]
                         )}
                     />
                 </ToolbarWhiteboardAction>
