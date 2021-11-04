@@ -23,6 +23,7 @@ function Stage(props: any) {
         if (props.newIncomingDcMessage?.eventType === KodoSessionEventType.WHITEBOARD) {
             setIncomingCanvasData(props.newIncomingDcMessage?.event?.encodedCanvasData)
         }
+
         if (props.newIncomingDcMessage?.eventType === KodoSessionEventType.EDITOR) {
             if (props.newIncomingDcMessage?.event?.editorData) {
                 setIncomingEditorData(props.newIncomingDcMessage?.event?.editorData)

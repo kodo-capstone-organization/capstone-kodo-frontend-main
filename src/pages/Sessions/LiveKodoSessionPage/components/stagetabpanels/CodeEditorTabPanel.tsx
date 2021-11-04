@@ -34,7 +34,7 @@ function CodeEditorTabPanel (props: any) {
 
     const monacoObjects = useRef<any>(null);
 
-    const [selectedTheme, setSelectedTheme] = useState<string>("vs-light")
+    const [selectedTheme, setSelectedTheme] = useState<string>("")
     const [selectedLanguage, setSelectedLanguage] = useState<string>("");
     const [isEditorLoading, setIsEditorLoading] = useState<boolean>(true);
     const [editorCode, setEditorCode] = useState<string>("");
@@ -96,6 +96,24 @@ function CodeEditorTabPanel (props: any) {
     const classes = useStyles();
 
     useEffect(() => {
+        // On mount for the first time as the first peer in the whiteboard
+        // OR on mount for the first time but has peers already in the whiteboard
+        // OR tabbing back to whiteboard
+        
+        // Local + Remote states
+        const initEditorData = window.sessionStorage.getItem("editorData") || props.incomingEditorData || "";
+        const initEditorLanguage = window.sessionStorage.getItem("selectedLanguage") || props.incomingSelectedLanguage || "javascript";
+
+        // Local
+        const initSelectedTheme = window.sessionStorage.getItem("selectedTheme") || "vs-light";
+
+        // Setting
+        setEditorCode(initEditorData)
+        setSelectedLanguage(initEditorLanguage)
+        setSelectedTheme(initSelectedTheme)
+    }, [])
+
+    useEffect(() => {
         if (props.incomingEditorData) {
             window.sessionStorage.setItem("editorData", props.incomingEditorData);
         }
@@ -116,12 +134,15 @@ function CodeEditorTabPanel (props: any) {
     }, [props.incomingSelectedLanguage])
 
     const handleThemeChange = (event: any) => {
-        setSelectedTheme(event?.target?.value as string); // only change for myself
+        const newTheme = event?.target?.value as string
+        setSelectedTheme(newTheme);
+        window.sessionStorage.setItem("selectedTheme", newTheme);
+        // only change for myself, no need to broadcast
     };
 
     const handleLanguageChange = (event: any) => {
         setSelectedLanguage(event?.target?.value as string);
-        // TODO send dc message to everyone that language is changed
+        // Send dc message to everyone that language is changed
         props.sendEditorEventViaDCCallback(undefined, event?.target?.value as string)
         window.sessionStorage.setItem("selectedLanguage", event?.target?.value as string);
     };
@@ -185,8 +206,6 @@ function CodeEditorTabPanel (props: any) {
       }, [props.incomingEditorCursorLocations]);
 
     const onCodeChange = (newCodeValue: string, event: monaco.editor.IModelContentChangedEvent) => {
-        // TODO fire datachannel message
-        setEditorCode(newCodeValue)
 
         const { monaco, editor } = monacoObjects.current;
 
@@ -195,8 +214,14 @@ function CodeEditorTabPanel (props: any) {
             column: editor.getPosition().column
         }
 
+        // Send updated code to peers
         props.sendEditorEventViaDCCallback(newCodeValue, undefined, newEditorCursorLocation)
+
+        // Set updated code to session storage
         window.sessionStorage.setItem("editorData", newCodeValue);
+
+        // Update local code
+        setEditorCode(newCodeValue)
     }
 
     const capitalise = (word: string) => {

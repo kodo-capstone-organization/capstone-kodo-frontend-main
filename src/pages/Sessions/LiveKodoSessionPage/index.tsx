@@ -7,6 +7,7 @@ import Stage from './components/Stage';
 import { LiveKodoSessionContainer, MainSessionWrapper, TopSessionBar } from './LiveKodoSessionPageElements';
 import { cursorColours } from '../../../values/Colours';
 import { appendSpacingToSessionId } from '../../../utils/SessionUrlHelper';
+import { fontSizes } from '../../../values/FontSizes';
 
 let conn: WebSocket;
 let interval: NodeJS.Timer;
@@ -450,15 +451,6 @@ function LiveKodoSessionPage(props: any) {
             colour: cursorColours[Array.from(peerConns.keys()).indexOf(incomingPeerId)]
         })));
     }
-    
-    const handleIncomingDataChannelWhiteboardEvent = (dcMessage: KodoDataChannelMessage) => {
-        const incomingPeerId = dcMessage.peerId;
-        const whiteboardEvent: WhiteboardEvent = dcMessage.event; // typecasting
-
-        // Printing message
-        console.log(whiteboardEvent.encodedCanvasData);
-
-    }
 
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
      * Action callbacks (Propped into ActionsPanel to be called from there)  *
@@ -509,8 +501,8 @@ function LiveKodoSessionPage(props: any) {
                         <audio key={pcRtcInfo.mediaStream?.id} ref={pcRtcInfo.audioRef} muted={pcRtcInfo.isMuted} autoPlay />
                     ))}
                     <TopSessionBar>
-                        <strong>{sessionDetails?.sessionName}</strong> &nbsp; 
-                        (Session ID: {sessionDetails?.sessionId})
+                        <strong>{sessionDetails?.sessionName}</strong> &nbsp;
+                        · &nbsp; <span style={{ fontSize: fontSizes.SUBTEXT }}>Session ID: {sessionDetails?.sessionId}</span>
                     </TopSessionBar>
                     <MainSessionWrapper>
                         <ParticipantsPanel
