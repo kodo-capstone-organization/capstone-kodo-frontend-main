@@ -11,6 +11,7 @@ import {getAllAccountsStrippedDown, getMyAccount } from '../../../apis/AccountAp
 import { Autocomplete } from '@material-ui/lab';
 import { colours } from '../../../values/Colours';
 import { CreateSessionReq, InvitedSessionResp } from '../../../entities/Session';
+import { removeSpacingFromSessionId } from '../../../utils/SessionUrlHelper';
 
 const formReducer = (state: any, event: any) => {
     if(event.reset) {
@@ -201,7 +202,7 @@ function SessionPage(props: any) {
         createSession(createSessionReq).then((sessionId: string) => {
             // Display success and redirect
             props.callOpenSnackBar("Creating session...", "info")
-            props.history.push({ pathname: `/session/create/${sessionId}`, state: { sessionName: createSessionReq.sessionName } })
+            props.history.push({ pathname: `/session/create/${removeSpacingFromSessionId(sessionId)}`, state: { sessionName: createSessionReq.sessionName } })
         }).catch((error) => {
             props.callOpenSnackBar(`Error in creating session: ${error}`, "error")
         })
@@ -210,7 +211,7 @@ function SessionPage(props: any) {
     const handleJoinSession = (sessionId: string, sessionName?: string) => {
         if (sessionId) {
             props.callOpenSnackBar("Joining session...", "info")
-            props.history.push({ pathname: `/session/join/${sessionId}`, state: { sessionName: sessionName || "" } })
+            props.history.push({ pathname: `/session/join/${removeSpacingFromSessionId(sessionId)}`, state: { sessionName: sessionName || "" } })
         }
     }
 

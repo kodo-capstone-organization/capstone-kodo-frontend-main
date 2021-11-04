@@ -6,6 +6,7 @@ import ParticipantsPanel from './components/ParticipantsPanel';
 import Stage from './components/Stage';
 import { LiveKodoSessionContainer, MainSessionWrapper, TopSessionBar } from './LiveKodoSessionPageElements';
 import { cursorColours } from '../../../values/Colours';
+import { appendSpacingToSessionId } from '../../../utils/SessionUrlHelper';
 
 let conn: WebSocket;
 let interval: NodeJS.Timer;
@@ -33,7 +34,7 @@ function LiveKodoSessionPage(props: any) {
 
     const myAccountId = parseInt(window.sessionStorage.getItem("loggedInAccountId") || "");
     const [initAction, setInitAction] = useState<string>(props.match.params.initAction.toLowerCase()); // "create" or "join" only
-    const [sessionId, setSessionId] = useState<string>(props.match.params.sessionId);
+    const [sessionId, setSessionId] = useState<string>(appendSpacingToSessionId(props.match.params.sessionId));
     const [isValidSession, setIsValidSession] = useState<boolean>(false);
     const [sessionDetails, setSessionDetails] = useState<InvitedSessionResp>();
     const [dataChannelConnected, setDataChannelConnected] = useState<boolean>(false);
@@ -45,8 +46,8 @@ function LiveKodoSessionPage(props: any) {
     const [newWhiteboardOrEditorDcMessage, setNewWhiteboardOrEditorDcMessage] = useState<KodoDataChannelMessage>();
 
     useEffect(() => {
-        setSessionId(props.match.params.sessionId);
-        getSessionBySessionId(props.match.params.sessionId, myAccountId)
+        setSessionId(appendSpacingToSessionId(props.match.params.sessionId));
+        getSessionBySessionId(appendSpacingToSessionId(props.match.params.sessionId), myAccountId)
             .then((sessionDetails: InvitedSessionResp) => {
                 setSessionDetails(sessionDetails);
                 if (initAction !== "create" && initAction !== "join") {

@@ -5,12 +5,13 @@ import FileCopyIcon from '@material-ui/icons/FileCopy';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import MicIcon from '@material-ui/icons/Mic';
 import MicOffIcon from '@material-ui/icons/MicOff';
+import { removeSpacingFromSessionId } from '../../../../utils/SessionUrlHelper';
 
 function ActionsPanel(props: any) {
 
     const copyJoinLinkToClipboard = () => {
         const prefix = `${window.location.protocol}//${window.location.host}`;
-        const joinUrl = `${prefix}/session/join/${props.sessionId}`
+        const joinUrl = `${prefix}/session/join/${removeSpacingFromSessionId(props.sessionId)}`
         navigator.clipboard.writeText(joinUrl)
         props.callOpenSnackBar("Join Link Copied!", "info")
     }
