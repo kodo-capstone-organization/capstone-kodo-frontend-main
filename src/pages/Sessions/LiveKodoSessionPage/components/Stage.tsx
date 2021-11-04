@@ -62,6 +62,7 @@ function Stage(props: any) {
                     incomingSelectedLanguage={incomingSelectedLanguage}
                     peerConns={peerConns}
                     incomingEditorCursorLocations={incomingEditorCursorLocations}
+                    callOpenSnackBar={props.callOpenSnackBar}
                     />
             },
             {

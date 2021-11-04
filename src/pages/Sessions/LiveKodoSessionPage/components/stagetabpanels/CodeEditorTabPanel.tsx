@@ -1,17 +1,20 @@
 import MonacoEditor, { monaco } from 'react-monaco-editor';
-import { FormControl, IconButton, InputLabel, Menu, MenuItem, Select, Tooltip, Typography } from "@material-ui/core";
+import { FormControl, IconButton, InputLabel, Dialog, MenuItem, Select, Tooltip, DialogTitle, DialogContent, DialogContentText, Input, DialogActions } from "@material-ui/core";
 import { useState, useEffect, useRef } from "react";
 import { CodeEditorPanelWrapper, EditorTopBarGrid } from "./StageTabPanelsElements";
 import SystemUpdateAltIcon from '@material-ui/icons/SystemUpdateAlt';
 import PublishIcon from '@material-ui/icons/Publish';
+import GitHubIcon from '@material-ui/icons/GitHub';
 import { 
     Theme, 
     createStyles, 
     makeStyles, 
   } from '@material-ui/core/styles';
-import { ClassNameMap } from '@material-ui/core/styles/withStyles';
 import { EditorCursorLocation } from '../../../../../entities/Session';
-import { ACCEPTABLE_PROGRAMMING_FILE_TYPE } from '../../../../../utils/GetFileTypeHelper';
+import { ACCEPTABLE_PROGRAMMING_FILE_TYPE, isSupportedProgrammingFile } from '../../../../../utils/GetFileTypeHelper';
+import { Button } from "../../../../../values/ButtonElements";
+import Alert from '@material-ui/lab/Alert';
+import { fetchGithubFile } from '../../../../../apis/SessionApis';
 
 // Monaco settings
 const options = {
@@ -23,10 +26,9 @@ const THEMES = ["vs-light", "vs-dark"]
 
 const LANGUAGES = ["javascript", "typescript", "html", "python", "java"]
 
-interface CursorInfo {
-    range: Range
-    styles: ClassNameMap
-}
+interface IErrors<TValue> {
+    [id: string]: TValue;
+  }
 
 function CodeEditorTabPanel (props: any) {
 
@@ -36,6 +38,12 @@ function CodeEditorTabPanel (props: any) {
     const [selectedLanguage, setSelectedLanguage] = useState<string>("javascript");
     const [isEditorLoading, setIsEditorLoading] = useState<boolean>(true);
     const [editorCode, setEditorCode] = useState<string>("");
+    const [showGithubImportDialog, setShowGithubImportDialog] = useState<boolean>(false);
+    const [githubUrl, setGithubUrl] = useState<string>(""); 
+    const [validationErrorMessage, setValidationErrorMessage] = useState<string>("");
+    var [errors, setErrors] = useState<IErrors<boolean>>({
+        githuburl: false,
+    });
 
     const useStyles = makeStyles((theme: Theme) =>
         createStyles({
@@ -275,8 +283,104 @@ function CodeEditorTabPanel (props: any) {
         } 
     }
 
+    const handleCloseGithubImportDialog = () => {
+        setShowGithubImportDialog(false)
+    }
+
+    const handleGithubImport = () => {
+        setShowGithubImportDialog(true)
+    }
+
+    const handleGithubUrlChange = (event: any) => {
+        setGithubUrl(event.target.value)
+    }
+
+    const handleClickImportFromGithub = () => {
+        if (!handleValidation()) return;
+
+        fetchGithubFile(githubUrl).then((fileContent) => {
+
+            if (fileContent) {
+                setEditorCode(fileContent)
+                props.sendEditorEventViaDCCallback(fileContent, undefined)
+                window.sessionStorage.setItem("editorData", fileContent);
+
+                const newSelectedLanguage = getSelectedLanguageByFileName(githubUrl)
+                setSelectedLanguage(newSelectedLanguage)
+                props.sendEditorEventViaDCCallback(undefined, newSelectedLanguage)
+                window.sessionStorage.setItem("selectedLanguage", newSelectedLanguage);
+            }
+
+            props.callOpenSnackBar(`Successfully imported file from Github`, "success")
+            setGithubUrl("")
+            handleCloseGithubImportDialog()
+        }).catch(error => { props.callOpenSnackBar(`Error in importing file via Github URL: ${error}`, "error") })
+    } 
+
+    const handleValidation = () => {
+        let formIsValid = true;
+        let newValidationErrorMessage = "";
+        errors = {};
+
+        if (!githubUrl.includes("https://github.com")) {
+            formIsValid = false;
+            errors['githuburl'] = true;
+            newValidationErrorMessage = newValidationErrorMessage.concat("URL is not a valid Github URL. \n")
+        }
+
+        if (!isSupportedProgrammingFile(githubUrl)) {
+            formIsValid = false;
+            errors['githuburl'] = true;
+            newValidationErrorMessage = newValidationErrorMessage.concat("Kodo currently does not support the following file type. \n")
+        }
+
+        setErrors(errors);
+        setValidationErrorMessage(newValidationErrorMessage)
+
+        return formIsValid
+    }
+
     return (
         <CodeEditorPanelWrapper>
+            <Dialog 
+                fullWidth
+                open={showGithubImportDialog}
+                onClose={handleCloseGithubImportDialog}
+                aria-labelledby="simple-modal-title"
+                aria-describedby="simple-modal-description"
+                >
+                    <DialogTitle>Upload from Github URL</DialogTitle>
+                    <DialogContent style={{ height: '30vh' }}>
+                        <DialogContentText>
+                            Enter the Github URL of the file to be uploaded.
+                            Note: This feature only supports files from public repositories.
+                        </DialogContentText>
+                        <FormControl fullWidth margin="normal">
+                            <InputLabel htmlFor="multimedia-name">Github URL</InputLabel>
+                            <Input
+                            error={errors['githuburl']}
+                            id="github-url-name"
+                            name="name"
+                            type="text"
+                            autoFocus
+                            fullWidth
+                            value={githubUrl}
+                            onChange={handleGithubUrlChange}
+                            />
+                        </FormControl>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleCloseGithubImportDialog}>
+                            Cancel
+                        </Button>
+                        <Button primay onClick={handleClickImportFromGithub}>
+                            Import
+                        </Button>
+                    </DialogActions>
+                    <DialogContent>
+                        {validationErrorMessage && <Alert severity="error">{validationErrorMessage}</Alert>}
+                    </DialogContent>
+            </Dialog>
             <EditorTopBarGrid container>
                 {/*<Typography variant="h6">*/}
                 {/*    Placeholder Code File Name*/}
@@ -312,6 +416,11 @@ function CodeEditorTabPanel (props: any) {
                     </Select>
                 </FormControl>
                 &nbsp;&nbsp;&nbsp;&nbsp;
+                <Tooltip title="Github Import">
+                    <IconButton onClick={handleGithubImport} aria-label="github-import">
+                        <GitHubIcon />
+                    </IconButton>
+                </Tooltip>
                 <Tooltip title="Import">
                     <>
                     <input 
