@@ -1,3 +1,4 @@
+import { monaco } from 'react-monaco-editor';
 
 export interface CreateSessionReq {
     sessionName: string,
@@ -41,7 +42,8 @@ export interface WhiteboardEvent extends KodoSessionEvent {
 export interface EditorEvent extends KodoSessionEvent {
     editorData?: string
     selectedLanguage?: string
-    cursorLocation?: EditorCursorLocation 
+    cursorLocation?: EditorCursorLocation
+    cursorSelection?: monaco.Selection
 }
 
 export interface EditorCursorLocation {

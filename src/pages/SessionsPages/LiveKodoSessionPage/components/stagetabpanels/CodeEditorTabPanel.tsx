@@ -47,52 +47,23 @@ function CodeEditorTabPanel (props: any) {
 
     const useStyles = makeStyles((theme: Theme) =>
         createStyles({
-            maroon: {
-                background: '#980000',
-                width: '2px !important',
-            },
-            red: {
-                background: '#ff0000',
-                width: '2px !important',
-            },
-            orange: {
-                background: '#ff9900',
-                width: '2px !important',
-            },
-            yellow: {
-                background: '#ffff00',
-                width: '2px !important',
-            },
-            limegreen: {
-                background: '#00ff00',
-                width: '2px !important',
-            },
-            teal: {
-                background: '#00ffff',
-                width: '2px !important',
-            },
-            blue: {
-                background: '#4a86e8',
-                width: '2px !important',
-            },
-            darkblue: {
-                background: '#0000ff',
-                width: '2px !important',
-            },
-            purple: {
-                background: '#9900ff',
-                width: '2px !important',
-            },
-            pink: {
-                background: '#ff00ff',
-                width: '2px !important',
-            },
-            black: {
-                background: '#000000',
-                width: '2px !important'
-            }
+            cursorPipeRed: { background: '#ff0000', width: '2px !important' },
+            cursorPipeOrange: { background: '#ff9900', width: '2px !important'},
+            cursorPipeLimegreen: { background: '#00ff00', width: '2px !important'},
+            cursorPipeDarkblue: { background: '#0000ff', width: '2px !important' },
+            cursorPipePurple: { background: '#9900ff', width: '2px !important'},
+            cursorPipePink: { background: '#ff00ff', width: '2px !important' },
+            cursorPipeBlack: { background: '#000000', width: '2px !important' },
+            cursorSelectionHighlightRed: { backgroundColor: 'rgba(255, 0, 0, 0.2)', width: '2px !important' },
+            cursorSelectionHighlightOrange: { backgroundColor: 'rgba(255, 153, 0, 0.2)', width: '2px !important' },
+            cursorSelectionHighlightLimegreen: { backgroundColor: 'rgba(0, 255, 0, 0.2)', width: '2px !important' },
+            cursorSelectionHighlightDarkblue: { backgroundColor: 'rgba(0, 0, 255, 0.2)', width: '2px !important' },
+            cursorSelectionHighlightPurple: { backgroundColor: 'rgba(153, 0, 255, 0.2)', width: '2px !important' },
+            cursorSelectionHighlightPink: { backgroundColor: 'rgba(255, 0, 255, 0.2)', width: '2px !important' },
+            cursorSelectionBlank: { backgroundColor: 'rgba(0, 0, 0, 0)' }
         }),
     );
+
     const classes = useStyles();
 
     useEffect(() => {
@@ -133,6 +104,84 @@ function CodeEditorTabPanel (props: any) {
         }
     }, [props.incomingSelectedLanguage])
 
+    // useEffect(() => {
+        // When a cursor location changes
+        // if (monacoObjects && monacoObjects.current && props.incomingEditorCursorLocations.size > 0) {
+        //     const { monaco, editor } = monacoObjects.current;
+        //
+        //     let newDeltaDecorations = new Array();
+        //     props.incomingEditorCursorLocations.forEach((value: EditorCursorLocation, key: number) => {
+        //         newDeltaDecorations.push({
+        //             range: new monaco.Range(value.lineNumber, value.column, value.lineNumber, value.column),
+        //             options: {
+        //                 // className: 'baseCursor cursorPipeRed'
+        //                 className: getColourStyleHelper(props.peerConns.get(key).colour)
+        //             }
+        //         })
+        //     })
+        //
+        //     editor.deltaDecorations([], newDeltaDecorations);
+        // }
+    // }, [props.incomingEditorCursorLocations]);
+
+    // Cursor selection changes implies cursor location changes!
+    useEffect(() => {
+        // When a cursor selection changes
+        if (monacoObjects && monacoObjects.current && props.incomingEditorCursorSelections.size > 0) {
+            const { monaco, editor } = monacoObjects.current;
+
+            let newDeltaDecorations = new Array();
+            props.incomingEditorCursorSelections.forEach((value: monaco.Selection, key: number) => {
+
+                // Add Cursor position
+                newDeltaDecorations.push({
+                    range: new monaco.Range(value.startLineNumber, value.startColumn, value.endLineNumber, value.endColumn),
+                    options: {
+                        inlineClassName: getSelectionColourStyle(props.peerConns.get(key).colour)
+                    }
+                })
+
+                // Add Selection
+                newDeltaDecorations.push({
+                    range: new monaco.Range(value.positionLineNumber, value.positionColumn, value.positionLineNumber, value.positionColumn),
+                    options: {
+                        // className: 'baseCursor cursorPipeRed'
+                        className: getColourStyleHelper(props.peerConns.get(key).colour)
+                    }
+                })
+            })
+
+            editor.deltaDecorations([], newDeltaDecorations);
+            console.log("received peers cursor selection update")
+            console.log(newDeltaDecorations)
+        }
+    }, [props.incomingEditorCursorSelections]);
+
+    const editorDidMount = (editor: any, monaco: any) => {
+        try {
+
+            // Attach event listener for cursor position changing
+            editor.onDidChangeCursorPosition((e: monaco.editor.ICursorPositionChangedEvent) => {
+                // This event fires if typing in the code editor (source: 'keyboard') OR
+                // clicking on a new location (source: 'mouse')
+                console.log("My cursor position changed event")
+                handleMyCursorLocationChange(e);
+            })
+
+            // Attach event listener for cursor selection changing
+            editor.onDidChangeCursorSelection((e: monaco.editor.ICursorSelectionChangedEvent) => {
+                console.log("My cursor selection changed event")
+                handleMyCursorSelectionChange(e);
+            })
+
+            // Set ref
+            monacoObjects.current = { editor, monaco };
+            setIsEditorLoading(false);
+        } catch {
+            console.error("boohooo, editorDidMount cannot set ref")
+        }
+    };
+
     const handleThemeChange = (event: any) => {
         const newTheme = event?.target?.value as string
         setSelectedTheme(newTheme);
@@ -147,84 +196,68 @@ function CodeEditorTabPanel (props: any) {
         window.sessionStorage.setItem("selectedLanguage", event?.target?.value as string);
     };
 
-    const editorDidMount = (editor: any, monaco: any) => {
-        try {
-            // Attach event listener for cursor position changing
-            editor.onDidChangeCursorPosition((e: monaco.editor.ICursorPositionChangedEvent) => {
-                // This event fires if typing in the code editor (source: 'keyboard') OR
-                // clicking on a new location (source: 'mouse')
-                console.log("My position changed event")
-                handleMyCursorLocationChange(e);
-            })
-
-            // Set ref
-            monacoObjects.current = { editor, monaco };
-            setIsEditorLoading(false);
-        } catch {
-            console.error("boohooo, editorDidMount cannot set ref")
-        }  
-    };
-
     const handleMyCursorLocationChange = (e: monaco.editor.ICursorPositionChangedEvent) => {
         const newEditorCursorLocation: EditorCursorLocation = {
             lineNumber: e.position.lineNumber,
             column: e.position.column
         }
         // Send my updated cursor location to peers
-        props.sendEditorEventViaDCCallback(undefined, undefined, newEditorCursorLocation)
+        props.sendEditorEventViaDCCallback(undefined, undefined, newEditorCursorLocation, undefined)
     }
 
+    const handleMyCursorSelectionChange = (e: monaco.editor.ICursorSelectionChangedEvent) => {
+        const newSelection = e.selection;
+        const newEditorCursorLocation: EditorCursorLocation = {
+            lineNumber: newSelection.positionLineNumber,
+            column: newSelection.positionColumn
+        }
+        // Send my updated selection AND cursor location (to select, cursor will inevitably change)
+        props.sendEditorEventViaDCCallback(undefined, undefined, newEditorCursorLocation, newSelection)
+    }
 
-    function getColourStyleHelper(colour: string) {
+    const getColourStyleHelper = (colour: string) => {
         switch (colour) {
-            case "#980000":
-                return classes.maroon;
             case "#ff0000":
-                return classes.red;
+                return classes.cursorPipeRed;
             case "#ff9900":
-                return classes.orange;
-            case "#ffff00":
-                return classes.yellow;
+                return classes.cursorPipeOrange;
             case "#00ff00":
-                return classes.limegreen;
-            case "#00ffff":
-                return classes.teal;
-            case "#4a86e8":
-                return classes.blue;
+                return classes.cursorPipeLimegreen;
             case "#0000ff":
-                return classes.darkblue;
+                return classes.cursorPipeDarkblue;
             case "#9900ff":
-                return classes.purple;
+                return classes.cursorPipePurple;
             case "#ff00ff":
-                return classes.pink;
+                return classes.cursorPipePink;
             default:
-                console.log("Invalid colour selection")
-                return classes.black;
+                console.log("Invalid cursor colour specified")
+                return classes.cursorPipeBlack;
         }
     }
 
-    useEffect(() => {
-        // When a cursor location changes
-        if (monacoObjects && monacoObjects.current && props.incomingEditorCursorLocations.size > 0) {
-            const { monaco, editor } = monacoObjects.current;
-
-            let newDeltaDecorations = new Array();
-            props.incomingEditorCursorLocations.forEach((value: EditorCursorLocation, key: number) => {
-                newDeltaDecorations.push({
-                    range: new monaco.Range(value.lineNumber, value.column, value.lineNumber, value.column),
-                    options: {
-                        className: getColourStyleHelper(props.peerConns.get(key).colour)
-                    }
-                })
-            })
-            console.log(editor)
-            editor.deltaDecorations([], newDeltaDecorations);
+    const getSelectionColourStyle = (colour: string) => {
+        switch (colour) {
+            case "#ff0000":
+                return classes.cursorSelectionHighlightRed;
+            case "#ff9900":
+                return classes.cursorSelectionHighlightOrange;
+            case "#00ff00":
+                return classes.cursorSelectionHighlightLimegreen;
+            case "#0000ff":
+                return classes.cursorSelectionHighlightDarkblue;
+            case "#9900ff":
+                return classes.cursorSelectionHighlightPurple;
+            case "#ff00ff":
+                return classes.cursorSelectionHighlightPink;
+            default:
+                console.log("Invalid colour selection specified")
+                return classes.cursorSelectionBlank;
         }
-      }, [props.incomingEditorCursorLocations]);
+    }
 
     const onCodeChange = (newCodeValue: string, event: monaco.editor.IModelContentChangedEvent) => {
         // Send updated code to peers
-        props.sendEditorEventViaDCCallback(newCodeValue, undefined, undefined)
+        props.sendEditorEventViaDCCallback(newCodeValue, undefined, undefined, undefined)
 
         // Set updated code to session storage
         window.sessionStorage.setItem("editorData", newCodeValue);

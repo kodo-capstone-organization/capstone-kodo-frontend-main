@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { monaco } from "react-monaco-editor";
 import { KodoSessionEventType, EditorCursorLocation } from "../../../../entities/Session";
 import {ActiveTabPanel, StageContainer, StageTab, StageTabBar } from "../LiveKodoSessionPageElements";
 import CodeEditorTabPanel from "./stagetabpanels/CodeEditorTabPanel";
@@ -14,6 +15,7 @@ function Stage(props: any) {
     const [incomingEditorData, setIncomingEditorData] = useState<string>();
     const [incomingSelectedLanguage, setIncomingSelectedLanguage] = useState<string>();
     const [incomingEditorCursorLocations, setIncomingEditorCursorLocations] = useState<Map<number, EditorCursorLocation>>(new Map());
+    const [incomingEditorCursorSelections, setIncomingEditorCursorSelections] = useState<Map<number, monaco.Selection>>(new Map());
 
     useEffect(() => {
         setPeerConns(props.peerConns)
@@ -38,6 +40,11 @@ function Stage(props: any) {
                 newIncomingEditorCursorLocations.set(newDCMessage.peerId, newDCMessage?.event?.cursorLocation)
                 setIncomingEditorCursorLocations(newIncomingEditorCursorLocations)
             }
+            if(props.newIncomingDcMessage?.event?.cursorSelection) {
+                const newIncomingEditorCursorSelections = new Map(incomingEditorCursorSelections)
+                newIncomingEditorCursorSelections.set(newDCMessage.peerId, newDCMessage?.event?.cursorSelection)
+                setIncomingEditorCursorSelections(newIncomingEditorCursorSelections)
+            }
         }
 
     }, [props.newIncomingDcMessage])
@@ -55,6 +62,7 @@ function Stage(props: any) {
                         incomingSelectedLanguage={incomingSelectedLanguage}
                         peerConns={peerConns}
                         incomingEditorCursorLocations={incomingEditorCursorLocations}
+                        incomingEditorCursorSelections={incomingEditorCursorSelections}
                         callOpenSnackBar={props.callOpenSnackBar}
                     />
             },

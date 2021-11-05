@@ -9,6 +9,7 @@ import { cursorColours } from '../../../values/Colours';
 import { appendSpacingToSessionId } from '../../../utils/SessionUrlHelper';
 import { fontSizes } from '../../../values/FontSizes';
 import { Tooltip } from '@material-ui/core';
+import { monaco } from 'react-monaco-editor';
 
 let conn: WebSocket;
 let interval: NodeJS.Timer;
@@ -435,11 +436,12 @@ function LiveKodoSessionPage(props: any) {
         return craftAndSendDcMessage(newWhiteboardEvent, KodoSessionEventType.WHITEBOARD)
     }
 
-    const craftAndSendEditorEventMessage = (editorData?: string, selectedLanguage?: string, cursorLocation?: EditorCursorLocation) => {
+    const craftAndSendEditorEventMessage = (editorData?: string, selectedLanguage?: string, cursorLocation?: EditorCursorLocation, cursorSelection?: monaco.Selection) => {
         const newEditorEvent: EditorEvent = {
             editorData: editorData ? editorData : undefined,
             selectedLanguage: selectedLanguage ? selectedLanguage : undefined,
-            cursorLocation: cursorLocation ? cursorLocation : undefined
+            cursorLocation: cursorLocation ? cursorLocation : undefined,
+            cursorSelection: cursorSelection ? cursorSelection : undefined
         }
         return craftAndSendDcMessage(newEditorEvent, KodoSessionEventType.EDITOR)
     }
