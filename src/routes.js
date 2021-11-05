@@ -18,10 +18,10 @@ import SignUpPage from "./pages/SignUpPage";
 // Pages with sidebar
 import CourseOverview from "./pages/CourseViewerPage";
 import ForumPage from "./pages/ForumPage";
-import InvalidSessionPage from "./pages/Sessions/InvalidSessionPage";
+import InvalidSessionPage from "./pages/SessionsPages/InvalidSessionPage";
 import LessonStatisticsViewerWithRouter from "./pages/CourseViewerPage/TutorView/LessonViewer";
 import LessonViewerWithRouter from "./pages/CourseViewerPage/StudentView/LessonViewer";
-import LiveKodoSessionPage from "./pages/Sessions/LiveKodoSessionPage";
+import LiveKodoSessionPage from "./pages/SessionsPages/LiveKodoSessionPage";
 import MultimediaViewerWithRouter from "./pages/CourseViewerPage/StudentView/MultimediaViewer";
 
 import Snackbar from '@material-ui/core/Snackbar';
