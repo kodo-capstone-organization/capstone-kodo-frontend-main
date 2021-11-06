@@ -15,6 +15,8 @@ import { ACCEPTABLE_PROGRAMMING_FILE_TYPE, isSupportedProgrammingFile } from '..
 import { Button } from "../../../../../values/ButtonElements";
 import Alert from '@material-ui/lab/Alert';
 import { fetchGithubFile } from '../../../../../apis/SessionApis';
+import { StrippedDownAccount } from '../../../../../entities/Account';
+import { getSomeAccountsStrippedDown } from '../../../../../apis/AccountApis';
 
 // Monaco settings
 const options = {
@@ -34,6 +36,7 @@ function CodeEditorTabPanel (props: any) {
 
     const monacoObjects = useRef<any>(null);
 
+    const [participants, setParticipants] = useState<StrippedDownAccount[]>([]);
     const [selectedTheme, setSelectedTheme] = useState<string>("")
     const [selectedLanguage, setSelectedLanguage] = useState<string>("");
     const [isEditorLoading, setIsEditorLoading] = useState<boolean>(true);
@@ -47,19 +50,25 @@ function CodeEditorTabPanel (props: any) {
 
     const useStyles = makeStyles((theme: Theme) =>
         createStyles({
-            cursorPipeRed: { background: '#ff0000', width: '2px !important' },
-            cursorPipeOrange: { background: '#ff9900', width: '2px !important'},
-            cursorPipeLimegreen: { background: '#00ff00', width: '2px !important'},
-            cursorPipeDarkblue: { background: '#0000ff', width: '2px !important' },
-            cursorPipePurple: { background: '#9900ff', width: '2px !important'},
-            cursorPipePink: { background: '#ff00ff', width: '2px !important' },
-            cursorPipeBlack: { background: '#000000', width: '2px !important' },
-            cursorSelectionHighlightRed: { backgroundColor: 'rgba(255, 0, 0, 0.2)', width: '2px !important' },
-            cursorSelectionHighlightOrange: { backgroundColor: 'rgba(255, 153, 0, 0.2)', width: '2px !important' },
-            cursorSelectionHighlightLimegreen: { backgroundColor: 'rgba(0, 255, 0, 0.2)', width: '2px !important' },
-            cursorSelectionHighlightDarkblue: { backgroundColor: 'rgba(0, 0, 255, 0.2)', width: '2px !important' },
-            cursorSelectionHighlightPurple: { backgroundColor: 'rgba(153, 0, 255, 0.2)', width: '2px !important' },
-            cursorSelectionHighlightPink: { backgroundColor: 'rgba(255, 0, 255, 0.2)', width: '2px !important' },
+            cursorPipeRed: { background: '#ff0000', width: '2.5px !important' },
+            cursorPipeOrange: {
+                width: '2.5px !important',
+                background: '#ff9900',
+                '&:hover': {
+                    background: "#0000ff",
+                }
+            },
+            cursorPipeLimegreen: { background: '#00ff00', width: '2.5px !important'},
+            cursorPipeDarkblue: { background: '#0000ff', width: '2.5px !important' },
+            cursorPipePurple: { background: '#9900ff', width: '2.5px !important'},
+            cursorPipePink: { background: '#ff00ff', width: '2.5px !important' },
+            cursorPipeBlack: { background: '#000000', width: '2.5px !important' },
+            cursorSelectionHighlightRed: { backgroundColor: 'rgba(255, 0, 0, 0.2)', width: '2.5px !important' },
+            cursorSelectionHighlightOrange: { backgroundColor: 'rgba(255, 153, 0, 0.2)', width: '2.5px !important' },
+            cursorSelectionHighlightLimegreen: { backgroundColor: 'rgba(0, 255, 0, 0.2)', width: '2.5px !important' },
+            cursorSelectionHighlightDarkblue: { backgroundColor: 'rgba(0, 0, 255, 0.2)', width: '2.5px !important' },
+            cursorSelectionHighlightPurple: { backgroundColor: 'rgba(153, 0, 255, 0.2)', width: '2.5px !important' },
+            cursorSelectionHighlightPink: { backgroundColor: 'rgba(255, 0, 255, 0.2)', width: '2.5px !important' },
             cursorSelectionBlank: { backgroundColor: 'rgba(0, 0, 0, 0)' }
         }),
     );
@@ -85,6 +94,13 @@ function CodeEditorTabPanel (props: any) {
     }, [])
 
     useEffect(() => {
+        let peerIds: number[] = Array.from(props.peerConns.keys());
+        getSomeAccountsStrippedDown(peerIds).then((accs: StrippedDownAccount[]) => {
+            setParticipants(accs)
+        })
+    }, [props.peerConns.size])
+
+    useEffect(() => {
         if (props.incomingEditorData) {
             window.sessionStorage.setItem("editorData", props.incomingEditorData);
         }
@@ -104,26 +120,6 @@ function CodeEditorTabPanel (props: any) {
         }
     }, [props.incomingSelectedLanguage])
 
-    // useEffect(() => {
-        // When a cursor location changes
-        // if (monacoObjects && monacoObjects.current && props.incomingEditorCursorLocations.size > 0) {
-        //     const { monaco, editor } = monacoObjects.current;
-        //
-        //     let newDeltaDecorations = new Array();
-        //     props.incomingEditorCursorLocations.forEach((value: EditorCursorLocation, key: number) => {
-        //         newDeltaDecorations.push({
-        //             range: new monaco.Range(value.lineNumber, value.column, value.lineNumber, value.column),
-        //             options: {
-        //                 // className: 'baseCursor cursorPipeRed'
-        //                 className: getColourStyleHelper(props.peerConns.get(key).colour)
-        //             }
-        //         })
-        //     })
-        //
-        //     editor.deltaDecorations([], newDeltaDecorations);
-        // }
-    // }, [props.incomingEditorCursorLocations]);
-
     // Cursor selection changes implies cursor location changes!
     useEffect(() => {
         // When a cursor selection changes
@@ -133,7 +129,7 @@ function CodeEditorTabPanel (props: any) {
             let newDeltaDecorations = new Array();
             props.incomingEditorCursorSelections.forEach((value: monaco.Selection, key: number) => {
 
-                // Add Cursor position
+                // Add Selection
                 newDeltaDecorations.push({
                     range: new monaco.Range(value.startLineNumber, value.startColumn, value.endLineNumber, value.endColumn),
                     options: {
@@ -141,19 +137,75 @@ function CodeEditorTabPanel (props: any) {
                     }
                 })
 
-                // Add Selection
+                // Add Cursor Pipe
                 newDeltaDecorations.push({
                     range: new monaco.Range(value.positionLineNumber, value.positionColumn, value.positionLineNumber, value.positionColumn),
                     options: {
-                        // className: 'baseCursor cursorPipeRed'
                         className: getColourStyleHelper(props.peerConns.get(key).colour)
                     }
                 })
+
+                // Add Cursor Tag
+                const peerCursorNametagWidget = {
+                    domNode: null,
+                    getId: function() { return `${key}-cursor`; },
+                    getDomNode: function() {
+                        // Destroy any existing widgets with the same widgetId
+                        const existingNodes = document.querySelectorAll(`[widgetid='${this.getId()}']`) || null;
+                        if (existingNodes) {
+                            Array.prototype.forEach.call( existingNodes, function( node ) {
+                                node.parentNode.removeChild( node );
+                            });
+                        }
+
+                        // Create wrapper dom node
+                        const newDomNode = document.createElement('div');
+                        newDomNode.id = `${value.positionLineNumber}-${value.positionColumn}-cursor-wrapper`;
+
+                        // Create a new nametag div object
+                        const nametagNode = document.createElement('div');
+                        nametagNode.id = `${value.positionLineNumber}-${value.positionColumn}-cursor-nametag-${key}`;
+                        nametagNode.innerHTML = getPeerNameForCursor(key) || '';
+                        nametagNode.style.fontSize = '14px';
+                        nametagNode.style.background = props.peerConns.get(key).colour;
+                        nametagNode.style.color = getContrastingTextColourToBackground(hexToRgb(props.peerConns.get(key).colour));
+
+                        // Uncomment to test with dark background colour
+                        // nametagNode.style.background = '#0000ff';
+                        // nametagNode.style.color = getContrastingTextColourToBackground(hexToRgb('#0000ff'));
+
+                        // nametagNode.style.opacity = '0.2';
+                        // Prevent div from wrapping
+                        nametagNode.style.overflow = 'hidden';
+                        nametagNode.style.whiteSpace = 'nowrap';
+
+                        // Add nametagNode to domNode
+                        newDomNode.appendChild(nametagNode);
+
+                        //@ts-ignore
+                        this.domNode = newDomNode;
+                        return this.domNode;
+                    },
+                    getPosition: function() {
+                        return {
+                            position: { lineNumber: value.positionLineNumber, column: value.positionColumn },
+                            preference: [monaco.editor.ContentWidgetPositionPreference.ABOVE, monaco.editor.ContentWidgetPositionPreference.EXACT]
+                        };
+                    },
+                    afterRender: function () {
+                        const nametagNode = document.getElementById(`${value.positionLineNumber}-${value.positionColumn}-cursor-nametag-${key}`);
+                        if (nametagNode) {
+                            // Nametag should disappear 2s after user stops typing. Cursor should still stay.
+                            setTimeout(() => {
+                                nametagNode.style.display = "none";
+                            }, 2000)
+                        }
+                    }
+                };
+                editor.addContentWidget(peerCursorNametagWidget);
             })
 
             editor.deltaDecorations([], newDeltaDecorations);
-            console.log("received peers cursor selection update")
-            console.log(newDeltaDecorations)
         }
     }, [props.incomingEditorCursorSelections]);
 
@@ -172,6 +224,26 @@ function CodeEditorTabPanel (props: any) {
             editor.onDidChangeCursorSelection((e: monaco.editor.ICursorSelectionChangedEvent) => {
                 console.log("My cursor selection changed event")
                 handleMyCursorSelectionChange(e);
+            })
+
+            // Mouse move event
+            editor.onMouseMove((e: monaco.editor.IEditorMouseEvent) => {
+                const targetLineNumber = e?.target?.position?.lineNumber;
+                const targetColumn = e?.target?.position?.column;
+
+                // Try to select cursors by matching front part of their id
+                const cursorNameTagNodes = document.querySelectorAll(`[id^='${targetLineNumber}-${targetColumn}-cursor-nametag-']`) || [];
+                if (cursorNameTagNodes && cursorNameTagNodes.length > 0) {
+                    console.log("CURSOR NAME TAGS FOUND ON MOUSE MOVE")
+                    Array.prototype.forEach.call( cursorNameTagNodes, function( node ) {
+                        // Show nametag
+                        node.style.display = 'block';
+                        // Which likewise disappears after 2 seconds if no longer hovered
+                        setTimeout(() => {
+                            node.style.display = "none";
+                        }, 2000)
+                    });
+                }
             })
 
             // Set ref
@@ -215,11 +287,34 @@ function CodeEditorTabPanel (props: any) {
         props.sendEditorEventViaDCCallback(undefined, undefined, newEditorCursorLocation, newSelection)
     }
 
+    // Convert hex colour string e.g. '#ff00ff' to rgb { r: number, g: number, b: number }
+    const hexToRgb = (hex: string) => {
+        var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result ? {
+            r: parseInt(result[1], 16),
+            g: parseInt(result[2], 16),
+            b: parseInt(result[3], 16)
+        } : null;
+    }
+
+    // Given an rgb input of a background colour, determine whether to use black or white as contrasting text colour
+    const getContrastingTextColourToBackground = (bgColourRGB: any) => {
+        if (bgColourRGB !== null) {
+            const brightness = Math.round(((parseInt(bgColourRGB.r) * 299) +
+                (parseInt(bgColourRGB.g) * 587) +
+                (parseInt(bgColourRGB.b) * 114)) / 1000);
+            return brightness > 125 ? 'black' : 'white';
+        } else {
+            return 'black'
+        }
+    }
+
     const getColourStyleHelper = (colour: string) => {
         switch (colour) {
             case "#ff0000":
                 return classes.cursorPipeRed;
             case "#ff9900":
+                // classes.cursorPipeOrange --> 'makestyles-cursorPipeOrange-xxxx'
                 return classes.cursorPipeOrange;
             case "#00ff00":
                 return classes.cursorPipeLimegreen;
@@ -253,6 +348,11 @@ function CodeEditorTabPanel (props: any) {
                 console.log("Invalid colour selection specified")
                 return classes.cursorSelectionBlank;
         }
+    }
+
+    const getPeerNameForCursor = (peerId: number) => {
+        const peerObj = participants.find(({ accountId }) => accountId === peerId );
+        return peerObj?.name;
     }
 
     const onCodeChange = (newCodeValue: string, event: monaco.editor.IModelContentChangedEvent) => {
