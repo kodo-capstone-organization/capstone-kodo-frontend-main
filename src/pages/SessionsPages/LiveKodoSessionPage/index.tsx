@@ -1,11 +1,15 @@
-import React, { useEffect, createRef, useState, RefObject } from 'react'
-import {CallEvent, InvitedSessionResp, KodoDataChannelMessage, KodoSessionEvent, KodoSessionEventType, WhiteboardEvent } from '../../../entities/Session';
+import React, { useEffect, createRef, useState, RefObject, useRef } from 'react'
+import {CallEvent, InvitedSessionResp, KodoDataChannelMessage, KodoSessionEvent, KodoSessionEventType, WhiteboardEvent, EditorEvent, EditorCursorLocation } from '../../../entities/Session';
 import { endSession, getSessionBySessionId } from '../../../apis/SessionApis';
-import { Button } from '../../../values/ButtonElements';
 import ActionsPanel from './components/ActionsPanel';
 import ParticipantsPanel from './components/ParticipantsPanel';
 import Stage from './components/Stage';
 import { LiveKodoSessionContainer, MainSessionWrapper, TopSessionBar } from './LiveKodoSessionPageElements';
+import { cursorColours } from '../../../values/Colours';
+import { appendSpacingToSessionId } from '../../../utils/SessionUrlHelper';
+import { fontSizes } from '../../../values/FontSizes';
+import { Tooltip } from '@material-ui/core';
+import { monaco } from 'react-monaco-editor';
 
 let conn: WebSocket;
 let interval: NodeJS.Timer;
@@ -25,6 +29,7 @@ interface RTCInfo {
     mediaStream?: MediaStream
     audioRef?: RefObject<HTMLAudioElement>
     isMuted?: boolean
+    colour?: string
 }
 
 // URL: /session/<CREATE_OR_JOIN>/<SESSION_ID>
@@ -32,7 +37,7 @@ function LiveKodoSessionPage(props: any) {
 
     const myAccountId = parseInt(window.sessionStorage.getItem("loggedInAccountId") || "");
     const [initAction, setInitAction] = useState<string>(props.match.params.initAction.toLowerCase()); // "create" or "join" only
-    const [sessionId, setSessionId] = useState<string>(props.match.params.sessionId);
+    const [sessionId, setSessionId] = useState<string>(appendSpacingToSessionId(props.match.params.sessionId));
     const [isValidSession, setIsValidSession] = useState<boolean>(false);
     const [sessionDetails, setSessionDetails] = useState<InvitedSessionResp>();
     const [dataChannelConnected, setDataChannelConnected] = useState<boolean>(false);
@@ -43,9 +48,14 @@ function LiveKodoSessionPage(props: any) {
     // Whiteboard States
     const [newWhiteboardOrEditorDcMessage, setNewWhiteboardOrEditorDcMessage] = useState<KodoDataChannelMessage>();
 
+    // Special ref for amIMuted
+    const amIMutedStateRef = useRef();
+    // @ts-ignoret
+    amIMutedStateRef.current = amIMuted;
+
     useEffect(() => {
-        setSessionId(props.match.params.sessionId);
-        getSessionBySessionId(props.match.params.sessionId, myAccountId)
+        setSessionId(appendSpacingToSessionId(props.match.params.sessionId));
+        getSessionBySessionId(appendSpacingToSessionId(props.match.params.sessionId), myAccountId)
             .then((sessionDetails: InvitedSessionResp) => {
                 setSessionDetails(sessionDetails);
                 if (initAction !== "create" && initAction !== "join") {
@@ -62,12 +72,23 @@ function LiveKodoSessionPage(props: any) {
                 props.callOpenSnackBar("Error in joining session", "error")
                 props.history.push({ pathname: "/session/invalidsession", state: { errorData: error?.response?.data }})
             })
+
+        // On init
+        cleanUpLiveSessionStorage();
         
         return () => {
             handleMyExit()
+            cleanUpLiveSessionStorage()
             clearInterval(interval)
         };
     }, [])
+
+    const cleanUpLiveSessionStorage = () => {
+        window.sessionStorage.removeItem("canvasData");
+        window.sessionStorage.removeItem("editorData");
+        window.sessionStorage.removeItem("selectedLanguage");
+        window.sessionStorage.removeItem("selectedTheme");
+    }
 
     useEffect(() => {
         // Only if session is determined to be valid
@@ -117,6 +138,9 @@ function LiveKodoSessionPage(props: any) {
                         if (incomingPeerId.toString() !== myAccountId.toString()) {
                             handleCandidate(incomingPeerId, data);
                         }
+                        break;
+                    case "broadcast":
+                        broadExistingData();
                         break;
                     case "exit":
                         handleExit(incomingPeerId);
@@ -174,6 +198,9 @@ function LiveKodoSessionPage(props: any) {
     }, [fireEffect])
 
     const setupNewPeerConn = (newPeerId: number) => {
+        // Clear any existing info about the old peer conn
+        peerConns.delete(newPeerId)
+
         // Create new peer connection
         const newPeerConn = new RTCPeerConnection(rtcConfiguration)
 
@@ -195,7 +222,9 @@ function LiveKodoSessionPage(props: any) {
                 rtcPeerConnection: peerConns.get(newPeerId)?.rtcPeerConnection,
                 rtcDataChannel: peerConns.get(newPeerId)?.rtcDataChannel,
                 audioRef: peerConns.get(newPeerId)?.audioRef,
-                mediaStream: event.streams[0] // Updating this
+                mediaStream: event.streams[0], // Updating this
+                // Using modulo to loop through the 6 available cursor colors
+                colour: cursorColours[Array.from(peerConns.keys()).indexOf(newPeerId) % 6]
             })))
 
             setFireEffect(true)
@@ -209,6 +238,7 @@ function LiveKodoSessionPage(props: any) {
         dataChannel.onopen = function(event) {
             console.log("dataChannel.onopen IN JOINER SIDE")
             setDataChannelConnected(true);
+            send({ event : "broadcast" });
         }
 
         // when we receive a message from the other peer, printing it on the console
@@ -247,7 +277,8 @@ function LiveKodoSessionPage(props: any) {
                 rtcDataChannel: newDataChannel,
                 audioRef: peerConns.get(newPeerId)?.audioRef,
                 mediaStream:  peerConns.get(newPeerId)?.mediaStream,
-                isMuted: peerConns.get(newPeerId)?.isMuted
+                isMuted: peerConns.get(newPeerId)?.isMuted,
+                colour: cursorColours[Array.from(peerConns.keys()).indexOf(newPeerId)]
             })))
         };
 
@@ -256,7 +287,8 @@ function LiveKodoSessionPage(props: any) {
             rtcDataChannel: dataChannel,
             audioRef: createRef<HTMLAudioElement>(),
             mediaStream: new MediaStream(),
-            isMuted: false
+            isMuted: false,
+            colour: cursorColours[Array.from(peerConns.keys()).indexOf(newPeerId)]
         })))
 
         return newPeerConn
@@ -300,7 +332,8 @@ function LiveKodoSessionPage(props: any) {
                     rtcDataChannel: peerConns.get(incomingPeerId)?.rtcDataChannel,
                     audioRef: peerConns.get(incomingPeerId)?.audioRef,
                     mediaStream:  peerConns.get(incomingPeerId)?.mediaStream,
-                    isMuted: peerConns.get(incomingPeerId)?.isMuted
+                    isMuted: peerConns.get(incomingPeerId)?.isMuted,
+                    colour: cursorColours[Array.from(peerConns.keys()).indexOf(incomingPeerId)]
                 })));
                 send({ event : "answer", data : answer, sendTo: incomingPeerId });
             } else {
@@ -310,7 +343,6 @@ function LiveKodoSessionPage(props: any) {
         } catch (e) {
             console.log("failed to create an answer: ", e)
         }
-
     };
 
     async function handleCandidate(incomingPeerId: number, candidate: any) {
@@ -322,7 +354,8 @@ function LiveKodoSessionPage(props: any) {
                 rtcDataChannel: peerConns.get(incomingPeerId)?.rtcDataChannel, 
                 audioRef: peerConns.get(incomingPeerId)?.audioRef, 
                 mediaStream:  peerConns.get(incomingPeerId)?.mediaStream,
-                isMuted: peerConns.get(incomingPeerId)?.isMuted
+                isMuted: peerConns.get(incomingPeerId)?.isMuted,
+                colour: cursorColours[Array.from(peerConns.keys()).indexOf(incomingPeerId)]
             })));
         } else {
             console.error("Not adding icecandidate, cannot find peerConn with peerId", incomingPeerId)
@@ -340,7 +373,8 @@ function LiveKodoSessionPage(props: any) {
                 peerConns.get(incomingPeerId)?.rtcDataChannel,
                 audioRef: peerConns.get(incomingPeerId)?.audioRef,
                 mediaStream:  peerConns.get(incomingPeerId)?.mediaStream,
-                isMuted: peerConns.get(incomingPeerId)?.isMuted
+                isMuted: peerConns.get(incomingPeerId)?.isMuted,
+                colour: cursorColours[Array.from(peerConns.keys()).indexOf(incomingPeerId)]
             })));
         }
     };
@@ -402,6 +436,16 @@ function LiveKodoSessionPage(props: any) {
         return craftAndSendDcMessage(newWhiteboardEvent, KodoSessionEventType.WHITEBOARD)
     }
 
+    const craftAndSendEditorEventMessage = (editorData?: string, selectedLanguage?: string, cursorLocation?: EditorCursorLocation, cursorSelection?: monaco.Selection) => {
+        const newEditorEvent: EditorEvent = {
+            editorData: editorData ? editorData : undefined,
+            selectedLanguage: selectedLanguage ? selectedLanguage : undefined,
+            cursorLocation: cursorLocation ? cursorLocation : undefined,
+            cursorSelection: cursorSelection ? cursorSelection : undefined
+        }
+        return craftAndSendDcMessage(newEditorEvent, KodoSessionEventType.EDITOR)
+    }
+
     /* * * * * * * * * * * * * * * * * * * * * * *
      * [RECEIVING] Data channel message handling   *
      * * * * * * * * * * * * * * * * * * * * * * */
@@ -419,17 +463,9 @@ function LiveKodoSessionPage(props: any) {
             rtcDataChannel: peerConns.get(incomingPeerId)?.rtcDataChannel,
             audioRef: peerConns.get(incomingPeerId)?.audioRef,
             mediaStream:  peerConns.get(incomingPeerId)?.mediaStream,
-            isMuted: callEvent.isMuted
+            isMuted: callEvent.isMuted,
+            colour: cursorColours[Array.from(peerConns.keys()).indexOf(incomingPeerId)]
         })));
-    }
-    
-    const handleIncomingDataChannelWhiteboardEvent = (dcMessage: KodoDataChannelMessage) => {
-        const incomingPeerId = dcMessage.peerId;
-        const whiteboardEvent: WhiteboardEvent = dcMessage.event; // typecasting
-
-        // Printing message
-        console.log(whiteboardEvent.encodedCanvasData);
-
     }
 
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -453,6 +489,26 @@ function LiveKodoSessionPage(props: any) {
         conn?.close(); // Triggers conn.onclose cleanup function (my own exit)
     }
 
+    const broadExistingData = () => {
+        console.log("Broadcasting existing data to new user")
+        craftAndSendCallEventMessage("", amIMutedStateRef.current);
+
+        if (window.sessionStorage.getItem("canvasData") !== "") {
+            //@ts-ignore
+            craftAndSendWhiteboardEventMessage(window.sessionStorage.getItem("canvasData"))
+        }
+
+        if (window.sessionStorage.getItem("editorData") !== "") {
+            //@ts-ignore
+            craftAndSendEditorEventMessage(window.sessionStorage.getItem("editorData"), undefined)
+        }
+
+        if (window.sessionStorage.getItem("selectedLanguage") !== "") {
+            //@ts-ignore
+            craftAndSendEditorEventMessage(undefined, window.sessionStorage.getItem("selectedLanguage"))
+        }
+    }
+
     return (
         <>
             { isValidSession &&
@@ -461,8 +517,13 @@ function LiveKodoSessionPage(props: any) {
                         <audio key={pcRtcInfo.mediaStream?.id} ref={pcRtcInfo.audioRef} muted={pcRtcInfo.isMuted} autoPlay />
                     ))}
                     <TopSessionBar>
-                        <strong>{sessionDetails?.sessionName}</strong> &nbsp; 
-                        (Session ID: {sessionDetails?.sessionId})
+                        <Tooltip title="Session Name">
+                            <strong>{sessionDetails?.sessionName}</strong>
+                        </Tooltip>
+                        &nbsp; · &nbsp;
+                        <Tooltip title="Session ID">
+                            <i style={{ fontSize: fontSizes.SUBTEXT }}>{sessionDetails?.sessionId}</i>
+                        </Tooltip>
                     </TopSessionBar>
                     <MainSessionWrapper>
                         <ParticipantsPanel
@@ -478,7 +539,9 @@ function LiveKodoSessionPage(props: any) {
                             sendViaWSCallback={send}
                             sendCallEventViaDCCallback={craftAndSendCallEventMessage}
                             sendWhiteboardEventViaDCCallback={craftAndSendWhiteboardEventMessage}
+                            sendEditorEventViaDCCallback={craftAndSendEditorEventMessage}
                             newIncomingDcMessage={newWhiteboardOrEditorDcMessage}
+                            callOpenSnackBar={props.callOpenSnackBar}
                         />
                         <ActionsPanel 
                             sessionId={sessionId} 

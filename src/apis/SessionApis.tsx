@@ -38,3 +38,20 @@ export async function endSession(sessionId: string) {
 
     return httpClient.delete<undefined, undefined>(deleteParameters, true);
 }
+
+export async function fetchGithubFile(githubUrl: string) {
+    const urlParameters = githubUrl.replace("https://github.com/", "").split("/");
+    if (urlParameters.length < 3) return; // invalid github url
+
+    const repo = urlParameters[0];
+    const branch = urlParameters[1];
+
+    // Remove '/blob' from url string
+    const remaining = urlParameters.slice(3).join("/")
+
+    const getParameters: IHttpClientRequestParameters<undefined> = {
+        url: `https://raw.githubusercontent.com/${repo}/${branch}/${remaining}`
+    }
+    
+    return httpClient.getExternalUrl<undefined, string>(getParameters);
+}

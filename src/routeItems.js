@@ -3,8 +3,8 @@ import CoursePreviewPageWithRouter from "./pages/CoursePreviewPage";
 import ProgressPage from "./pages/ProgressPage";
 import MyProfilePage from "./pages/ProfilePage";
 import CourseOverview from "./pages/CourseViewerPage";
-import SessionPage from "./pages/Sessions/SessionPage";
-import LiveKodoSessionPage from "./pages/Sessions/LiveKodoSessionPage";
+import SessionPage from "./pages/SessionsPages/SessionPage";
+import LiveKodoSessionPage from "./pages/SessionsPages/LiveKodoSessionPage";
 import ForumPage from "./pages/ForumPage";
 
 export const RouteItemsWithSidebar = [
