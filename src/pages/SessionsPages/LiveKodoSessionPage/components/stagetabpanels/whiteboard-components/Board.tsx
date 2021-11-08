@@ -26,6 +26,12 @@ function Board (props: any) {
     let ctx: CanvasRenderingContext2D | null;
     const [isDrawing, setIsDrawing] = useState<boolean>(false); // whether i am currently drawing
     const [isMovingImage, setIsMovingImage] = useState<boolean>(false);
+    const [isTempBoardHidden, setIsTempBoardHidden] = useState<boolean>(true);
+
+    // Temporary Canvas variables
+    let tempCanvas: HTMLCanvasElement | null = document.querySelector('#temp-board');
+    let tempCtx: CanvasRenderingContext2D | null;
+    let imgWidth = 0, imgHeight = 0;
 
     // Tool states
     const [cursorImagePath, setCursorImagePath] = useState<string>("");
@@ -36,6 +42,12 @@ function Board (props: any) {
             drawOnCanvas(true);
         }
     }, [canvas])
+
+    useEffect(() => {
+        if (tempCanvas === null) {
+            tempCanvas = document.querySelector('#temp-board');
+        }
+    }, [tempCanvas])
 
     useEffect(() => {
         drawOnCanvas(false, true);
@@ -88,9 +100,6 @@ function Board (props: any) {
     }, [props.isNewImageAttached])
 
     const drawOnCanvas = (isInit: boolean = false, setIncomingCanvas: boolean = false, isClearAll: boolean = false) => {
-        let restore_array: ImageData[] = [];
-        let index = -1;
-
         if (canvas) {
             ctx = canvas.getContext('2d');
 
@@ -198,20 +207,112 @@ function Board (props: any) {
     }
 
     const insertImage = (attImageFile: File) => {
-
-        const image = new Image();
-        const reader = new FileReader();
+        setIsTempBoardHidden(false)
+        let image = new Image();
+        let reader = new FileReader();
         
         reader.addEventListener("load", function () {
             // convert image file to base64 string
             image.src = reader?.result?.toString() || "";
         }, false);
 
-        image.addEventListener("onload", function () {
+        image.addEventListener("load", function () {
             console.log("ONLOAD ATTACH IMAGE")
             console.log(image.src)
             // TODO: ADD IMAGE TO (EDIT LAYER) CANVAS
-            // ctx?.drawImage(image, 0, 0);
+
+            let isDown = false;
+
+            if (tempCanvas) {
+                tempCtx = tempCanvas.getContext('2d')
+
+                // First time ever setting up temp canvas,
+                // Make it visually fill the positioned parent
+                tempCanvas.style.width = '100%';
+                tempCanvas.style.height= '100%';
+                // ...then set the internal size to match
+                tempCanvas.width  = tempCanvas.offsetWidth;
+                tempCanvas.height = tempCanvas.offsetHeight;
+
+                let mouse = {x: 0, y: 0};
+                let last_mouse = {x: 0, y: 0};
+
+                tempCanvas.addEventListener('mousedown', function(e) {
+                    last_mouse.x = mouse.x;
+                    last_mouse.y = mouse.y;
+                    mouse.x = e.pageX- this.offsetLeft;
+                    mouse.y = e.pageY - this.offsetTop;
+
+                    if (mouse.x >= last_mouse.x && mouse.x <= last_mouse.x + imgWidth && mouse.y >= last_mouse.y && mouse.y <= last_mouse.y + imgHeight) {
+                        isDown = true;
+                    } else {
+                        console.log("Im outside of image range")
+                    }
+                }, false)
+
+                tempCanvas.addEventListener('mouseup', function(e) {
+                    isDown = false;
+                }, false)
+
+                tempCanvas.addEventListener('mouseout', function(e) {
+                    isDown = false;
+
+                    if (canvas) {
+                        ctx = canvas.getContext('2d');
+                        if (ctx) {
+                            ctx?.drawImage(image, last_mouse.x, last_mouse.y, imgWidth, imgHeight);
+                        }
+                    }
+                    
+                    if (tempCanvas && tempCtx) {
+                        // Clearing up temporary canvas data
+                        tempCtx?.clearRect(0, 0, tempCanvas?.width, tempCanvas?.height);
+                        image = new Image();
+                        reader = new FileReader();
+                    }
+                    setIsTempBoardHidden(true)
+                }, false)
+
+                tempCanvas.addEventListener('mousemove', function(e) {
+                    // Put your mousemove stuff here
+                    last_mouse.x = mouse.x;
+                    last_mouse.y = mouse.y;
+                    mouse.x = e.pageX- this.offsetLeft;
+                    mouse.y = e.pageY - this.offsetTop;
+
+                    if (!isDown) {
+                        return;
+                    }
+
+                    if (tempCanvas && tempCtx) {
+                        var MAX_WIDTH = 300;
+                        var MAX_HEIGHT = 300;
+                        imgWidth = image.width;
+                        imgHeight = image.height;
+                
+                        // Add the resizing logic
+                        if (imgWidth > imgHeight) {
+                            if (imgWidth > MAX_WIDTH) {
+                                imgHeight *= MAX_WIDTH / imgWidth;
+                                imgWidth = MAX_WIDTH;
+                            }
+                            } else {
+                            if (imgHeight > MAX_HEIGHT) {
+                                imgWidth *= MAX_HEIGHT / imgHeight;
+                                imgHeight = MAX_HEIGHT;
+                            }
+                        }
+
+                        tempCtx?.clearRect(0, 0, tempCanvas?.width, tempCanvas?.height);
+                        tempCtx?.drawImage(image, last_mouse.x, last_mouse.y, imgWidth, imgHeight);
+                    }
+                }, false)
+
+                if (tempCtx) {
+                    imgWidth = image.width;
+                    imgHeight = image.height;
+                }
+            }
         }, false)
 
         if (attImageFile) {
@@ -221,10 +322,11 @@ function Board (props: any) {
 
     return (
         <div
-            style={{ height: "inherit", width: "inherit", cursor: `url(${cursorImagePath}), auto` }}
+            style={{ height: "100%", width: "100%", cursor: `url(${cursorImagePath}), auto`, display: "grid"}}
             className="sketch" id="sketch"
         >
-            <canvas className="board" id="board" />
+            <canvas className="board" id="board" style={{ gridArea: "1 / 1" }}/>
+            <canvas className="temp-board" id="temp-board" hidden={isTempBoardHidden} style={{ gridArea: "1 / 1" }}/>
         </div>
 
     )
