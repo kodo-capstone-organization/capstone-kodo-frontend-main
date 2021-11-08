@@ -234,19 +234,33 @@ function Board (props: any) {
                 tempCanvas.width  = tempCanvas.offsetWidth;
                 tempCanvas.height = tempCanvas.offsetHeight;
 
-                let mouse = {x: 0, y: 0};
-                let last_mouse = {x: 0, y: 0};
+                let start = {x: 0, y: 0};
+                let img = {x: 0, y: 0};
 
                 tempCanvas.addEventListener('mousedown', function(e) {
-                    last_mouse.x = mouse.x;
-                    last_mouse.y = mouse.y;
-                    mouse.x = e.pageX- this.offsetLeft;
-                    mouse.y = e.pageY - this.offsetTop;
+                    start.x = e.pageX- this.offsetLeft;
+                    start.y = e.pageY - this.offsetTop;
 
-                    if (mouse.x >= last_mouse.x && mouse.x <= last_mouse.x + imgWidth && mouse.y >= last_mouse.y && mouse.y <= last_mouse.y + imgHeight) {
+                    if (start.x >= img.x && start.x <= img.x + imgWidth && start.y >= img.y && start.y <= img.y + imgHeight) {
                         isDown = true;
                     } else {
-                        console.log("Im outside of image range")
+                        // Outside of image range
+                        // Update actual canvas with image
+                        if (canvas) {
+                            ctx = canvas.getContext('2d');
+                            if (ctx) {
+                                ctx?.drawImage(image, img.x, img.y, imgWidth, imgHeight);
+                            }
+                        }
+                        
+                        // Clear all temporary canvas data
+                        if (tempCanvas && tempCtx) {
+                            // Clearing up temporary canvas data
+                            tempCtx?.clearRect(0, 0, tempCanvas?.width, tempCanvas?.height);
+                            image = new Image();
+                            reader = new FileReader();
+                        }
+                        setIsTempBoardHidden(true)
                     }
                 }, false)
 
@@ -256,33 +270,25 @@ function Board (props: any) {
 
                 tempCanvas.addEventListener('mouseout', function(e) {
                     isDown = false;
-
-                    if (canvas) {
-                        ctx = canvas.getContext('2d');
-                        if (ctx) {
-                            ctx?.drawImage(image, last_mouse.x, last_mouse.y, imgWidth, imgHeight);
-                        }
-                    }
-                    
-                    if (tempCanvas && tempCtx) {
-                        // Clearing up temporary canvas data
-                        tempCtx?.clearRect(0, 0, tempCanvas?.width, tempCanvas?.height);
-                        image = new Image();
-                        reader = new FileReader();
-                    }
-                    setIsTempBoardHidden(true)
                 }, false)
 
                 tempCanvas.addEventListener('mousemove', function(e) {
-                    // Put your mousemove stuff here
-                    last_mouse.x = mouse.x;
-                    last_mouse.y = mouse.y;
+                    if (!isDown) {
+                        return;
+                    }
+
+                    let mouse = {x: 0, y: 0}
                     mouse.x = e.pageX- this.offsetLeft;
                     mouse.y = e.pageY - this.offsetTop;
 
                     if (!isDown) {
                         return;
                     }
+
+                    img.x += mouse.x - start.x;
+                    img.y += mouse.y - start.y;
+                    start.x = mouse.x;
+                    start.y = mouse.y;
 
                     if (tempCanvas && tempCtx) {
                         var MAX_WIDTH = 300;
@@ -304,7 +310,7 @@ function Board (props: any) {
                         }
 
                         tempCtx?.clearRect(0, 0, tempCanvas?.width, tempCanvas?.height);
-                        tempCtx?.drawImage(image, last_mouse.x, last_mouse.y, imgWidth, imgHeight);
+                        tempCtx?.drawImage(image, img.x, img.y, imgWidth, imgHeight);
                     }
                 }, false)
 
