@@ -207,12 +207,12 @@ function Board (props: any) {
             image.src = reader?.result?.toString() || "";
         }, false);
 
-        image.onload = function(){
+        image.addEventListener("onload", function () {
             console.log("ONLOAD ATTACH IMAGE")
             console.log(image.src)
-            // TODO: ADD IMAGE TO CANVAS
+            // TODO: ADD IMAGE TO (EDIT LAYER) CANVAS
             // ctx?.drawImage(image, 0, 0);
-        }
+        }, false)
 
         if (attImageFile) {
             reader.readAsDataURL(attImageFile);
