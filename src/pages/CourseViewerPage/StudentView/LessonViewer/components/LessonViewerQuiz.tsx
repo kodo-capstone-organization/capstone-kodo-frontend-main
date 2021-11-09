@@ -144,7 +144,8 @@ function LessonViewerQuiz(props: any) {
     const showStartButton = (enrolledContent: EnrolledContent, quiz: Quiz) => {
         return (
             <BtnWrapper>
-                {(props.previousLessonCompleted()  || enrolledLesson.parentLesson.sequence === 1) && quiz.maxAttemptsPerStudent < enrolledContent.studentAttempts.length &&
+                {(props.previousLessonCompleted() || enrolledLesson.parentLesson.sequence === 1)
+                    && enrolledContent.studentAttempts.length < quiz.maxAttemptsPerStudent &&
                     <Button primary={true} big={false} fontBig={false} disabled={false}
                         onClick={() => attemptQuiz(enrolledContent.enrolledContentId)}
                     >
