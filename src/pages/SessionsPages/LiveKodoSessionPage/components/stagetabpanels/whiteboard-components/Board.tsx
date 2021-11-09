@@ -271,6 +271,8 @@ function Board (props: any) {
                             if (ctx) {
                                 console.log("mousedown coordinates ", start, img, imgWidth, imgHeight)
                                 ctx?.drawImage(image, img.x, img.y, imgWidth, imgHeight);
+                                var base64ImageData = canvas?.toDataURL("image/png");
+                                props.sendWhiteboardEventViaDCCallback(base64ImageData);
                             }
                         }
                         
