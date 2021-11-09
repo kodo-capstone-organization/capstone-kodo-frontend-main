@@ -160,6 +160,13 @@ function LessonViewerQuiz(props: any) {
                         Start
                     </Button>
                 }
+                { enrolledLesson.parentLesson.sequence === 1 &&
+                    <Button primary={true} big={false} fontBig={false} disabled={false}
+                            onClick={() => attemptQuiz(enrolledContent.enrolledContentId)}
+                    >
+                        Start
+                    </Button>
+                }
             </BtnWrapper>
         );
     }
