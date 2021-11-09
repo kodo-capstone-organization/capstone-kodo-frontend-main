@@ -328,7 +328,7 @@ function LessonPlan(props: any) {
                                         <Grid style={{ padding: "0!important"}} item xs={12}>
                                             <TextField 
                                                 // @ts-ignore
-                                                error={errorsForUpdateLesson && errorsForUpdateLesson.get(lesson.lessonId)['name']}
+                                                error={errorsForUpdateLesson && (errorsForUpdateLesson.get(lesson.lessonId)['name'] || "")}
                                                 fullWidth 
                                                 required
                                                 disabled={props.isEnrollmentActive}
@@ -340,7 +340,7 @@ function LessonPlan(props: any) {
                                         <Grid style={{ padding: "0!important"}} item xs={12}>
                                             <TextField 
                                                 // @ts-ignore
-                                                error={errorsForUpdateLesson && errorsForUpdateLesson.get(lesson.lessonId)['description']}
+                                                error={errorsForUpdateLesson && (errorsForUpdateLesson.get(lesson.lessonId)['description'] || "")}
                                                 fullWidth
                                                 required
                                                 disabled={props.isEnrollmentActive}
