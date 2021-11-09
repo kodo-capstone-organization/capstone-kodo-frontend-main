@@ -8,11 +8,11 @@ import { EnrolledCourse } from "../../../../../entities/EnrolledCourse";
 import { EnrolledLesson } from "../../../../../entities/EnrolledLesson";
 import { Quiz } from "../../../../../entities/Quiz";
 
-import { 
+import {
     BtnWrapper,
-    LessonViewerCardElement, 
+    LessonViewerCardElement,
     LessonViewerContentElement,
-    LessonViewerHeaderElement, 
+    LessonViewerHeaderElement,
     QuizDescription,
     QuizDescriptionTwo,
     QuizRow,
@@ -32,19 +32,17 @@ function LessonViewerQuiz(props: any) {
 
     const history = useHistory();
 
-    const [enrolledCourseId, setEnrolledCourseId] = useState<number>(); 
+    const [enrolledCourseId, setEnrolledCourseId] = useState<number>();
     const [enrolledLessonId, setEnrolledLessonId] = useState<number>();
 
     useEffect(() => {
-        if (enrolledCourse != null)
-        {
+        if (enrolledCourse != null) {
             setEnrolledCourseId(enrolledCourse.enrolledCourseId);
         }
     }, [enrolledCourse]);
 
     useEffect(() => {
-        if (enrolledLesson != null)
-        {
+        if (enrolledLesson != null) {
             setEnrolledLessonId(enrolledLesson.enrolledLessonId);
         }
     }, [enrolledLesson]);
@@ -65,19 +63,18 @@ function LessonViewerQuiz(props: any) {
             + (seconds === 0 ? "" : seconds + "s ");
     }
 
-    const attemptQuiz = (enrolledContentId: number) => {        
+    const attemptQuiz = (enrolledContentId: number) => {
         history.push({ pathname: `/overview/course/${enrolledCourseId}/lesson/${enrolledLessonId}/attemptquizviewer/${enrolledContentId}`, state: { mode: 'ATTEMPT' } });
     }
-  
+
     const showQuizzes = (enrolledContents: EnrolledContent[]) => {
         return (
             enrolledContents.map((enrolledContent: EnrolledContent) => {
-                if (isQuiz(enrolledContent.parentContent))
-                {
+                if (isQuiz(enrolledContent.parentContent)) {
                     let quiz: Quiz = enrolledContent.parentContent as Quiz;
                     return (
                         <>
-                            { showQuiz(enrolledContent, quiz) }
+                            {showQuiz(enrolledContent, quiz)}
                         </>
                     );
                 }
@@ -88,12 +85,12 @@ function LessonViewerQuiz(props: any) {
     const showQuiz = (enrolledContent: EnrolledContent, quiz: Quiz) => {
         return (
             <>
-                { showName(enrolledContent, quiz) }
-                <br/>
-                { showTimeLimit(quiz) }
-                <br/>
-                { showStudentAttemptsLeft(enrolledContent, quiz) }
-                { showPreviousStudentAttempts(enrolledContent) }
+                {showName(enrolledContent, quiz)}
+                <br />
+                {showTimeLimit(quiz)}
+                <br />
+                {showStudentAttemptsLeft(enrolledContent, quiz)}
+                {showPreviousStudentAttempts(enrolledContent)}
             </>
         );
     }
@@ -102,8 +99,8 @@ function LessonViewerQuiz(props: any) {
         return (
             <QuizRow>
                 <QuizSubheader>Name:</QuizSubheader>
-                <QuizDescription>{ quiz.name }</QuizDescription>
-                { showStartButton(enrolledContent, quiz) }
+                <QuizDescription>{quiz.name}</QuizDescription>
+                {showStartButton(enrolledContent, quiz)}
             </QuizRow>
         );
     }
@@ -112,7 +109,7 @@ function LessonViewerQuiz(props: any) {
         return (
             <QuizRow>
                 <QuizSubheader>Time Limit:</QuizSubheader>
-                <QuizDescription>{ formatTime(quiz.timeLimit) }</QuizDescription>
+                <QuizDescription>{formatTime(quiz.timeLimit)}</QuizDescription>
             </QuizRow>
         );
     }
@@ -121,9 +118,9 @@ function LessonViewerQuiz(props: any) {
         return (
             <QuizRow>
                 <QuizSubheader>No. Attempts Left:</QuizSubheader>
-                    <QuizDescriptionTwo>
-                        { quiz.maxAttemptsPerStudent - enrolledContent.studentAttempts.length }
-                    </QuizDescriptionTwo>
+                <QuizDescriptionTwo>
+                    {quiz.maxAttemptsPerStudent - enrolledContent.studentAttempts.length}
+                </QuizDescriptionTwo>
             </QuizRow>
         );
     }
@@ -132,12 +129,12 @@ function LessonViewerQuiz(props: any) {
         return (
             <QuizRow style={{ borderBottom: "none" }}>
                 <BtnWrapper>
-                    <br/>
-                    <ViewQuizAttemptsModal 
+                    <br />
+                    <ViewQuizAttemptsModal
                         enrolledCourseId={enrolledCourseId}
                         enrolledLessonId={enrolledLessonId}
-                        isButtonDisabled={ !props.previousLessonCompleted() } 
-                        studentAttempts={ enrolledContent.studentAttempts }
+                        isButtonDisabled={!props.previousLessonCompleted()}
+                        studentAttempts={enrolledContent.studentAttempts}
                     />
                 </BtnWrapper>
             </QuizRow>
@@ -147,23 +144,16 @@ function LessonViewerQuiz(props: any) {
     const showStartButton = (enrolledContent: EnrolledContent, quiz: Quiz) => {
         return (
             <BtnWrapper>
-                { (!props.previousLessonCompleted() 
-                    || quiz.maxAttemptsPerStudent === enrolledContent.studentAttempts.length) &&
-                    <Button disabled>
-                        Start
-                    </Button>
-                }
-                { props.previousLessonCompleted() && enrolledContent.studentAttempts.length > 0 &&
+                {(props.previousLessonCompleted()  || enrolledLesson.parentLesson.sequence === 1) &&
                     <Button primary={true} big={false} fontBig={false} disabled={false}
                         onClick={() => attemptQuiz(enrolledContent.enrolledContentId)}
                     >
                         Start
                     </Button>
                 }
-                { enrolledLesson.parentLesson.sequence === 1 &&
-                    <Button primary={true} big={false} fontBig={false} disabled={false}
-                            onClick={() => attemptQuiz(enrolledContent.enrolledContentId)}
-                    >
+                {(!props.previousLessonCompleted()
+                    || quiz.maxAttemptsPerStudent === enrolledContent.studentAttempts.length) &&
+                    <Button disabled>
                         Start
                     </Button>
                 }
@@ -171,16 +161,16 @@ function LessonViewerQuiz(props: any) {
         );
     }
 
-    return (      
+    return (
         <>
-            { (enrolledContents) &&                
+            {(enrolledContents) &&
                 <LessonViewerCardElement>
-                    <LessonViewerHeaderElement title="Quizzes"/>
+                    <LessonViewerHeaderElement title="Quizzes" />
                     <LessonViewerContentElement>
-                        { showQuizzes(enrolledContents) }
+                        {showQuizzes(enrolledContents)}
                     </LessonViewerContentElement>
                 </LessonViewerCardElement>
-            }          
+            }
         </>
     );
 }
