@@ -269,7 +269,6 @@ function Board (props: any) {
                         if (canvas) {
                             ctx = canvas.getContext('2d');
                             if (ctx) {
-                                console.log("mousedown coordinates ", start, img, imgWidth, imgHeight)
                                 ctx?.drawImage(image, img.x, img.y, imgWidth, imgHeight);
                                 var base64ImageData = canvas?.toDataURL("image/png");
                                 props.sendWhiteboardEventViaDCCallback(base64ImageData);
@@ -316,23 +315,6 @@ function Board (props: any) {
                     start.y = mouse.y;
 
                     if (tempCanvas && tempCtx) {
-                        // var MAX_WIDTH = 300;
-                        // var MAX_HEIGHT = 300;
-                        // imgWidth = image.width;
-                        // imgHeight = image.height;
-                
-                        // // Add the resizing logic
-                        // if (imgWidth > imgHeight) {
-                        //     if (imgWidth > MAX_WIDTH) {
-                        //         imgHeight *= MAX_WIDTH / imgWidth;
-                        //         imgWidth = MAX_WIDTH;
-                        //     }
-                        // } else {
-                        //     if (imgHeight > MAX_HEIGHT) {
-                        //         imgWidth *= MAX_HEIGHT / imgHeight;
-                        //         imgHeight = MAX_HEIGHT;
-                        //     }
-                        // }
 
                         tempCtx?.clearRect(0, 0, tempCanvas?.width, tempCanvas?.height);
                         tempCtx?.drawImage(image, img.x, img.y, imgWidth, imgHeight);
