@@ -270,7 +270,16 @@ function LiveKodoSessionPage(props: any) {
                 setDataChannelConnected(true);
             }
             newDataChannel.onmessage = function(event) {
-                console.log("dataChannel.onmessage IN CREATOR SIDE")
+                const dcMessage: KodoDataChannelMessage = JSON.parse(event.data)
+                console.log("dataChannel.onmessage IN CREATOR SIDE", dcMessage);
+                if (dcMessage.eventType === KodoSessionEventType.CALL) {
+                    handleIncomingDataChannelCallEvent(dcMessage);
+                } else if (dcMessage.eventType === KodoSessionEventType.WHITEBOARD || dcMessage.eventType === KodoSessionEventType.EDITOR) {
+                    // Propped into stage child to be handled there
+                    setNewWhiteboardOrEditorDcMessage(dcMessage)
+                } else {
+                    console.error("invalid eventType on datachannel message received");
+                }
             }
             setPeerConns(new Map(peerConns.set(newPeerId, {
                 rtcPeerConnection: peerConns.get(newPeerId)?.rtcPeerConnection,

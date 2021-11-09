@@ -164,6 +164,12 @@ function Tools (props: any) {
                             // @ts-ignore
                             e?.target?.files[0]
                         )}
+                        onClick={(e) => {
+                            // @ts-ignore
+                            e.target.value = ''
+                            // @ts-ignore
+                            e.target.files = null
+                        }}
                     />
                 </ToolbarWhiteboardAction>
             </Tooltip>
