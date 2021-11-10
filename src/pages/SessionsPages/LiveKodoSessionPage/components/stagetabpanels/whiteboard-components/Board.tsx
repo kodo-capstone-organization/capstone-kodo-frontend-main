@@ -3,30 +3,12 @@ import { colours } from '../../../../../../values/Colours';
 
 function Board (props: any) {
 
-    // timeout;
-    // var interval = setInterval(function(){
-    //     if (isDrawing) {
-    //         return;
-    //     } else {
-    //         setIsDrawing(true);
-    //         clearInterval(interval);
-    //         const canvas: HTMLCanvasElement | null = document.querySelector('#board');
-    //         let ctx = canvas?.getContext('2d');
-    //         let image = new Image();
-    //         image.onload = function() {
-    //             ctx?.drawImage(image, 0, 0);
-    //             setIsDrawing(false)
-    //         };
-    //         image.src = canvasData;
-    //     }
-    // }, 200)
-
     let timeout: NodeJS.Timeout;
     let canvas: HTMLCanvasElement | null = document.querySelector('#board');
     let ctx: CanvasRenderingContext2D | null;
     const [isDrawing, setIsDrawing] = useState<boolean>(false); // whether i am currently drawing
     const [isMovingImage, setIsMovingImage] = useState<boolean>(false);
-    const [isTempBoardHidden, setIsTempBoardHidden] = useState<boolean>(true);
+    const [isTempBoardHidden, setIsTempBoardHidden] = useState<boolean>(true); // Determines whether user is in "Edit State" or not
 
     // Temporary Canvas variables
     let tempCanvas: HTMLCanvasElement | null = document.querySelector('#temp-board');
@@ -55,22 +37,29 @@ function Board (props: any) {
     }, [props.incomingCanvasData])
 
     useEffect(() => {
-        console.log(props.activeTool)
-        switch (props.activeTool) {
-            case "pen":
-                setCursorImagePath("/cursors/pen_cursor.svg");
-                break;
-            case "eraser":
-                setCursorImagePath("/cursors/eraser_cursor.svg");
-                break;
-            default:
-                // default to pen
-                setCursorImagePath("/cursors/pen_cursor.svg");
-                break;
+
+        if (isTempBoardHidden) {
+            console.log(props.activeTool)
+            switch (props.activeTool) {
+                case "pen":
+                    setCursorImagePath("/cursors/pen_cursor.svg");
+                    break;
+                case "eraser":
+                    setCursorImagePath("/cursors/eraser_cursor.svg");
+                    break;
+                default:
+                    // default to pen
+                    setCursorImagePath("/cursors/pen_cursor.svg");
+                    break;
+            }
+        } else {
+            // In edit state, remove image and let move css override
+            setCursorImagePath("");
         }
+
         // Call this again
-        drawOnCanvas();
-    }, [props.activeTool, props.toolProperties.lineWidth, props.toolProperties.strokeStyle])
+        drawOnCanvas(false, false, false, true);
+    }, [props.activeTool, props.toolProperties.lineWidth, props.toolProperties.strokeStyle, isTempBoardHidden])
 
     useEffect(() => {
         // If changes to true, clear the canvas
@@ -99,7 +88,7 @@ function Board (props: any) {
         }
     }, [props.isNewImageAttached])
 
-    const drawOnCanvas = (isInit: boolean = false, setIncomingCanvas: boolean = false, isClearAll: boolean = false) => {
+    const drawOnCanvas = (isInit: boolean = false, setIncomingCanvas: boolean = false, isClearAll: boolean = false, isSetContextPropertiesOnly: boolean = false) => {
         if (canvas) {
             ctx = canvas.getContext('2d');
 
@@ -143,7 +132,6 @@ function Board (props: any) {
                 }, false);
 
                 const onPaint = () => {
-
                     if (!props.isClearAllCalled) { // prevents drawing a dot when clear all is called
                         ctx?.beginPath();
                         ctx?.moveTo(last_mouse.x, last_mouse.y);
@@ -171,24 +159,25 @@ function Board (props: any) {
                     ctx.lineCap = 'round';
                     ctx.strokeStyle = props.toolProperties.strokeStyle;
 
-                    if (isClearAll) {
-                        ctx.fillStyle = colours.GRAY7;
-                        ctx.clearRect(0, 0, canvas.width, canvas.height);
-                        ctx.fillRect(0, 0, canvas.width, canvas.height);
-                        // NOTE: Manually call onPaint to send out empty canvas to other peers instead of relying on
-                        // mouseup / mousedown event listeners, so that the change is instant.
-                        onPaint();
-                    } else if (window.sessionStorage.getItem("canvasData") !== null) {
-                        let existingCanvasDataImage = new Image();
-
-                        //@ts-ignore
-                        existingCanvasDataImage.src = window.sessionStorage.getItem("canvasData")
-                        existingCanvasDataImage.onload = function() {
-                            if (ctx) {
-                                console.log("CHANGED TAB, RE-DRAWING NOW")
-                                ctx.drawImage(existingCanvasDataImage, 0, 0);
-                            }
-                        };
+                    if (!isSetContextPropertiesOnly) { // Early termination if we are only setting ctx
+                        if (isClearAll) {
+                            ctx.fillStyle = colours.GRAY7;
+                            ctx.clearRect(0, 0, canvas.width, canvas.height);
+                            ctx.fillRect(0, 0, canvas.width, canvas.height);
+                            // NOTE: Manually call onPaint to send out empty canvas to other peers instead of relying on
+                            // mouseup / mousedown event listeners, so that the change is instant.
+                            onPaint();
+                        } else if (window.sessionStorage.getItem("canvasData") !== null) {
+                            let existingCanvasDataImage = new Image();
+                            // @ts-ignore
+                            existingCanvasDataImage.src = window.sessionStorage.getItem("canvasData")
+                            existingCanvasDataImage.onload = function() {
+                                if (ctx && isTempBoardHidden) {
+                                    console.log("CHANGED TAB, RE-DRAWING NOW")
+                                    ctx.drawImage(existingCanvasDataImage, 0, 0);
+                                }
+                            };
+                        }
                     }
                 }
             } else {
@@ -217,9 +206,7 @@ function Board (props: any) {
         }, false);
 
         image.addEventListener("load", function () {
-            console.log("ONLOAD ATTACH IMAGE")
-            console.log(image.src)
-            // TODO: ADD IMAGE TO (EDIT LAYER) CANVAS
+            console.log("Image onLoad event listener fired")
 
             let isDown = false;
 
@@ -255,8 +242,16 @@ function Board (props: any) {
                     }
                 }
 
-                tempCtx?.drawImage(image, img.x, img.y, imgWidth, imgHeight);
-
+                if (tempCtx) {
+                    // Set background fill to indicate edit state
+                    tempCtx = setTempContextBackgroundFill(tempCtx, 'rgba(74, 75, 169, 0.2)', tempCanvas?.width, tempCanvas?.height)
+                    // Set stroke style to draw selection box later
+                    tempCtx = setTempContextSelectionStyle(tempCtx);
+                    // Add image to the temp canvas and draw a blue border around it to show its selection state
+                    tempCtx.drawImage(image, img.x, img.y, imgWidth, imgHeight);
+                    tempCtx.strokeRect(img.x, img.y, imgWidth, imgHeight);
+                }
+                
                 tempCanvas.addEventListener('mousedown', function(e) {
                     start.x = e.pageX- this.offsetLeft;
                     start.y = e.pageY - this.offsetTop;
@@ -315,9 +310,13 @@ function Board (props: any) {
                     start.y = mouse.y;
 
                     if (tempCanvas && tempCtx) {
-
-                        tempCtx?.clearRect(0, 0, tempCanvas?.width, tempCanvas?.height);
-                        tempCtx?.drawImage(image, img.x, img.y, imgWidth, imgHeight);
+                        // Set opacity of canvas to not fully transparent to indicate editing state
+                        tempCtx = setTempContextBackgroundFill(tempCtx, 'rgba(74, 75, 169, 0.2)', tempCanvas?.width, tempCanvas?.height)
+                        // Set selection styles
+                        tempCtx = setTempContextSelectionStyle(tempCtx);
+                        // User moving image, redraw to new location + selection border
+                        tempCtx.drawImage(image, img.x, img.y, imgWidth, imgHeight);
+                        tempCtx.strokeRect(img.x, img.y, imgWidth, imgHeight);
                     }
                 }, false)
             }
@@ -328,9 +327,40 @@ function Board (props: any) {
         }
     }
 
+    /* * * * * * * * *
+     * Abstractions  *
+     * * * * * * * * */
+
+    const setTempContextBackgroundFill = (ctxObject: CanvasRenderingContext2D, fillStyle: string, canvasWidth: number, canvasHeight: number) => {
+        ctxObject.clearRect(0, 0, canvasWidth, canvasHeight);
+        ctxObject.fillStyle = fillStyle;
+        ctxObject.fillRect(0, 0, canvasWidth, canvasHeight);
+        return ctxObject
+    }
+
+    const setTempContextSelectionStyle = (ctxObject: CanvasRenderingContext2D) => {
+        // Dashed border (5px dashes and 3px spaces)
+        ctxObject.strokeStyle = 'blue'
+        ctxObject.setLineDash([5, 3]);
+        ctxObject.lineWidth = 2
+
+        // Glow effect
+        ctxObject.shadowBlur = 20;
+        ctxObject.shadowColor = 'lightblue';
+        return ctxObject;
+    }
+
+    const getCursorStyle = () => {
+        if (cursorImagePath === "") { // In edit state
+            return 'grab';
+        } else {
+            return `url(${cursorImagePath}), auto`
+        }
+    }
+
     return (
         <div
-            style={{ height: "100%", width: "100%", cursor: `url(${cursorImagePath}), auto`, display: "grid"}}
+            style={{ height: "100%", width: "100%", cursor: getCursorStyle(), display: "grid"}}
             className="sketch" id="sketch"
         >
             <canvas className="board" id="board" style={{ gridArea: "1 / 1" }}/>
