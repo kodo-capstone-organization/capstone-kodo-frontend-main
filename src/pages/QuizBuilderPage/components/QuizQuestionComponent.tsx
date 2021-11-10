@@ -115,7 +115,7 @@ function QuizQuestionComponent(props: any) {
 
                 <div>
                     {
-                        <QuizBuilderTextInput disabled={isDisabled} id="question-input" label="Question" variant="standard" value={content} onChange={handleContentChange} />
+                        <QuizBuilderTextInput multiline disabled={isDisabled} id="question-input" label="Question" variant="standard" value={content} onChange={handleContentChange} />
                     }
                 </div>
 
