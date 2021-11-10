@@ -13,6 +13,7 @@ import TextFieldsIcon from '@material-ui/icons/TextFields';
 import { Divider, Slider, Typography, Tooltip, Menu, MenuItem, IconButton } from "@material-ui/core";
 import { colours } from "../../../../../../values/Colours";
 import ExportWhiteboardModal from "./ExportWhiteboardModal";
+import TextInsertModal from "./TextInsertModal";
 
 const paletteColours = ["red", "green", "black", "blue", "yellow"];
 
@@ -21,6 +22,7 @@ function Tools (props: any) {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [colourPicked, setColourPicked] = useState<string>("red");
     const [isExportDialogOpen, setIsExportDialogOpen] = useState<boolean>(false);
+    const [isTextInsertDialogOpen, setIsTextInsertDialogOpen] = useState<boolean>(false);
 
     useEffect(() => {
         handleChangeTool(null, props.activeTool, colourPicked);
@@ -67,19 +69,28 @@ function Tools (props: any) {
     const handleCloseColourMenu = () => {
         setAnchorEl(null);
     };
+    
+    const handleTextInsert = () => {
+        // "Firing" the event
+        props.setIsTextInsertCalled(true)
+    }
 
     const handleClearAll = () => {
         // "Firing" the event
         props.setIsClearAllCalled(true);
     }
 
+    const handleImageAttachment = (selectedImage: File) => {
+        // "Firing" the event
+        props.setIsNewImageAttached(true);
+    }
+
     const handleOpenExportDialog = () => {
         setIsExportDialogOpen(true)
     }
 
-    const handleImageAttachment = (selectedImage: File) => {
-        // "Firing" the event
-        props.setIsNewImageAttached(true);
+    const handleOpenTextInsertDialog = () => {
+        setIsTextInsertDialogOpen(true)
     }
 
     return (
@@ -147,7 +158,7 @@ function Tools (props: any) {
             <Divider flexItem orientation="vertical" style={{ margin: "0.5rem"}}/>
 
             <Tooltip title="Insert Text">
-                <ToolbarWhiteboardAction variant="contained"  component="label" aria-label="text">
+                <ToolbarWhiteboardAction onClick={handleOpenTextInsertDialog} aria-label="text">
                     <TextFieldsIcon />
                 </ToolbarWhiteboardAction>
             </Tooltip>
@@ -189,6 +200,15 @@ function Tools (props: any) {
                 setIsExportDialogOpen={setIsExportDialogOpen}
                 callOpenSnackBar={props.callOpenSnackBar}
                 sessionName="placeholder"
+            />
+
+            <TextInsertModal
+                isTextInsertDialogOpen={isTextInsertDialogOpen}
+                setIsTextInsertDialogOpen={setIsTextInsertDialogOpen}
+                inputText={props.inputText}
+                setInputText={props.setInputText}
+                fireIsTextInsertCalled={props.setIsTextInsertCalled}
+                callOpenSnackBar={props.callOpenSnackBar}
             />
         </ToolbarPaper>
     )

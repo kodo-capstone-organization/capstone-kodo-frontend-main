@@ -73,7 +73,7 @@ function Board (props: any) {
     }, [props.isClearAllCalled])
 
     useEffect(() => {
-        // If changes to true, add new image to the canvas
+        // If changes to true, add new image to board
         if (props.isNewImageAttached) {
             // Get file
             const attImageHTML: any = document.getElementById("image-attachment-upload")
@@ -87,6 +87,25 @@ function Board (props: any) {
             props.setIsNewImageAttached(false);
         }
     }, [props.isNewImageAttached])
+
+    useEffect(() => {
+        // If changes to true, add a new text box to board
+        if (props.isTextInsertCalled) {
+            console.log("Received text input in board.tsx")
+            console.log(props.inputText)
+
+            // Convert text to image
+            const textImage: HTMLImageElement | null = convertInputTextToImageFile(props.inputText)
+            if (textImage) {
+                insertImage(null, textImage);
+            } else {
+                console.error("Unable to convert text to image")
+            }
+
+            // Finally, set back parent state to false
+            props.setIsTextInsertCalled(false);
+        }
+    }, [props.isTextInsertCalled])
 
     const drawOnCanvas = (isInit: boolean = false, setIncomingCanvas: boolean = false, isClearAll: boolean = false, isSetContextPropertiesOnly: boolean = false) => {
         if (canvas) {
@@ -195,15 +214,20 @@ function Board (props: any) {
         }
     }
 
-    const insertImage = (attImageFile: File) => {
+    const insertImage = (attImageFile: File | null, retrievedImage: HTMLImageElement | null = null) => {
         setIsTempBoardHidden(false)
+
         let image = new Image();
         let reader = new FileReader();
-        
-        reader.addEventListener("load", function () {
-            // convert image file to base64 string
-            image.src = reader?.result?.toString() || "";
-        }, false);
+
+        if (retrievedImage !== null) {
+            image = retrievedImage;
+        } else {
+            reader.addEventListener("load", function () {
+                // convert image file to base64 string
+                image.src = reader?.result?.toString() || "";
+            }, false);
+        }
 
         image.addEventListener("load", function () {
             console.log("Image onLoad event listener fired")
@@ -322,9 +346,43 @@ function Board (props: any) {
             }
         }, false)
 
-        if (attImageFile) {
+        if (attImageFile && retrievedImage === null) {
             reader.readAsDataURL(attImageFile);
         }
+    }
+
+    const convertInputTextToImageFile = (text: string): HTMLImageElement | null => {
+        const textBoxCanvas: HTMLCanvasElement = document.getElementById("textbox-utility-canvas") as HTMLCanvasElement;
+        if (textBoxCanvas) {
+            textBoxCanvas.style.width = '100%';
+            textBoxCanvas.style.height= '100%';
+
+            const textBoxCtx = textBoxCanvas.getContext("2d");
+
+            if (textBoxCtx) {
+                // TODO: Positioning still wonky
+
+                // Set canvas width to the text's width
+                textBoxCanvas.width  = textBoxCtx.measureText(text).width;
+
+                // Stroke settings
+                textBoxCtx.font='30px verdana';
+                textBoxCtx.textAlign = 'center';
+                textBoxCtx.textBaseline = 'middle';
+                textBoxCtx.strokeStyle = 'black';
+                textBoxCtx.fillStyle = 'green'; // TODO change to colour of selection
+                textBoxCtx.lineWidth = 2; // Dont change this though
+
+                // Write text
+                textBoxCtx.fillText(text,0,0);
+
+                // Convert canvas object to image
+                let textAsImage = new Image();
+                textAsImage.src = textBoxCtx.canvas.toDataURL("image/png");
+                return textAsImage;
+            }
+        }
+        return null;
     }
 
     /* * * * * * * * *
@@ -363,6 +421,7 @@ function Board (props: any) {
             style={{ height: "100%", width: "100%", cursor: getCursorStyle(), display: "grid"}}
             className="sketch" id="sketch"
         >
+            <canvas hidden className="textbox-utility-canvas" id="textbox-utility-canvas" style={{ gridArea: "1 / 1" }}/>
             <canvas className="board" id="board" style={{ gridArea: "1 / 1" }}/>
             <canvas className="temp-board" id="temp-board" hidden={isTempBoardHidden} style={{ gridArea: "1 / 1" }}/>
         </div>

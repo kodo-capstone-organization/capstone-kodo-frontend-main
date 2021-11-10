@@ -15,6 +15,8 @@ function WhiteboardTabPanel (props: any) {
     const [toolProperties, setToolProperties] = useState<object>(initToolProperties);
     const [isClearAllCalled, setIsClearAllCalled] = useState<boolean>(false);
     const [isNewImageAttached, setIsNewImageAttached] = useState<boolean>(false);
+    const [inputText, setInputText] = useState<string>("");
+    const [isTextInsertCalled, setIsTextInsertCalled] = useState<boolean>(false);
     
     return (
         <WhiteboardPanelWrapper>
@@ -26,6 +28,9 @@ function WhiteboardTabPanel (props: any) {
                 setToolProperties={setToolProperties}
                 setIsClearAllCalled={setIsClearAllCalled}
                 setIsNewImageAttached={setIsNewImageAttached}
+                inputText={inputText}
+                setInputText={setInputText}
+                setIsTextInsertCalled={setIsTextInsertCalled}
                 callOpenSnackBar={props.callOpenSnackBar}
             />
             <Board
@@ -36,6 +41,9 @@ function WhiteboardTabPanel (props: any) {
                 setIsClearAllCalled={setIsClearAllCalled}
                 isNewImageAttached={isNewImageAttached}
                 setIsNewImageAttached={setIsNewImageAttached}
+                inputText={inputText}
+                isTextInsertCalled={isTextInsertCalled}
+                setIsTextInsertCalled={setIsTextInsertCalled}
                 sendWhiteboardEventViaDCCallback={props.sendWhiteboardEventViaDCCallback}
                 incomingCanvasData={props.incomingCanvasData}
             />
