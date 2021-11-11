@@ -235,6 +235,38 @@ function Board (props: any) {
         }
     }
 
+    function anchorHitTest(mouseX: number, mouseY: number, startX: number, startY: number, endX: number, endY: number) {
+
+        let dx, dy;
+        const rr = 256;
+    
+        // top-left
+        dx = mouseX - startX;
+        dy = mouseY - startY;
+        if (dx * dx + dy * dy <= rr) {
+            return (0);
+        }
+        // top-right
+        dx = mouseX - endX;
+        dy = mouseY - startY;
+        if (dx * dx + dy * dy <= rr) {
+            return (1);
+        }
+        // bottom-right
+        dx = mouseX - endX;
+        dy = mouseY - endY;
+        if (dx * dx + dy * dy <= rr) {
+            return (2);
+        }
+        // bottom-left
+        dx = mouseX - startX;
+        dy = mouseY - endY;
+        if (dx * dx + dy * dy <= rr) {
+            return (3);
+        }
+        return (-1);
+    }
+
     const drawAllAnchors = (ctx: CanvasRenderingContext2D, startX: number, startY: number, endX: number, endY: number) => {
         ctx = drawDragAnchor(ctx, startX, startY);
         ctx = drawDragAnchor(ctx, endX, startY);
@@ -245,7 +277,7 @@ function Board (props: any) {
 
     const drawDragAnchor = (ctx: CanvasRenderingContext2D, x: number, y: number) => {
         ctx.beginPath();
-        ctx.arc(x, y, 8, 0, Math.PI*2, false);
+        ctx.arc(x, y, 16, 0, Math.PI*2, false);
         ctx.closePath();
         ctx.fill();
         return ctx;
@@ -269,7 +301,7 @@ function Board (props: any) {
         image.addEventListener("load", function () {
             console.log("Image onLoad event listener fired")
 
-            let isDown = false;
+            let isDraggingImage = false;
 
             if (tempCanvas) {
                 tempCtx = tempCanvas.getContext('2d')
@@ -284,6 +316,7 @@ function Board (props: any) {
 
                 let start = {x: 0, y: 0};
                 let img = {x: 0, y: 0};
+                let draggingResizer = -1;
 
                 var MAX_WIDTH = 300;
                 var MAX_HEIGHT = 300;
@@ -325,8 +358,12 @@ function Board (props: any) {
                     start.x = e.pageX- this.offsetLeft;
                     start.y = e.pageY - this.offsetTop;
 
-                    if (start.x >= img.x && start.x <= img.x + imgWidth && start.y >= img.y && start.y <= img.y + imgHeight) {
-                        isDown = true;
+                    draggingResizer = anchorHitTest(start.x, start.y, img.x, img.y, img.x + imgWidth, img.y + imgHeight)
+
+                    if (start.x >= img.x - 16 && start.x <= img.x + imgWidth + 16 && start.y >= img.y - 16 && start.y <= img.y + imgHeight + 16) {
+                        if (draggingResizer < 0) {
+                            isDraggingImage = true;
+                        } 
                     } else {
                         // Outside of image range
                         // Update actual canvas with image
@@ -347,50 +384,103 @@ function Board (props: any) {
                             reader = new FileReader();
                             start = {x: 0, y: 0};
                             img = {x: 0, y: 0};
+                            draggingResizer = -1;
                         }
                         setIsTempBoardHidden(true)
                     }
                 }, false)
 
                 tempCanvas.addEventListener('mouseup', function(e) {
-                    isDown = false;
+                    draggingResizer = -1;
+                    isDraggingImage = false;
                 }, false)
 
                 tempCanvas.addEventListener('mouseout', function(e) {
-                    isDown = false;
+                    isDraggingImage = false;
                 }, false)
 
                 tempCanvas.addEventListener('mousemove', function(e) {
-                    if (!isDown) {
-                        return;
-                    }
-
                     let mouse = {x: 0, y: 0}
                     mouse.x = e.pageX- this.offsetLeft;
                     mouse.y = e.pageY - this.offsetTop;
 
-                    if (!isDown) {
-                        return;
-                    }
+                    if (!isDraggingImage && draggingResizer > -1) {
+                        // resize the image
+                        let endX = img.x + imgWidth;
+                        let endY = img.y + imgHeight;
 
-                    img.x += mouse.x - start.x;
-                    img.y += mouse.y - start.y;
-                    start.x = mouse.x;
-                    start.y = mouse.y;
+                        switch (draggingResizer) {
+                            case 0:
+                                //top-left
+                                img.x = mouse.x;
+                                imgWidth = endX - mouse.x;
+                                img.y = mouse.y;
+                                imgHeight = endY - mouse.y;
+                                break;
+                            case 1:
+                                //top-right
+                                img.y = mouse.y;
+                                imgWidth = mouse.x - img.x;
+                                imgHeight = endY - mouse.y;
+                                break;
+                            case 2:
+                                //bottom-right
+                                imgWidth = mouse.x  - img.x;
+                                imgHeight = mouse.y - img.y;
+                                break;
+                            case 3:
+                                //bottom-left
+                                img.x = mouse.x;
+                                imgWidth = endX - mouse.x ;
+                                imgHeight = mouse.y - img.y;
+                                break;
+                        }
 
-                    if (tempCanvas && tempCtx) {
-                        // Set opacity of canvas to not fully transparent to indicate editing state
-                        tempCtx = setTempContextBackgroundFill(tempCtx, 'rgba(74, 75, 169, 0.2)', tempCanvas?.width, tempCanvas?.height)
-                        
-                        // Set selection styles
-                        tempCtx = setTempContextSelectionStyle(tempCtx);
+                        if (imgWidth < 40) {imgWidth = 40;}
+                        if (imgHeight < 40) {imgHeight = 40;}
 
-                        // Draw the anchor at the four corners
-                        tempCtx = drawAllAnchors(tempCtx, img.x, img.y, img.x + imgWidth, img.y + imgHeight)
-                        
-                        // User moving image, redraw to new location + selection border
-                        tempCtx.drawImage(image, img.x, img.y, imgWidth, imgHeight);
-                        tempCtx.strokeRect(img.x, img.y, imgWidth, imgHeight);
+                        // set the image right and bottom
+                        endX = img.x + imgWidth;
+                        endY = img.y + imgHeight;
+
+                        if (tempCanvas && tempCtx) {
+                            // Set opacity of canvas to not fully transparent to indicate editing state
+                            tempCtx = setTempContextBackgroundFill(tempCtx, 'rgba(74, 75, 169, 0.2)', tempCanvas?.width, tempCanvas?.height)
+                                
+                            // Set selection styles
+                            tempCtx = setTempContextSelectionStyle(tempCtx);
+
+                            // Draw the anchor at the four corners
+                            tempCtx = drawAllAnchors(tempCtx, img.x, img.y, endX, endY)
+                            
+                            // User moving image, redraw to new location + selection border
+                            tempCtx.drawImage(image, img.x, img.y, imgWidth, imgHeight);
+                            tempCtx.strokeRect(img.x, img.y, imgWidth, imgHeight);
+                        }
+                    } else {
+                        if (!isDraggingImage) {
+                            return;
+                        }
+
+                        img.x += mouse.x - start.x;
+                        img.y += mouse.y - start.y;
+                        start.x = mouse.x;
+                        start.y = mouse.y;
+
+                        if (tempCanvas && tempCtx) {
+                            // Set opacity of canvas to not fully transparent to indicate editing state
+                            tempCtx = setTempContextBackgroundFill(tempCtx, 'rgba(74, 75, 169, 0.2)', tempCanvas?.width, tempCanvas?.height)
+                            
+                            // Set selection styles
+                            tempCtx = setTempContextSelectionStyle(tempCtx);
+
+                            // Draw the anchor at the four corners
+                            tempCtx = drawAllAnchors(tempCtx, img.x, img.y, img.x + imgWidth, img.y + imgHeight)
+                            
+                            // User moving image, redraw to new location + selection border
+                            tempCtx.drawImage(image, img.x, img.y, imgWidth, imgHeight);
+                            tempCtx.strokeRect(img.x, img.y, imgWidth, imgHeight);
+                        }
                     }
                 }, false)
             }
