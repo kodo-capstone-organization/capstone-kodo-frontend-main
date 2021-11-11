@@ -42,6 +42,7 @@ function WhiteboardTabPanel (props: any) {
                 isNewImageAttached={isNewImageAttached}
                 setIsNewImageAttached={setIsNewImageAttached}
                 inputText={inputText}
+                setInputText={setInputText}
                 isTextInsertCalled={isTextInsertCalled}
                 setIsTextInsertCalled={setIsTextInsertCalled}
                 sendWhiteboardEventViaDCCallback={props.sendWhiteboardEventViaDCCallback}

@@ -104,6 +104,9 @@ function Board (props: any) {
 
             // Finally, set back parent state to false
             props.setIsTextInsertCalled(false);
+
+            // Clear existing text in modal
+            props.setInputText("");
         }
     }, [props.isTextInsertCalled])
 
