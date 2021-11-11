@@ -253,7 +253,6 @@ function Board (props: any) {
 
                 var MAX_WIDTH = 300;
                 var MAX_HEIGHT = 300;
-                console.log("image dimensions ", image.width, image.height)
                 imgWidth = image.width;
                 imgHeight = image.height;
         
