@@ -375,7 +375,7 @@ function Board (props: any) {
     }
 
     const convertInputTextToImageFile = (text: string): HTMLImageElement | null => {
-        const textBoxCanvas: HTMLCanvasElement = document.getElementById("textbox-utility-canvas") as HTMLCanvasElement;
+        const textBoxCanvas: HTMLCanvasElement = document.getElementById("utility-canvas") as HTMLCanvasElement;
         if (textBoxCanvas) {
             textBoxCanvas.style.width = '100%';
             textBoxCanvas.style.height= '100%';
@@ -464,8 +464,7 @@ function Board (props: any) {
             style={{ height: "100%", width: "100%", cursor: getCursorStyle(), display: "grid"}}
             className="sketch" id="sketch"
         >
-            <canvas hidden className="textbox-utility-canvas" id="textbox-utility-canvas" style={{ gridArea: "1 / 1" }}/>
-            <canvas hidden className="shape-utility-canvas" id="shape-utility-canvas" style={{ gridArea: "1 / 1" }}/>
+            <canvas hidden className="utility-canvas" id="utility-canvas" style={{ gridArea: "1 / 1" }}/>
             <canvas className="board" id="board" style={{ gridArea: "1 / 1" }}/>
             <canvas className="temp-board" id="temp-board" hidden={isTempBoardHidden} style={{ gridArea: "1 / 1" }}/>
         </div>
