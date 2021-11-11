@@ -47,8 +47,10 @@ function Board (props: any) {
     }, [cursorCanvas])
 
     useEffect(() => {
-        drawOnCanvas(false, true);
-        window.sessionStorage.setItem("canvasData", props.incomingCanvasData)
+        if (props.incomingCanvasData) {
+            drawOnCanvas(false, true);
+            window.sessionStorage.setItem("canvasData", props.incomingCanvasData)
+        }
     }, [props.incomingCanvasData])
 
     useEffect(() => {
