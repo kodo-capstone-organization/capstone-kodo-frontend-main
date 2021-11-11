@@ -110,6 +110,24 @@ function Board (props: any) {
         }
     }, [props.isTextInsertCalled])
 
+    useEffect(() => {
+        // If changes to true, add a new text box to board
+        if (props.isShapeInsertCalled) {
+            console.log("Received shape input in board.tsx")
+            console.log(props.shapeInsertString)
+
+            fetch(`/shapes/${props.shapeInsertString}_shape.png`)
+                .then(res => res.blob())
+                .then((blob) => {
+                    const shapeFile = new File([blob], "shape_file");
+                    insertImage(shapeFile);
+                })
+            
+            // Finally, set back parent state to false
+            props.setIsShapeInsertCalled(false);
+        }
+    }, [props.isShapeInsertCalled])
+
     const drawOnCanvas = (isInit: boolean = false, setIncomingCanvas: boolean = false, isClearAll: boolean = false, isSetContextPropertiesOnly: boolean = false) => {
         if (canvas) {
             ctx = canvas.getContext('2d');

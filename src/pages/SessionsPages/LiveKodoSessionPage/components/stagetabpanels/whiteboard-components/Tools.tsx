@@ -221,6 +221,8 @@ function Tools (props: any) {
             <ShapeInsertModal
                 isShapeInsertDialogOpen={isShapeInsertDialogOpen}
                 setIsShapeInsertDialogOpen={setIsShapeInsertDialogOpen}
+                setShapeInsertString={props.setShapeInsertString}
+                fireIsShapeInsertCalled={props.setIsShapeInsertCalled}
                 callOpenSnackBar={props.callOpenSnackBar}
             />
         </ToolbarPaper>

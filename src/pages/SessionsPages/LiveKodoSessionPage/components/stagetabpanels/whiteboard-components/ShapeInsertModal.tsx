@@ -10,20 +10,14 @@ const UML_SHAPES = ["actor", "entity", "ellipse", "note"]
 
 function ShapeInsertModal(props: any) {
 
-    const handleSelectChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-        // props.setInputText(event.target.value as string);
-    }
-
     const handleCloseDialog = () => {
         props.setIsShapeInsertDialogOpen(false)
     }
 
     const handleInsertShape = (shapeString: string) => {
-        // if (props.inputText === "") {
-        //     props.callOpenSnackBar("No text input received", "warning")
-        // } else {
-        //     props.fireIsTextInsertCalled(true)
-        // }
+        console.log("handleshapeinsert in modal called")
+        props.setShapeInsertString(shapeString)
+        props.fireIsShapeInsertCalled(true)
         handleCloseDialog()
     }
 
@@ -48,6 +42,7 @@ function ShapeInsertModal(props: any) {
                         </Grid>
                     ))}
                 </Grid>
+                <br/>
                 <br/>
                 <DialogContentText>
                     <strong>UML Shapes 💠</strong>
