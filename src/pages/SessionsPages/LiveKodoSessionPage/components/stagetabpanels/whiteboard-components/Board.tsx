@@ -302,6 +302,7 @@ function Board (props: any) {
             console.log("Image onLoad event listener fired")
 
             let isDraggingImage = false;
+            let draggingResizer = -1;
 
             if (tempCanvas) {
                 tempCtx = tempCanvas.getContext('2d')
@@ -316,27 +317,26 @@ function Board (props: any) {
 
                 let start = {x: 0, y: 0};
                 let img = {x: 0, y: 0};
-                let draggingResizer = -1;
 
                 var MAX_WIDTH = 300;
                 var MAX_HEIGHT = 300;
                 imgWidth = image.width;
                 imgHeight = image.height;
         
-                // Add the resizing logic ONLY for attached images
-                if (retrievedImage === null) {
-                    if (imgWidth > imgHeight) {
-                        if (imgWidth > MAX_WIDTH) {
-                            imgHeight *= MAX_WIDTH / imgWidth;
-                            imgWidth = MAX_WIDTH;
-                        }
-                    } else {
-                        if (imgHeight > MAX_HEIGHT) {
-                            imgWidth *= MAX_HEIGHT / imgHeight;
-                            imgHeight = MAX_HEIGHT;
-                        }
-                    }
-                }
+                // Add the resizing logic ONLY for attached images - Deprecated since we implemented resizing of all attachments already
+                // if (retrievedImage === null) {
+                //     if (imgWidth > imgHeight) {
+                //         if (imgWidth > MAX_WIDTH) {
+                //             imgHeight *= MAX_WIDTH / imgWidth;
+                //             imgWidth = MAX_WIDTH;
+                //         }
+                //     } else {
+                //         if (imgHeight > MAX_HEIGHT) {
+                //             imgWidth *= MAX_HEIGHT / imgHeight;
+                //             imgHeight = MAX_HEIGHT;
+                //         }
+                //     }
+                // }
 
                 if (tempCtx) {
                     // Set background fill to indicate edit state
@@ -360,33 +360,38 @@ function Board (props: any) {
 
                     draggingResizer = anchorHitTest(start.x, start.y, img.x, img.y, img.x + imgWidth, img.y + imgHeight)
 
-                    if (start.x >= img.x - 16 && start.x <= img.x + imgWidth + 16 && start.y >= img.y - 16 && start.y <= img.y + imgHeight + 16) {
+                    if ((start.x >= img.x - 16) && (start.x <= img.x + imgWidth + 16) && (start.y >= img.y - 16) && (start.y <= img.y + imgHeight + 16)) {
                         if (draggingResizer < 0) {
                             isDraggingImage = true;
                         } 
                     } else {
                         // Outside of image range
-                        // Update actual canvas with image
-                        if (canvas) {
+                        // Update canvas with image
+                        console.log("Mousedown Outside of Image")
+                        if (canvas && image.src) {
                             ctx = canvas.getContext('2d');
                             if (ctx) {
                                 ctx?.drawImage(image, img.x, img.y, imgWidth, imgHeight);
-                                var base64ImageData = canvas?.toDataURL("image/png");
+                                const base64ImageData = canvas?.toDataURL("image/png");
                                 props.sendWhiteboardEventViaDCCallback(base64ImageData);
+
+                                // Clear all temporary canvas data
+                                if (tempCanvas && tempCtx) {
+                                    // Clearing up temporary canvas data
+                                    tempCtx?.clearRect(0, 0, tempCanvas?.width, tempCanvas?.height);
+                                    image = new Image();
+                                    reader = new FileReader();
+                                    start = {x: 0, y: 0};
+                                    img = {x: 0, y: 0};
+                                    draggingResizer = -1;
+                                    isDraggingImage = false;
+
+                                    // Reset Canvas
+                                    tempCanvas = document.querySelector('#temp-board');
+                                }
+                                setIsTempBoardHidden(true)
                             }
                         }
-                        
-                        // Clear all temporary canvas data
-                        if (tempCanvas && tempCtx) {
-                            // Clearing up temporary canvas data
-                            tempCtx?.clearRect(0, 0, tempCanvas?.width, tempCanvas?.height);
-                            image = new Image();
-                            reader = new FileReader();
-                            start = {x: 0, y: 0};
-                            img = {x: 0, y: 0};
-                            draggingResizer = -1;
-                        }
-                        setIsTempBoardHidden(true)
                     }
                 }, false)
 
@@ -396,6 +401,7 @@ function Board (props: any) {
                 }, false)
 
                 tempCanvas.addEventListener('mouseout', function(e) {
+                    draggingResizer = -1;
                     isDraggingImage = false;
                 }, false)
 
@@ -458,6 +464,8 @@ function Board (props: any) {
                             tempCtx.strokeRect(img.x, img.y, imgWidth, imgHeight);
                         }
                     } else {
+                        // Move/drag the image
+
                         if (!isDraggingImage) {
                             return;
                         }
