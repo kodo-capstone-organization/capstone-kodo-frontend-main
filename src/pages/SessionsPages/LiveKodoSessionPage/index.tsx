@@ -1,5 +1,5 @@
 import React, { useEffect, createRef, useState, RefObject, useRef } from 'react'
-import {CallEvent, InvitedSessionResp, KodoDataChannelMessage, KodoSessionEvent, KodoSessionEventType, WhiteboardEvent, EditorEvent, EditorCursorLocation } from '../../../entities/Session';
+import {CallEvent, InvitedSessionResp, KodoDataChannelMessage, KodoSessionEvent, KodoSessionEventType, WhiteboardEvent, EditorEvent, EditorCursorLocation, WhiteboardCursorLocation } from '../../../entities/Session';
 import { endSession, getSessionBySessionId } from '../../../apis/SessionApis';
 import ActionsPanel from './components/ActionsPanel';
 import ParticipantsPanel from './components/ParticipantsPanel';
@@ -437,10 +437,10 @@ function LiveKodoSessionPage(props: any) {
         return craftAndSendDcMessage(newCallEvent, KodoSessionEventType.CALL)
     }
     
-    const craftAndSendWhiteboardEventMessage = (encodedCanvasData?: string, cursorLocation?: string) => {
+    const craftAndSendWhiteboardEventMessage = (encodedCanvasData?: string, cursorLocation?: WhiteboardCursorLocation) => {
         const newWhiteboardEvent: WhiteboardEvent = {
-            encodedCanvasData: encodedCanvasData ? encodedCanvasData : "",
-            cursorLocation: cursorLocation ? cursorLocation : ""
+            encodedCanvasData: encodedCanvasData ? encodedCanvasData : undefined,
+            cursorLocation: cursorLocation ? cursorLocation : undefined
         }
         return craftAndSendDcMessage(newWhiteboardEvent, KodoSessionEventType.WHITEBOARD)
     }

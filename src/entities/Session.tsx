@@ -36,7 +36,7 @@ export interface CallEvent extends KodoSessionEvent {
 
 export interface WhiteboardEvent extends KodoSessionEvent {
     encodedCanvasData?: string
-    cursorLocation?: string 
+    cursorLocation?: WhiteboardCursorLocation 
 }
 
 export interface EditorEvent extends KodoSessionEvent {
@@ -49,4 +49,9 @@ export interface EditorEvent extends KodoSessionEvent {
 export interface EditorCursorLocation {
     lineNumber: number
     column: number
+}
+
+export interface WhiteboardCursorLocation {
+    cursorX: number
+    cursorY: number
 }

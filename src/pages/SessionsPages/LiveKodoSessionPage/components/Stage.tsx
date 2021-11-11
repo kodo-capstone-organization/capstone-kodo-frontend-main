@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { monaco } from "react-monaco-editor";
-import { KodoSessionEventType, EditorCursorLocation } from "../../../../entities/Session";
+import { KodoSessionEventType, EditorCursorLocation, WhiteboardCursorLocation } from "../../../../entities/Session";
 import {ActiveTabPanel, StageContainer, StageTab, StageTabBar } from "../LiveKodoSessionPageElements";
 import CodeEditorTabPanel from "./stagetabpanels/CodeEditorTabPanel";
 import DebugInfoTabPanel from "./stagetabpanels/DebugInfoTabPanel";
@@ -16,6 +16,7 @@ function Stage(props: any) {
     const [incomingSelectedLanguage, setIncomingSelectedLanguage] = useState<string>();
     const [incomingEditorCursorLocations, setIncomingEditorCursorLocations] = useState<Map<number, EditorCursorLocation>>(new Map());
     const [incomingEditorCursorSelections, setIncomingEditorCursorSelections] = useState<Map<number, monaco.Selection>>(new Map());
+    const [incomingWhiteboardCursorLocations, setIncomingWhiteboardCursorLocations] = useState<Map<number, WhiteboardCursorLocation>>(new Map())
 
     useEffect(() => {
         setPeerConns(props.peerConns)
@@ -24,11 +25,21 @@ function Stage(props: any) {
     useEffect(() => {
 
         const newDCMessage = props.newIncomingDcMessage;
-
-        // New Whiteboard DC Message
+        
         if (newDCMessage?.eventType === KodoSessionEventType.WHITEBOARD) {
-            setIncomingCanvasData(newDCMessage?.event?.encodedCanvasData)
-        } else if (newDCMessage?.eventType === KodoSessionEventType.EDITOR) { // New Editor DC Message
+            // New Whiteboard DC Message
+            
+            if (props.newIncomingDcMessage?.event?.encodedCanvasData) {
+                setIncomingCanvasData(newDCMessage?.event?.encodedCanvasData)
+            }
+
+            if (props.newIncomingDcMessage?.event?.cursorLocation) {
+                const newIncomingWhiteboardCursorLocations = new Map(incomingWhiteboardCursorLocations)
+                newIncomingWhiteboardCursorLocations.set(newDCMessage.peerId, newDCMessage?.event?.cursorLocation)
+                setIncomingWhiteboardCursorLocations(newIncomingWhiteboardCursorLocations)
+            }
+        } else if (newDCMessage?.eventType === KodoSessionEventType.EDITOR) { 
+            // New Editor DC Message
             if (newDCMessage?.event?.editorData) {
                 setIncomingEditorData(newDCMessage?.event?.editorData)
             }
@@ -74,6 +85,7 @@ function Stage(props: any) {
                         key={1}
                         sendWhiteboardEventViaDCCallback={props.sendWhiteboardEventViaDCCallback}
                         incomingCanvasData={incomingCanvasData}
+                        incomingWhiteboardCursorLocations={incomingWhiteboardCursorLocations}
                         callOpenSnackBar={props.callOpenSnackBar}
                         peerConns={peerConns}
                     />

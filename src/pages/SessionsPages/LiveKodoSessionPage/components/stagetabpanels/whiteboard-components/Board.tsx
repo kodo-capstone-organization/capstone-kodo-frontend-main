@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { WhiteboardCursorLocation } from '../../../../../../entities/Session';
 import { colours } from '../../../../../../values/Colours';
 
 function Board (props: any) {
@@ -15,6 +16,10 @@ function Board (props: any) {
     let tempCtx: CanvasRenderingContext2D | null;
     let imgWidth = 0, imgHeight = 0;
 
+    // Cursor Canvas
+    let cursorCanvas: HTMLCanvasElement | null = document.querySelector('#peer-cursor-board');
+    let cursorCtx: CanvasRenderingContext2D | null;
+
     // Tool states
     const [cursorImagePath, setCursorImagePath] = useState<string>("");
 
@@ -30,6 +35,16 @@ function Board (props: any) {
             tempCanvas = document.querySelector('#temp-board');
         }
     }, [tempCanvas])
+
+    useEffect(() => {
+        if (cursorCanvas === null) {
+            cursorCanvas = document.querySelector('#peer-cursor-board');
+            if (cursorCanvas) {
+                cursorCanvas.style.width = '100%';
+                cursorCanvas.style.height= '100%';
+            }
+        }
+    }, [cursorCanvas])
 
     useEffect(() => {
         drawOnCanvas(false, true);
@@ -127,8 +142,62 @@ function Board (props: any) {
         }
     }, [props.isShapeInsertCalled])
 
+    // Receive update of cursor location from peers
+    useEffect(() => {
+
+        if (props.incomingWhiteboardCursorLocations.size > 0) {
+
+            let cursorSvg = new Image();
+            fetch(`/cursors/peer_cursor_8.svg`)
+                .then(res => res.blob())
+                .then((blob) => {
+                    var objectURL = URL.createObjectURL(blob);
+                    cursorSvg.src = objectURL;
+                })
+
+            cursorSvg.addEventListener("load", function () {
+                // Clear Cursor canvas
+                clearCursorCanvas();
+
+                // Add Peers
+                props.incomingWhiteboardCursorLocations.forEach((value: WhiteboardCursorLocation, key: number) => {
+                    // Create peer cursor image by cloning
+                    // const peerCursorSvg = new Image();
+                    // peerCursorSvg.replaceWith(cursorSvg.cloneNode(true));
+                    // peerCursorSvg.style.backgroundColor = props.peerConns.get(key).colour;
+                    // Add peer cursor image to cursor canvas and specified location
+                    drawOnCursorCanvas(value.cursorX, value.cursorY, cursorSvg);
+                })
+            })
+        }
+        
+    }, [props.incomingWhiteboardCursorLocations])
+
+    const drawOnCursorCanvas = (cursorX: number, cursorY: number, peerCursorImage: HTMLImageElement) => {
+        if (cursorCanvas) {
+            cursorCtx = cursorCanvas.getContext('2d');
+            if (cursorCtx) {
+                console.log("DRAW CURSOR", peerCursorImage)
+                console.log(cursorX, cursorY)
+                cursorCtx.imageSmoothingEnabled = false;
+                cursorCtx.drawImage(peerCursorImage, cursorX, cursorY, peerCursorImage.width, peerCursorImage.height);
+            }
+        }
+    }
+
+    const clearCursorCanvas = () => {
+        if (cursorCanvas) {
+            cursorCtx = cursorCanvas.getContext('2d');
+            if (cursorCtx) {
+                cursorCtx.fillRect(0, 0, cursorCanvas.width, cursorCanvas.height);
+                cursorCtx.clearRect(0, 0, cursorCanvas.width, cursorCanvas.height);
+            }
+        }
+    }
+
     const drawOnCanvas = (isInit: boolean = false, setIncomingCanvas: boolean = false, isClearAll: boolean = false, isSetContextPropertiesOnly: boolean = false) => {
         if (canvas) {
+            let isCursorTimeoutScheduled = false;
             ctx = canvas.getContext('2d');
 
             // Whiteboard is initiated for the first time ever
@@ -161,6 +230,19 @@ function Board (props: any) {
                     last_mouse.y = mouse.y;
                     mouse.x = e.pageX- this.offsetLeft;
                     mouse.y = e.pageY - this.offsetTop;
+
+                    // Sending my cursor loaction to peers every 500 ms
+                    if (!isCursorTimeoutScheduled) {
+                        isCursorTimeoutScheduled = true;
+                        setTimeout(function() {
+                            isCursorTimeoutScheduled = false;
+                            const newWhiteboardCursorLocationObject: WhiteboardCursorLocation = {
+                                cursorX: mouse.x,
+                                cursorY: mouse.y
+                            }
+                            props.sendWhiteboardEventViaDCCallback(undefined, newWhiteboardCursorLocationObject);
+                        }, 250)
+                    }
                 }, false);
 
                 canvas.addEventListener('mousedown', function(e) {
@@ -178,7 +260,7 @@ function Board (props: any) {
                         ctx?.lineTo(mouse.x, mouse.y);
                         ctx?.closePath();
                         ctx?.stroke();
-                    } 
+                    }
 
                     if (timeout !== undefined) {
                         clearTimeout(timeout);
