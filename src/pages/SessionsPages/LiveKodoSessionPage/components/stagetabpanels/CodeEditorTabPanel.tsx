@@ -76,9 +76,9 @@ function CodeEditorTabPanel (props: any) {
     const classes = useStyles();
 
     useEffect(() => {
-        // On mount for the first time as the first peer in the whiteboard
-        // OR on mount for the first time but has peers already in the whiteboard
-        // OR tabbing back to whiteboard
+        // On mount for the first time as the first peer in the codeditor
+        // OR on mount for the first time but has peers already in the codeeditor
+        // OR tabbing back to codedeitor
 
         // Local + Remote states
         const initEditorData = window.sessionStorage.getItem("editorData") || props.incomingEditorData || "";
