@@ -253,19 +253,22 @@ function Board (props: any) {
 
                 var MAX_WIDTH = 300;
                 var MAX_HEIGHT = 300;
+                console.log("image dimensions ", image.width, image.height)
                 imgWidth = image.width;
                 imgHeight = image.height;
         
-                // Add the resizing logic
-                if (imgWidth > imgHeight) {
-                    if (imgWidth > MAX_WIDTH) {
-                        imgHeight *= MAX_WIDTH / imgWidth;
-                        imgWidth = MAX_WIDTH;
-                    }
-                } else {
-                    if (imgHeight > MAX_HEIGHT) {
-                        imgWidth *= MAX_HEIGHT / imgHeight;
-                        imgHeight = MAX_HEIGHT;
+                // Add the resizing logic ONLY for attached images
+                if (retrievedImage === null) {
+                    if (imgWidth > imgHeight) {
+                        if (imgWidth > MAX_WIDTH) {
+                            imgHeight *= MAX_WIDTH / imgWidth;
+                            imgWidth = MAX_WIDTH;
+                        }
+                    } else {
+                        if (imgHeight > MAX_HEIGHT) {
+                            imgWidth *= MAX_HEIGHT / imgHeight;
+                            imgHeight = MAX_HEIGHT;
+                        }
                     }
                 }
 
@@ -363,22 +366,42 @@ function Board (props: any) {
             const textBoxCtx = textBoxCanvas.getContext("2d");
 
             if (textBoxCtx) {
-                // TODO: Positioning still wonky
+                // Clear existing textbox canvas data
+                textBoxCtx.clearRect(0, 0, textBoxCtx.canvas.width, textBoxCtx.canvas.height);
 
-                // Set canvas width to the text's width
-                textBoxCanvas.width  = textBoxCtx.measureText(text).width;
+                let maxWidth = 0;
+                let totalHeight = 30;
+                textBoxCtx.font='30px verdana'; // Have to pre-set font as measureText values varies based on set font
 
-                // Stroke settings
+                const lines = text.split('\n');
+                
+                // Determine max width  
+                for (var i = 0; i < lines.length; i++) {
+                    maxWidth = Math.max(textBoxCtx.measureText(lines[i]).width, maxWidth);
+                    totalHeight += 30;
+                }
+
+                // Set canvas dimensions with buffer
+                textBoxCanvas.width = maxWidth + 50;
+                textBoxCanvas.height = totalHeight + 50;
+
+                // Set stroke settings after setting canvas dimensions, as it will wipe all other settings
                 textBoxCtx.font='30px verdana';
-                textBoxCtx.textAlign = 'center';
+                textBoxCtx.textAlign = 'left';
                 textBoxCtx.textBaseline = 'middle';
                 textBoxCtx.strokeStyle = 'black';
                 textBoxCtx.fillStyle = props.toolProperties.strokeStyle;; // TODO change to colour of selection
                 textBoxCtx.lineWidth = 2; // Dont change this though
 
-                // Write text
-                textBoxCtx.fillText(text,0,0);
+                const x = 0;
+                const y = 30;
+                const lineHeight = 30; // Determined by 30px font size
 
+                // Fill multi line
+                for (var i = 0; i < lines.length; i++) {
+                    textBoxCtx.fillText(lines[i], x, y + (i * lineHeight));
+                }
+                
                 // Convert canvas object to image
                 let textAsImage = new Image();
                 textAsImage.src = textBoxCtx.canvas.toDataURL("image/png");
