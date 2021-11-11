@@ -24,6 +24,12 @@ function Board (props: any) {
     const [cursorImagePath, setCursorImagePath] = useState<string>("");
 
     useEffect(() => {
+        return () => {
+            props.setIncomingCanvasData(undefined)
+        }
+    }, [])
+    
+    useEffect(() => {
         if (canvas === null) {
             canvas = document.querySelector('#board');
             drawOnCanvas(true);

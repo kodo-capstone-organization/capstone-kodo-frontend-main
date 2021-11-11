@@ -88,6 +88,7 @@ function Stage(props: any) {
                         incomingWhiteboardCursorLocations={incomingWhiteboardCursorLocations}
                         callOpenSnackBar={props.callOpenSnackBar}
                         peerConns={peerConns}
+                        setIncomingCanvasData={setIncomingCanvasData}
                     />
             }
             // {

@@ -54,6 +54,7 @@ function WhiteboardTabPanel (props: any) {
                 setIsShapeInsertCalled={setIsShapeInsertCalled}
                 sendWhiteboardEventViaDCCallback={props.sendWhiteboardEventViaDCCallback}
                 incomingCanvasData={props.incomingCanvasData}
+                setIncomingCanvasData={props.setIncomingCanvasData}
                 incomingWhiteboardCursorLocations={props.incomingWhiteboardCursorLocations}
                 peerConns={props.peerConns}
             />
