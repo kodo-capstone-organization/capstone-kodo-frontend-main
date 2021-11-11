@@ -37,7 +37,6 @@ function Board (props: any) {
     }, [props.incomingCanvasData])
 
     useEffect(() => {
-
         if (isTempBoardHidden) {
             console.log(props.activeTool)
             switch (props.activeTool) {
@@ -145,8 +144,9 @@ function Board (props: any) {
                 // Filling background
                 if (ctx) {
                     console.log("filling on init")
-                    ctx.fillStyle = colours.GRAY7;
+                    // ctx.fillStyle = colours.GRAY7;
                     ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
                 }
             }
 
@@ -178,7 +178,7 @@ function Board (props: any) {
                         ctx?.lineTo(mouse.x, mouse.y);
                         ctx?.closePath();
                         ctx?.stroke();
-                    }
+                    } 
 
                     if (timeout !== undefined) {
                         clearTimeout(timeout);
@@ -201,9 +201,9 @@ function Board (props: any) {
 
                     if (!isSetContextPropertiesOnly) { // Early termination if we are only setting ctx
                         if (isClearAll) {
-                            ctx.fillStyle = colours.GRAY7;
-                            ctx.clearRect(0, 0, canvas.width, canvas.height);
+                            // ctx.fillStyle = colours.GRAY7;
                             ctx.fillRect(0, 0, canvas.width, canvas.height);
+                            ctx.clearRect(0, 0, canvas.width, canvas.height);
                             // NOTE: Manually call onPaint to send out empty canvas to other peers instead of relying on
                             // mouseup / mousedown event listeners, so that the change is instant.
                             onPaint();
@@ -228,6 +228,8 @@ function Board (props: any) {
                     console.log("image onload")
                     if (ctx) {
                         console.log("RECEIVED PEER CANVAS, DRAWING NOW")
+                        ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+                        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
                         ctx.drawImage(peerCanvasDataImage, 0, 0);
                     }
                 };
@@ -592,8 +594,13 @@ function Board (props: any) {
             style={{ height: "100%", width: "100%", cursor: getCursorStyle(), display: "grid"}}
             className="sketch" id="sketch"
         >
+            {/* To convert text to image */}
             <canvas hidden className="utility-canvas" id="utility-canvas" style={{ gridArea: "1 / 1" }}/>
+            {/* Cursor Render Layer */}
+            <canvas className="peer-cursor-board" id="peer-cursor-board" style={{ gridArea: "1 / 1" }}/>
+            {/* Main Canvas */}
             <canvas className="board" id="board" style={{ gridArea: "1 / 1" }}/>
+            {/* Image Edit Layer */}
             <canvas className="temp-board" id="temp-board" hidden={isTempBoardHidden} style={{ gridArea: "1 / 1" }}/>
         </div>
 
