@@ -148,12 +148,7 @@ function Board (props: any) {
         if (props.incomingWhiteboardCursorLocations.size > 0) {
 
             let cursorSvg = new Image();
-            fetch(`/cursors/peer_cursor_8.svg`)
-                .then(res => res.blob())
-                .then((blob) => {
-                    var objectURL = URL.createObjectURL(blob);
-                    cursorSvg.src = objectURL;
-                })
+            cursorSvg.src = '/cursors/peer_cursor_4.svg';
 
             cursorSvg.addEventListener("load", function () {
                 // Clear Cursor canvas
@@ -180,7 +175,12 @@ function Board (props: any) {
                 console.log("DRAW CURSOR", peerCursorImage)
                 console.log(cursorX, cursorY)
                 cursorCtx.imageSmoothingEnabled = false;
-                cursorCtx.drawImage(peerCursorImage, cursorX, cursorY, peerCursorImage.width, peerCursorImage.height);
+                // cursorCtx.drawImage(peerCursorImage, cursorX, cursorY);
+
+                cursorCtx.beginPath();
+                cursorCtx.arc(cursorX, cursorY, 8, 0, Math.PI*2, false);
+                cursorCtx.closePath();
+                cursorCtx.fill();
             }
         }
     }
