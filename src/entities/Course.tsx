@@ -10,6 +10,7 @@ export interface Course {
   price: number;
   bannerUrl: string;
   tutor: Account;
+  tutorName: string;
   enrollment: EnrolledCourse[];
   dateTimeOfCreation: Date;
   lessons: Lesson[];
