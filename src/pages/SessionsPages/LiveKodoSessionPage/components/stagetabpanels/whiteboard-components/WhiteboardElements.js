@@ -3,6 +3,7 @@ import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import { colours } from "../../../../../../values/Colours";
 import { Paper, IconButton } from "@material-ui/core";
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
+import { Button } from "../../../../../../values/ButtonElements";
 
 export const StyledToggleButtonGroup = styled(ToggleButtonGroup)`
     margin: 1rem;
@@ -28,6 +29,19 @@ export const ToolbarWhiteboardAction = styled(IconButton)`
 `;
 
 export const CustomColor = styled(FiberManualRecordIcon)`
-`
+`;
+
+export const ShapeOption = styled(Button)`
+    display: flex;
+    flex-direction: column;
+    margin: auto;
+    height: 100px;
+`;
+
+export const ShapeOptionImage = styled.img`
+    height: 42px;
+    width: 42px;
+    margin-top: 5px;
+`;
     
         

@@ -14,6 +14,7 @@ import { Divider, Slider, Typography, Tooltip, Menu, MenuItem, IconButton } from
 import { colours } from "../../../../../../values/Colours";
 import ExportWhiteboardModal from "./ExportWhiteboardModal";
 import TextInsertModal from "./TextInsertModal";
+import ShapeInsertModal from "./ShapeInsertModal";
 
 const paletteColours = ["red", "green", "black", "blue", "yellow"];
 
@@ -23,6 +24,7 @@ function Tools (props: any) {
     const [colourPicked, setColourPicked] = useState<string>("red");
     const [isExportDialogOpen, setIsExportDialogOpen] = useState<boolean>(false);
     const [isTextInsertDialogOpen, setIsTextInsertDialogOpen] = useState<boolean>(false);
+    const [isShapeInsertDialogOpen, setIsShapeInsertDialogOpen] = useState<boolean>(false);
 
     useEffect(() => {
         handleChangeTool(null, props.activeTool, colourPicked);
@@ -93,6 +95,10 @@ function Tools (props: any) {
         setIsTextInsertDialogOpen(true)
     }
 
+    const handleOpenShapeInsertDialog = () => {
+        setIsShapeInsertDialogOpen(true)
+    }
+
     return (
         <ToolbarPaper elevation={2}>
             <StyledToggleButtonGroup
@@ -110,11 +116,6 @@ function Tools (props: any) {
                 <ToggleButton value="eraser" aria-label="eraser">
                     <Tooltip title="Eraser">
                         <Crop169Icon />
-                    </Tooltip>
-                </ToggleButton>
-                <ToggleButton value="shape" aria-label="shape">
-                    <Tooltip title="Shape">
-                        <CategoryIcon />
                     </Tooltip>
                 </ToggleButton>
             </StyledToggleButtonGroup>
@@ -163,8 +164,14 @@ function Tools (props: any) {
                 </ToolbarWhiteboardAction>
             </Tooltip>
 
+            <Tooltip title="Insert Shape">
+                <ToolbarWhiteboardAction onClick={handleOpenShapeInsertDialog} aria-label="shape">
+                    <CategoryIcon />
+                </ToolbarWhiteboardAction>
+            </Tooltip>
+
             <Tooltip title="Insert Image">
-                <ToolbarWhiteboardAction variant="contained"  component="label" aria-label="image">
+                <ToolbarWhiteboardAction variant="contained" component="label" aria-label="image">
                     <ImageIcon />
                     <input
                         id="image-attachment-upload"
@@ -208,6 +215,12 @@ function Tools (props: any) {
                 inputText={props.inputText}
                 setInputText={props.setInputText}
                 fireIsTextInsertCalled={props.setIsTextInsertCalled}
+                callOpenSnackBar={props.callOpenSnackBar}
+            />
+
+            <ShapeInsertModal
+                isShapeInsertDialogOpen={isShapeInsertDialogOpen}
+                setIsShapeInsertDialogOpen={setIsShapeInsertDialogOpen}
                 callOpenSnackBar={props.callOpenSnackBar}
             />
         </ToolbarPaper>
