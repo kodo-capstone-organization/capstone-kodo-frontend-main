@@ -235,6 +235,22 @@ function Board (props: any) {
         }
     }
 
+    const drawAllAnchors = (ctx: CanvasRenderingContext2D, startX: number, startY: number, endX: number, endY: number) => {
+        ctx = drawDragAnchor(ctx, startX, startY);
+        ctx = drawDragAnchor(ctx, endX, startY);
+        ctx = drawDragAnchor(ctx, endX, endY);
+        ctx = drawDragAnchor(ctx, startX, endY);
+        return ctx
+    }
+
+    const drawDragAnchor = (ctx: CanvasRenderingContext2D, x: number, y: number) => {
+        ctx.beginPath();
+        ctx.arc(x, y, 8, 0, Math.PI*2, false);
+        ctx.closePath();
+        ctx.fill();
+        return ctx;
+    }
+
     const insertImage = (attImageFile: File | null, retrievedImage: HTMLImageElement | null = null) => {
         setIsTempBoardHidden(false)
 
@@ -292,10 +308,16 @@ function Board (props: any) {
                 if (tempCtx) {
                     // Set background fill to indicate edit state
                     tempCtx = setTempContextBackgroundFill(tempCtx, 'rgba(74, 75, 169, 0.2)', tempCanvas?.width, tempCanvas?.height)
+                    
                     // Set stroke style to draw selection box later
                     tempCtx = setTempContextSelectionStyle(tempCtx);
+
+                    // Draw the anchor at the four corners
+                    tempCtx = drawAllAnchors(tempCtx, img.x, img.y, img.x + imgWidth, img.y + imgHeight)
+
                     // Add image to the temp canvas and draw a blue border around it to show its selection state
                     tempCtx.drawImage(image, img.x, img.y, imgWidth, imgHeight);
+
                     tempCtx.strokeRect(img.x, img.y, imgWidth, imgHeight);
                 }
                 
@@ -359,8 +381,13 @@ function Board (props: any) {
                     if (tempCanvas && tempCtx) {
                         // Set opacity of canvas to not fully transparent to indicate editing state
                         tempCtx = setTempContextBackgroundFill(tempCtx, 'rgba(74, 75, 169, 0.2)', tempCanvas?.width, tempCanvas?.height)
+                        
                         // Set selection styles
                         tempCtx = setTempContextSelectionStyle(tempCtx);
+
+                        // Draw the anchor at the four corners
+                        tempCtx = drawAllAnchors(tempCtx, img.x, img.y, img.x + imgWidth, img.y + imgHeight)
+                        
                         // User moving image, redraw to new location + selection border
                         tempCtx.drawImage(image, img.x, img.y, imgWidth, imgHeight);
                         tempCtx.strokeRect(img.x, img.y, imgWidth, imgHeight);
