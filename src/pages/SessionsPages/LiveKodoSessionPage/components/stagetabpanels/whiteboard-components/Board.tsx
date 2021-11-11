@@ -143,44 +143,34 @@ function Board (props: any) {
     }, [props.isShapeInsertCalled])
 
     // Receive update of cursor location from peers
-    useEffect(() => {
-
-        if (props.incomingWhiteboardCursorLocations.size > 0) {
-
-            let cursorSvg = new Image();
-            cursorSvg.src = '/cursors/peer_cursor_4.svg';
-
-            cursorSvg.addEventListener("load", function () {
-                // Clear Cursor canvas
-                clearCursorCanvas();
-
-                // Add Peers
-                props.incomingWhiteboardCursorLocations.forEach((value: WhiteboardCursorLocation, key: number) => {
-                    // Create peer cursor image by cloning
-                    // const peerCursorSvg = new Image();
-                    // peerCursorSvg.replaceWith(cursorSvg.cloneNode(true));
-                    // peerCursorSvg.style.backgroundColor = props.peerConns.get(key).colour;
-                    // Add peer cursor image to cursor canvas and specified location
-                    drawOnCursorCanvas(value.cursorX, value.cursorY, cursorSvg);
-                })
-            })
-        }
-        
-    }, [props.incomingWhiteboardCursorLocations])
+    // useEffect(() => {
+    //     if (props.incomingWhiteboardCursorLocations.size > 0) {
+    //         let cursorSvg = new Image();
+    //         cursorSvg.src = '/cursors/peer_cursor_4.svg';
+    //         cursorSvg.addEventListener("load", function () {
+    //             // Clear Cursor canvas
+    //             clearCursorCanvas();
+    //
+    //             // Add Peers
+    //             props.incomingWhiteboardCursorLocations.forEach((value: WhiteboardCursorLocation, key: number) => {
+    //                 // Create peer cursor image by cloning
+    //                 // const peerCursorSvg = new Image();
+    //                 // peerCursorSvg.replaceWith(cursorSvg.cloneNode(true));
+    //                 // peerCursorSvg.style.backgroundColor = props.peerConns.get(key).colour;
+    //                 // Add peer cursor image to cursor canvas and specified location
+    //                 drawOnCursorCanvas(value.cursorX, value.cursorY, cursorSvg);
+    //             })
+    //         })
+    //     }
+    //
+    // }, [props.incomingWhiteboardCursorLocations])
 
     const drawOnCursorCanvas = (cursorX: number, cursorY: number, peerCursorImage: HTMLImageElement) => {
         if (cursorCanvas) {
             cursorCtx = cursorCanvas.getContext('2d');
             if (cursorCtx) {
-                console.log("DRAW CURSOR", peerCursorImage)
-                console.log(cursorX, cursorY)
                 cursorCtx.imageSmoothingEnabled = false;
-                // cursorCtx.drawImage(peerCursorImage, cursorX, cursorY);
-
-                cursorCtx.beginPath();
-                cursorCtx.arc(cursorX, cursorY, 8, 0, Math.PI*2, false);
-                cursorCtx.closePath();
-                cursorCtx.fill();
+                cursorCtx.drawImage(peerCursorImage, cursorX, cursorY);
             }
         }
     }
@@ -232,17 +222,17 @@ function Board (props: any) {
                     mouse.y = e.pageY - this.offsetTop;
 
                     // Sending my cursor loaction to peers every 500 ms
-                    if (!isCursorTimeoutScheduled) {
-                        isCursorTimeoutScheduled = true;
-                        setTimeout(function() {
-                            isCursorTimeoutScheduled = false;
-                            const newWhiteboardCursorLocationObject: WhiteboardCursorLocation = {
-                                cursorX: mouse.x,
-                                cursorY: mouse.y
-                            }
-                            props.sendWhiteboardEventViaDCCallback(undefined, newWhiteboardCursorLocationObject);
-                        }, 250)
-                    }
+                    // if (!isCursorTimeoutScheduled) {
+                    //     isCursorTimeoutScheduled = true;
+                    //     setTimeout(function() {
+                    //         isCursorTimeoutScheduled = false;
+                    //         const newWhiteboardCursorLocationObject: WhiteboardCursorLocation = {
+                    //             cursorX: mouse.x,
+                    //             cursorY: mouse.y
+                    //         }
+                    //         props.sendWhiteboardEventViaDCCallback(undefined, newWhiteboardCursorLocationObject);
+                    //     }, 500)
+                    // }
                 }, false);
 
                 canvas.addEventListener('mousedown', function(e) {
