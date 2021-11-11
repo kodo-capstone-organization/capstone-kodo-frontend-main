@@ -380,9 +380,9 @@ function Board (props: any) {
                     totalHeight += 30;
                 }
 
-                // Set canvas dimensions with buffer
-                textBoxCanvas.width = maxWidth + 50;
-                textBoxCanvas.height = totalHeight + 50;
+                // Set canvas dimensions
+                textBoxCanvas.width = maxWidth;
+                textBoxCanvas.height = totalHeight;
 
                 // Set stroke settings after setting canvas dimensions, as it will wipe all other settings
                 textBoxCtx.font='30px verdana';
