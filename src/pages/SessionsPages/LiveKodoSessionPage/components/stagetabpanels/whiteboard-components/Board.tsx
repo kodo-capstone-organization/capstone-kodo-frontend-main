@@ -374,6 +374,9 @@ function Board (props: any) {
                                 ctx?.drawImage(image, img.x, img.y, imgWidth, imgHeight);
                                 const base64ImageData = canvas?.toDataURL("image/png");
                                 props.sendWhiteboardEventViaDCCallback(base64ImageData);
+                                if (base64ImageData) {
+                                    window.sessionStorage.setItem("canvasData", base64ImageData);
+                                }
 
                                 // Clear all temporary canvas data
                                 if (tempCanvas && tempCtx) {
