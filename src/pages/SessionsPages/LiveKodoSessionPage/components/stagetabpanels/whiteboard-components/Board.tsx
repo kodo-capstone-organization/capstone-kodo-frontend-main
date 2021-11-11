@@ -389,7 +389,7 @@ function Board (props: any) {
                 textBoxCtx.textAlign = 'left';
                 textBoxCtx.textBaseline = 'middle';
                 textBoxCtx.strokeStyle = 'black';
-                textBoxCtx.fillStyle = props.toolProperties.strokeStyle;; // TODO change to colour of selection
+                textBoxCtx.fillStyle = props.toolProperties.strokeStyle; // Colour of words should be the tool colours
                 textBoxCtx.lineWidth = 2; // Dont change this though
 
                 const x = 0;
@@ -447,6 +447,7 @@ function Board (props: any) {
             className="sketch" id="sketch"
         >
             <canvas hidden className="textbox-utility-canvas" id="textbox-utility-canvas" style={{ gridArea: "1 / 1" }}/>
+            <canvas hidden className="shape-utility-canvas" id="shape-utility-canvas" style={{ gridArea: "1 / 1" }}/>
             <canvas className="board" id="board" style={{ gridArea: "1 / 1" }}/>
             <canvas className="temp-board" id="temp-board" hidden={isTempBoardHidden} style={{ gridArea: "1 / 1" }}/>
         </div>

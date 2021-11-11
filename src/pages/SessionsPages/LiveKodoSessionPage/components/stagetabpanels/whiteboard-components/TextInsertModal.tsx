@@ -36,6 +36,7 @@ function TextInsertModal(props: any) {
                         onChange={handleInsertTextChange}
                         variant="outlined"
                         multiline
+                        autoFocus
                     />
                 </FormControl>
             </DialogContent>
