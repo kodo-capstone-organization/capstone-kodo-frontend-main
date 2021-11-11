@@ -370,7 +370,7 @@ function Board (props: any) {
                 textBoxCtx.textAlign = 'center';
                 textBoxCtx.textBaseline = 'middle';
                 textBoxCtx.strokeStyle = 'black';
-                textBoxCtx.fillStyle = 'green'; // TODO change to colour of selection
+                textBoxCtx.fillStyle = props.toolProperties.strokeStyle;; // TODO change to colour of selection
                 textBoxCtx.lineWidth = 2; // Dont change this though
 
                 // Write text
