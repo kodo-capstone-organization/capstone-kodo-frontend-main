@@ -21,9 +21,10 @@ function ForumPostModal(props: any) {
     const [open, setOpen] = useState<boolean>(false);
     const [modalType, setModalType] = useState<string>();
     const [forumPost, setForumPost] = useState<ForumPost>();
-    const [currentCourse , setCurrentCourse] = useState<Course>();
+    const [currentCourse, setCurrentCourse] = useState<Course>();
     const [reasonForReport, setReasonForReport] = useState<string>("");
     const [isFormError, setIsFormError] = useState<boolean>(false);
+    const [isDisplayed, setIsDisplayed] = useState<boolean>(false);
 
     const loggedInAccountId = JSON.parse(window.sessionStorage.getItem("loggedInAccountId") || "{}");
 
@@ -33,6 +34,7 @@ function ForumPostModal(props: any) {
         setModalType(props.modalType);
         if (props.forumPost !== undefined) {
             setForumPost(props.forumPost);
+            setIsDisplayed(props.forumPost.account.accountId === loggedInAccountId || props.currentCourse.tutor.accountId === loggedInAccountId);
         }
     }, [props, open])
 
@@ -67,7 +69,7 @@ function ForumPostModal(props: any) {
     }
 
     const handleReportConfirm = () => {
-        if(reasonForReport.length === 0){
+        if (reasonForReport.length === 0) {
             const isReasonEmpty = reasonForReport.length === 0;
             setIsFormError(isReasonEmpty);
         } else if (forumPost !== undefined) {
@@ -87,29 +89,11 @@ function ForumPostModal(props: any) {
 
     return (
         <>
-            {
-                modalType === "DELETEREPLY" &&
-                <>
-                    <IconButton onClick={handleOpen} style={{ width: "fit-content", marginInlineStart: "auto", fontSize: "unset" }}>
-                        <DeleteIcon /> Delete
-                    </IconButton>
-                    <Dialog open={open} onClose={handleClose} maxWidth={"lg"}>
-                        <DialogTitle>Delete Forum Post</DialogTitle>
-                        <DialogContent>
-                            Are you sure you want to delete this post: {forumPost?.message}?
-                        </DialogContent>
-                        <DialogActions>
-                            <Button onClick={handleClose}>Cancel</Button>
-                            <Button primary onClick={handleDeleteConfirm}>Confirm</Button>
-                        </DialogActions>
-                    </Dialog>
-                </>
-            }
 
             {
                 modalType === "REPORTREPLY" &&
                 <>
-                    <IconButton onClick={handleOpen} style={{ width: "fit-content", fontSize: "unset" }}>
+                    <IconButton onClick={handleOpen} style={{ width: "fit-content", marginInlineStart: "auto", fontSize: "unset" }}>
                         <FlagIcon /> Report
                     </IconButton>
                     <Dialog open={open} onClose={handleClose} maxWidth={"lg"}>
@@ -141,15 +125,15 @@ function ForumPostModal(props: any) {
             }
 
             {
-                modalType === "DELETEPARENTPOST" &&
+                modalType === "DELETEREPLY" && isDisplayed &&
                 <>
                     <IconButton onClick={handleOpen} style={{ width: "fit-content", fontSize: "unset" }}>
                         <DeleteIcon /> Delete
                     </IconButton>
                     <Dialog open={open} onClose={handleClose} maxWidth={"lg"}>
-                        <DialogTitle>Delete Forum Thread</DialogTitle>
+                        <DialogTitle>Delete Forum Post</DialogTitle>
                         <DialogContent>
-                            Are you sure you want to delete this thread: {forumPost?.message}?
+                            Are you sure you want to delete this post: {forumPost?.message}?
                         </DialogContent>
                         <DialogActions>
                             <Button onClick={handleClose}>Cancel</Button>
@@ -189,6 +173,25 @@ function ForumPostModal(props: any) {
                                 <Button primary onClick={handleReportConfirm}>Confirm</Button>
                             </DialogActions>
                         </form>
+                    </Dialog>
+                </>
+            }
+
+            {
+                modalType === "DELETEPARENTPOST" && isDisplayed &&
+                <>
+                    <IconButton onClick={handleOpen} style={{ width: "fit-content", fontSize: "unset" }}>
+                        <DeleteIcon /> Delete
+                    </IconButton>
+                    <Dialog open={open} onClose={handleClose} maxWidth={"lg"}>
+                        <DialogTitle>Delete Forum Thread</DialogTitle>
+                        <DialogContent>
+                            Are you sure you want to delete this thread: {forumPost?.message}?
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={handleClose}>Cancel</Button>
+                            <Button primary onClick={handleDeleteConfirm}>Confirm</Button>
+                        </DialogActions>
                     </Dialog>
                 </>
             }

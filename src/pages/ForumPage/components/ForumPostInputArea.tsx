@@ -149,29 +149,29 @@ function ForumPostInputArea(props: any) {
             <>
                 {forumPosts.map(function (post, postId) {
                     return (
-                            <ForumPostReplyCard key={postId} name={post.forumPostId} elevation={0} variant="outlined">
-                                <ForumPostReplyCardContent>
-                                    <ForumAvatar alt="Remy Sharp" src={post.account.displayPictureUrl} />
-                                    <Typography variant="body1" component="div" style={{ marginLeft: "20px" }}>
-                                        Posted By {post.account.name} on {formatDate(post.timeStamp)}
-                                    </Typography>
-                                    {
-                                        post.reported &&
-                                        <ForumReportedChip label="Reported" color="secondary" reported={post.reported} />
-                                    }
-                                </ForumPostReplyCardContent>
-                                <Divider />
-                                <ForumPostReplyCardContent>
-                                    <Typography variant="body1" component="div" style={{ marginLeft: "20px" }}>
-                                        {post.message}
-                                    </Typography>
-                                </ForumPostReplyCardContent>
-                                <Divider />
-                                <div style={{ display: "flex" }}>
-                                    <ForumPostModal currentCourse={currentCourse} forumPost={post} modalType={"DELETEREPLY"} onForumPostChange={handleCallSnackbar} />
-                                    <ForumPostModal currentCourse={currentCourse} forumPost={post} modalType={"REPORTREPLY"} onForumPostChange={handleCallSnackbar} />
-                                </div>
-                            </ForumPostReplyCard>
+                        <ForumPostReplyCard key={postId} name={post.forumPostId} elevation={0} variant="outlined">
+                            <ForumPostReplyCardContent>
+                                <ForumAvatar alt="Remy Sharp" src={post.account.displayPictureUrl} />
+                                <Typography variant="body1" component="div" style={{ marginLeft: "20px" }}>
+                                    Posted By {post.account.name} on {formatDate(post.timeStamp)}
+                                </Typography>
+                                {
+                                    post.reported &&
+                                    <ForumReportedChip label="Reported" color="secondary" reported={post.reported} />
+                                }
+                            </ForumPostReplyCardContent>
+                            <Divider />
+                            <ForumPostReplyCardContent>
+                                <Typography variant="body1" component="div" style={{ marginLeft: "20px" }}>
+                                    {post.message}
+                                </Typography>
+                            </ForumPostReplyCardContent>
+                            <Divider />
+                            <div style={{ display: "flex" }}>
+                                <ForumPostModal currentCourse={currentCourse} forumPost={post} modalType={"REPORTREPLY"} onForumPostChange={handleCallSnackbar} />
+                                <ForumPostModal currentCourse={currentCourse} forumPost={post} modalType={"DELETEREPLY"} onForumPostChange={handleCallSnackbar} />
+                            </div>
+                        </ForumPostReplyCard>
                     );
                 })}
             </>
@@ -193,9 +193,8 @@ function ForumPostInputArea(props: any) {
                             <IconButton onClick={handleMakeReply} style={{ width: "fit-content", fontSize: "unset" }}>
                                 <ReplyIcon /> Reply
                             </IconButton>
+                            <ForumPostModal currentCourse={currentCourse} forumPost={parentForumPost} modalType={"REPORTPARENTPOST"} onForumPostChange={handleCallSnackbar} />
                             <ForumPostModal currentCourse={currentCourse} forumPost={parentForumPost} modalType={"DELETEPARENTPOST"} onForumPostChange={handleCallSnackbar} />
-                            <ForumPostModal  currentCourse={currentCourse} forumPost={parentForumPost} modalType={"REPORTPARENTPOST"} onForumPostChange={handleCallSnackbar} />
-
                         </>
                     }
                     {
@@ -216,7 +215,7 @@ function ForumPostInputArea(props: any) {
                     <div style={{ margin: "20px 0px 0px 20px" }}>
                         Replies
                     </div>
-                    <div style={{display: "flex", flexDirection: "column" }}>
+                    <div style={{ display: "flex", flexDirection: "column" }}>
                         <ForumPostCardContent>
                             {mapReplies(childForumPosts)}
                         </ForumPostCardContent>
