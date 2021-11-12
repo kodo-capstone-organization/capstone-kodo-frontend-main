@@ -191,6 +191,7 @@ function ForumThreadList(props: any) {
                                             aria-haspopup="true"
                                             aria-expanded={open ? 'true' : undefined}
                                             onClick={(e) => handleMenuOpen(e, thread.forumThreadId, thread.account.accountId)}
+                                            disabled = {thread.account.accountId != loggedInAccountId && course?.tutor.accountId != loggedInAccountId}
                                         >
                                             <MoreVertIcon />
                                         </IconButton>
