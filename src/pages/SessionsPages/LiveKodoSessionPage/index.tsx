@@ -269,6 +269,15 @@ function LiveKodoSessionPage(props: any) {
                 console.log("dataChannel.onopen in CREATOR SIDE")
                 setDataChannelConnected(true);
             }
+
+            newDataChannel.onclose = function() {
+                console.log("NEW PEER CONN Data channel is closed");
+            };
+    
+            newDataChannel.onerror = function(error) {
+                console.log("NEW PEER CONN DC Error:", error);
+            };
+
             newDataChannel.onmessage = function(event) {
                 const dcMessage: KodoDataChannelMessage = JSON.parse(event.data)
                 console.log("dataChannel.onmessage IN CREATOR SIDE", dcMessage);
